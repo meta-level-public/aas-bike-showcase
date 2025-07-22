@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { InventoryStatus } from 'src/app/model/inventory-status';
 import { KatalogEintrag } from '../../model/katalog-eintrag';
@@ -10,7 +11,7 @@ import { CatalogListService } from '../catalog-list.service';
   selector: 'app-catalog-item',
   templateUrl: './catalog-item.component.html',
   styleUrl: './catalog-item.component.css',
-  imports: [CommonModule, FormsModule, RatingModule]
+  imports: [CommonModule, FormsModule, RatingModule, ButtonModule]
 })
 export class CatalogItemComponent {
   @Input() item: KatalogEintrag | undefined;

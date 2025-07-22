@@ -2,6 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { DropdownModule } from 'primeng/dropdown';
 import { KatalogEintrag } from '../model/katalog-eintrag';
@@ -12,7 +13,7 @@ import { CatalogListService } from './catalog-list.service';
   selector: 'app-catalog-list',
   templateUrl: './catalog-list.component.html',
   styleUrl: './catalog-list.component.css',
-  imports: [CommonModule, FormsModule, CatalogItemComponent, DropdownModule, DataViewModule]
+  imports: [CommonModule, FormsModule, CatalogItemComponent, DropdownModule, DataViewModule, ButtonModule]
 })
 export class CatalogListComponent implements OnInit {
   items: KatalogEintrag[] = [];
