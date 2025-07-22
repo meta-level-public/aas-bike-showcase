@@ -221,7 +221,5 @@ Bei Fragen oder Problemen erstellen Sie bitte ein Issue im Repository.
 ## 🔮 Roadmap
 
 - [ ] Erweiterte DPP Funktionalitäten
-- [ ] Blockchain Integration für Rückverfolgbarkeit
-- [ ] Mobile App für QR-Code Scanning
-- [ ] Erweiterte Analytics und Reporting
-- [ ] Multi-Tenant Support
+- [ ] Integration "echter" Viewer für die AAS
+- [ ] Aufrufbarkeit über QR-Code
