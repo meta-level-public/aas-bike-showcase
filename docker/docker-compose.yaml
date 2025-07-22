@@ -1,0 +1,32 @@
+services:
+
+  aasx-server:
+    container_name: bike-corp-aasx-server
+    image: adminshellio/aasx-server-blazor-for-demo-arm64:main
+    restart: unless-stopped 
+    volumes:
+      - ../dockerfiles/aasx-server:/usr/share/aasxs
+    ports:
+      - 9421:5001
+    environment:  
+      - Kestrel__Endpoints__Http__Url=http://*:5001  
+    command: --no-security --data-path /usr/share/aasxs 
+    #--external-blazor YOURURL  
+
+  # basyx-registry:
+  #   container_name: bike-corp-basyx-registry
+  #   image: eclipsebasyx/aas-registry:1.5.1
+  #   restart: unless-stopped
+  #   ports:
+  #     - 8081:4001
+  #   volumes:
+  #     - ../dockerfiles/aas-registry/config:/usr/share/config
+
+  basyx-server:
+    container_name: bike-corp-basyx-server
+    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+#    volumes:
+      # - ../dockerfiles/aas-server/config:/usr/share/config

@@ -1,0 +1,80 @@
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8 min-h-full min-w-full">
+  <div class="card flex flex-column mt-2 gap-2 w-full">
+    <div class="card flex flex-column gap-2">
+      <label>Zu Produzierenden Typen wählen</label>
+      <p-dropdown
+        [options]="items"
+        [(ngModel)]="selectedItem"
+        (onChange)="typeSelected()"
+        optionLabel="name"
+        styleClass="w-full"
+        >
+      </p-dropdown>
+    </div>
+    <!-- {{ selectedItem | json }} -->
+    @for (item of selectedItem?.bestandteile ?? []; track $index) {
+      <div class="card flex flex-column gap-2">
+        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+          <div class="w-12rem">
+            <img
+              class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
+              height="100"
+              [src]="'data:image/jpeg;base64, ' + item.katalogEintrag.image"
+              [alt]="item.name"
+              />
+          </div>
+          <div
+            class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
+            >
+            <div
+              class="flex flex-column align-items-center sm:align-items-start gap-3 w-20rem"
+              >
+              <div class="text-2xl font-bold text-900">{{ item.name }}</div>
+              <div class="text-2xl font-medium text-900">{{ item.amount }} Stück</div>
+            </div>
+            <div
+              class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 flex-1"
+              >
+              @for (teil of getParts(item); track $index) {
+                <input
+                  pInputText
+                  type="text"
+                  class="w-full"
+                  placeholder="Verbautes Teil (Charge/Seriennummer/...) einscannen"
+                  (keydown.enter)="findRohteilInstanz($event, item, teil.guid)"
+                  (blur)="findRohteilInstanz($event, item, teil.guid)"
+                  [(ngModel)]="teil.instanceGlobalAssetId"
+                  />
+              }
+              @if (isTeilOk(item)) {
+                <div class="flex flex-row gap-1">
+                  Teil ok
+                </div>
+              }
+              @if (!isTeilOk(item)) {
+                <div class="flex flex-row gap-1">
+                  Teil nicht ok
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      } @empty {
+      <div class="card flex flex-column gap-2">
+        @if (selectedItem) {
+          <label>Keine zu verbauenden Teile vorhanden</label>
+        }
+      </div>
+    }
+    @if (selectedItem) {
+      <button
+        pButton
+        label="Verbau Fertig"
+        class="w-full"
+        (click)="saveProducedProduct()"
+        [disabled]="!allPartsValid()"
+      ></button>
+    }
+  </div>
+</div>

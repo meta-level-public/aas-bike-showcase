@@ -1,0 +1,168 @@
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+  <div class="card flex flex-column mt-2 gap-2">
+    <div class="flex flex-column gap-2">
+      <label>ERP System wählen</label>
+      <p-selectButton
+        [options]="erpOptions"
+        [(ngModel)]="selectedErp"
+        optionLabel="label"
+        >
+        <ng-template let-item pTemplate>
+          <div
+            class="flex flex-column h-3rem justify-content-end gap-2 mt-2 align-items-center"
+            >
+            <img
+              src="assets/logos/{{ item.logo }}"
+              width="32"
+              style="vertical-align: middle"
+              />
+            <span>{{ item.label }}</span>
+          </div>
+        </ng-template>
+      </p-selectButton>
+    </div>
+    <div class="flex flex-column gap-2">
+      @if (selectedErp) {
+        @if (selectedErp.label == 'Meta SimplestErp') {
+          <div
+            class="flex flex-column gap-2"
+            >
+            Beim Eigenen ERP-System ist keine Konfiguration notwendig.
+          </div>
+        }
+        @if (selectedErp.label != 'Meta SimplestErp') {
+          <div
+            class="flex flex-column gap-2"
+            >
+            <label>Mapping</label>
+            <p>
+              Hier wird jetzt ein Mapping für Felder des ERP-Systems zu Feldern
+              aus der AAS/Speziellen Teilmodellen vorgenommen.
+            </p>
+            <p>Beispiele:</p>
+            <ul>
+              <li>
+                Produktfamilie aus dem Digital Nameplate ==> Kategorie des Teils
+              </li>
+              <li>Hersteller aus Digital Nameplate ==> Hersteller des Teils</li>
+              <li>
+                Produktbeschreibung aus dem Digital Nameplate ==> Beschreibung
+              </li>
+              <li>
+                Produktbezeichnung aus dem Digital Nameplate ==> Bezeichnung
+              </li>
+              <li>Globale Asset ID ==> Eindeutige Kennung</li>
+              <li>...</li>
+            </ul>
+            <button
+              pButton
+              type="button"
+              label="Konfiguration SPeichern"
+              (click)="saveSettings()"
+              class="w-14rem"
+            ></button>
+          </div>
+        }
+      }
+    </div>
+    <div class="flex flex-column gap-2">
+      <label>Lieferanten</label>
+      <button
+        pButton
+        type="button"
+        label="Lieferant hinzufügen"
+        (click)="showAddSupplierDialog()"
+        class="w-14rem"
+      ></button>
+
+      <p-dataView #dv [value]="suppliers">
+        <ng-template pTemplate="list" let-products>
+          <div class="grid grid-nogutter">
+            @for (item of suppliers; track item; let first = $first) {
+              <div
+                class="col-12"
+                >
+                <div
+                  class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
+                  [ngClass]="{ 'border-top-1 surface-border': !first }"
+                  >
+                  <img
+                    height="75"
+                    [style.width]="'auto'"
+                    [src]="'/assets/logos/' + item.logo"
+                    [alt]="item.name"
+                    />
+                  <div
+                    class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
+                    >
+                    <div
+                      class="flex flex-column align-items-center sm:align-items-start gap-3"
+                      >
+                      <div class="text-2xl font-bold text-900">
+                        {{ item.name }}
+                      </div>
+                      <div class="text-900">
+                        {{ item.remoteRepositoryUrl }}
+                      </div>
+                    </div>
+                  </div>
+                  <p-button
+                    icon="pi pi-trash"
+                    class="p-button-rounded p-button-danger"
+                    (click)="deleteSupplier(item)"
+                  ></p-button>
+                </div>
+              </div>
+            }
+          </div>
+        </ng-template>
+      </p-dataView>
+    </div>
+  </div>
+
+  <p-dialog [(visible)]="addSupplierDialogVisible">
+    @if (newSupplier) {
+      <div class="gap-2 flex-column">
+        <label for="kategorie" class="block text-900 font-medium mb-2"
+          >Name</label
+          >
+          <input
+            id="name"
+            type="text"
+            placeholder="Name"
+            pInputText
+            class="w-full mb-3"
+            [(ngModel)]="newSupplier.name"
+            />
+          <label for="logo" class="block text-900 font-medium mb-2">Logo</label>
+          <input
+            id="logo"
+            type="text"
+            placeholder="Logo"
+            pInputText
+            class="w-full mb-3"
+            [(ngModel)]="newSupplier.logo"
+            />
+          <label for="price" class="block text-900 font-medium mb-2"
+            >RepositoryUrl</label
+            >
+            <input
+              id="repositoryUrl"
+              type="text"
+              placeholder="repositoryUrl"
+              pInputText
+              class="w-full mb-3"
+              [(ngModel)]="newSupplier.remoteRepositoryUrl"
+              />
+            <button
+              pButton
+              type="button"
+              label="Speichern"
+              (click)="saveSupplier()"
+              icon="pi pi-save"
+              class="w-10rem"
+            ></button>
+          </div>
+        }
+      </p-dialog>
+    </div>

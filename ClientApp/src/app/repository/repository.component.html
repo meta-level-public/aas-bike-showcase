@@ -1,0 +1,69 @@
+<h1 id="tableLabel">Repository abfragen</h1>
+
+<div class="flex flex-column w-full gap-2">
+  <div class="flex flex-row gap-2">
+    <input
+      pInputText
+      type="text"
+      [(ngModel)]="localRegistryUrl"
+      placeholder="local Registry"
+      class="w-full"
+      />
+      <input
+        pInputText
+        type="text"
+        [(ngModel)]="remoteRegistryUrl"
+        placeholder="remote Registry"
+        class="w-full"
+        />
+        <input
+          pInputText
+          type="text"
+          [(ngModel)]="aasId"
+          placeholder="aasId"
+          class="w-full"
+          />
+        </div>
+        <div class="flex flex-row gap-2">
+          <button
+            pButton
+            (click)="loadLocalRegistry()"
+            label="load local"
+          ></button>
+          <button
+            pButton
+            (click)="loadRemoteRegistry()"
+            label="load remote"
+          ></button>
+        </div>
+      </div>
+
+      <div class="flex flex-row gap-2">
+
+        <p-table [value]="shells" class="w-full" styleClass="p-datatable-sm p-datatable-striped p-datatable-gridlines">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Aas IdShort</th>
+              <th>AasId</th>
+              @if (!isLocal) {
+                <th></th>
+              }
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-shell>
+            @if (shell != null) {
+              <tr>
+                <td>{{ shell.idShort }}</td>
+                <td>{{ shell.id }}</td>
+                @if (!isLocal) {
+                  <td><button pButton class="p-button-sm" label="import" (click)="import(shell.id)"></button></td>
+                }
+                <td><p-overlayPanel #op><ngx-json-viewer [json]="shell" [expanded]="false"></ngx-json-viewer>
+                </p-overlayPanel> <button pButton (click)="op.toggle($event)" icon="pi pi-eye"></button></td>
+              </tr>
+            }
+          </ng-template>
+        </p-table>
+
+      </div>

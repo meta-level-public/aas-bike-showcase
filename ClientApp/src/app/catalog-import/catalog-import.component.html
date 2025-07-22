@@ -1,0 +1,120 @@
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+  <div class="flex flex-column gap-2 mt-2">
+    <div class="flex flex-row gap-2">
+      <div class="gap-2 flex-column md:w-4">
+        <label for="name" class="block text-900 font-medium mb-2">Name</label>
+        <input
+          id="name"
+          type="text"
+          placeholder="Name"
+          pInputText
+          class="w-full mb-3"
+          [(ngModel)]="newKatalogEintrag.name"
+          />
+        <label for="price" class="block text-900 font-medium mb-2">Preis</label>
+        <input
+          id="price"
+          type="text"
+          placeholder="Preis"
+          pInputText
+          class="w-full mb-3"
+          [(ngModel)]="newKatalogEintrag.price"
+          />
+        <label for="price" class="block text-900 font-medium mb-2">AasId</label>
+        <input
+          id="price"
+          type="text"
+          placeholder="AasId"
+          pInputText
+          [(ngModel)]="newKatalogEintrag.aasId"
+          class="w-full mb-3"
+          />
+        <label for="price" class="block text-900 font-medium mb-2"
+          >GlobalAssetId</label
+          >
+          <input
+            id="price"
+            type="text"
+            placeholder="GlobalAssetId"
+            pInputText
+            [(ngModel)]="newKatalogEintrag.globalAssetId"
+            class="w-full mb-3"
+            />
+        </div>
+        <div class="flex gap-2 flex-column md:w-8">
+          <div class="flex flex-row gap-2">
+            @for (item of suppliers; track $index) {
+              <div [ngClass]="{'border-solid': item.remoteRepositoryUrl === currentRepositoryUrl}" class="border-indigo-400 h-full flex align-items-center p-2">
+                <img
+                  [src]="'/assets/logos/' + item.logo"
+                  width="100px"
+                  (click)="loadRegistry(item.remoteRepositoryUrl)"
+                  [alt]="item.name"
+                  class="cursor-pointer"
+                  />
+              </div>
+              } @empty {
+              <p>
+                Keine Lieferanten erfasst. Bitte zuerst im Grundsetup einrichten
+              </p>
+            }
+          </div>
+          <p-table
+            [value]="shells"
+            class="w-full"
+            styleClass="p-datatable-sm p-datatable-striped p-datatable-gridlines"
+            [scrollable]="true"
+            scrollHeight="250px"
+            [tableStyle]="{ 'min-width': '50rem' }"
+            [loading]="loading"
+            >
+            <ng-template pTemplate="header">
+              <tr>
+                <th scope="col">Aas IdShort</th>
+                <th scope="col">AasId</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-shell>
+              @if (shell != null) {
+                <tr>
+                  <td>{{ shell.idShort }}</td>
+                  <td>{{ shell.id }}</td>
+                  <td>
+                    <button
+                      pButton
+                      class="p-button-sm"
+                      label="übernehmen"
+                      (click)="apply(shell)"
+                    ></button>
+                  </td>
+                  <td>
+                    <p-overlayPanel #op
+                      ><ngx-json-viewer
+                      [json]="shell"
+                      [expanded]="false"
+                    ></ngx-json-viewer>
+                  </p-overlayPanel>
+                  <button
+                    pButton
+                    (click)="op.toggle($event)"
+                    icon="pi pi-eye"
+                  ></button>
+                </td>
+              </tr>
+            }
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+    <button
+      pButton
+      pRipple
+      label="Speichern"
+      icon="pi pi-save"
+      class="w-full"
+      (click)="save()"
+    ></button>
+  </div>
+</div>

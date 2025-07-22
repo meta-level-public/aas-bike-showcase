@@ -1,0 +1,70 @@
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+  <div class="flex flex-column gap-2 mt-2">
+    <div class="gap-2 flex-column">
+      <label for="name" class="block text-900 font-medium mb-2">Name</label>
+      <input
+        id="name"
+        type="text"
+        placeholder="Name"
+        pInputText
+        class="w-full mb-3"
+        [(ngModel)]="newProduct.name"
+      />
+    </div>
+    <div class="gap-2 flex-column">
+      <label for="name" class="block text-900 font-medium mb-2">Preis</label>
+      <input
+        id="name"
+        type="text"
+        placeholder="Preis"
+        pInputText
+        class="w-full mb-3"
+        [(ngModel)]="newProduct.price"
+        readonly
+      />
+    </div>
+    <div class="gap-2 flex-column">
+      <label for="name" class="block text-900 font-medium mb-2">Teile</label>
+      <p-pickList
+        [source]="rohteile"
+        [target]="bestandteile"
+        sourceHeader="Available"
+        targetHeader="Selected"
+        [dragdrop]="true"
+        [responsive]="true"
+        [sourceStyle]="{ height: '15rem' }"
+        [targetStyle]="{ height: '15rem' }"
+        breakpoint="1400px"
+        (onMoveToSource)="calculatePrice()"
+        (onMoveToTarget)="calculatePrice()"
+        (onMoveAllToSource)="calculatePrice()"
+        (onMoveAllToTarget)="calculatePrice()"
+      >
+        <ng-template let-item pTemplate="item">
+          <div class="flex flex-wrap p-2 align-items-center gap-3" >
+            <div class="flex flex-row w-5rem justify-content-center">
+
+              <img
+              class="scaleImageWidth shadow-2 flex-shrink-0 border-round" height="50"
+              [src]="'data:image/jpeg;base64, ' + item.image"
+              alt="{item.name}"
+              />
+            </div>
+            <div class="flex-1 flex flex-column gap-2">
+              <span class="font-bold">{{ item.name }}</span>
+              <div class="flex align-products-center gap-2">
+                <i class="pi pi-tag text-sm"></i>
+                <span>{{ item.kategorie }}</span>
+              </div>
+            </div>
+            <span class="font-bold text-900">{{ "$" + item.price }}</span>
+            <span class="font-bold text-900"><input pInputText class="w-5rem" placeholder="Anzahl" [(ngModel)]="item.amountToUse"/></span>
+          </div>
+        </ng-template>
+      </p-pickList>
+    </div>
+    <div class="gap-2 flex-column">
+      <button pButton label="Anlegen" (click)="createProduct()"></button>
+    </div>
+  </div>
+</div>

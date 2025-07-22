@@ -1,0 +1,38 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AasDemoapp.Database;
+using AasDemoapp.Database.Model;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
+namespace AasDemoapp.Settings
+{
+    public class SettingService
+    {
+        private readonly AasDemoappContext _context;
+
+        public SettingService(AasDemoappContext aasDemoappContext)
+        {
+            _context = aasDemoappContext;
+        }
+
+        public Setting Save(Setting setting)
+        {
+            var dbSetting = _context.Settings.FirstOrDefault(s => s.Name == setting.Name);
+            if (dbSetting == null) {
+                _context.Settings.Add(setting);
+            } else {
+                dbSetting.value = setting.value;
+            }
+            _context.SaveChanges();
+
+            return setting;
+        }
+
+        public List<Setting> GetAll()
+        {
+            return _context.Settings.ToList();
+        }
+    }
+}
