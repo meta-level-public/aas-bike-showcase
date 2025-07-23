@@ -1,16 +1,15 @@
 import { ConfiguredProduct } from './configured-product';
-import { KatalogEintrag } from './katalog-eintrag';
 import { ProductPart } from './product-part';
 
 export interface ProducedProduct {
   id?: number;
-  name: string;
+  configuredProductId: number;
+  configuredProductName: string;
   aasId: string;
   globalAssetId: string;
-
-  configuredProduct?: ConfiguredProduct;
-
+  productionDate: Date;
   bestandteile: ProductPart[];
 
-  price: number;
+  // Optional für erweiterte Anzeige
+  configuredProduct?: ConfiguredProduct;
 }

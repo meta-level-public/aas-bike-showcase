@@ -44,7 +44,7 @@ export class AssemblyComponent implements OnInit {
       this.newProduct.configuredProductId = this.selectedItem.id ?? 0;
       this.selectedItem.bestandteile.forEach((bestandteil) => {
         for (let i = 0; i < bestandteil.amount; i++) {
-          this.teileStatus.push({guid: guid(), typeGlobalAssetId: bestandteil.katalogEintrag.globalAssetId, instanceGlobalAssetId: '', instanceAasId: bestandteil.katalogEintrag.aasId, statusOk: false, bestandteilId: bestandteil.id ?? 0});
+          this.teileStatus.push({guid: guid(), typeGlobalAssetId: bestandteil.katalogEintrag?.globalAssetId ?? '', instanceGlobalAssetId: '', instanceAasId: bestandteil.katalogEintrag?.aasId ?? '', statusOk: false, bestandteilId: bestandteil.id ?? 0});
         }
       });
     }
@@ -59,10 +59,10 @@ export class AssemblyComponent implements OnInit {
         this.notificationService.showMessageAlways('Rohteil Instanz nicht gefunden');
       } else {
         console.log(this.teileStatus);
-        const teileStatus = this.teileStatus.find((teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag.globalAssetId && teileStatus.guid == guid);
+        const teileStatus = this.teileStatus.find((teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId && teileStatus.guid == guid);
         console.log(teileStatus);
         if (teileStatus == null) return;
-        if (katalogEintrag.referencedType?.globalAssetId != item.katalogEintrag.globalAssetId) {
+        if (katalogEintrag.referencedType?.globalAssetId != item.katalogEintrag?.globalAssetId) {
           this.notificationService.showMessageAlways('Rohteil hat den falschen Typ!');
         } else {
           teileStatus.instanceGlobalAssetId = katalogEintrag.globalAssetId;
@@ -77,11 +77,11 @@ export class AssemblyComponent implements OnInit {
 
 
   getParts(item: ProductPart) {
-    return this.teileStatus.filter((teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag.globalAssetId);
+    return this.teileStatus.filter((teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId);
   }
 
   isTeilOk(item: ProductPart) {
-    return this.teileStatus.filter((teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag.globalAssetId).every((teileStatus) => teileStatus.statusOk);
+    return this.teileStatus.filter((teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId).every((teileStatus) => teileStatus.statusOk);
   }
 
   async saveProducedProduct() {
@@ -90,7 +90,7 @@ export class AssemblyComponent implements OnInit {
     console.log(this.teileStatus);
     console.log(this.selectedItem);
     this.teileStatus.forEach((teileStatus) => {
-      const typePart = this.selectedItem?.bestandteile?.find((bestandteil) => bestandteil.katalogEintrag.globalAssetId == teileStatus.typeGlobalAssetId);
+      const typePart = this.selectedItem?.bestandteile?.find((bestandteil) => bestandteil.katalogEintrag?.globalAssetId == teileStatus.typeGlobalAssetId);
       console.log(typePart);
       if (typePart == null) return;
       this.newProduct.bestandteile?.push({

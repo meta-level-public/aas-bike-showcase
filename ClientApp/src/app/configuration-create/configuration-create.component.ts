@@ -44,7 +44,7 @@ export class ConfigurationCreateComponent implements OnInit {
     this.bestandteile.forEach((bestandteil) => {
       this.newProduct.bestandteile?.push({
         id: undefined,
-        katalogEintrag: bestandteil,
+        katalogEintragId: bestandteil.id,
         name: bestandteil.name,
         price: bestandteil.price,
         amount: bestandteil.amountToUse,

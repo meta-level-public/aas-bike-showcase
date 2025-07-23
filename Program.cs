@@ -11,6 +11,7 @@ using AasDemoapp.Proxy;
 using AasDemoapp.Settings;
 using AasDemoapp.Suppliers;
 using AasDemoapp.Dpp;
+using AasDemoapp.Mapping;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +53,8 @@ builder.Services.AddDbContext<AasDemoappContext>(options =>
 
 //  builder.Services.AddScoped<AasDemoappContext>(provider => provider.GetService<AasDemoappContext>());
 
+// AutoMapper registrieren
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<ImportService>();
 builder.Services.AddScoped<KatalogService>();

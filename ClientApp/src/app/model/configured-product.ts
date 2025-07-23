@@ -1,4 +1,3 @@
-import { KatalogEintrag } from './katalog-eintrag';
 import { ProductPart } from './product-part';
 
 export interface ConfiguredProduct {

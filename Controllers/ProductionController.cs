@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using AasDemoapp.Dashboard;
 using AasDemoapp.Database.Model;
+using AasDemoapp.Database.Model.DTOs;
 using AasDemoapp.Katalog;
 using AasDemoapp.Production;
 using Microsoft.AspNetCore.Mvc;
@@ -16,47 +18,77 @@ namespace AasDemoapp.Controllers
     public class ProductionController : ControllerBase
     {
         private readonly ProductionService _productionService;
+        private readonly IMapper _mapper;
 
-        public ProductionController(ProductionService productionService)
+        public ProductionController(ProductionService productionService, IMapper mapper)
         {
             _productionService = productionService;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public async Task<ProducedProduct> CreateProduct(ProducedProductRequest producedProduct)
+        public async Task<ActionResult<ProductionResponseDto>> CreateProduct(ProducedProductRequestDto requestDto)
         {
-            return await _productionService.CreateProduct(producedProduct);
+            try
+            {
+                // DTO zu Entity Model konvertieren
+                var request = _mapper.Map<ProducedProductRequest>(requestDto);
+                
+                // Produktion ausführen
+                var producedProduct = await _productionService.CreateProduct(request);
+                
+                // Entity Model zu DTO konvertieren
+                var responseDto = _mapper.Map<ProducedProductDto>(producedProduct);
+                
+                return Ok(new ProductionResponseDto
+                {
+                    Success = true,
+                    Message = "Product created successfully",
+                    ProducedProduct = responseDto
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ProductionResponseDto
+                {
+                    Success = false,
+                    Message = "Failed to create product",
+                    Error = ex.Message
+                });
+            }
         }
 
         [HttpGet]
-        public IActionResult TestHandoverDocumentation()
+        public ActionResult<HandoverDocumentationDto> TestHandoverDocumentation()
         {
             try
             {
                 var submodel = HandoverDocumentationCreator.CreateHandoverDocumentationFromJson();
                 
-                return Ok(new
+                var submodelDto = new SubmodelSummaryDto
                 {
-                    success = true,
-                    message = "HandoverDocumentation submodel created successfully",
-                    submodel = new
-                    {
-                        id = submodel.Id,
-                        idShort = submodel.IdShort,
-                        description = submodel.Description?.FirstOrDefault()?.Text,
-                        version = submodel.Administration?.Version,
-                        revision = submodel.Administration?.Revision,
-                        elementCount = submodel.SubmodelElements?.Count ?? 0
-                    }
+                    Id = submodel.Id,
+                    IdShort = submodel.IdShort,
+                    Description = submodel.Description?.FirstOrDefault()?.Text,
+                    Version = submodel.Administration?.Version,
+                    Revision = submodel.Administration?.Revision,
+                    ElementCount = submodel.SubmodelElements?.Count ?? 0
+                };
+
+                return Ok(new HandoverDocumentationDto
+                {
+                    Success = true,
+                    Message = "HandoverDocumentation submodel created successfully",
+                    Submodel = submodelDto
                 });
             }
             catch (Exception ex)
             {
-                return BadRequest(new
+                return BadRequest(new HandoverDocumentationDto
                 {
-                    success = false,
-                    message = "Failed to create HandoverDocumentation submodel",
-                    error = ex.Message
+                    Success = false,
+                    Message = "Failed to create HandoverDocumentation submodel",
+                    Error = ex.Message
                 });
             }
         }
