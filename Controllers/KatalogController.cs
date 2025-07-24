@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using AasDemoapp.Database.Model;
+using AasDemoapp.Database.Model.DTOs;
 using AasDemoapp.Katalog;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,22 +15,26 @@ namespace AasDemoapp.Controllers
     public class KatalogController : ControllerBase
     {
         private readonly KatalogService _katalogService;
+        private readonly IMapper _mapper;
 
-        public KatalogController(KatalogService katalogService)
+        public KatalogController(KatalogService katalogService, IMapper mapper)
         {
             _katalogService = katalogService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<List<KatalogEintrag>> GetAllRohteil()
+        public async Task<List<KatalogEintragDto>> GetAllRohteil()
         {
-            return await Task.FromResult(_katalogService.GetAll(KatalogEintragTyp.RohteilTyp));
+            var katalogEintraege = await Task.FromResult(_katalogService.GetAll(KatalogEintragTyp.RohteilTyp));
+            return _mapper.Map<List<KatalogEintragDto>>(katalogEintraege);
         }
 
         [HttpGet]
-        public async Task<List<KatalogEintrag>> GetAllRohteilInstanz()
+        public async Task<List<KatalogEintragDto>> GetAllRohteilInstanz()
         {
-            return await Task.FromResult(_katalogService.GetAll(KatalogEintragTyp.RohteilInstanz));
+            var katalogEintraege = await Task.FromResult(_katalogService.GetAll(KatalogEintragTyp.RohteilInstanz));
+            return _mapper.Map<List<KatalogEintragDto>>(katalogEintraege);
         }
 
         public class RndResult

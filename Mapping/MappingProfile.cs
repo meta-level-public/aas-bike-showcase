@@ -12,9 +12,9 @@ namespace AasDemoapp.Mapping
             // ProducedProduct zu ProducedProductDto
             CreateMap<ProducedProduct, ProducedProductDto>()
                 .ForMember(dest => dest.ConfiguredProductName,
-                          opt => opt.MapFrom(src => src.ConfiguredProduct.Name))
+                        opt => opt.MapFrom(src => src.ConfiguredProduct.Name))
                 .ForMember(dest => dest.Bestandteile,
-                          opt => opt.MapFrom(src => src.Bestandteile));
+                        opt => opt.MapFrom(src => src.Bestandteile));
 
             // ProductPart zu ProductPartDto
             CreateMap<ProductPart, ProductPartDto>();
@@ -22,22 +22,40 @@ namespace AasDemoapp.Mapping
             // ConfiguredProduct zu ConfiguredProductDto
             CreateMap<ConfiguredProduct, ConfiguredProductDto>()
                 .ForMember(dest => dest.ProducedProductsCount,
-                          opt => opt.MapFrom(src => src.ProducedProducts != null ? src.ProducedProducts.Count : 0))
+                        opt => opt.MapFrom(src => src.ProducedProducts != null ? src.ProducedProducts.Count : 0))
                 .ForMember(dest => dest.Bestandteile,
-                          opt => opt.MapFrom(src => src.Bestandteile));
+                        opt => opt.MapFrom(src => src.Bestandteile));
 
             // KatalogEintrag zu KatalogEintragDto
             CreateMap<KatalogEintrag, KatalogEintragDto>()
                 .ForMember(dest => dest.InventoryStatus,
-                          opt => opt.MapFrom(src => src.InventoryStatus))
+                        opt => opt.MapFrom(src => src.InventoryStatus))
                 .ForMember(dest => dest.ReferencedType,
-                          opt => opt.MapFrom(src => src.ReferencedType));
+                        opt => opt.MapFrom(src => src.ReferencedType));
 
             // Production Request Mappings
             CreateMap<ProducedProductRequestDto, ProducedProductRequest>();
             CreateMap<ProducedProductRequest, ProducedProductRequestDto>();
             CreateMap<BestandteilRequestDto, BestandteilRequest>();
             CreateMap<BestandteilRequest, BestandteilRequestDto>();
+
+                        // Konfigurator mappings
+            CreateMap<CreateConfiguredProductDto, ConfiguredProduct>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Bestandteile, opt => opt.MapFrom(src => src.Bestandteile));
+            
+            CreateMap<CreateProductPartDto, ProductPart>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ConfiguredProductId, opt => opt.Ignore())
+                .ForMember(dest => dest.ConfiguredProduct, opt => opt.Ignore())
+                .ForMember(dest => dest.KatalogEintrag, opt => opt.Ignore());
+
+            // Supplier mappings
+            CreateMap<Supplier, SupplierDto>().ReverseMap();
+            // Supplier mappings
+            CreateMap<Supplier, SupplierDto>().ReverseMap();
+            CreateMap<CreateSupplierDto, Supplier>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
 
             // Reverse Mappings (falls benötigt)
             CreateMap<ProducedProductDto, ProducedProduct>()

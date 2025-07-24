@@ -1,6 +1,6 @@
 export interface Supplier {
-  id: number;
+  id?: number;
   name: string;
-  remoteRepositoryUrl: string;
   logo: string;
+  remoteRepositoryUrl: string;
 }

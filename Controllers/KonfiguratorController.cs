@@ -32,15 +32,89 @@ namespace AasDemoapp.Controllers
         }
 
         [HttpDelete]
-        public async Task<bool> Delete(long id)
+        public async Task<ActionResult<ConfigurationResponseDto>> Delete(long id)
         {
-            return await Task.FromResult(_konfiguratorService.Delete(id));
+            try
+            {
+                var result = await Task.FromResult(_konfiguratorService.Delete(id));
+                
+                if (result)
+                {
+                    return Ok(new ConfigurationResponseDto
+                    {
+                        Success = true,
+                        Message = "Product deleted successfully"
+                    });
+                }
+                else
+                {
+                    return NotFound(new ConfigurationResponseDto
+                    {
+                        Success = false,
+                        Message = "Product not found",
+                        Error = $"Product with ID {id} not found"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ConfigurationResponseDto
+                {
+                    Success = false,
+                    Message = "Failed to delete product",
+                    Error = ex.Message
+                });
+            }
         }
 
         [HttpPost]
-        public async Task<ConfiguredProduct?> CreateProduct(ConfiguredProduct configuredProduct)
+        public async Task<ActionResult<ConfigurationResponseDto>> CreateProduct(CreateConfiguredProductDto createDto)
         {
-            return await Task.FromResult(_konfiguratorService.CreateProduct(configuredProduct));
+            try
+            {
+                // Validation
+                if (string.IsNullOrEmpty(createDto.Name))
+                {
+                    return BadRequest(new ConfigurationResponseDto
+                    {
+                        Success = false,
+                        Message = "Product name is required",
+                        Error = "Name cannot be empty"
+                    });
+                }
+
+                if (!createDto.Bestandteile.Any())
+                {
+                    return BadRequest(new ConfigurationResponseDto
+                    {
+                        Success = false,
+                        Message = "At least one component is required",
+                        Error = "Bestandteile cannot be empty"
+                    });
+                }
+
+                // Create product using service
+                var configuredProduct = await Task.FromResult(_konfiguratorService.CreateProductFromDto(createDto));
+                
+                // Map to DTO for response
+                var responseDto = _mapper.Map<ConfiguredProductDto>(configuredProduct);
+                
+                return Ok(new ConfigurationResponseDto
+                {
+                    Success = true,
+                    Message = "Product configured successfully",
+                    ConfiguredProduct = responseDto
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ConfigurationResponseDto
+                {
+                    Success = false,
+                    Message = "Failed to create configured product",
+                    Error = ex.Message
+                });
+            }
         }
     }
 }
