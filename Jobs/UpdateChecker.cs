@@ -4,6 +4,7 @@ using AasCore.Aas3_0;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Proxy;
+using AasDemoapp.Settings;
 using AasDemoapp.Utils;
 
 namespace AasDemoapp.Jobs
@@ -16,6 +17,7 @@ namespace AasDemoapp.Jobs
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly AasDemoappContext? _context;
         private readonly ProxyService? _proxyService;
+        private readonly SettingService? _settingsService;
         private Timer? _timer = null;
 
         public UpdateChecker(ILogger<UpdateChecker> logger, IServiceProvider provider, IServiceScopeFactory scopeFactory)
@@ -23,9 +25,10 @@ namespace AasDemoapp.Jobs
             _logger = logger;
             _provider = provider;
             _scopeFactory = scopeFactory;
-            _context = scopeFactory.CreateScope().ServiceProvider.GetRequiredService<AasDemoappContext>();
-            _proxyService = scopeFactory.CreateScope().ServiceProvider.GetService<ProxyService>();
-
+            var scope = scopeFactory.CreateScope();
+            _context = scope.ServiceProvider.GetRequiredService<AasDemoappContext>();
+            _proxyService = scope.ServiceProvider.GetService<ProxyService>();
+            _settingsService = scope.ServiceProvider.GetService<SettingService>();
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -45,9 +48,11 @@ namespace AasDemoapp.Jobs
                 var count = Interlocked.Increment(ref executionCount);
 
                 var now = DateTime.Today;
-                var allShellIds = _proxyService.Discover("http://localhost:9421", string.Empty);
+                var discovery = _settingsService?.GetSetting(SettingTypes.DiscoveryUrl);
+                var aasRepo = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
+                var allShellIds = _proxyService?.Discover(discovery?.value ?? "", string.Empty);
 
-                _context.KatalogEintraege.Where(k => k.RemoteRepositoryUrl != null).ToList().ForEach(async eintrag =>
+                _context?.KatalogEintraege.Where(k => k.RemoteRepositoryUrl != null).ToList().ForEach(async eintrag =>
                 {
                     try
                     {
@@ -58,10 +63,10 @@ namespace AasDemoapp.Jobs
                         string remoteResponseBody = await remoteResponse.Content.ReadAsStringAsync();
                         var remoteShell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(remoteResponseBody));
 
-                        using HttpResponseMessage localResponse = await client.GetAsync($"http://localhost:9421/shells/{eintrag.LocalAasId.ToBase64()}");
+                        using HttpResponseMessage localResponse = await client.GetAsync($"{aasRepo?.value ?? ""}/shells/{eintrag.LocalAasId.ToBase64()}");
                         localResponse.EnsureSuccessStatusCode();
-                        string localResposeBody = await localResponse.Content.ReadAsStringAsync();
-                        var localShell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(localResposeBody));
+                        string localResponseBody = await localResponse.Content.ReadAsStringAsync();
+                        var localShell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(localResponseBody));
 
                         Console.WriteLine(localShell.Administration?.Version);
                         Console.WriteLine(remoteShell.Administration?.Version);

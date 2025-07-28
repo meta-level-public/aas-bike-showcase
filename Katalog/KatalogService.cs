@@ -7,6 +7,7 @@ using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Import;
 using AasDemoapp.Proxy;
+using AasDemoapp.Settings;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 
@@ -17,12 +18,14 @@ namespace AasDemoapp.Katalog
         private readonly AasDemoappContext _context;
         private readonly ImportService _importService;
         private readonly ProxyService _proxyService;
+        private readonly SettingService _settingsService;
 
-        public KatalogService(AasDemoappContext aasDemoappContext, ImportService importService, ProxyService proxyService)
+        public KatalogService(AasDemoappContext aasDemoappContext, ImportService importService, ProxyService proxyService, SettingService settingsService)
         {
             _context = aasDemoappContext;
             _importService = importService;
             _proxyService = proxyService;
+            _settingsService = settingsService;
         }
 
         public List<KatalogEintrag> GetAll(KatalogEintragTyp typ)
@@ -49,8 +52,8 @@ namespace AasDemoapp.Katalog
                 }
             }
             katalogEintrag.Kategorie = kategorie;
-
-            katalogEintrag.LocalAasId = await _importService.ImportFromRepository("http://localhost:9421", katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId);
+            var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
+            katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.value ?? "", katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId);
             _context.SaveChanges();
             return katalogEintrag;
         }
@@ -133,7 +136,8 @@ namespace AasDemoapp.Katalog
 
                 _context.KatalogEintraege.Attach(katalogEintrag.ReferencedType);
 
-                katalogEintrag.LocalAasId = await _importService.ImportFromRepository("http://localhost:9421", katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId, false);
+                var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
+                katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.value ?? "", katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId, false);
             }
             else
             {
@@ -156,7 +160,8 @@ namespace AasDemoapp.Katalog
                 _context.SaveChanges();
                 try
                 {
-                    await _proxyService.Delete("http://localhost:9421", eintrag.LocalAasId);
+                    var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
+                    await _proxyService.Delete(aasRepositoryUrl?.value ?? "", eintrag.LocalAasId);
                 }
                 catch (Exception ex)
                 {

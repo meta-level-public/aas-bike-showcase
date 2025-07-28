@@ -1,3 +1,32 @@
 :host {
   display: block;
 }
+
+/* Accordion Styling */
+::ng-deep .p-accordion .p-accordion-tab {
+  margin-bottom: 1rem;
+}
+
+::ng-deep .p-accordion .p-accordion-tab .p-accordion-header a {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+::ng-deep .p-accordion .p-accordion-tab .p-accordion-content {
+  padding: 0;
+}
+
+/* Grid responsiveness */
+.grid .col-12.md\:col-6 {
+  padding: 0.5rem;
+}
+
+/* Button spacing */
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+/* Dialog improvements */
+::ng-deep .p-dialog .p-dialog-content {
+  padding: 1rem;
+}

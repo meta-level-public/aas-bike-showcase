@@ -20,9 +20,12 @@ namespace AasDemoapp.Settings
         public Setting Save(Setting setting)
         {
             var dbSetting = _context.Settings.FirstOrDefault(s => s.Name == setting.Name);
-            if (dbSetting == null) {
+            if (dbSetting == null)
+            {
                 _context.Settings.Add(setting);
-            } else {
+            }
+            else
+            {
                 dbSetting.value = setting.value;
             }
             _context.SaveChanges();
@@ -33,6 +36,11 @@ namespace AasDemoapp.Settings
         public List<Setting> GetAll()
         {
             return _context.Settings.ToList();
+        }
+
+        public Setting? GetSetting(string name)
+        {
+            return _context.Settings.FirstOrDefault(s => s.Name == name);
         }
     }
 }

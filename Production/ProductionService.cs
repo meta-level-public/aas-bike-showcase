@@ -6,6 +6,8 @@ using AasCore.Aas3_0;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Import;
+using AasDemoapp.Settings;
+using AasDemoapp.Utils.Shells;
 
 namespace AasDemoapp.Production
 {
@@ -13,11 +15,13 @@ namespace AasDemoapp.Production
     {
         private readonly AasDemoappContext _context;
         private readonly ImportService _importService;
+        private readonly SettingService _settingService;
 
-        public ProductionService(AasDemoappContext aasDemoappContext, ImportService importService)
+        public ProductionService(AasDemoappContext aasDemoappContext, ImportService importService, SettingService settingService)
         {
             _context = aasDemoappContext;
             _importService = importService;
+            _settingService = settingService;
         }
 
         public async Task<ProducedProduct> CreateProduct(ProducedProductRequest producedProductRequest)
@@ -74,7 +78,30 @@ namespace AasDemoapp.Production
 
             aas.Submodels.Add(new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, handoverdoc.Id)]));
 
-            await _importService.PushNewToLocalRepositoryAsync(aas, [nameplate, handoverdoc], "http://localhost:9421");
+            var aasRepositoryUrl = _settingService?.GetSetting(SettingTypes.AasRepositoryUrl)?.value ?? "";
+            await _importService.PushNewToLocalRepositoryAsync(aas, [nameplate, handoverdoc], aasRepositoryUrl);
+
+            var env = new AasCore.Aas3_0.Environment
+            {
+                AssetAdministrationShells = [aas],
+                Submodels = [nameplate, handoverdoc]
+            };
+            var plainJson = AasCore.Aas3_0.Jsonization.Serialize.ToJsonObject(env).ToJsonString();
+
+            var submodelRepositoryUrl = _settingService?.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.value ?? "";
+            var aasRegistryUrl = _settingService?.GetSetting(SettingTypes.AasRegistryUrl)?.value ?? "";
+            var submodelRegistryUrl = _settingService?.GetSetting(SettingTypes.SubmodelRegistryUrl)?.value ?? "";
+            await SaveShellSaver.SaveSingle(
+                new AasUrls
+                {
+                    AasRepositoryUrl = aasRepositoryUrl,
+                    SubmodelRepositoryUrl = submodelRepositoryUrl,
+                    AasRegistryUrl = aasRegistryUrl,
+                    SubmodelRegistryUrl = submodelRegistryUrl
+                },
+                plainJson,
+                [],
+                default);
 
             producedProduct.AasId = aas.Id;
             producedProduct.GlobalAssetId = assetInformation.GlobalAssetId;
