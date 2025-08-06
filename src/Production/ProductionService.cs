@@ -36,12 +36,25 @@ namespace AasDemoapp.Production
             var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, "https://oi4-nextbike.de");
 
             // Produkt zusammenbauen
+            var accumulatedPCF = 0; // TODO: kann der Wert schon vorbefüllt sein?
+            foreach (var component in producedProductRequest.BestandteilRequests)
+            {
+                var componentPCF = 0; // TODO: get PCF for component.globalAssetID
+                /*
+                 * ProxyService.Discover() -> AASID (1. Element in Liste)
+                 * AASUrls Objekt erstellen aus ... (siehe Beispiel in InstanceAASCreator.SaveAasToRepositories()
+                 * Utils.ShellLoader.LoadAsync()
+                 * hole korrektes Submodel über semanticID
+                 */
+                accumulatedPCF += componentPCF * component.Amount;
+            }
+            // todo: accumulatedPCF speichern in ProducedProduct
             var producedProduct = new ProducedProduct()
             {
                 ConfiguredProductId = producedProductRequest.ConfiguredProductId,
                 ProductionDate = DateTime.Now,
                 AasId = aasId,
-                GlobalAssetId = globalAssetId,
+                GlobalAssetId = globalAssetId
             };
 
             var configuredProduct = await _context.ConfiguredProducts.FirstAsync(c => c.Id == producedProductRequest.ConfiguredProductId);

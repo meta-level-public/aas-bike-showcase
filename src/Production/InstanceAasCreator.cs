@@ -29,6 +29,7 @@ public class InstanceAasCreator
         var hierarchicalStructures = CreateHierarchicalStructuresSubmodel(producedProduct);
         aas.Submodels.Add(new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, hierarchicalStructures.Id)]));
 
+        // TODO 
         await SaveAasToRepositories(aas, nameplate, handoverdoc, hierarchicalStructures, importService, settingsService);
 
         return aas;
@@ -69,6 +70,8 @@ public class InstanceAasCreator
 
         return handoverdoc;
     }
+    
+    // TODO: hier eine Methode Submodel CreatePCFSubmodel(int PCFValue), das ein entsprechendes Submodel zurückgibt?
 
     private static Submodel CreateNameplateSubmodel()
     {

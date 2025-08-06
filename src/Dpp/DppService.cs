@@ -20,5 +20,8 @@ namespace AasDemoapp.Dpp
         public List<ProducedProduct> GetAll() {
             return _context.ProducedProducts.Include(p => p.ConfiguredProduct).ToList();
         } 
+        
+        // TODO: hier eine Methode GetPCFSubmodel(string globalAssetID)?
+        
     }
 }

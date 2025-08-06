@@ -66,6 +66,8 @@ namespace AasDemoapp.Konfigurator
 
             return handoverdoc;
         }
+        
+        
 
         private static Submodel CreateNameplateSubmodel()
         {
