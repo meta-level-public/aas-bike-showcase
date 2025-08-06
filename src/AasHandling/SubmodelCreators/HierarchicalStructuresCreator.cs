@@ -26,7 +26,7 @@ public class HierarchicalStructuresCreator
 
         var submodel = Jsonization.Deserialize.SubmodelFrom(jsonNode);
         submodel.Kind = ModellingKind.Instance;
-        submodel.Id = Guid.NewGuid().ToString(); // TODO: korrekte ID generieren
+        submodel.Id = IdGenerationUtil.GenerateId(IdType.Submodel, "https://oi4-nextbike.de"); // Generiere eine korrekte ID
 
         return submodel;
     }

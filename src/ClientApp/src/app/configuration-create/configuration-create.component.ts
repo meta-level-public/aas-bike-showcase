@@ -59,6 +59,7 @@ export class ConfigurationCreateComponent implements OnInit {
         'Konfiguration erfolgreich erstellt'
         );
         this.newProduct = {} as ConfiguredProduct;
+        this.calculatePrice();
       } finally {
         this.loading = false;
       }
@@ -67,10 +68,17 @@ export class ConfigurationCreateComponent implements OnInit {
     calculatePrice() {
       let price = 0;
       this.bestandteile.forEach((bestandteil) => {
-        price += bestandteil.price;
+        price += bestandteil.price * bestandteil.amountToUse;
       });
 
       this.newProduct.price = price * 1.3; // bisschen was draufschlagen ;)
       console.log(this.bestandteile);
+  }
+
+  valid() {
+    return (this.newProduct.name != null &&
+      this.newProduct.name.length > 0 &&
+      this.bestandteile.length > 0 && this.bestandteile.every(b => b.amountToUse > 0)
+    );
   }
 }

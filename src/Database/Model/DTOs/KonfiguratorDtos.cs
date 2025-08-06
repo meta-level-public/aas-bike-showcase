@@ -7,8 +7,6 @@ namespace AasDemoapp.Database.Model.DTOs
     {
         public string Name { get; set; } = string.Empty;
         public double Price { get; set; }
-        public string? AasId { get; set; } = string.Empty;
-        public string? GlobalAssetId { get; set; } = string.Empty;
         public List<CreateProductPartDto> Bestandteile { get; set; } = [];
     }
 

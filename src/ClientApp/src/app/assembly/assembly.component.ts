@@ -39,8 +39,9 @@ export class AssemblyComponent implements OnInit {
     if (this.selectedItem) {
       console.log('Selected type:', this.selectedItem);
     }
+    this.teileStatus = [];
     if (this.selectedItem?.bestandteile != null) {
-      this.newProduct.bestandteile = [];
+      this.newProduct.bestandteilRequests = [];
       this.newProduct.configuredProductId = this.selectedItem.id ?? 0;
       this.selectedItem.bestandteile.forEach((bestandteil) => {
         for (let i = 0; i < bestandteil.amount; i++) {
@@ -86,14 +87,14 @@ export class AssemblyComponent implements OnInit {
 
   async saveProducedProduct() {
     if (this.newProduct == null) return;
-    this.newProduct.bestandteile = [];
+    this.newProduct.bestandteilRequests = [];
     console.log(this.teileStatus);
     console.log(this.selectedItem);
     this.teileStatus.forEach((teileStatus) => {
       const typePart = this.selectedItem?.bestandteile?.find((bestandteil) => bestandteil.katalogEintrag?.globalAssetId == teileStatus.typeGlobalAssetId);
       console.log(typePart);
       if (typePart == null) return;
-      this.newProduct.bestandteile?.push({
+      this.newProduct.bestandteilRequests?.push({
 
         amount: 1,
         usageDate: new Date(),
@@ -116,7 +117,7 @@ export class AssemblyComponent implements OnInit {
 
   allPartsValid() {
     let valid = false;
-    if (this.newProduct.bestandteile != null) {
+    if (this.newProduct.bestandteilRequests != null) {
       valid = this.teileStatus.every(
         (teileStatus) => teileStatus.statusOk == true
       );

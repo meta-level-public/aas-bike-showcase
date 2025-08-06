@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AasCore.Aas3_0;
+using AasDemoapp.AasHandling;
 using AasDemoapp.AasHandling.SubmodelCreators;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Import;
 using AasDemoapp.Settings;
 using AasDemoapp.Utils.Shells;
+using Microsoft.EntityFrameworkCore;
 
 namespace AasDemoapp.Production
 {
@@ -17,26 +19,32 @@ namespace AasDemoapp.Production
         private readonly AasDemoappContext _context;
         private readonly ImportService _importService;
         private readonly SettingService _settingService;
+        private readonly ILogger<ProductionService> _logger;
 
-        public ProductionService(AasDemoappContext aasDemoappContext, ImportService importService, SettingService settingService)
+        public ProductionService(AasDemoappContext aasDemoappContext, ImportService importService, SettingService settingService, ILogger<ProductionService> logger)
         {
             _context = aasDemoappContext;
             _importService = importService;
             _settingService = settingService;
+            _logger = logger;
         }
 
         public async Task<ProducedProduct> CreateProduct(ProducedProductRequest producedProductRequest)
         {
 
-            // Produkt zusammenbauen
+            var aasId = IdGenerationUtil.GenerateId(IdType.Aas, "https://oi4-nextbike.de");
+            var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, "https://oi4-nextbike.de");
 
+            // Produkt zusammenbauen
             var producedProduct = new ProducedProduct()
             {
                 ConfiguredProductId = producedProductRequest.ConfiguredProductId,
-                ProductionDate = DateTime.Now
+                ProductionDate = DateTime.Now,
+                AasId = aasId,
+                GlobalAssetId = globalAssetId,
             };
 
-            var configuredProduct = _context.ConfiguredProducts.First(c => c.Id == producedProductRequest.ConfiguredProductId);
+            var configuredProduct = await _context.ConfiguredProducts.FirstAsync(c => c.Id == producedProductRequest.ConfiguredProductId);
 
             producedProductRequest.BestandteilRequests.ForEach((bestandteil) =>
             {
@@ -53,61 +61,27 @@ namespace AasDemoapp.Production
             });
 
             _context.ProducedProducts.Add(producedProduct);
-
-            // TODO: jetzt die neue Verwaltungsschale bauen
-            var assetInformation = new AssetInformation(AssetKind.Instance, Guid.NewGuid().ToString(), null, configuredProduct.GlobalAssetId);
-            var aas = new AssetAdministrationShell(Guid.NewGuid().ToString(), assetInformation, null, null, configuredProduct.Name);
-
-            var nameplate = new Submodel(Guid.NewGuid().ToString(), null, null, "Nameplate", null, null, null, ModellingKind.Instance, new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "0173-1#02-AAO677#002")]));
-            var smeManufacturer = new MultiLanguageProperty(null, null, "ManufacturerName", null, null, new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "0173-1#02-AAO677#002")]))
-            {
-                Value = [new LangStringTextType("de", "ML DEMO App")]
-            };
-            nameplate.SubmodelElements = [smeManufacturer];
-            aas.Submodels = [new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, nameplate.Id)])];
-
-            var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
-            handoverdoc.Id = Guid.NewGuid().ToString();
-            handoverdoc.IdShort = "HandoverDocumentation";
-            if (handoverdoc.Administration != null)
-            {
-
-                handoverdoc.Administration.Version = "1.0";
-                handoverdoc.Administration.Version = "1.0";
-            }
-            handoverdoc.Description = [new LangStringTextType("de", "Handover documentation for the produced product")];
-
-            aas.Submodels.Add(new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, handoverdoc.Id)]));
-
-            var aasRepositoryUrl = _settingService?.GetSetting(SettingTypes.AasRepositoryUrl)?.value ?? "";
-            await _importService.PushNewToLocalRepositoryAsync(aas, [nameplate, handoverdoc], aasRepositoryUrl);
-
-            var env = new AasCore.Aas3_0.Environment
-            {
-                AssetAdministrationShells = [aas],
-                Submodels = [nameplate, handoverdoc]
-            };
-            var plainJson = AasCore.Aas3_0.Jsonization.Serialize.ToJsonObject(env).ToJsonString();
-
-            var submodelRepositoryUrl = _settingService?.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.value ?? "";
-            var aasRegistryUrl = _settingService?.GetSetting(SettingTypes.AasRegistryUrl)?.value ?? "";
-            var submodelRegistryUrl = _settingService?.GetSetting(SettingTypes.SubmodelRegistryUrl)?.value ?? "";
-            await SaveShellSaver.SaveSingle(
-                new AasUrls
-                {
-                    AasRepositoryUrl = aasRepositoryUrl,
-                    SubmodelRepositoryUrl = submodelRepositoryUrl,
-                    AasRegistryUrl = aasRegistryUrl,
-                    SubmodelRegistryUrl = submodelRegistryUrl
-                },
-                plainJson,
-                [],
-                default);
-
-            producedProduct.AasId = aas.Id;
-            producedProduct.GlobalAssetId = assetInformation.GlobalAssetId;
-
             _context.SaveChanges();
+
+            var product = await _context.ProducedProducts
+                .AsNoTracking()
+                .Include(p => p.ConfiguredProduct)
+                .Include(p => p.Bestandteile)
+                .ThenInclude(b => b.KatalogEintrag)
+                .FirstAsync(p => p.Id == producedProduct.Id);
+
+            try
+            {
+                // Create InstanceAAS for Bike
+                var aas = await InstanceAasCreator.CreateBikeInstanceAas(product, _importService, _settingService);
+                producedProduct.AasId = aasId;
+                producedProduct.GlobalAssetId = globalAssetId;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating InstanceAAS for product {ProductId}", producedProduct.Id);
+            }
+
             return producedProduct;
         }
 

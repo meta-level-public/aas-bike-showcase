@@ -12,13 +12,12 @@ using AasDemoapp.Utils.Shells;
 
 namespace AasDemoapp.Konfigurator
 {
-    public class TypeAasCreator
+    public class InstanceAasCreator
     {
         public static async Task CreateBikeTypeAas(ConfiguredProduct configuredProduct, ImportService importService, SettingService settingsService)
         {
-            // TODO: jetzt die neue Verwaltungsschale bauen
-            var assetInformation = new AssetInformation(AssetKind.Type, Guid.NewGuid().ToString(), null, configuredProduct.GlobalAssetId);
-            var aas = new AssetAdministrationShell(Guid.NewGuid().ToString(), assetInformation, null, null, configuredProduct.Name);
+            var assetInformation = new AssetInformation(AssetKind.Type, configuredProduct.GlobalAssetId, null, configuredProduct.GlobalAssetId);
+            var aas = new AssetAdministrationShell(configuredProduct.AasId ?? Guid.NewGuid().ToString(), assetInformation, null, null, configuredProduct.Name);
 
             var nameplate = CreateNameplateSubmodel();
             aas.Submodels = [new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, nameplate.Id)])];

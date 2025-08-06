@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AasDemoapp.AasHandling;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Database.Model.DTOs;
@@ -42,12 +43,15 @@ namespace AasDemoapp.Konfigurator
 
         public async Task<ConfiguredProduct> CreateProductFromDto(CreateConfiguredProductDto createDto)
         {
+            var aasId = IdGenerationUtil.GenerateId(IdType.Aas, "https://oi4-nextbike.de");
+            var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, "https://oi4-nextbike.de");
+
             var configuredProduct = new ConfiguredProduct
             {
                 Name = createDto.Name,
                 Price = createDto.Price,
-                AasId = createDto.AasId,
-                GlobalAssetId = createDto.GlobalAssetId,
+                AasId = aasId,
+                GlobalAssetId = globalAssetId,
                 Bestandteile = new List<ProductPart>()
             };
 
@@ -88,7 +92,7 @@ namespace AasDemoapp.Konfigurator
             {
 
                 // Create TypeAAS for Bike
-                await TypeAasCreator.CreateBikeTypeAas(product, _importService, _settingsService);
+                await InstanceAasCreator.CreateBikeTypeAas(product, _importService, _settingsService);
             }
             catch (Exception ex)
             {

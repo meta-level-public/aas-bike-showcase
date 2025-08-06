@@ -58,13 +58,13 @@
               </div>
             </div>
             <span class="font-bold text-900">{{ "$" + item.price }}</span>
-            <span class="font-bold text-900"><input pInputText class="w-5rem" placeholder="Anzahl" [(ngModel)]="item.amountToUse"/></span>
+            <span class="font-bold text-900"><input pInputText class="w-5rem" placeholder="Anzahl" [(ngModel)]="item.amountToUse" (ngModelChange)="calculatePrice()"/></span>
           </div>
         </ng-template>
       </p-pickList>
     </div>
     <div class="gap-2 flex-column">
-      <button pButton label="Anlegen" (click)="createProduct()"></button>
+      <button pButton label="Anlegen" (click)="createProduct()" [disabled]="!valid()"></button>
     </div>
   </div>
 </div>
