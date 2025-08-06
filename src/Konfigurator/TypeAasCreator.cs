@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AasCore.Aas3_0;
+using AasDemoapp.AasHandling;
+using AasDemoapp.AasHandling.SubmodelCreators;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Import;
-using AasDemoapp.Production;
 using AasDemoapp.Settings;
 using AasDemoapp.Utils.Shells;
 
@@ -13,7 +14,7 @@ namespace AasDemoapp.Konfigurator
 {
     public class TypeAasCreator
     {
-        public async Task CreateBikeTypeAas(ConfiguredProduct configuredProduct, ImportService importService, SettingService settingsService)
+        public static async Task CreateBikeTypeAas(ConfiguredProduct configuredProduct, ImportService importService, SettingService settingsService)
         {
             // TODO: jetzt die neue Verwaltungsschale bauen
             var assetInformation = new AssetInformation(AssetKind.Type, Guid.NewGuid().ToString(), null, configuredProduct.GlobalAssetId);
@@ -31,7 +32,7 @@ namespace AasDemoapp.Konfigurator
             await SaveAasToRepositories(aas, nameplate, handoverdoc, hierarchicalStructures, importService, settingsService);
         }
 
-        private async Task SaveAasToRepositories(AssetAdministrationShell aas, Submodel nameplate, Submodel handoverdoc, Submodel hierarchicalStructures, ImportService importService, SettingService settingsService)
+        private static async Task SaveAasToRepositories(AssetAdministrationShell aas, Submodel nameplate, Submodel handoverdoc, Submodel hierarchicalStructures, ImportService importService, SettingService settingsService)
         {
             var aasRepositoryUrl = settingsService.GetSetting(SettingTypes.AasRepositoryUrl)?.value ?? "";
             await importService.PushNewToLocalRepositoryAsync(aas, [nameplate, handoverdoc, hierarchicalStructures], aasRepositoryUrl);
@@ -59,96 +60,43 @@ namespace AasDemoapp.Konfigurator
                 default);
         }
 
-        private Submodel CreateHandoverDocumentation()
+        private static Submodel CreateHandoverDocumentation()
         {
             var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
-            handoverdoc.Id = Guid.NewGuid().ToString();
-            handoverdoc.IdShort = "HandoverDocumentation";
-            if (handoverdoc.Administration != null)
-            {
-                handoverdoc.Administration.Version = "1.0";
-                handoverdoc.Administration.Version = "1.0";
-            }
             handoverdoc.Description = [new LangStringTextType("de", "Handover documentation for the configured product")];
             
             return handoverdoc;
         }
 
-        private Submodel CreateNameplateSubmodel()
+        private static Submodel CreateNameplateSubmodel()
         {
-            var nameplate = new Submodel(Guid.NewGuid().ToString(), null, null, "Nameplate", null, null, null, ModellingKind.Instance, new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "0173-1#02-AAO677#002")]));
-            var smeManufacturer = new MultiLanguageProperty(null, null, "ManufacturerName", null, null, new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "0173-1#02-AAO677#002")]))
-            {
-                Value = [new LangStringTextType("de", "ML DEMO App")]
-            };
-            nameplate.SubmodelElements = [smeManufacturer];
-            
+            var nameplate = NameplateCreator.CreateFromJson();
+            PropertyValueChanger.SetPropertyValueByPath("ManufacturerName", "OI4 Nextbike", nameplate);
+
             return nameplate;
         }
 
-        private Submodel CreateHierarchicalStructuresSubmodel(ConfiguredProduct configuredProduct)
+        private static Submodel CreateHierarchicalStructuresSubmodel(ConfiguredProduct configuredProduct)
         {
-            var hierarchicalStructures = new Submodel(
-                Guid.NewGuid().ToString(),
-                null,
-                null,
-                "HierarchicalStructures",
-                null,
-                null,
-                null,
-                ModellingKind.Instance,
-                new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/zvei/nameplate/1/0/Nameplate/Markings/Marking/ExplosionSafety")])
-            );
-
-            // BOM Structure Element
-            var bomStructure = new SubmodelElementCollection(
-                null,
-                null,
-                "BillOfMaterial",
-                null,
-                null,
-                new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "0173-1#02-AAQ424#005")])
-            );
-
-            // Beispiel BOM Eintrag
-            var bomEntry = new SubmodelElementCollection(
-                null,
-                null,
-                "BOMEntry_001",
-                null,
-                null,
-                null
-            );
-
-            var partNumber = new Property(
-                DataTypeDefXsd.String,
-                null,
-                "PartNumber",
-                null,
-                null,
-                null,
-                new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "0173-1#02-AAO739#001")])
-            )
+            var hierarchicalStructures = HierarchicalStructuresCreator.CreateFromJson();
+            // entryNode ist das konfigurierte Produkt
+            var entryNode = new Entity(EntityType.SelfManagedEntity);
+            entryNode.IdShort = configuredProduct.Name.Replace(" ", "_");
+            entryNode.GlobalAssetId = configuredProduct.GlobalAssetId;
+            entryNode.Statements = [];
+            var first = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, hierarchicalStructures.Id), new Key(KeyTypes.Entity, entryNode.IdShort)]);
+            // die elemente einfügen, die in der Konfiguration des Produkts enthalten sind
+            foreach (var part in configuredProduct.Bestandteile)
             {
-                Value = "BIKE-PART-001"
-            };
+                var partNode = new Entity(EntityType.SelfManagedEntity);
+                partNode.IdShort = part.Name.Replace(" ", "_");
+                var second = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, hierarchicalStructures.Id), new Key(KeyTypes.Entity, entryNode.IdShort), new Key(KeyTypes.Entity, partNode.IdShort)]);
+                var hasPartRelation = new RelationshipElement(first, second);
+                entryNode.Statements.Add(partNode);
+                entryNode.Statements.Add(hasPartRelation);
+            }
 
-            var quantity = new Property(
-                DataTypeDefXsd.Int,
-                null,
-                "Quantity",
-                null,
-                null,
-                null,
-                new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "0173-1#02-AAO738#001")])
-            )
-            {
-                Value = "1"
-            };
-
-            bomEntry.Value = [partNumber, quantity];
-            bomStructure.Value = [bomEntry];
-            hierarchicalStructures.SubmodelElements = [bomStructure];
+            hierarchicalStructures.SubmodelElements = [entryNode];
 
             return hierarchicalStructures;
         }

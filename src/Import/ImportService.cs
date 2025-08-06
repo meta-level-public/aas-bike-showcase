@@ -178,7 +178,7 @@ namespace AasDemoapp.Import
             var jsonString = Jsonization.Serialize.ToJsonObject(shell).ToJsonString();
 
             var client = new HttpClient();
-            using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRepositoryUrl}/shells");
+            using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRepositoryUrl.AppendSlash()}shells");
 
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
             request.Content = content;
@@ -189,7 +189,7 @@ namespace AasDemoapp.Import
 
             submodels.ForEach(async sm =>
             {
-                using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRepositoryUrl}/submodels");
+                using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRepositoryUrl.AppendSlash()}submodels");
                 jsonString = Jsonization.Serialize.ToJsonObject(sm).ToJsonString();
 
                 var content = new StringContent(jsonString, Encoding.UTF8, "application/json");

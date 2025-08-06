@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Database.Model.DTOs;
+using AasDemoapp.Import;
+using AasDemoapp.Settings;
 using Microsoft.EntityFrameworkCore;
 
 namespace AasDemoapp.Konfigurator
@@ -12,10 +14,16 @@ namespace AasDemoapp.Konfigurator
     public class KonfiguratorService
     {
         private readonly AasDemoappContext _context;
+        private readonly ImportService _importService;
+        private readonly SettingService _settingsService;
+        private readonly ILogger<KonfiguratorService> _logger;
 
-        public KonfiguratorService(AasDemoappContext aasDemoappContext)
+        public KonfiguratorService(AasDemoappContext aasDemoappContext, ImportService importService, SettingService settingsService, ILogger<KonfiguratorService> logger)
         {
             _context = aasDemoappContext;
+            _importService = importService;
+            _settingsService = settingsService;
+            _logger = logger;
         }
 
         public List<ConfiguredProduct> GetAll()
@@ -32,7 +40,7 @@ namespace AasDemoapp.Konfigurator
             return configuredProduct;
         }
 
-        public ConfiguredProduct CreateProductFromDto(CreateConfiguredProductDto createDto)
+        public async Task<ConfiguredProduct> CreateProductFromDto(CreateConfiguredProductDto createDto)
         {
             var configuredProduct = new ConfiguredProduct
             {
@@ -69,14 +77,25 @@ namespace AasDemoapp.Konfigurator
 
             _context.ConfiguredProducts.Add(configuredProduct);
             _context.SaveChanges();
-
-            // Create TypeAAS for Bike
-
             // Reload with includes for complete data
-            return _context.ConfiguredProducts
+            var product = await _context.ConfiguredProducts
+                .AsNoTracking()
                 .Include(p => p.Bestandteile)
                 .ThenInclude(x => x.KatalogEintrag)
-                .First(p => p.Id == configuredProduct.Id);
+                .FirstAsync(p => p.Id == configuredProduct.Id);
+
+            try
+            {
+
+                // Create TypeAAS for Bike
+                await TypeAasCreator.CreateBikeTypeAas(product, _importService, _settingsService);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating TypeAAS for product {ProductId}", product.Id);
+            }
+
+            return product;
         }
 
         public bool Delete(long id)

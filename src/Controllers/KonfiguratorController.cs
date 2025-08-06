@@ -94,7 +94,7 @@ namespace AasDemoapp.Controllers
                 }
 
                 // Create product using service
-                var configuredProduct = await Task.FromResult(_konfiguratorService.CreateProductFromDto(createDto));
+                var configuredProduct = await _konfiguratorService.CreateProductFromDto(createDto);
                 
                 // Map to DTO for response
                 var responseDto = _mapper.Map<ConfiguredProductDto>(configuredProduct);

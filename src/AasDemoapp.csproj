@@ -5,7 +5,8 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
-    <SpaProxyServerUrl>https://localhost:42400</SpaProxyServerUrl>
+    <SpaProxyServerUrl>http://localhost:42400</SpaProxyServerUrl>
+    <!-- <SpaProxyServerUrl>https://localhost:42400</SpaProxyServerUrl> -->
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>AasDemoapp</RootNamespace>

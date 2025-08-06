@@ -10,6 +10,7 @@ using AasDemoapp.Katalog;
 using AasDemoapp.Production;
 using Microsoft.AspNetCore.Mvc;
 using AasCore.Aas3_0;
+using AasDemoapp.AasHandling.SubmodelCreators;
 
 namespace AasDemoapp.Controllers
 {
