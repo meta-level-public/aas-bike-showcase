@@ -63,7 +63,7 @@ namespace AasDemoapp.Controllers
         {
             try
             {
-                var submodel = HandoverDocumentationCreator.CreateHandoverDocumentationFromJson();
+                var submodel = HandoverDocumentationCreator.CreateFromJson();
                 
                 var submodelDto = new SubmodelSummaryDto
                 {

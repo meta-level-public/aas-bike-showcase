@@ -65,7 +65,7 @@ namespace AasDemoapp.Production
             nameplate.SubmodelElements = [smeManufacturer];
             aas.Submodels = [new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, nameplate.Id)])];
 
-            var handoverdoc = HandoverDocumentationCreator.CreateHandoverDocumentationFromJson();
+            var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
             handoverdoc.Id = Guid.NewGuid().ToString();
             handoverdoc.IdShort = "HandoverDocumentation";
             if (handoverdoc.Administration != null)

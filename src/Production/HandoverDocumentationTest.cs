@@ -12,7 +12,7 @@ namespace AasDemoapp.Production
                 Console.WriteLine("Testing HandoverDocumentationCreator...");
                 
                 // Test the conversion
-                var submodel = HandoverDocumentationCreator.CreateHandoverDocumentationFromJson();
+                var submodel = HandoverDocumentationCreator.CreateFromJson();
                 
                 Console.WriteLine($"✓ Successfully created submodel with ID: {submodel.Id}");
                 Console.WriteLine($"✓ IdShort: {submodel.IdShort}");

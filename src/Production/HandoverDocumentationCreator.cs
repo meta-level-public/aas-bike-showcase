@@ -10,7 +10,7 @@ namespace AasDemoapp.Production
 {
     public class HandoverDocumentationCreator
     {
-        public static Submodel CreateHandoverDocumentationFromJson()
+        public static Submodel CreateFromJson()
         {
             // JSON-Datei lesen
             var jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Production", "handoverdoc.json");

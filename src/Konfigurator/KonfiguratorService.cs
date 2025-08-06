@@ -70,6 +70,8 @@ namespace AasDemoapp.Konfigurator
             _context.ConfiguredProducts.Add(configuredProduct);
             _context.SaveChanges();
 
+            // Create TypeAAS for Bike
+
             // Reload with includes for complete data
             return _context.ConfiguredProducts
                 .Include(p => p.Bestandteile)
