@@ -6,6 +6,7 @@ import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ButtonModule } from 'primeng/button';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { TableModule } from 'primeng/table';
+import { UrlBase } from '../base/url-base';
 import { ProducedProduct } from '../model/produced-product';
 import { DppService } from './dpp.service';
 
@@ -15,12 +16,14 @@ import { DppService } from './dpp.service';
   styleUrl: './dpp.component.css',
   imports: [CommonModule, FormsModule, OverlayPanelModule, TableModule, NgxJsonViewerModule, ButtonModule]
 })
-export class DppComponent implements OnInit {
+export class DppComponent  extends UrlBase implements OnInit {
   shell: AssetAdministrationShell | null = null;
   productList: ProducedProduct[] = [];
   loading: boolean = false;
 
-  constructor(private dppService: DppService) {}
+  constructor(private dppService: DppService) {
+    super();
+  }
 
   ngOnInit() {
     this.loadData();
@@ -36,7 +39,7 @@ export class DppComponent implements OnInit {
       this.shell = null;
       op.toggle(event);
       this.shell = await this.dppService.loadShell(
-        'http://localhost:9421',
+        this.localRegistryUrl,
         aasId
       );
     } finally {
