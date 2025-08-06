@@ -64,7 +64,7 @@ namespace AasDemoapp.Konfigurator
         {
             var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
             handoverdoc.Description = [new LangStringTextType("de", "Handover documentation for the configured product")];
-            
+
             return handoverdoc;
         }
 
@@ -81,6 +81,7 @@ namespace AasDemoapp.Konfigurator
             var hierarchicalStructures = HierarchicalStructuresCreator.CreateFromJson();
             // entryNode ist das konfigurierte Produkt
             var entryNode = new Entity(EntityType.SelfManagedEntity);
+            entryNode.SemanticId = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0")]);
             entryNode.IdShort = configuredProduct.Name.Replace(" ", "_");
             entryNode.GlobalAssetId = configuredProduct.GlobalAssetId;
             entryNode.Statements = [];
@@ -90,8 +91,20 @@ namespace AasDemoapp.Konfigurator
             {
                 var partNode = new Entity(EntityType.SelfManagedEntity);
                 partNode.IdShort = part.Name.Replace(" ", "_");
+                partNode.SemanticId = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0")]);
                 var second = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, hierarchicalStructures.Id), new Key(KeyTypes.Entity, entryNode.IdShort), new Key(KeyTypes.Entity, partNode.IdShort)]);
+                partNode.Statements = [];
+
                 var hasPartRelation = new RelationshipElement(first, second);
+                hasPartRelation.SemanticId = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0")]);
+                hasPartRelation.IdShort = "HasPart";
+
+                var bulkCount = new Property(DataTypeDefXsd.Integer);
+                bulkCount.SemanticId = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/idta/HierarchicalStructures/BulkCount/1/0")]);
+                bulkCount.IdShort = "BulkCount";
+                bulkCount.Value = part.Amount.ToString();
+
+                partNode.Statements.Add(bulkCount);
                 entryNode.Statements.Add(partNode);
                 entryNode.Statements.Add(hasPartRelation);
             }
