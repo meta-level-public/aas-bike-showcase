@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataViewModule } from 'primeng/dataview';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { KatalogEintrag } from '../model/katalog-eintrag';
 import { GoodsItemComponent } from './goods-item/goods-item.component';
 import { GoodsListService } from './goods-list.service';
@@ -11,7 +11,7 @@ import { GoodsListService } from './goods-list.service';
   selector: 'app-goods-list',
   templateUrl: './goods-list.component.html',
   styleUrl: './goods-list.component.css',
-  imports: [CommonModule, FormsModule, DataViewModule, DropdownModule, GoodsItemComponent],
+  imports: [CommonModule, FormsModule, DataViewModule, SelectModule, GoodsItemComponent],
 })
 export class GoodsListComponent implements OnInit {
   items: KatalogEintrag[] = [];

@@ -33,6 +33,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@primeuix/themes": "^1.2.3",
     "bootstrap": "^5.3.7",
     "ngx-json-viewer": "^3.2.1",
     "oidc-client": "^1.11.5",

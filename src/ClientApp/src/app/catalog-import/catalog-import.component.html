@@ -90,12 +90,12 @@
                     ></button>
                   </td>
                   <td>
-                    <p-overlayPanel #op
+                    <p-popover #op
                       ><ngx-json-viewer
                       [json]="shell"
                       [expanded]="false"
                     ></ngx-json-viewer>
-                  </p-overlayPanel>
+                  </p-popover>
                   <button
                     pButton
                     (click)="op.toggle($event)"

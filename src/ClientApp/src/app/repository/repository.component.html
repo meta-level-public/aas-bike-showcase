@@ -59,8 +59,8 @@
                 @if (!isLocal) {
                   <td><button pButton class="p-button-sm" label="import" (click)="import(shell.id)"></button></td>
                 }
-                <td><p-overlayPanel #op><ngx-json-viewer [json]="shell" [expanded]="false"></ngx-json-viewer>
-                </p-overlayPanel> <button pButton (click)="op.toggle($event)" icon="pi pi-eye"></button></td>
+                <td><p-popover #op><ngx-json-viewer [json]="shell" [expanded]="false"></ngx-json-viewer>
+                </p-popover> <button pButton (click)="op.toggle($event)" icon="pi pi-eye"></button></td>
               </tr>
             }
           </ng-template>
