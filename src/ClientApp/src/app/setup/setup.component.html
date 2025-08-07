@@ -1,9 +1,11 @@
 <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
   <div class="card mt-2">
-    <p-accordion [multiple]="true" [activeIndex]="[0, 1, 2]">
+    <p-accordion [value]="['0', '1', '2']" [multiple]="true">
 
       <!-- ERP System Bereich -->
-      <p-accordionTab header="ERP System Konfiguration" [selected]="true">
+      <p-accordion-panel value="0">
+        <p-accordion-header>ERP System Konfiguration</p-accordion-header>
+        <p-accordion-content>
         <div class="flex flex-column gap-4 p-4">
           <div class="flex flex-column gap-2">
             <label>ERP System wählen</label>
@@ -69,10 +71,13 @@
             }
           </div>
         </div>
-      </p-accordionTab>
+        </p-accordion-content>
+      </p-accordion-panel>
 
       <!-- AAS Infrastructure Bereich -->
-      <p-accordionTab header="AAS Infrastructure URLs" [selected]="true">
+      <p-accordion-panel value="1">
+        <p-accordion-header>AAS Infrastructure URLs</p-accordion-header>
+        <p-accordion-content>
         <div class="flex flex-column gap-4 p-4">
           <p>Konfiguration der Asset Administration Shell (AAS) Infrastruktur URLs</p>
 
@@ -159,10 +164,13 @@
             icon="pi pi-save"
           ></button>
         </div>
-      </p-accordionTab>
+        </p-accordion-content>
+      </p-accordion-panel>
 
       <!-- Lieferanten Bereich -->
-      <p-accordionTab header="Lieferanten Verwaltung" [selected]="true">
+      <p-accordion-panel value="2">
+        <p-accordion-header>Lieferanten Verwaltung</p-accordion-header>
+        <p-accordion-content>
         <div class="flex flex-column gap-4 p-4">
           <div class="flex justify-content-between align-items-center">
           <p>Konfiguration der Lieferanten</p>
@@ -217,7 +225,8 @@
             </ng-template>
           </p-dataView>
         </div>
-      </p-accordionTab>
+        </p-accordion-content>
+      </p-accordion-panel>
 
     </p-accordion>
   </div>

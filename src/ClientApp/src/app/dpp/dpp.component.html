@@ -19,7 +19,7 @@
           <tr>
             <td>
               <div class="flex flex-row justify-content-center ">
-                <p-overlayPanel #op
+                <p-popover #op
                   >@if (shell) {
                   <ngx-json-viewer
                     [json]="shell"
@@ -29,7 +29,7 @@
                 @if (loading) {
                   <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
                 }
-              </p-overlayPanel>
+              </p-popover>
               <button
                 pButton
                 (click)="loadShell(item.aasId, op, $event);"

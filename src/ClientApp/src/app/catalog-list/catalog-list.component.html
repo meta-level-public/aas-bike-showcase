@@ -1,13 +1,13 @@
 <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
   <div class="card flex flex-column mt-2 gap-2 w-full">
     <label>Kategorie</label>
-    <p-dropdown
+    <p-select
       [options]="groups"
       [(ngModel)]="selectedCategory"
       (onChange)="setCurrentGroupItems()"
       styleClass="w-full"
       >
-    </p-dropdown>
+    </p-select>
 
     <p-dataView #dv [value]="currentGroupItems" class="w-full">
       <ng-template pTemplate="list" let-lenker>

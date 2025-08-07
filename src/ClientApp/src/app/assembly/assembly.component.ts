@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { v4 as guid } from 'uuid';
 import { ConfiguredProduct } from '../model/configured-product';
 import { ProducedProductRequest } from '../model/produced-product-request';
@@ -14,7 +14,7 @@ import { AssemblyService } from './assembly.service';
   selector: 'app-assembly',
   templateUrl: './assembly.component.html',
   styleUrl: './assembly.component.css',
-  imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, DropdownModule],
+  imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, SelectModule],
 })
 export class AssemblyComponent implements OnInit {
   items: ConfiguredProduct[] = [];

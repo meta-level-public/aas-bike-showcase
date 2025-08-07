@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { PopoverModule } from 'primeng/popover';
 import { TableModule } from 'primeng/table';
 import { Kategorie } from '../catalog-list/kategorie';
 import { InventoryStatus } from '../model/inventory-status';
@@ -20,7 +20,7 @@ import { CatalogImportService } from './catalog-import.service';
   selector: 'app-catalog-import',
   templateUrl: './catalog-import.component.html',
   styleUrl: './catalog-import.component.css',
-  imports: [CommonModule, FormsModule, TableModule, InputTextModule, ButtonModule, OverlayPanelModule, NgxJsonViewerModule]
+  imports: [CommonModule, FormsModule, TableModule, InputTextModule, ButtonModule, PopoverModule, NgxJsonViewerModule]
 })
 export class CatalogImportComponent implements OnInit {
   kategorieOptions: Kategorie[] = [];

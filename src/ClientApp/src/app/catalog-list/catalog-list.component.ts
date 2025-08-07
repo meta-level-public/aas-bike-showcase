@@ -4,7 +4,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { KatalogEintrag } from '../model/katalog-eintrag';
 import { CatalogItemComponent } from './catalog-item/catalog-item.component';
 import { CatalogListService } from './catalog-list.service';
@@ -13,7 +13,7 @@ import { CatalogListService } from './catalog-list.service';
   selector: 'app-catalog-list',
   templateUrl: './catalog-list.component.html',
   styleUrl: './catalog-list.component.css',
-  imports: [CommonModule, FormsModule, CatalogItemComponent, DropdownModule, DataViewModule, ButtonModule]
+  imports: [CommonModule, FormsModule, CatalogItemComponent, SelectModule, DataViewModule, ButtonModule]
 })
 export class CatalogListComponent implements OnInit {
   items: KatalogEintrag[] = [];

@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ButtonModule } from 'primeng/button';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { PopoverModule } from 'primeng/popover';
 import { TableModule } from 'primeng/table';
 import { UrlBase } from '../base/url-base';
 import { ProducedProduct } from '../model/produced-product';
@@ -14,7 +14,7 @@ import { DppService } from './dpp.service';
   selector: 'app-dpp',
   templateUrl: './dpp.component.html',
   styleUrl: './dpp.component.css',
-  imports: [CommonModule, FormsModule, OverlayPanelModule, TableModule, NgxJsonViewerModule, ButtonModule]
+  imports: [CommonModule, FormsModule, PopoverModule, TableModule, NgxJsonViewerModule, ButtonModule]
 })
 export class DppComponent  extends UrlBase implements OnInit {
   shell: AssetAdministrationShell | null = null;

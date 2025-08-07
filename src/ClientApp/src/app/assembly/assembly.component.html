@@ -2,14 +2,14 @@
   <div class="card flex flex-column mt-2 gap-2 w-full">
     <div class="card flex flex-column gap-2">
       <label>Zu Produzierenden Typen wählen</label>
-      <p-dropdown
+      <p-select
         [options]="items"
         [(ngModel)]="selectedItem"
         (onChange)="typeSelected()"
         optionLabel="name"
         styleClass="w-full"
         >
-      </p-dropdown>
+      </p-select>
     </div>
     @for (item of selectedItem?.bestandteile ?? []; track $index) {
       <div class="card flex flex-column gap-2">
