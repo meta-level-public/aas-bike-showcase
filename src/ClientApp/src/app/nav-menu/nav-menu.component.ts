@@ -141,6 +141,16 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         icon: 'pi pi-fw pi-cog',
         items: [
           {
+            label: 'Darkmode umschalten',
+            command: () => {
+              const element = document.querySelector('html');
+              console.log('Darkmode umschalten');
+              console.log(element);
+              element?.classList.toggle('my-app-dark');
+              console.log('Darkmode umgeschaltet');
+            }
+          },
+          {
             label: 'Grundsetup',
             routerLink: '/setup/setup',
           },

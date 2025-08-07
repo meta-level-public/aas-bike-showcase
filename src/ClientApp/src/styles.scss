@@ -5,9 +5,16 @@
 
 /* You can add global styles to this file, and also import other style files */
 
-html {
-  font-size: 15px;
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  font-size: 14px;
+  background-image: var(--p-background-image);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol';
 }
+
 
 
 .scaleImageHeight {
