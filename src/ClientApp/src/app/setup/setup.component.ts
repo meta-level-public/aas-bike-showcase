@@ -34,7 +34,7 @@ import { SetupService } from './setup.service';
     FileUploadModule,
     MessageModule,
     FieldsetModule,
-    PasswordModule
+    PasswordModule,
   ],
 })
 export class SetupComponent implements OnInit {
@@ -102,6 +102,15 @@ export class SetupComponent implements OnInit {
     this.conceptDescriptionUrl =
       this.settings.find((s) => s.name === 'ConceptDescriptionUrl')?.value ||
       '';
+    const security =
+      this.settings.find((s) => s.name === 'InfrastructureSecurity')?.value ||
+      '';
+    if (security) {
+      const parsedSecurity = JSON.parse(security) as SecuritySetting;
+      this.certificate = parsedSecurity.certificate || '';
+      this.certificatePassword = parsedSecurity.certificatePassword || '';
+      this.headerParameters = parsedSecurity.headerParameters || [];
+    }
   }
 
   showAddSupplierDialog() {
@@ -137,7 +146,6 @@ export class SetupComponent implements OnInit {
   }
 
   async saveAasUrls() {
-
     var security = new SecuritySetting();
     security.certificate = this.certificate;
     security.certificatePassword = this.certificatePassword;
@@ -150,7 +158,7 @@ export class SetupComponent implements OnInit {
       { name: 'SubmodelRegistryUrl', value: this.submodelRegistryUrl },
       { name: 'DiscoveryUrl', value: this.discoveryUrl },
       { name: 'ConceptDescriptionUrl', value: this.conceptDescriptionUrl },
-      { name: 'InfrastructureSecurity', value: JSON.stringify(security) }
+      { name: 'InfrastructureSecurity', value: JSON.stringify(security) },
     ];
 
     for (const setting of urlSettings) {
@@ -169,7 +177,9 @@ export class SetupComponent implements OnInit {
   }
 
   removeHeaderRow(headerParameter: HeaderParameter) {
-    this.headerParameters = this.headerParameters?.filter((x) => x !== headerParameter);
+    this.headerParameters = this.headerParameters?.filter(
+      (x) => x !== headerParameter
+    );
   }
 
   async setCertificateFile(event: any) {
@@ -178,12 +188,13 @@ export class SetupComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         const arrayBuffer = reader.result as ArrayBuffer;
-        const binaryString = String.fromCharCode(...new Uint8Array(arrayBuffer));
+        const binaryString = String.fromCharCode(
+          ...new Uint8Array(arrayBuffer)
+        );
         const text = window.btoa(binaryString);
         this.certificate = text;
       };
       reader.readAsArrayBuffer(file);
     }
   }
-
 }
