@@ -28,9 +28,9 @@ namespace AasDemoapp.Import
 
         }
 
-        public async Task<string> ImportFromRepository(string decodedLocalUrl, string decodedRemoteUrl, string decodedId, bool saveChanges = true)
+        public async Task<string> ImportFromRepository(string decodedLocalUrl, string decodedRemoteUrl, SecuritySetting securitySetting, string decodedId, bool saveChanges = true)
         {
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             using HttpResponseMessage response = await client.GetAsync(decodedRemoteUrl + $"/shells/{decodedId.ToBase64()}");
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
@@ -55,9 +55,9 @@ namespace AasDemoapp.Import
             shell.DerivedFrom.Keys.Add(new Key(KeyTypes.AssetAdministrationShell, shell.Id));
             shell.Id = Guid.NewGuid().ToString();
 
-            await PushNewToLocalRepositoryAsync(shell, submodels, decodedLocalUrl);
-            await PushNewToLocalRegistryAsync(shell, submodels, decodedLocalUrl);
-            // await PushNewToLocalDiscoveryAsync(shell, submodels, decodedLocalUrl);
+            await PushNewToLocalRepositoryAsync(shell, submodels, decodedLocalUrl, securitySetting);
+            await PushNewToLocalRegistryAsync(shell, submodels, decodedLocalUrl, securitySetting);
+            // await PushNewToLocalDiscoveryAsync(shell, submodels, decodedLocalUrl, securitySetting);
 
             ImportedShell importedShell = new()
             {
@@ -70,9 +70,9 @@ namespace AasDemoapp.Import
             return shell.Id;
         }
 
-        public async Task<string> GetImageString(string decodedRemoteUrl, string decodedId)
+        public async Task<string> GetImageString(string decodedRemoteUrl, SecuritySetting securitySetting, string decodedId)
         {
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             using HttpResponseMessage response = await client.GetAsync(decodedRemoteUrl + $"/shells/{decodedId.ToBase64()}/asset-information/thumbnail");
             response.EnsureSuccessStatusCode();
             var responseBody = await response.Content.ReadAsByteArrayAsync();
@@ -80,9 +80,9 @@ namespace AasDemoapp.Import
             return Convert.ToBase64String(responseBody);
         }
 
-        public async Task<AasCore.Aas3_0.Environment> GetEnvironment(string decodedRemoteUrl, string decodedId)
+        public async Task<AasCore.Aas3_0.Environment> GetEnvironment(string decodedRemoteUrl, SecuritySetting securitySetting, string decodedId)
         {
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             var url = decodedRemoteUrl + $"/shells/{decodedId.ToBase64UrlEncoded(Encoding.UTF8)}";
             using HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
@@ -140,11 +140,11 @@ namespace AasDemoapp.Import
             return nameplate != null ? GetKategorie(nameplate) : kategorie;
         }
 
-        public async Task PushNewToLocalRegistryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl)
+        public async Task PushNewToLocalRegistryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl, SecuritySetting securitySetting)
         {
             var jsonString = CreateShellDescriptorString(shell, submodels, localRegistryUrl);
 
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRegistryUrl}/shell-descriptors");
 
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -173,11 +173,11 @@ namespace AasDemoapp.Import
 
         }
 
-        public async Task PushNewToLocalRepositoryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRepositoryUrl)
+        public async Task PushNewToLocalRepositoryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRepositoryUrl, SecuritySetting securitySetting)
         {
             var jsonString = Jsonization.Serialize.ToJsonObject(shell).ToJsonString();
 
-            var client = new HttpClient();
+            var client = HttpClientCreator.CreateHttpClient(securitySetting);
             using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRepositoryUrl.AppendSlash()}shells");
 
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");

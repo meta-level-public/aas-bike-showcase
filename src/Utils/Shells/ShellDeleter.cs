@@ -1,3 +1,5 @@
+using AasDemoapp.Database.Model;
+
 namespace AasDemoapp.Utils.Shells
 {
     public class ShellDeleter
@@ -19,9 +21,9 @@ namespace AasDemoapp.Utils.Shells
             _logger = serviceProvider.GetService<ILogger<ShellDeleter>>();
         }
 
-        public static async Task DeleteShell(AasUrls aasUrls,EditorDescriptor editorDescriptor, CancellationToken cancellationToken)
+        public static async Task DeleteShell(AasUrls aasUrls, SecuritySetting securitySetting, EditorDescriptor editorDescriptor, CancellationToken cancellationToken)
         {
-            using var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
             var url = editorDescriptor.AasDescriptorEntry.Endpoint;
             var response = await client.DeleteAsync(url, cancellationToken);

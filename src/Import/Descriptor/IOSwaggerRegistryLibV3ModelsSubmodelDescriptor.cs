@@ -77,9 +77,9 @@ namespace IO.Swagger.Model
     /// <summary>
     /// Gets or Sets Extensions
     /// </summary>
-    [DataMember(Name="extensions", EmitDefaultValue=false)]
+    [DataMember(Name = "extensions", EmitDefaultValue = false)]
     [JsonProperty(PropertyName = "extensions")]
-    public List<IExtension> Extensions { get; set; }
+    public List<IExtension> Extensions { get; set; } = [];
 
 
     /// <summary>

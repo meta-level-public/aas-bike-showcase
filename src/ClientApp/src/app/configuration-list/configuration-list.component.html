@@ -1,7 +1,7 @@
 <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
   <div class="card flex flex-column mt-2 gap-2 w-full">
     <p-dataView #dv [value]="items" class="w-full">
-      <ng-template pTemplate="list" let-lenker>
+      <ng-template #list let-lenker>
         @for (item of lenker; track item.id) {
           <div class="grid grid-nogutter w-full">
             <app-configuration-item

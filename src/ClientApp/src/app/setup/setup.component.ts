@@ -6,8 +6,14 @@ import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
+import { FieldsetModule } from 'primeng/fieldset';
+import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
+import { PasswordModule } from 'primeng/password';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { HeaderParameter } from '../model/header-parameter';
+import { SecuritySetting } from '../model/security-setting';
 import { Supplier } from '../model/supplier';
 import { Setting } from './setting';
 import { SetupService } from './setup.service';
@@ -16,7 +22,20 @@ import { SetupService } from './setup.service';
   selector: 'app-setup',
   templateUrl: './setup.component.html',
   styleUrl: './setup.component.css',
-  imports: [CommonModule, FormsModule, AccordionModule, SelectButtonModule, DataViewModule, ButtonModule, DialogModule, InputTextModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    AccordionModule,
+    SelectButtonModule,
+    DataViewModule,
+    ButtonModule,
+    DialogModule,
+    InputTextModule,
+    FileUploadModule,
+    MessageModule,
+    FieldsetModule,
+    PasswordModule
+  ],
 })
 export class SetupComponent implements OnInit {
   erpOptions: { label: string; logo: string }[] = [];
@@ -26,6 +45,10 @@ export class SetupComponent implements OnInit {
   addSupplierDialogVisible: boolean = false;
   newSupplier: Supplier | undefined;
   settings: Setting[] = [];
+
+  headerParameters: HeaderParameter[] = [];
+  certificate: string = '';
+  certificatePassword: string = '';
 
   // AAS Infrastructure URLs
   aasRepositoryUrl: string = '';
@@ -65,12 +88,20 @@ export class SetupComponent implements OnInit {
   }
 
   loadAasUrls() {
-    this.aasRepositoryUrl = this.settings.find((s) => s.name === 'AASRepositoryUrl')?.value || '';
-    this.aasRegistryUrl = this.settings.find((s) => s.name === 'AASRegistryUrl')?.value || '';
-    this.submodelRepositoryUrl = this.settings.find((s) => s.name === 'SubmodelRepositoryUrl')?.value || '';
-    this.submodelRegistryUrl = this.settings.find((s) => s.name === 'SubmodelRegistryUrl')?.value || '';
-    this.discoveryUrl = this.settings.find((s) => s.name === 'DiscoveryUrl')?.value || '';
-    this.conceptDescriptionUrl = this.settings.find((s) => s.name === 'ConceptDescriptionUrl')?.value || '';
+    this.aasRepositoryUrl =
+      this.settings.find((s) => s.name === 'AASRepositoryUrl')?.value || '';
+    this.aasRegistryUrl =
+      this.settings.find((s) => s.name === 'AASRegistryUrl')?.value || '';
+    this.submodelRepositoryUrl =
+      this.settings.find((s) => s.name === 'SubmodelRepositoryUrl')?.value ||
+      '';
+    this.submodelRegistryUrl =
+      this.settings.find((s) => s.name === 'SubmodelRegistryUrl')?.value || '';
+    this.discoveryUrl =
+      this.settings.find((s) => s.name === 'DiscoveryUrl')?.value || '';
+    this.conceptDescriptionUrl =
+      this.settings.find((s) => s.name === 'ConceptDescriptionUrl')?.value ||
+      '';
   }
 
   showAddSupplierDialog() {
@@ -106,13 +137,20 @@ export class SetupComponent implements OnInit {
   }
 
   async saveAasUrls() {
+
+    var security = new SecuritySetting();
+    security.certificate = this.certificate;
+    security.certificatePassword = this.certificatePassword;
+    security.headerParameters = this.headerParameters;
+
     const urlSettings: Setting[] = [
       { name: 'AASRepositoryUrl', value: this.aasRepositoryUrl },
       { name: 'AASRegistryUrl', value: this.aasRegistryUrl },
       { name: 'SubmodelRepositoryUrl', value: this.submodelRepositoryUrl },
       { name: 'SubmodelRegistryUrl', value: this.submodelRegistryUrl },
       { name: 'DiscoveryUrl', value: this.discoveryUrl },
-      { name: 'ConceptDescriptionUrl', value: this.conceptDescriptionUrl }
+      { name: 'ConceptDescriptionUrl', value: this.conceptDescriptionUrl },
+      { name: 'InfrastructureSecurity', value: JSON.stringify(security) }
     ];
 
     for (const setting of urlSettings) {
@@ -122,4 +160,30 @@ export class SetupComponent implements OnInit {
     // Update local settings array
     await this.loadSettings();
   }
+
+  addHeaderRow() {
+    if (this.headerParameters == null) {
+      this.headerParameters = [];
+    }
+    this.headerParameters?.push(new HeaderParameter());
+  }
+
+  removeHeaderRow(headerParameter: HeaderParameter) {
+    this.headerParameters = this.headerParameters?.filter((x) => x !== headerParameter);
+  }
+
+  async setCertificateFile(event: any) {
+    if (event.files.length > 0) {
+      const file = event.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        const arrayBuffer = reader.result as ArrayBuffer;
+        const binaryString = String.fromCharCode(...new Uint8Array(arrayBuffer));
+        const text = window.btoa(binaryString);
+        this.certificate = text;
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  }
+
 }

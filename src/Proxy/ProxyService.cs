@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AasCore.Aas3_0;
+using AasDemoapp.Database.Model;
 using AasDemoapp.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -13,9 +14,9 @@ namespace AasDemoapp.Proxy
 {
     public class ProxyService
     {
-        public async Task<string[]> Discover(string registryUrl, string assetId)
+        public async Task<string[]> Discover(string registryUrl, SecuritySetting securitySetting, string assetId)
         {
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             var specificAssetId = new SpecificAssetId("globalAssetId", assetId);
             var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, ContractResolver = new CamelCasePropertyNamesContractResolver() };
             var jsonString = JsonConvert.SerializeObject(specificAssetId, Formatting.Indented, settings).ToBase64UrlEncoded(Encoding.UTF8);
@@ -58,9 +59,9 @@ namespace AasDemoapp.Proxy
             }
         }
 
-        public async Task<bool> Delete(string registryUrl, string aasId)
+        public async Task<bool> Delete(string registryUrl, SecuritySetting securitySetting, string aasId)
         {
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             var url = registryUrl + $"/shells/{aasId.ToBase64()}";
             using HttpResponseMessage response = await client.DeleteAsync(url);
             string responseBody = await response.Content.ReadAsStringAsync();

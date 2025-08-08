@@ -16,7 +16,7 @@ public class DescriptorUpdater
         aasDescriptor.AssetKind = aas.AssetInformation.AssetKind;
         aasDescriptor.AssetType = aas.AssetInformation.AssetType;
         aasDescriptor.GlobalAssetId = aas.AssetInformation.GlobalAssetId;
-        aas?.AssetInformation.SpecificAssetIds?.ForEach((specificAssetId) =>
+        aas.AssetInformation.SpecificAssetIds?.ForEach((specificAssetId) =>
         {
             aasDescriptor.SpecificAssetIds?.Add(new MySpecificAssetId(specificAssetId));
         });

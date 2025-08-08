@@ -15,14 +15,14 @@ namespace IO.Swagger.Model
     /// </summary>
     [DataMember(Name="interface", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "interface")]
-    public string _Interface { get; set; }
+    public string _Interface { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or Sets ProtocolInformation
     /// </summary>
     [DataMember(Name="protocolInformation", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "protocolInformation")]
-    public ProtocolInformation ProtocolInformation { get; set; }
+    public ProtocolInformation ProtocolInformation { get; set; } = new ProtocolInformation();
 
 
     /// <summary>

@@ -10,7 +10,7 @@
     </p-select>
 
     <p-dataView #dv [value]="currentGroupItems" class="w-full">
-      <ng-template pTemplate="list" let-lenker>
+      <ng-template #list let-lenker>
         @for (item of lenker; track item.id) {
           <div class="grid grid-nogutter w-full">
             <app-goods-item
