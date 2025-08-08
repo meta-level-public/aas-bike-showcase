@@ -90,6 +90,7 @@ export class GoodsIncomingComponent {
 
   // LKW Animation Methods
   async startDelivery() {
+    console.log('Start delivery animation');
 
     const randomRohteil = await this.goodsIncomingService.getRandomRohteil();
 

@@ -2,14 +2,13 @@ Wareneingangsbuchung
 
 <!-- LKW Lieferung Animation -->
 <div class="delivery-section">
-  <button
-    pButton
+  <p-button
     label="Lieferung starten"
     icon="pi pi-truck"
     class="delivery-button"
-    (click)="startDelivery()"
+    (onClick)="startDelivery()"
     [disabled]="showTruck">
-  </button>
+  </p-button>
 
   @if (showTruck) {
     <div class="delivery-animation">
