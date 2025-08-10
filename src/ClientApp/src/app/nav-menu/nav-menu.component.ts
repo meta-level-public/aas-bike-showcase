@@ -45,27 +45,27 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         icon: 'pi pi-fw pi-th-large',
         routerLink: '/',
       },
-      {
-        label: 'Browse',
-        icon: 'pi pi-fw pi-th-large',
-        items: [
-          {
-            label: 'AAS Discovery',
-            icon: 'pi pi-fw pi-file',
-            routerLink: '/browse/discovery',
-          },
-          {
-            label: 'AAS Registry',
-            icon: 'pi pi-fw pi-file',
-            routerLink: '/browse/registry',
-          },
-          {
-            label: 'AAS Repository',
-            icon: 'pi pi-fw pi-file',
-            routerLink: '/browse/repository',
-          },
-        ],
-      },
+      // {
+      //   label: 'Browse',
+      //   icon: 'pi pi-fw pi-th-large',
+      //   items: [
+      //     {
+      //       label: 'AAS Discovery',
+      //       icon: 'pi pi-fw pi-file',
+      //       routerLink: '/browse/discovery',
+      //     },
+      //     {
+      //       label: 'AAS Registry',
+      //       icon: 'pi pi-fw pi-file',
+      //       routerLink: '/browse/registry',
+      //     },
+      //     {
+      //       label: 'AAS Repository',
+      //       icon: 'pi pi-fw pi-file',
+      //       routerLink: '/browse/repository',
+      //     },
+      //   ],
+      // },
       {
         label: 'Katalog',
         icon: 'pi pi-fw pi-book',
