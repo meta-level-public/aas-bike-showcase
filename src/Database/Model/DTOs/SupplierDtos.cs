@@ -6,6 +6,7 @@ namespace AasDemoapp.Database.Model.DTOs
         public string Name { get; set; } = string.Empty;
         public string Logo { get; set; } = string.Empty;
         public string RemoteRepositoryUrl { get; set; } = string.Empty;
+        public SecuritySetting SecuritySetting { get; set; } = new SecuritySetting();
     }
 
     public class CreateSupplierDto
@@ -13,6 +14,16 @@ namespace AasDemoapp.Database.Model.DTOs
         public string Name { get; set; } = string.Empty;
         public string Logo { get; set; } = string.Empty;
         public string RemoteRepositoryUrl { get; set; } = string.Empty;
+        public SecuritySetting SecuritySetting { get; set; } = new SecuritySetting();
+    }
+
+    public class UpdateSupplierDto
+    {
+        public long Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Logo { get; set; } = string.Empty;
+        public string RemoteRepositoryUrl { get; set; } = string.Empty;
+        public SecuritySetting SecuritySetting { get; set; } = new SecuritySetting();
     }
 
     public class SupplierResponseDto
@@ -21,5 +32,6 @@ namespace AasDemoapp.Database.Model.DTOs
         public string Message { get; set; } = string.Empty;
         public SupplierDto? Supplier { get; set; }
         public string? Error { get; set; }
+        public SecuritySetting? SecuritySetting { get; set; }
     }
 }

@@ -52,10 +52,9 @@ namespace AasDemoapp.Mapping
 
             // Supplier mappings
             CreateMap<Supplier, SupplierDto>().ReverseMap();
-            // Supplier mappings
-            CreateMap<Supplier, SupplierDto>().ReverseMap();
             CreateMap<CreateSupplierDto, Supplier>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<UpdateSupplierDto, Supplier>();
 
             // Reverse Mappings (falls benötigt)
             CreateMap<ProducedProductDto, ProducedProduct>()

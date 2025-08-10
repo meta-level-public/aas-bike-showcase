@@ -103,13 +103,13 @@ namespace AasDemoapp.Database
                 .WithMany()
                 .UsingEntity<ProductPart>(
                     j => j.HasOne(pp => pp.ConfiguredProduct)
-                          .WithMany(cp => cp.Bestandteile)
-                          .HasForeignKey(pp => pp.ConfiguredProductId)
-                          .OnDelete(DeleteBehavior.Cascade),
+                        .WithMany(cp => cp.Bestandteile)
+                        .HasForeignKey(pp => pp.ConfiguredProductId)
+                        .OnDelete(DeleteBehavior.Cascade),
                     j => j.HasOne(pp => pp.KatalogEintrag)
-                          .WithMany()
-                          .HasForeignKey(pp => pp.KatalogEintragId)
-                          .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany()
+                        .HasForeignKey(pp => pp.KatalogEintragId)
+                        .OnDelete(DeleteBehavior.Restrict)
                 );
 
             // UpdateableShell -> KatalogEintrag (1:1)
@@ -118,6 +118,12 @@ namespace AasDemoapp.Database
                 .WithMany()
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(true);
+
+            modelBuilder.Entity<Supplier>()
+                .Property(e => e.SecuritySetting)
+                .HasConversion(
+                    v => DBJsonConverter.Serialize(v),
+                    v => DBJsonConverter.Deserialize<SecuritySetting>(v));
 
             // Global Query Filter für Soft Delete
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -129,7 +135,7 @@ namespace AasDemoapp.Database
                         Expression.Property(parameter, nameof(ISoftDelete.IsDeleted)),
                         Expression.Constant(false));
                     var lambda = Expression.Lambda(body, parameter);
-                    
+
                     modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
                 }
             }

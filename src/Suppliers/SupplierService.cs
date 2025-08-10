@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AasDemoapp.Database;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore;
 
 namespace AasDemoapp.Suppliers
 {
@@ -16,29 +16,51 @@ namespace AasDemoapp.Suppliers
             _context = aasDemoappContext;
         }
 
-        public Database.Model.Supplier Add(Database.Model.Supplier supplier)
+        public async Task<Database.Model.Supplier> AddAsync(Database.Model.Supplier supplier)
         {
             _context.Suppliers.Add(supplier);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return supplier;
         }
 
-        public List<Database.Model.Supplier> GetAll()
+        public async Task<List<Database.Model.Supplier>> GetAllAsync()
         {
-            return _context.Suppliers.ToList();
+            return await _context.Suppliers.ToListAsync();
         }
 
-        public bool Delete(int id)
+        public async Task<Database.Model.Supplier?> GetByIdAsync(long id)
         {
-            var supplier = _context.Suppliers.FirstOrDefault(s => s.Id == id);
+            return await _context.Suppliers.FirstOrDefaultAsync(s => s.Id == id);
+        }
+
+        public async Task<Database.Model.Supplier?> UpdateAsync(Database.Model.Supplier supplier)
+        {
+            var existingSupplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.Id == supplier.Id);
+            if (existingSupplier == null)
+            {
+                return null;
+            }
+
+            existingSupplier.Name = supplier.Name;
+            existingSupplier.Logo = supplier.Logo;
+            existingSupplier.RemoteRepositoryUrl = supplier.RemoteRepositoryUrl;
+            existingSupplier.SecuritySetting = supplier.SecuritySetting;
+
+            await _context.SaveChangesAsync();
+            return existingSupplier;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var supplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.Id == id);
             if (supplier == null)
             {
                 return false;
             }
 
             _context.Suppliers.Remove(supplier);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return true;
         }
     }

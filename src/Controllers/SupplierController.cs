@@ -29,7 +29,7 @@ namespace AasDemoapp.Controllers
         {
             try
             {
-                var suppliers = await Task.FromResult(_supplierService.GetAll());
+                var suppliers = await _supplierService.GetAllAsync();
                 var supplierDtos = _mapper.Map<List<SupplierDto>>(suppliers);
                 return Ok(supplierDtos);
             }
@@ -55,7 +55,7 @@ namespace AasDemoapp.Controllers
                 }
 
                 var supplier = _mapper.Map<Supplier>(createSupplierDto);
-                var addedSupplier = await Task.FromResult(_supplierService.Add(supplier));
+                var addedSupplier = await _supplierService.AddAsync(supplier);
                 var supplierDto = _mapper.Map<SupplierDto>(addedSupplier);
 
                 return Ok(new SupplierResponseDto
@@ -76,13 +76,81 @@ namespace AasDemoapp.Controllers
             }
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SupplierDto>> GetById(long id)
+        {
+            try
+            {
+                var supplier = await _supplierService.GetByIdAsync(id);
+                if (supplier == null)
+                {
+                    return NotFound(new { error = $"Lieferant mit ID {id} nicht gefunden" });
+                }
+
+                var supplierDto = _mapper.Map<SupplierDto>(supplier);
+                return Ok(supplierDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Fehler beim Abrufen des Lieferanten", details = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<SupplierResponseDto>> Update(UpdateSupplierDto updateSupplierDto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(updateSupplierDto.Name))
+                {
+                    return BadRequest(new SupplierResponseDto
+                    {
+                        Success = false,
+                        Message = "Name ist erforderlich",
+                        Error = "Validation failed"
+                    });
+                }
+
+                var supplier = _mapper.Map<Supplier>(updateSupplierDto);
+                var updatedSupplier = await _supplierService.UpdateAsync(supplier);
+
+                if (updatedSupplier == null)
+                {
+                    return NotFound(new SupplierResponseDto
+                    {
+                        Success = false,
+                        Message = $"Lieferant mit ID {updateSupplierDto.Id} nicht gefunden",
+                        Error = "Not found"
+                    });
+                }
+
+                var supplierDto = _mapper.Map<SupplierDto>(updatedSupplier);
+
+                return Ok(new SupplierResponseDto
+                {
+                    Success = true,
+                    Message = "Lieferant erfolgreich aktualisiert",
+                    Supplier = supplierDto
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new SupplierResponseDto
+                {
+                    Success = false,
+                    Message = "Fehler beim Aktualisieren des Lieferanten",
+                    Error = ex.Message
+                });
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<SupplierResponseDto>> Delete(int id)
         {
             try
             {
-                var success = await Task.FromResult(_supplierService.Delete(id));
-                
+                var success = await _supplierService.DeleteAsync(id);
+
                 if (!success)
                 {
                     return NotFound(new SupplierResponseDto
