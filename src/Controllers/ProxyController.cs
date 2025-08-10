@@ -84,12 +84,17 @@ public class ProxyController : ControllerBase
     [HttpGet]
     public async Task<bool> Import(string localRegistryUrl, string remoteRegistryUrl, string id)
     {
-        var decodedLocalUrl = HttpUtility.UrlDecode(localRegistryUrl);
-        var decodedRemoteUrl = HttpUtility.UrlDecode(remoteRegistryUrl);
-        var decodedId = HttpUtility.UrlDecode(id);
-        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+        throw new NotImplementedException();
+        // var decodedLocalUrl = HttpUtility.UrlDecode(localRegistryUrl);
+        // var decodedRemoteUrl = HttpUtility.UrlDecode(remoteRegistryUrl);
 
-        await _importService.ImportFromRepository(decodedLocalUrl, decodedRemoteUrl, securitySetting, decodedId);
+        // // TODO: korrigieren
+        // var katalogEintrag
+
+        // var decodedId = HttpUtility.UrlDecode(id);
+        // var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+
+        // await _importService.ImportFromRepository(decodedLocalUrl, decodedRemoteUrl, securitySetting, decodedId);
 
 
         return await Task.FromResult(true);

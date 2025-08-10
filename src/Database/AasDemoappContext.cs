@@ -119,6 +119,14 @@ namespace AasDemoapp.Database
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(true);
 
+            // KatalogEintrag -> Supplier (N:1)
+            modelBuilder.Entity<KatalogEintrag>()
+                .HasOne(e => e.Supplier)
+                .WithMany()
+                .HasForeignKey(e => e.SupplierId)
+                .OnDelete(DeleteBehavior.Restrict) // Verhindert Löschen von Supplier wenn KatalogEintrag existiert
+                .IsRequired(false);
+
             modelBuilder.Entity<Supplier>()
                 .Property(e => e.SecuritySetting)
                 .HasConversion(

@@ -38,12 +38,15 @@ namespace AasDemoapp.Katalog
             _context.KatalogEintraege.Add(katalogEintrag);
             katalogEintrag.KatalogEintragTyp = KatalogEintragTyp.RohteilTyp;
             var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+            var securitySettingSupplier = katalogEintrag.Supplier.SecuritySetting;
 
-            katalogEintrag.Image = await _importService.GetImageString(katalogEintrag.RemoteRepositoryUrl, securitySetting, katalogEintrag.AasId);
+            _context.Suppliers.Update(katalogEintrag.Supplier);
+
+            katalogEintrag.Image = await _importService.GetImageString(katalogEintrag.Supplier.RemoteRepositoryUrl, securitySettingSupplier, katalogEintrag.AasId);
 
             var kategorie = "unklassifiziert";
 
-            var env = await _importService.GetEnvironment(katalogEintrag.RemoteRepositoryUrl, securitySetting, katalogEintrag.AasId);
+            var env = await _importService.GetEnvironment(katalogEintrag.Supplier.RemoteRepositoryUrl, securitySettingSupplier, katalogEintrag.AasId);
             if (env != null)
             {
                 var nameplate = _importService.GetNameplate(env);
@@ -54,7 +57,7 @@ namespace AasDemoapp.Katalog
             }
             katalogEintrag.Kategorie = kategorie;
             var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
-            katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.Value ?? "", katalogEintrag.RemoteRepositoryUrl, securitySetting, katalogEintrag.AasId);
+            katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.Value ?? "", katalogEintrag, securitySetting, katalogEintrag.AasId);
             _context.SaveChanges();
             return katalogEintrag;
         }
@@ -142,7 +145,7 @@ namespace AasDemoapp.Katalog
                 }
 
                 var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
-                katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.Value ?? "", katalogEintrag.RemoteRepositoryUrl, securitySetting, katalogEintrag.AasId, false);
+                katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.Value ?? "", katalogEintrag, securitySetting, katalogEintrag.AasId, false);
             }
             else
             {

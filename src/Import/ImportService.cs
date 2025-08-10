@@ -28,10 +28,10 @@ namespace AasDemoapp.Import
 
         }
 
-        public async Task<string> ImportFromRepository(string decodedLocalUrl, string decodedRemoteUrl, SecuritySetting securitySetting, string decodedId, bool saveChanges = true)
+        public async Task<string> ImportFromRepository(string decodedLocalUrl, KatalogEintrag katalogEintrag, SecuritySetting securitySetting, string decodedId, bool saveChanges = true)
         {
-            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-            using HttpResponseMessage response = await client.GetAsync(decodedRemoteUrl + $"/shells/{decodedId.ToBase64()}");
+            using var clientSource = HttpClientCreator.CreateHttpClient(securitySetting);
+            using HttpResponseMessage response = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteRepositoryUrl + $"/shells/{decodedId.ToBase64()}");
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -40,7 +40,7 @@ namespace AasDemoapp.Import
 
             foreach (var smRef in shell.Submodels ?? [])
             {
-                using var resp = await client.GetAsync(decodedRemoteUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}");
+                using var resp = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteRepositoryUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}");
                 resp.EnsureSuccessStatusCode();
                 responseBody = await resp.Content.ReadAsStringAsync();
 
@@ -57,11 +57,11 @@ namespace AasDemoapp.Import
 
             await PushNewToLocalRepositoryAsync(shell, submodels, decodedLocalUrl, securitySetting);
             await PushNewToLocalRegistryAsync(shell, submodels, decodedLocalUrl, securitySetting);
-            // await PushNewToLocalDiscoveryAsync(shell, submodels, decodedLocalUrl, securitySetting);
+            await PushNewToLocalDiscoveryAsync(shell, submodels, decodedLocalUrl, securitySetting);
 
             ImportedShell importedShell = new()
             {
-                RemoteRegistryUrl = decodedRemoteUrl
+                RemoteRegistryUrl = katalogEintrag.Supplier.RemoteRepositoryUrl,
             };
 
             _AasDemoappContext.Add(importedShell);
@@ -156,19 +156,19 @@ namespace AasDemoapp.Import
 
         }
 
-        public async Task<bool> PushNewToLocalDiscoveryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl)
+        public async Task<bool> PushNewToLocalDiscoveryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl, SecuritySetting securitySetting)
         {
-            // var jsonString = CreateShellDescriptorString(shell, submodels, localRegistryUrl);
+            var jsonString = CreateShellDescriptorString(shell, submodels, localRegistryUrl);
 
-            // var client = new HttpClient();
-            // using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRegistryUrl}/registry/shell-descriptors");
+            var client = HttpClientCreator.CreateHttpClient(securitySetting);
+            using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRegistryUrl}/registry/shell-descriptors");
 
-            // var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            // request.Content = content;
-            // var result = await client.SendAsync(request);
-            // var resultContent = await result.Content.ReadAsStringAsync();
+            var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            request.Content = content;
+            var result = await client.SendAsync(request);
+            var resultContent = await result.Content.ReadAsStringAsync();
 
-            // Console.WriteLine(resultContent);
+            Console.WriteLine(resultContent);
             return await Task.FromResult(true);
 
         }
