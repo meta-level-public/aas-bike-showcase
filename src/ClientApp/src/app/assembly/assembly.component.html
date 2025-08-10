@@ -3,9 +3,9 @@
     <div class="card flex flex-column gap-2">
       <label>Zu Produzierenden Typen wählen</label>
       <p-select
-        [options]="items"
-        [(ngModel)]="selectedItem"
-        (onChange)="typeSelected()"
+        [options]="items()"
+        [ngModel]="selectedItem()"
+        (ngModelChange)="selectedItem.set($event); typeSelected()"
         optionLabel="name"
         styleClass="w-full"
         >
@@ -13,31 +13,31 @@
     </div>
 
     <!-- Geführte Montage -->
-    @if (selectedItem && selectedItem.bestandteile && selectedItem.bestandteile.length > 0) {
+    @if (selectedItem() && selectedItem()?.bestandteile && selectedItem()!.bestandteile.length > 0) {
       <!-- Fortschrittsanzeige -->
       <div class="card flex flex-column gap-2">
         <div class="text-lg font-bold">Montage-Fortschritt</div>
         <div class="flex align-items-center gap-2">
-          <span>Schritt {{ currentAssemblyStep + 1 }} von {{ selectedItem.bestandteile.length }}</span>
+          <span>Schritt {{ currentAssemblyStep() + 1 }} von {{ selectedItem()!.bestandteile.length }}</span>
           <div class="flex-1 bg-gray-200 border-round-lg h-1rem">
             <div
               class="bg-primary border-round-lg h-full transition-all transition-duration-300"
-              [style.width.%]="(currentAssemblyStep / selectedItem.bestandteile.length) * 100">
+              [style.width.%]="(currentAssemblyStep() / selectedItem()!.bestandteile.length) * 100">
             </div>
           </div>
         </div>
       </div>
 
       <!-- Aktueller Montageschritt -->
-      @if (currentAssemblyStep < selectedItem.bestandteile.length) {
+      @if (currentAssemblyStep() < selectedItem()!.bestandteile.length) {
         <div class="card flex flex-column gap-2">
           <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
             <div class="w-12rem">
               <img
                 class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
                 height="100"
-                [src]="'data:image/jpeg;base64, ' + selectedItem.bestandteile[currentAssemblyStep].katalogEintrag?.image"
-                [alt]="selectedItem.bestandteile[currentAssemblyStep].name"
+                [src]="'data:image/jpeg;base64, ' + selectedItem()!.bestandteile[currentAssemblyStep()].katalogEintrag?.image"
+                [alt]="selectedItem()!.bestandteile[currentAssemblyStep()].name"
                 />
             </div>
             <div
@@ -46,33 +46,33 @@
               <div
                 class="flex flex-column align-items-center sm:align-items-start gap-3 w-20rem"
                 >
-                <div class="text-2xl font-bold text-900">{{ selectedItem.bestandteile[currentAssemblyStep].name }}</div>
-                <div class="text-2xl font-medium text-900">{{ selectedItem.bestandteile[currentAssemblyStep].amount }} Stück</div>
+                <div class="text-2xl font-bold text-900">{{ selectedItem()!.bestandteile[currentAssemblyStep()].name }}</div>
+                <div class="text-2xl font-medium text-900">{{ selectedItem()!.bestandteile[currentAssemblyStep()].amount }} Stück</div>
                 <div class="text-lg text-600">Bitte scannen Sie das zu verbauende Teil</div>
               </div>
               <div
                 class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 flex-1"
                 >
-                @if (selectedItem.bestandteile[currentAssemblyStep]) {
-                  @for (teil of getParts(selectedItem.bestandteile[currentAssemblyStep]); track $index) {
+                @if (selectedItem()!.bestandteile[currentAssemblyStep()]) {
+                  @for (teil of getParts(selectedItem()!.bestandteile[currentAssemblyStep()]); track $index) {
                     <input
                       pInputText
                       type="text"
                       class="w-full"
                       placeholder="Verbautes Teil (Charge/Seriennummer/...) einscannen"
-                      (keydown.enter)="findRohteilInstanz($event, selectedItem.bestandteile[currentAssemblyStep], teil.guid)"
-                      (blur)="findRohteilInstanz($event, selectedItem.bestandteile[currentAssemblyStep], teil.guid)"
+                      (keydown.enter)="findRohteilInstanz($event, selectedItem()!.bestandteile[currentAssemblyStep()], teil.guid)"
+                      (blur)="findRohteilInstanz($event, selectedItem()!.bestandteile[currentAssemblyStep()], teil.guid)"
                       [(ngModel)]="teil.instanceGlobalAssetId"
                       />
                   }
                 }
-                @if (selectedItem.bestandteile[currentAssemblyStep] && isTeilOk(selectedItem.bestandteile[currentAssemblyStep])) {
+                @if (selectedItem()!.bestandteile[currentAssemblyStep()] && isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])) {
                   <div class="flex flex-row gap-1 text-green-600">
                     <i class="pi pi-check-circle"></i>
                     Teil korrekt erfasst
                   </div>
                 }
-                @if (selectedItem.bestandteile[currentAssemblyStep] && !isTeilOk(selectedItem.bestandteile[currentAssemblyStep])) {
+                @if (selectedItem()!.bestandteile[currentAssemblyStep()] && !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])) {
                   <div class="flex flex-row gap-1 text-orange-600">
                     <i class="pi pi-exclamation-triangle"></i>
                     Teil noch nicht korrekt erfasst
@@ -84,9 +84,21 @@
                   label="Nächster Schritt"
                   class="w-full mt-2"
                   (click)="nextAssemblyStep()"
-                  [disabled]="!selectedItem.bestandteile[currentAssemblyStep] || !isTeilOk(selectedItem.bestandteile[currentAssemblyStep])"
+                  [disabled]="!selectedItem()!.bestandteile[currentAssemblyStep()] || !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])"
                   severity="secondary"
                 ></button>
+
+                <!-- Schrauben-Button für Lenker-Schritte -->
+                @if (isLenkerStep()) {
+                  <button
+                    pButton
+                    label="Zum Schrauben"
+                    icon="pi pi-external-link"
+                    class="w-full mt-2"
+                    (click)="openSchraubenDialog()"
+                    severity="info"
+                  ></button>
+                }
               </div>
             </div>
           </div>
@@ -94,7 +106,7 @@
       }
 
       <!-- Alle Schritte abgeschlossen -->
-      @if (currentAssemblyStep >= selectedItem.bestandteile.length) {
+      @if (currentAssemblyStep() >= selectedItem()!.bestandteile.length) {
         <div class="card flex flex-column gap-2 text-center">
           <div class="text-2xl font-bold text-green-600 mb-3">
             <i class="pi pi-check-circle mr-2"></i>
@@ -107,13 +119,13 @@
       }
     } @else {
       <div class="card flex flex-column gap-2">
-        @if (selectedItem) {
+        @if (selectedItem()) {
           <label>Keine zu verbauenden Teile vorhanden</label>
         }
       </div>
     }
 
-    @if (selectedItem && selectedItem.bestandteile && currentAssemblyStep >= selectedItem.bestandteile.length) {
+    @if (selectedItem() && selectedItem()?.bestandteile && currentAssemblyStep() >= selectedItem()!.bestandteile.length) {
       <button
         pButton
         label="Verbau Fertig"
@@ -124,3 +136,30 @@
     }
   </div>
 </div>
+
+<!-- Schrauben-Dialog -->
+<p-dialog
+  header="Schrauben-Anleitung"
+  [visible]="showSchraubenDialog()"
+  [modal]="true"
+  [style]="{ width: '90vw', height: '80vh' }"
+  [draggable]="false"
+  [resizable]="false"
+  closable="false">
+
+  <div class="flex flex-column h-full">
+    <div class="mb-3 text-lg">
+      Hier kommt jezt Hendriks Schraubersimulation
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      type="button"
+      label="Schließen"
+      (click)="closeSchraubenDialog()"
+      severity="secondary">
+    </button>
+  </ng-template>
+</p-dialog>
