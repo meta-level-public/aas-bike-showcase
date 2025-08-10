@@ -1,70 +1,171 @@
-<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
-  <div class="flex flex-column gap-2 mt-2">
-    <div class="gap-2 flex-column">
-      <label for="name" class="block text-900 font-medium mb-2">Name</label>
-      <input
-        id="name"
-        type="text"
-        placeholder="Name"
-        pInputText
-        class="w-full mb-3"
-        [(ngModel)]="newProduct.name"
-      />
-    </div>
-    <div class="gap-2 flex-column">
-      <label for="name" class="block text-900 font-medium mb-2">Preis</label>
-      <input
-        id="name"
-        type="text"
-        placeholder="Preis"
-        pInputText
-        class="w-full mb-3"
-        [(ngModel)]="newProduct.price"
-        readonly
-      />
-    </div>
-    <div class="gap-2 flex-column">
-      <label for="name" class="block text-900 font-medium mb-2">Teile</label>
-      <p-pickList
-        [source]="rohteile"
-        [target]="bestandteile"
-        sourceHeader="Available"
-        targetHeader="Selected"
-        [dragdrop]="true"
-        [responsive]="true"
-        [sourceStyle]="{ height: '15rem' }"
-        [targetStyle]="{ height: '15rem' }"
-        breakpoint="1400px"
-        (onMoveToSource)="calculatePrice()"
-        (onMoveToTarget)="calculatePrice()"
-        (onMoveAllToSource)="calculatePrice()"
-        (onMoveAllToTarget)="calculatePrice()"
-      >
-        <ng-template let-item pTemplate="item">
-          <div class="flex flex-wrap p-2 align-items-center gap-3" >
-            <div class="flex flex-row w-5rem justify-content-center">
+<div class="configurator-container">
+  <!-- Header Section -->
+  <div class="configurator-header">
+    <h1 class="configurator-title">
+      <i class="pi pi-cog"></i>
+      Bike Konfigurator
+    </h1>
+    <p class="configurator-subtitle">Erstellen Sie Ihr individuelles Fahrrad</p>
+  </div>
 
-              <img
-              class="scaleImageWidth shadow-2 flex-shrink-0 border-round" height="50"
-              [src]="'data:image/jpeg;base64, ' + item.image"
-              alt="{item.name}"
-              />
-            </div>
-            <div class="flex-1 flex flex-column gap-2">
-              <span class="font-bold">{{ item.name }}</span>
-              <div class="flex align-products-center gap-2">
-                <i class="pi pi-tag text-sm"></i>
-                <span>{{ item.kategorie }}</span>
-              </div>
-            </div>
-            <span class="font-bold text-900">{{ "$" + item.price }}</span>
-            <span class="font-bold text-900"><input pInputText class="w-5rem" placeholder="Anzahl" [(ngModel)]="item.amountToUse" (ngModelChange)="calculatePrice()"/></span>
+  <!-- Main Content -->
+  <div class="configurator-content">
+    <!-- Left Panel - Available Parts -->
+    <div class="parts-panel">
+      <div class="panel-header">
+        <i class="pi pi-shopping-cart"></i>
+        <h3>Verfügbare Rohteile</h3>
+        <span class="parts-count">({{ rohteile.length }} Teile)</span>
+      </div>
+
+      <div class="parts-grid p-4">
+        <div
+          *ngFor="let rohteil of rohteile"
+          class="part-card"
+          (click)="addToConfiguration(rohteil)"
+        >
+          <div class="add-btn-overlay">
+            <i class="pi pi-plus"></i>
           </div>
-        </ng-template>
-      </p-pickList>
+          <img
+            [src]="'data:image/jpeg;base64, ' + rohteil.image"
+            [alt]="rohteil.name"
+            class="part-img"
+          />
+          <h4 class="part-name">{{ rohteil.name }}</h4>
+          <p class="part-category">
+            <i class="pi pi-tag"></i>
+            {{ rohteil.kategorie }}
+          </p>
+          <div class="part-price">{{ rohteil.price | currency:'EUR':'symbol':'1.2-2' }}</div>
+        </div>
+      </div>
     </div>
-    <div class="gap-2 flex-column">
-      <button pButton label="Anlegen" (click)="createProduct()" [disabled]="!valid()"></button>
+
+    <!-- Right Panel - Configuration -->
+    <div class="configuration-panel">
+      <div class="panel-header">
+        <i class="pi pi-wrench"></i>
+        <h3>Konfiguration</h3>
+        <span class="selected-count">({{ bestandteile.length }} ausgewählt)</span>
+      </div>
+
+      <!-- Product Details -->
+      <div class="product-details">
+        <div class="form-group">
+          <label for="productName">Produktname</label>
+          <input
+            id="productName"
+            type="text"
+            placeholder="Name eingeben..."
+            pInputText
+            [(ngModel)]="newProduct.name"
+            class="product-name-input"
+          />
+        </div>
+
+        <div class="price-display">
+          <div class="price-label">Gesamtpreis</div>
+          <div class="price-value">
+            {{ newProduct.price | currency:'EUR':'symbol':'1.2-2' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Parts -->
+      <div class="selected-parts">
+        <div *ngIf="bestandteile.length === 0" class="empty-state">
+          <i class="pi pi-shopping-basket"></i>
+          <p>Wählen Sie Teile aus der linken Liste aus</p>
+        </div>
+
+        <div *ngFor="let teil of bestandteile; trackBy: trackByFn" class="selected-part-card">
+          <img
+            [src]="'data:image/jpeg;base64, ' + teil.image"
+            [alt]="teil.name"
+            class="selected-img"
+          />
+
+          <div class="selected-part-info">
+            <h4>{{ teil.name }}</h4>
+            <p class="selected-part-category">{{ teil.kategorie }}</p>
+            <div class="selected-part-price">
+              {{ teil.price | currency:'EUR':'symbol':'1.2-2' }} / Stück
+            </div>
+          </div>
+
+          <div class="quantity-controls">
+            <span class="quantity-label">Anzahl</span>
+            <div class="quantity-input-group">
+              <button
+                type="button"
+                class="quantity-btn"
+                (click)="decreaseQuantity(teil)"
+                [disabled]="teil.amountToUse <= 1"
+              >
+                <i class="pi pi-minus"></i>
+              </button>
+
+              <input
+                type="number"
+                [(ngModel)]="teil.amountToUse"
+                (ngModelChange)="onQuantityChange(teil, $event)"
+                min="1"
+                class="quantity-input"
+              />
+
+              <button
+                type="button"
+                class="quantity-btn"
+                (click)="increaseQuantity(teil)"
+              >
+                <i class="pi pi-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="part-total">
+            <div class="total-value">
+              {{ (teil.price * teil.amountToUse) | currency:'EUR':'symbol':'1.2-2' }}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="remove-btn"
+            (click)="removeFromConfiguration(teil)"
+            title="Teil entfernen"
+          >
+            <i class="pi pi-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button
+          pButton
+          type="button"
+          label="Konfiguration löschen"
+          class="p-button-outlined p-button-secondary"
+          (click)="clearConfiguration()"
+          [disabled]="bestandteile.length === 0"
+        >
+          <i class="pi pi-trash"></i>
+        </button>
+
+        <button
+          pButton
+          type="button"
+          label="Konfiguration erstellen"
+          class="p-button-success create-btn"
+          (click)="createProduct()"
+          [disabled]="!valid()"
+          [loading]="loading"
+        >
+          <i class="pi pi-check"></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>
