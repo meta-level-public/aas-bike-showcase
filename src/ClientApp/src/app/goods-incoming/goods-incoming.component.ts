@@ -44,6 +44,15 @@ export class GoodsIncomingComponent {
         this.newKatalogEintrag.globalAssetId
       );
 
+      console.log(res);
+
+      if (res.typeKatalogEintrag == null) {
+        this.notificationService.showMessageAlways(
+          'Rohteil nicht gefunden'
+        );
+        return;
+      }
+
       this.parentRohteil = res.typeKatalogEintrag;
       this.newKatalogEintrag.aasId = res.aasId;
       this.newKatalogEintrag.price = this.parentRohteil.price;
@@ -52,6 +61,7 @@ export class GoodsIncomingComponent {
       this.newKatalogEintrag.referencedType = this.parentRohteil;
       this.newKatalogEintrag.remoteRepositoryUrl =
         this.parentRohteil.remoteRepositoryUrl;
+      this.newKatalogEintrag.supplier = this.parentRohteil.supplier;
 
       this.importImageUrl =
         this.parentRohteil.remoteRepositoryUrl +

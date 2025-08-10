@@ -116,6 +116,8 @@ namespace AasDemoapp.Katalog
             {
                 _context.KatalogEintraege.Add(katalogEintrag);
                 katalogEintrag.KatalogEintragTyp = KatalogEintragTyp.RohteilInstanz;
+                _context.Suppliers.Update(katalogEintrag.Supplier);
+
 
                 try
                 {
