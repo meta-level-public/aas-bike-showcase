@@ -2,19 +2,22 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { PopoverModule } from 'primeng/popover';
 import { RatingModule } from 'primeng/rating';
+import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
+import { ConfiguredProduct } from '../../model/configured-product';
 import { InventoryStatus } from '../../model/inventory-status';
-import { KatalogEintrag } from '../../model/katalog-eintrag';
 import { ConfigurationListService } from '../configuration-list.service';
 
 @Component({
   selector: 'app-configuration-item',
   templateUrl: './configuration-item.component.html',
   styleUrl: './configuration-item.component.css',
-  imports: [CommonModule, FormsModule, RatingModule, ButtonModule]
+  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, PopoverModule, TagModule, TooltipModule]
 })
 export class ConfigurationItemComponent {
-  @Input() item: KatalogEintrag | undefined;
+  @Input() item: ConfiguredProduct | undefined;
   @Input() first: boolean = false;
   InventoryStatus = InventoryStatus;
   loading: boolean = false;
@@ -34,19 +37,18 @@ export class ConfigurationItemComponent {
     }
   }
 
-  getSeverity(eintrag: KatalogEintrag) {
-    switch (eintrag.inventoryStatus) {
-      case InventoryStatus.INSTOCK:
-        return 'success';
+  getSeverity(eintrag: ConfiguredProduct) {
+    // Für ConfiguredProduct müssen wir eine andere Logik verwenden
+    // da es keine inventoryStatus Eigenschaft hat
+    return 'success'; // Default
+  }
 
-      case InventoryStatus.LOWSTOCK:
-        return 'warning';
+  // Neue Methode für Bestandteile-Popover
+  getTotalBestandteile(): number {
+    return this.item?.bestandteile?.length || 0;
+  }
 
-      case InventoryStatus.OUTOFSTOCK:
-        return 'danger';
-
-      default:
-        return undefined;
-    }
+  getTotalPrice(): number {
+    return this.item?.bestandteile?.reduce((sum, teil) => sum + (teil.price * teil.amount), 0) || 0;
   }
 }

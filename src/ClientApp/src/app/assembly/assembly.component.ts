@@ -23,6 +23,9 @@ export class AssemblyComponent implements OnInit {
   newProduct: ProducedProductRequest = {} as ProducedProductRequest;
   loading: boolean = false;
 
+  // Geführte Montage
+  currentAssemblyStep: number = 0;
+
   teileStatus: {guid: string, typeGlobalAssetId: string, instanceGlobalAssetId:string, instanceAasId: string, statusOk: boolean, bestandteilId: number}[] = [];
 
   constructor(private service: AssemblyService, private notificationService: NotificationService) {}
@@ -40,6 +43,7 @@ export class AssemblyComponent implements OnInit {
       console.log('Selected type:', this.selectedItem);
     }
     this.teileStatus = [];
+    this.currentAssemblyStep = 0; // Reset assembly step when new type is selected
     if (this.selectedItem?.bestandteile != null) {
       this.newProduct.bestandteilRequests = [];
       this.newProduct.configuredProductId = this.selectedItem.id ?? 0;
@@ -83,6 +87,12 @@ export class AssemblyComponent implements OnInit {
 
   isTeilOk(item: ProductPart) {
     return this.teileStatus.filter((teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId).every((teileStatus) => teileStatus.statusOk);
+  }
+
+  nextAssemblyStep() {
+    if (this.selectedItem && this.currentAssemblyStep < this.selectedItem.bestandteile.length - 1) {
+      this.currentAssemblyStep++;
+    }
   }
 
   async saveProducedProduct() {

@@ -11,68 +11,115 @@
         >
       </p-select>
     </div>
-    @for (item of selectedItem?.bestandteile ?? []; track $index) {
+
+    <!-- Geführte Montage -->
+    @if (selectedItem && selectedItem.bestandteile && selectedItem.bestandteile.length > 0) {
+      <!-- Fortschrittsanzeige -->
       <div class="card flex flex-column gap-2">
-        <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-          <div class="w-12rem">
-            <img
-              class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
-              height="100"
-              [src]="'data:image/jpeg;base64, ' + item.katalogEintrag?.image"
-              [alt]="item.name"
-              />
-          </div>
-          <div
-            class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
-            >
+        <div class="text-lg font-bold">Montage-Fortschritt</div>
+        <div class="flex align-items-center gap-2">
+          <span>Schritt {{ currentAssemblyStep + 1 }} von {{ selectedItem.bestandteile.length }}</span>
+          <div class="flex-1 bg-gray-200 border-round-lg h-1rem">
             <div
-              class="flex flex-column align-items-center sm:align-items-start gap-3 w-20rem"
-              >
-              <div class="text-2xl font-bold text-900">{{ item.name }}</div>
-              <div class="text-2xl font-medium text-900">{{ item.amount }} Stück</div>
-            </div>
-            <div
-              class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 flex-1"
-              >
-              @for (teil of getParts(item); track $index) {
-                <input
-                  pInputText
-                  type="text"
-                  class="w-full"
-                  placeholder="Verbautes Teil (Charge/Seriennummer/...) einscannen"
-                  (keydown.enter)="findRohteilInstanz($event, item, teil.guid)"
-                  (blur)="findRohteilInstanz($event, item, teil.guid)"
-                  [(ngModel)]="teil.instanceGlobalAssetId"
-                  />
-              }
-              @if (isTeilOk(item)) {
-                <div class="flex flex-row gap-1">
-                  Teil ok
-                </div>
-              }
-              @if (!isTeilOk(item)) {
-                <div class="flex flex-row gap-1">
-                  Teil nicht ok
-                </div>
-              }
+              class="bg-primary border-round-lg h-full transition-all transition-duration-300"
+              [style.width.%]="(currentAssemblyStep / selectedItem.bestandteile.length) * 100">
             </div>
           </div>
         </div>
       </div>
-      } @empty {
+
+      <!-- Aktueller Montageschritt -->
+      @if (currentAssemblyStep < selectedItem.bestandteile.length) {
+        <div class="card flex flex-column gap-2">
+          <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+            <div class="w-12rem">
+              <img
+                class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
+                height="100"
+                [src]="'data:image/jpeg;base64, ' + selectedItem.bestandteile[currentAssemblyStep].katalogEintrag?.image"
+                [alt]="selectedItem.bestandteile[currentAssemblyStep].name"
+                />
+            </div>
+            <div
+              class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
+              >
+              <div
+                class="flex flex-column align-items-center sm:align-items-start gap-3 w-20rem"
+                >
+                <div class="text-2xl font-bold text-900">{{ selectedItem.bestandteile[currentAssemblyStep].name }}</div>
+                <div class="text-2xl font-medium text-900">{{ selectedItem.bestandteile[currentAssemblyStep].amount }} Stück</div>
+                <div class="text-lg text-600">Bitte scannen Sie das zu verbauende Teil</div>
+              </div>
+              <div
+                class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 flex-1"
+                >
+                @if (selectedItem.bestandteile[currentAssemblyStep]) {
+                  @for (teil of getParts(selectedItem.bestandteile[currentAssemblyStep]); track $index) {
+                    <input
+                      pInputText
+                      type="text"
+                      class="w-full"
+                      placeholder="Verbautes Teil (Charge/Seriennummer/...) einscannen"
+                      (keydown.enter)="findRohteilInstanz($event, selectedItem.bestandteile[currentAssemblyStep], teil.guid)"
+                      (blur)="findRohteilInstanz($event, selectedItem.bestandteile[currentAssemblyStep], teil.guid)"
+                      [(ngModel)]="teil.instanceGlobalAssetId"
+                      />
+                  }
+                }
+                @if (selectedItem.bestandteile[currentAssemblyStep] && isTeilOk(selectedItem.bestandteile[currentAssemblyStep])) {
+                  <div class="flex flex-row gap-1 text-green-600">
+                    <i class="pi pi-check-circle"></i>
+                    Teil korrekt erfasst
+                  </div>
+                }
+                @if (selectedItem.bestandteile[currentAssemblyStep] && !isTeilOk(selectedItem.bestandteile[currentAssemblyStep])) {
+                  <div class="flex flex-row gap-1 text-orange-600">
+                    <i class="pi pi-exclamation-triangle"></i>
+                    Teil noch nicht korrekt erfasst
+                  </div>
+                }
+                <!-- Weiter-Button für aktuellen Schritt -->
+                <button
+                  pButton
+                  label="Nächster Schritt"
+                  class="w-full mt-2"
+                  (click)="nextAssemblyStep()"
+                  [disabled]="!selectedItem.bestandteile[currentAssemblyStep] || !isTeilOk(selectedItem.bestandteile[currentAssemblyStep])"
+                  severity="secondary"
+                ></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Alle Schritte abgeschlossen -->
+      @if (currentAssemblyStep >= selectedItem.bestandteile.length) {
+        <div class="card flex flex-column gap-2 text-center">
+          <div class="text-2xl font-bold text-green-600 mb-3">
+            <i class="pi pi-check-circle mr-2"></i>
+            Alle Teile erfolgreich verbaut!
+          </div>
+          <div class="text-lg text-600 mb-4">
+            Die Montage ist abgeschlossen. Sie können nun das fertige Produkt speichern.
+          </div>
+        </div>
+      }
+    } @else {
       <div class="card flex flex-column gap-2">
         @if (selectedItem) {
           <label>Keine zu verbauenden Teile vorhanden</label>
         }
       </div>
     }
-    @if (selectedItem) {
+
+    @if (selectedItem && selectedItem.bestandteile && currentAssemblyStep >= selectedItem.bestandteile.length) {
       <button
         pButton
         label="Verbau Fertig"
         class="w-full"
         (click)="saveProducedProduct()"
-        [disabled]="!allPartsValid()"
+        severity="success"
       ></button>
     }
   </div>

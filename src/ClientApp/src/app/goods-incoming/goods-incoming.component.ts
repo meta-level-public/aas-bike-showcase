@@ -128,4 +128,19 @@ export class GoodsIncomingComponent {
       this.truckPosition = 'start';
     }, 2000);
   }
+
+  resetDelivery() {
+    // Alle Animationszustände zurücksetzen
+    this.showTruck = false;
+    this.showBox = false;
+    this.truckPosition = 'start';
+    this.isBoxClickable = false;
+
+    // Form-Daten zurücksetzen
+    this.newKatalogEintrag = {} as KatalogEintrag;
+    this.parentRohteil = undefined;
+    this.loaded = false;
+    this.importImageUrl = '';
+
+  }
 }

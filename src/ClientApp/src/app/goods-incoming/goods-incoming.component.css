@@ -557,3 +557,18 @@
 .delivery-section {
   margin-bottom: 20px;
 }
+
+.delivery-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.delivery-button {
+  margin-right: 0 !important;
+}
+
+.reset-button {
+  margin-left: 0 !important;
+}

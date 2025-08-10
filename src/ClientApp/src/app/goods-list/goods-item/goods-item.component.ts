@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 import { InventoryStatus } from 'src/app/model/inventory-status';
 import { KatalogEintrag } from '../../model/katalog-eintrag';
 import { GoodsListService } from '../goods-list.service';
@@ -12,7 +13,7 @@ import { GoodsListService } from '../goods-list.service';
   selector: 'app-goods-item',
   templateUrl: './goods-item.component.html',
   styleUrl: './goods-item.component.css',
-  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, TagModule]
+  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, TagModule, TooltipModule]
 })
 export class GoodsItemComponent {
   @Input() item: KatalogEintrag | undefined;
@@ -48,5 +49,36 @@ export class GoodsItemComponent {
       default:
         return undefined;
     }
+  }
+
+  async copyGlobalAssetId() {
+    if (this.item?.globalAssetId) {
+      try {
+        await navigator.clipboard.writeText(this.item.globalAssetId);
+        console.log('GlobalAssetId copied to clipboard:', this.item.globalAssetId);
+      } catch (err) {
+        console.error('Failed to copy GlobalAssetId to clipboard:', err);
+        // Fallback für ältere Browser
+        this.fallbackCopyTextToClipboard(this.item.globalAssetId);
+      }
+    }
+  }
+
+  private fallbackCopyTextToClipboard(text: string) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      console.log('GlobalAssetId copied to clipboard (fallback):', text);
+    } catch (err) {
+      console.error('Fallback: Failed to copy GlobalAssetId to clipboard:', err);
+    }
+    document.body.removeChild(textArea);
   }
 }

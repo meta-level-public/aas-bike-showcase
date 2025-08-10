@@ -2,48 +2,64 @@ Wareneingangsbuchung
 
 <!-- LKW Lieferung Animation -->
 <div class="delivery-section">
-  <p-button
-    label="Lieferung starten"
-    icon="pi pi-truck"
-    class="delivery-button"
-    (onClick)="startDelivery()"
-    [disabled]="showTruck">
-  </p-button>
+  <div class="delivery-controls">
+    @if (!showTruck) {
+    <p-button
+      label="Lieferung starten"
+      icon="pi pi-truck"
+      class="delivery-button"
+      (onClick)="startDelivery()"
+      [disabled]="showTruck"
+    >
+    </p-button>
+    }
+
+    @if (showTruck) {
+    <p-button
+      label="Lieferung zurücksetzen"
+      icon="pi pi-refresh"
+      class="reset-button"
+      severity="secondary"
+      (onClick)="resetDelivery()"
+    ></p-button>
+    }
+  </div>
 
   @if (showTruck) {
-    <div class="delivery-animation">
-      <!-- Hintergrund Wolken -->
-      <div class="cloud cloud1"></div>
-      <div class="cloud cloud2"></div>
-      <!-- Fabrikgebäude -->
-      <div class="factory-building factory-building-1"></div>
-      <div class="factory-building factory-building-2"></div>
-      <div class="factory-chimney"></div>
-      <!-- LKW -->
-      <div class="truck" [ngClass]="truckPosition">
-        <div class="truck-cab"></div>
-        <div class="truck-body">
-          <!-- Kiste auf der Ladefläche -->
-          @if (showBox) {
-            <div
-              class="delivery-box"
-              [ngClass]="{'clickable': isBoxClickable}"
-              (click)="onBoxClick()"
-              >
-              <div class="box-text"></div>
-            </div>
-          }
+  <div class="delivery-animation">
+    <!-- Hintergrund Wolken -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    <!-- Fabrikgebäude -->
+    <div class="factory-building factory-building-1"></div>
+    <div class="factory-building factory-building-2"></div>
+    <div class="factory-chimney"></div>
+    <!-- LKW -->
+    <div class="truck" [ngClass]="truckPosition">
+      <div class="truck-cab"></div>
+      <div class="truck-body">
+        <!-- Kiste auf der Ladefläche -->
+        @if (showBox) {
+        <div
+          class="delivery-box"
+          [ngClass]="{ clickable: isBoxClickable }"
+          (click)="onBoxClick()"
+        >
+          <div class="box-text"></div>
         </div>
-        <div class="truck-wheel wheel-front"></div>
-        <div class="truck-wheel wheel-back"></div>
+        }
       </div>
+      <div class="truck-wheel wheel-front"></div>
+      <div class="truck-wheel wheel-back"></div>
     </div>
-  }
-
-  @if (showTruck && isBoxClickable) {
-    <div class="delivery-status">
-      <p><i class="pi pi-info-circle"></i> Klicken Sie auf die Kiste, um die GlobalAssetId zu übernehmen</p>
-    </div>
+  </div>
+  } @if (showTruck && isBoxClickable) {
+  <div class="delivery-status">
+    <p>
+      <i class="pi pi-info-circle"></i> Klicken Sie auf die Kiste, um die
+      GlobalAssetId zu übernehmen
+    </p>
+  </div>
   }
 </div>
 
@@ -53,41 +69,58 @@ Wareneingangsbuchung
       <div class="gap-2 flex-column">
         <label for="name" class="block text-900 font-medium mb-2"
           >GlobalAssetId des gelieferten Teils scannen</label
-          >
-          <input
-            id="name"
-            type="text"
-            placeholder="Name"
-            pInputText
-            class="w-full mb-3"
-            [(ngModel)]="newKatalogEintrag.globalAssetId"
-            />
-        </div>
-        <div class="gap-2 flex-column">
-          <button pButton label="Lookup" (click)="lookup()" [loading]="loading" ></button>
-          <label for="price" class="block text-900 font-medium mb-2"
-            >Anzahl</label
-            >
-            <input
-              id="price"
-              type="text"
-              placeholder="Anzahl"
-              pInputText
-              class="w-full mb-3"
-              [(ngModel)]="newKatalogEintrag.amount"
-              />
-          </div>
-          <button pButton label="Buchen" (click)="createRohteilInstanz()" [loading]="loading" [disabled]="!parentRohteil || !newKatalogEintrag.amount"></button>
-        </div>
-        @if (loaded) {
-          <div class="gap-2 flex-column md:w-8">
-            Teil im lokalen Katalog:
-            <app-catalog-item [item]="parentRohteil" [showDelete]="false"></app-catalog-item>
-            Instanz beim Hersteller:
-            @if (loaded) {
-              <app-catalog-item [item]="newKatalogEintrag" [imgUrl]="importImageUrl" [showDelete]="false"></app-catalog-item>
-            }
-          </div>
-        }
+        >
+        <input
+          id="name"
+          type="text"
+          placeholder="Name"
+          pInputText
+          class="w-full mb-3"
+          [(ngModel)]="newKatalogEintrag.globalAssetId"
+        />
       </div>
+      <div class="gap-2 flex-column">
+        <button
+          pButton
+          label="Lookup"
+          (click)="lookup()"
+          [loading]="loading"
+        ></button>
+        <label for="price" class="block text-900 font-medium mb-2"
+          >Anzahl</label
+        >
+        <input
+          id="price"
+          type="text"
+          placeholder="Anzahl"
+          pInputText
+          class="w-full mb-3"
+          [(ngModel)]="newKatalogEintrag.amount"
+        />
+      </div>
+      <button
+        pButton
+        label="Buchen"
+        (click)="createRohteilInstanz()"
+        [loading]="loading"
+        [disabled]="!parentRohteil || !newKatalogEintrag.amount"
+      ></button>
     </div>
+    @if (loaded) {
+    <div class="gap-2 flex-column md:w-8">
+      Teil im lokalen Katalog:
+      <app-catalog-item
+        [item]="parentRohteil"
+        [showDelete]="false"
+      ></app-catalog-item>
+      Instanz beim Hersteller: @if (loaded) {
+      <app-catalog-item
+        [item]="newKatalogEintrag"
+        [imgUrl]="importImageUrl"
+        [showDelete]="false"
+      ></app-catalog-item>
+      }
+    </div>
+    }
+  </div>
+</div>
