@@ -204,4 +204,244 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     const anzahl = this.orderForm.get('anzahl')?.value || 1;
     return (this.product?.price || 0) * anzahl;
   }
+
+  onMapLocationClicked(location: MapLocation) {
+    console.log('Map location clicked:', location); // Debug-Log
+
+    // Die Position für die Karte setzen
+    this.mapLocation = location;
+
+    // Formular mit Koordinaten aktualisieren
+    this.orderForm.patchValue({
+      lat: location.lat,
+      long: location.lng
+    });
+
+    // Direktes Reverse Geocoding für bessere Adressdaten
+    this.performReverseGeocoding(location.lat, location.lng);
+  }
+
+  onMapClickModeChange(enabled: boolean) {
+    console.log('Map click mode changed to:', enabled);
+    this.mapClickMode = enabled;
+  }
+
+  toggleMapClickMode() {
+    this.mapClickMode = !this.mapClickMode;
+    console.log('Map click mode toggled to:', this.mapClickMode);
+  }
+
+  private async performReverseGeocoding(lat: number, lng: number) {
+    this.isGeocodingLoading = true;
+
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+      const data = await response.json();
+
+      if (data && data.address) {
+        const address = data.address;
+        console.log('Reverse geocoding result:', address); // Debug-Log
+
+        // Formular mit strukturierten Adressdaten füllen
+        this.orderForm.patchValue({
+          strasse: this.buildStreetAddress(address),
+          plz: address.postcode || '',
+          ort: address.city || address.town || address.village || address.municipality || '',
+          land: address.country || 'Deutschland',
+          lat: lat,
+          long: lng
+        });
+
+        // Aktualisiere auch die currentAddress für die Karte
+        this.currentAddress = data.display_name || '';
+
+        // Erfolgs-Nachricht
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Adresse gefunden',
+          detail: 'Die Adressdaten wurden automatisch ausgefüllt.'
+        });
+      }
+    } catch (error) {
+      console.error('Reverse geocoding error:', error);
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Adresse',
+        detail: 'Adresse konnte nicht automatisch ermittelt werden.'
+      });
+    } finally {
+      this.isGeocodingLoading = false;
+    }
+  }  private buildStreetAddress(address: any): string {
+    // Verschiedene mögliche Straßen-Felder kombinieren
+    const streetName = address.road || address.street || address.pedestrian || '';
+    const houseNumber = address.house_number || '';
+
+    if (streetName && houseNumber) {
+      return `${streetName} ${houseNumber}`;
+    } else if (streetName) {
+      return streetName;
+    }
+
+    return '';
+  }
+
+  // Geocoding basierend auf Adressfeldern
+  private scheduleGeocoding() {
+    // Clear existing timeout
+    if (this.geocodingTimeout) {
+      clearTimeout(this.geocodingTimeout);
+    }
+
+    // Schedule new geocoding after 1 second delay (debouncing)
+    this.geocodingTimeout = window.setTimeout(() => {
+      this.performForwardGeocoding();
+    }, 1000);
+  }
+
+  private async performForwardGeocoding() {
+    const formValue = this.orderForm.value;
+    const addr: Address = {
+      name: formValue.name || '',
+      vorname: formValue.vorname || '',
+      strasse: formValue.strasse || '',
+      plz: formValue.plz || '',
+      ort: formValue.ort || '',
+      land: formValue.land || '',
+      lat: formValue.lat,
+      long: formValue.long
+    };
+
+    const addressString = formatAddressString(addr);
+
+    // Only geocode if we have enough address information and no manual coordinates
+    if (!addressString.trim() || addressString.length < 5) {
+      return;
+    }
+
+    // Skip if user has manually set coordinates
+    if (hasValidCoordinates(addr)) {
+      return;
+    }
+
+    this.isGeocodingLoading = true;
+
+    try {
+      const encodedAddress = encodeURIComponent(addressString);
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`);
+
+      if (!response.ok) {
+        throw new Error('Geocoding request failed');
+      }
+
+      const results = await response.json();
+
+      if (results && results.length > 0) {
+        const result = results[0];
+        const lat = parseFloat(result.lat);
+        const lng = parseFloat(result.lon);
+
+        // Update form with coordinates
+        this.orderForm.patchValue({
+          lat: lat,
+          long: lng
+        });
+
+        // Update map location
+        this.mapLocation = {
+          lat: lat,
+          lng: lng,
+          address: addressString,
+          title: 'Lieferadresse'
+        };
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Koordinaten gefunden',
+          detail: `Koordinaten automatisch für "${addressString}" ermittelt`
+        });
+      }
+    } catch (error) {
+      console.error('Geocoding error:', error);
+    } finally {
+      this.isGeocodingLoading = false;
+    }
+  }
+
+  // Method to manually clear coordinates
+  clearCoordinates() {
+    this.orderForm.patchValue({
+      lat: undefined,
+      long: undefined
+    });
+    this.mapLocation = undefined;
+  }
+
+  // Method to manually trigger geocoding
+  async geocodeAddress() {
+    await this.performForwardGeocoding();
+  }
+
+  // Helper methods for template
+  getMapLocation(): MapLocation | undefined {
+    const formValue = this.orderForm.value;
+    if (formValue.lat !== undefined && formValue.long !== undefined &&
+        !isNaN(formValue.lat) && !isNaN(formValue.long)) {
+      return {
+        lat: formValue.lat,
+        lng: formValue.long,
+        address: this.getFormattedAddress(),
+        title: 'Lieferadresse'
+      };
+    }
+    return undefined;
+  }
+
+  getFormattedAddress(): string {
+    const formValue = this.orderForm.value;
+    const addr: Address = {
+      name: formValue.name || '',
+      vorname: formValue.vorname || '',
+      strasse: formValue.strasse || '',
+      plz: formValue.plz || '',
+      ort: formValue.ort || '',
+      land: formValue.land || '',
+      lat: formValue.lat,
+      long: formValue.long
+    };
+    return formatAddressString(addr);
+  }
+
+  hasCoordinates(): boolean {
+    const formValue = this.orderForm.value;
+    return formValue.lat !== undefined && formValue.long !== undefined &&
+           !isNaN(formValue.lat) && !isNaN(formValue.long);
+  }
+
+  hasAddressData(): boolean {
+    const formValue = this.orderForm.value;
+    return !!(formValue.strasse || formValue.plz || formValue.ort || formValue.land);
+  }
+
+  // Method to handle address field changes and trigger geocoding
+  onAddressFieldChange() {
+    this.scheduleGeocoding();
+  }
+
+  async searchAddress() {
+    const formValue = this.orderForm.value;
+    const addressString = `${formValue.strasse}, ${formValue.plz} ${formValue.ort}, ${formValue.land}`.trim();
+
+    if (!addressString || addressString === ', , Deutschland') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warnung',
+        detail: 'Bitte geben Sie eine Adresse ein, um sie zu suchen.'
+      });
+      return;
+    }
+
+    // Die Adresse an die Karte weiterleiten
+    this.currentAddress = addressString;
+  }
 }
