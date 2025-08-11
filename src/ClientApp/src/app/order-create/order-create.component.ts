@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -8,10 +8,14 @@ import { CardModule } from 'primeng/card';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
+import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ConfigurationListService } from '../configuration-list/configuration-list.service';
+import { Address } from '../model/address';
 import { ConfiguredProduct } from '../model/configured-product';
 import { CreateProductionOrder, ProductionOrderResponse } from '../model/production-order';
 import { ProductionOrderListService } from '../production-order-list/production-order-list.service';
+import { LeafletMapComponent, MapLocation } from '../shared/components/leaflet-map/leaflet-map.component';
+import { formatAddressString, hasValidCoordinates } from '../shared/utils/address.utils';
 
 @Component({
   selector: 'app-order-create',
@@ -20,19 +24,31 @@ import { ProductionOrderListService } from '../production-order-list/production-
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     CardModule,
     ButtonModule,
     InputTextModule,
     InputNumberModule,
-    ToastModule
+    ToastModule,
+    ToggleButtonModule,
+    LeafletMapComponent
   ],
   providers: [MessageService]
 })
-export class OrderCreateComponent implements OnInit {
+export class OrderCreateComponent implements OnInit, OnDestroy {
   product: ConfiguredProduct | null = null;
   orderForm: FormGroup;
   loading: boolean = false;
   productId: number | null = null;
+
+  // Map properties
+  mapLocation: MapLocation | undefined;
+  currentAddress: string = '';
+
+  // Geocoding properties
+  isGeocodingLoading: boolean = false;
+  mapClickMode: boolean = false;
+  private geocodingTimeout: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -50,8 +66,18 @@ export class OrderCreateComponent implements OnInit {
       strasse: [''],
       plz: [''],
       ort: [''],
-      land: ['Deutschland']
+      land: ['Deutschland'],
+      lat: [undefined],
+      long: [undefined]
     });
+  }
+
+  ngOnDestroy() {
+    // Clean up any pending geocoding timeout
+    if (this.geocodingTimeout) {
+      clearTimeout(this.geocodingTimeout);
+      this.geocodingTimeout = null;
+    }
   }
 
   async ngOnInit() {

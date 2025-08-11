@@ -27,6 +27,19 @@
   padding: 2rem;
 }
 
+/* Flexbox für Adresssuche */
+.flex {
+  display: flex;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
