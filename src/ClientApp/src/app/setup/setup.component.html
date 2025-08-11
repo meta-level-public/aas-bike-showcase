@@ -1,6 +1,6 @@
 <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
   <div class="card mt-2">
-    <p-accordion [value]="['0', '1', '2']" [multiple]="true">
+    <p-accordion [value]="['0', '1', '2', '3']" [multiple]="true">
       <!-- ERP System Bereich -->
       <app-erp-configuration
         [selectedErp]="selectedErp()"
@@ -19,6 +19,12 @@
         [suppliers]="suppliers()"
         (suppliersUpdated)="onSuppliersUpdated()">
       </app-supplier-management>
+
+      <!-- Firmenadresse Bereich -->
+      <app-company-address
+        [settings]="settings()"
+        (settingsUpdated)="onCompanyAddressUpdated()">
+      </app-company-address>
     </p-accordion>
   </div>
 </div>

@@ -1,0 +1,143 @@
+<p-accordion-panel value="3">
+  <p-accordion-header>Firmenadresse</p-accordion-header>
+  <p-accordion-content>
+    <div class="grid">
+      <div class="col-12">
+        <h5>Firmenadresse konfigurieren</h5>
+        <p class="text-color-secondary">
+          Konfigurieren Sie hier die Adresse Ihres Unternehmens. Diese wird als Setting "CompanyAddress" gespeichert.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Name und Vorname -->
+      <div class="field col-12 md:col-6">
+        <label for="companyName">Firmenname</label>
+        <input
+          id="companyName"
+          type="text"
+          pInputText
+          class="w-full"
+          [value]="address().name || ''"
+          (input)="updateAddress('name', $any($event.target).value)"
+          placeholder="Firmenname eingeben..."
+        />
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label for="firstName">Ansprechpartner Vorname</label>
+        <input
+          id="firstName"
+          type="text"
+          pInputText
+          class="w-full"
+          [value]="address().vorname || ''"
+          (input)="updateAddress('vorname', $any($event.target).value)"
+          placeholder="Vorname eingeben..."
+        />
+      </div>
+
+      <!-- Straße -->
+      <div class="field col-12">
+        <label for="street">Straße</label>
+        <input
+          id="street"
+          type="text"
+          pInputText
+          class="w-full"
+          [value]="address().strasse || ''"
+          (input)="updateAddress('strasse', $any($event.target).value)"
+          placeholder="Straße und Hausnummer eingeben..."
+        />
+      </div>
+
+      <!-- PLZ und Ort -->
+      <div class="field col-12 md:col-4">
+        <label for="zipCode">PLZ</label>
+        <input
+          id="zipCode"
+          type="text"
+          pInputText
+          class="w-full"
+          [value]="address().plz || ''"
+          (input)="updateAddress('plz', $any($event.target).value)"
+          placeholder="PLZ eingeben..."
+        />
+      </div>
+
+      <div class="field col-12 md:col-8">
+        <label for="city">Ort</label>
+        <input
+          id="city"
+          type="text"
+          pInputText
+          class="w-full"
+          [value]="address().ort || ''"
+          (input)="updateAddress('ort', $any($event.target).value)"
+          placeholder="Ort eingeben..."
+        />
+      </div>
+
+      <!-- Land -->
+      <div class="field col-12">
+        <label for="country">Land</label>
+        <input
+          id="country"
+          type="text"
+          pInputText
+          class="w-full"
+          [value]="address().land || ''"
+          (input)="updateAddress('land', $any($event.target).value)"
+          placeholder="Land eingeben..."
+        />
+      </div>
+
+      <!-- Koordinaten (optional) -->
+      <div class="field col-12 md:col-6">
+        <label for="latitude">Breitengrad (Lat)</label>
+        <input
+          id="latitude"
+          type="number"
+          pInputText
+          class="w-full"
+          [value]="address().lat || ''"
+          (input)="updateAddress('lat', $any($event.target).value ? +$any($event.target).value : undefined)"
+          placeholder="z.B. 52.520008"
+          step="any"
+        />
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label for="longitude">Längengrad (Long)</label>
+        <input
+          id="longitude"
+          type="number"
+          pInputText
+          class="w-full"
+          [value]="address().long || ''"
+          (input)="updateAddress('long', $any($event.target).value ? +$any($event.target).value : undefined)"
+          placeholder="z.B. 13.404954"
+          step="any"
+        />
+      </div>
+
+      <!-- Buttons -->
+      <div class="field col-12 flex gap-2 justify-content-end">
+        <p-button
+          label="Zurücksetzen"
+          severity="secondary"
+          (click)="resetAddress()"
+          [outlined]="true"
+        />
+        <p-button
+          label="Speichern"
+          (click)="saveAddress()"
+          icon="pi pi-check"
+        />
+      </div>
+    </div>
+
+    <p-toast />
+  </p-accordion-content>
+</p-accordion-panel>
