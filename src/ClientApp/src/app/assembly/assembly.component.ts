@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -9,7 +10,9 @@ import { v4 as guid } from 'uuid';
 import { ConfiguredProduct } from '../model/configured-product';
 import { ProducedProductRequest } from '../model/produced-product-request';
 import { ProductPart } from '../model/product-part';
+import { ProductionOrder } from '../model/production-order';
 import { NotificationService } from '../notification.service';
+import { ProductionOrderListService } from '../production-order-list/production-order-list.service';
 import { AssemblyService } from './assembly.service';
 @Component({
   selector: 'app-assembly',
@@ -18,7 +21,10 @@ import { AssemblyService } from './assembly.service';
   imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, SelectModule, DialogModule],
 })
 export class AssemblyComponent implements OnInit {
+  private router = inject(Router);
   // Signals für den State
+  productionOrders = signal<ProductionOrder[]>([]);
+  selectedProductionOrder = signal<ProductionOrder | undefined>(undefined);
   items = signal<ConfiguredProduct[]>([]);
   selectedItem = signal<ConfiguredProduct | undefined>(undefined);
   newProduct = signal<ProducedProductRequest>({} as ProducedProductRequest);
@@ -26,12 +32,21 @@ export class AssemblyComponent implements OnInit {
   currentAssemblyStep = signal<number>(0);
   showSchraubenDialog = signal<boolean>(false);
   teileStatus = signal<{guid: string, typeGlobalAssetId: string, instanceGlobalAssetId:string, instanceAasId: string, statusOk: boolean, bestandteilId: number}[]>([]);
+  isRouteBasedSelection = signal<boolean>(false); // Zeigt an, ob ProductionOrder über Route ausgewählt wurde
 
   // Computed signals
+  bestandteileLength = computed(() => {
+    return this.selectedItem()?.bestandteile?.length || 0;
+  });
+
+  hasBestandteile = computed(() => {
+    return this.bestandteileLength() > 0;
+  });
+
   isLenkerStep = computed(() => {
     const selected = this.selectedItem();
     const currentStep = this.currentAssemblyStep();
-    if (selected?.bestandteile && currentStep < selected.bestandteile.length) {
+    if (selected?.bestandteile && currentStep < this.bestandteileLength()) {
       const stepName = selected.bestandteile[currentStep].name.toLowerCase();
       return stepName.includes('lenker') || stepName.includes('handlebar');
     }
@@ -46,45 +61,113 @@ export class AssemblyComponent implements OnInit {
     return false;
   });
 
-  constructor(private service: AssemblyService, private notificationService: NotificationService) {}
+  assemblyComplete = computed(() => {
+    return this.currentAssemblyStep() >= (this.bestandteileLength() - 1) && this.allPartsValid();
+  });
+
+  constructor(
+    private service: AssemblyService,
+    private productionOrderService: ProductionOrderListService,
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
   }
 
   async loadData() {
+    // Lade verfügbare ProductionOrders
+    const productionOrders = await this.productionOrderService.getAllProductionOrders();
+    // Filtere nur Orders, die noch nicht abgeschlossen sind
+    const pendingOrders = productionOrders.filter(order => !order.produktionAbgeschlossen);
+    this.productionOrders.set(pendingOrders);
+
+    // Lade alle verfügbaren Produkte (für Fallback)
     const data = await this.service.getAllFertigteil();
     this.items.set(data);
+
+    // Erst nach dem Laden der Daten Route-Parameter behandeln
+    this.handleRouteParameter();
   }
 
-  typeSelected() {
-    const selectedItem = this.selectedItem();
-    if (selectedItem) {
-      console.log('Selected type:', selectedItem);
+  handleRouteParameter(): void {
+    const productionOrderId = this.route.snapshot.paramMap.get('id');
+    console.log('Production Order ID from route:', productionOrderId);
+    if (productionOrderId) {
+      // Wenn eine ProductionOrder-ID übergeben wurde, wähle sie aus
+      const orderId = parseInt(productionOrderId, 10);
+      if (!isNaN(orderId)) {
+        this.isRouteBasedSelection.set(true);
+        this.selectProductionOrderById(orderId);
+      }
+    } else {
+      // Keine ID über Route - Dropdown soll angezeigt werden
+      this.isRouteBasedSelection.set(false);
     }
-    this.teileStatus.set([]);
-    this.currentAssemblyStep.set(0); // Reset assembly step when new type is selected
-    if (selectedItem?.bestandteile != null) {
-      this.newProduct.update(product => ({
-        ...product,
-        bestandteilRequests: [],
-        configuredProductId: selectedItem.id ?? 0
-      }));
+  }
 
-      const newTeileStatus: {guid: string, typeGlobalAssetId: string, instanceGlobalAssetId:string, instanceAasId: string, statusOk: boolean, bestandteilId: number}[] = [];
-      selectedItem.bestandteile.forEach((bestandteil) => {
-        for (let i = 0; i < bestandteil.amount; i++) {
-          newTeileStatus.push({
-            guid: guid(),
-            typeGlobalAssetId: bestandteil.katalogEintrag?.globalAssetId ?? '',
-            instanceGlobalAssetId: '',
-            instanceAasId: bestandteil.katalogEintrag?.aasId ?? '',
-            statusOk: false,
-            bestandteilId: bestandteil.id ?? 0
-          });
-        }
-      });
-      this.teileStatus.set(newTeileStatus);
+  async selectProductionOrderById(orderId: number) {
+    const orders = this.productionOrders();
+    const selectedOrder = orders.find(order => order.id === orderId);
+    if (selectedOrder) {
+      this.selectedProductionOrder.set(selectedOrder);
+      this.productionOrderSelected();
+    } else {
+      // ProductionOrder nicht gefunden - fallback auf normale Auswahl
+      console.warn(`ProductionOrder with ID ${orderId} not found`);
+      this.isRouteBasedSelection.set(false);
+      this.notificationService.showMessageAlways(`Produktionsauftrag mit ID ${orderId} nicht gefunden.`);
+    }
+  }
+
+  productionOrderSelected() {
+    const selectedOrder = this.selectedProductionOrder();
+    if (selectedOrder) {
+      // Finde das entsprechende ConfiguredProduct basierend auf der ProductionOrder
+      const items = this.items();
+      const correspondingProduct = items.find(item => item.id === selectedOrder.configuredProductId);
+      if (correspondingProduct) {
+        this.selectedItem.set(correspondingProduct);
+        this.initializeAssembly();
+      } else {
+        console.warn(`ConfiguredProduct with ID ${selectedOrder.configuredProductId} not found`);
+        this.notificationService.showMessageAlways(`Produktkonfiguration für Auftrag nicht gefunden.`);
+      }
+    }
+  }
+
+  initializeAssembly() {
+    const selectedItem = this.selectedItem();
+    const selectedOrder = this.selectedProductionOrder();
+    if (selectedItem && selectedOrder) {
+      console.log('Starting assembly for:', selectedItem);
+      this.teileStatus.set([]);
+      this.currentAssemblyStep.set(0);
+
+      if (selectedItem?.bestandteile != null) {
+        this.newProduct.update(product => ({
+          ...product,
+          bestandteilRequests: [],
+          configuredProductId: selectedItem.id ?? 0,
+          productionOrderId: selectedOrder.id
+        }));
+
+        const newTeileStatus: {guid: string, typeGlobalAssetId: string, instanceGlobalAssetId:string, instanceAasId: string, statusOk: boolean, bestandteilId: number}[] = [];
+        selectedItem.bestandteile.forEach((bestandteil) => {
+          for (let i = 0; i < bestandteil.amount; i++) {
+            newTeileStatus.push({
+              guid: guid(),
+              typeGlobalAssetId: bestandteil.katalogEintrag?.globalAssetId ?? '',
+              instanceGlobalAssetId: '',
+              instanceAasId: bestandteil.katalogEintrag?.aasId ?? '',
+              statusOk: false,
+              bestandteilId: bestandteil.id ?? 0
+            });
+          }
+        });
+        this.teileStatus.set(newTeileStatus);
+      }
     }
   }
 
@@ -132,9 +215,8 @@ export class AssemblyComponent implements OnInit {
   }
 
   nextAssemblyStep() {
-    const selectedItem = this.selectedItem();
     const currentStep = this.currentAssemblyStep();
-    if (selectedItem && currentStep < selectedItem.bestandteile.length - 1) {
+    if (currentStep < this.bestandteileLength() - 1) {
       this.currentAssemblyStep.set(currentStep + 1);
     }
   }
@@ -153,6 +235,7 @@ export class AssemblyComponent implements OnInit {
 
   async saveProducedProduct() {
     const currentProduct = this.newProduct();
+    const selectedOrder = this.selectedProductionOrder();
     if (currentProduct == null) return;
 
     const currentTeileStatus = this.teileStatus();
@@ -176,10 +259,29 @@ export class AssemblyComponent implements OnInit {
     try {
       this.loading.set(true);
       await this.service.createProduct(productToSave);
-      this.notificationService.showMessageAlways(
-        'Produkt erfolgreich erstellt'
-      );
+
+      // Markiere ProductionOrder als abgeschlossen, wenn eine ausgewählt ist
+      if (selectedOrder?.id) {
+        await this.productionOrderService.markProductionCompleted(selectedOrder.id);
+        this.notificationService.showMessageAlways(
+          'Produkt erfolgreich erstellt und Produktionsauftrag als abgeschlossen markiert'
+        );
+      } else {
+        this.notificationService.showMessageAlways(
+          'Produkt erfolgreich erstellt'
+        );
+      }
+
+      this.router.navigate(['/production/assembly']);
+
       this.newProduct.set({} as ProducedProductRequest);
+      this.selectedProductionOrder.set(undefined);
+      this.selectedItem.set(undefined);
+      this.teileStatus.set([]);
+      this.currentAssemblyStep.set(0);
+
+      // Lade die ProductionOrders neu, um aktualisierte Liste zu erhalten
+      // await this.loadData();
     } finally {
       this.loading.set(false);
     }

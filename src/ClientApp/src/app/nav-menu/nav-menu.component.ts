@@ -120,7 +120,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         items: [
           {
             label: 'Aufträge Auflisten',
-            icon: 'pi pi-fw pi-list',
+            icon: 'pi pi-fw pi-receipt', // TODO: Auftragsicon finden
             routerLink: '/production-orders/list',
           },
         ],

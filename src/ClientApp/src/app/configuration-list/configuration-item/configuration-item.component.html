@@ -30,7 +30,11 @@
                 tooltipPosition="top">
               </button>
             }
-            <button pButton icon="pi pi-shopping-cart" class="md:align-self-end mb-2 p-button-rounded" [loading]="loading"></button>
+            <button pButton icon="pi pi-shopping-cart" class="md:align-self-end mb-2 p-button-rounded"
+                    (click)="openOrderDialog()"
+                    [loading]="loading"
+                    pTooltip="Bestellung erstellen"
+                    tooltipPosition="top"></button>
             <button pButton icon="pi pi-trash" class="md:align-self-end mb-2 p-button-rounded p-button-danger" (click)="deleteItem()" [loading]="loading"></button>
           </div>
         </div>
@@ -92,4 +96,11 @@
       }
     </div>
   </p-popover>
+
+  <!-- Order Dialog -->
+  <app-order-dialog
+    [(visible)]="showOrderDialog"
+    [product]="item"
+    (orderCreated)="onOrderCreated()">
+  </app-order-dialog>
 }

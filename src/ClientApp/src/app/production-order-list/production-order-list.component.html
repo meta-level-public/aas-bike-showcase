@@ -1,0 +1,148 @@
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+  <p-toast></p-toast>
+
+  <!-- Header mit Filter -->
+  <div class="flex flex-column gap-2 w-full mb-4">
+    <label for="statusFilter">Filter nach Status</label>
+    <p-select
+      id="statusFilter"
+      [(ngModel)]="selectedFilterModel"
+      [options]="filterOptions"
+      optionLabel="label"
+      styleClass="w-full"
+      (onChange)="onFilterChange()"
+    ></p-select>
+  </div>
+
+  <!-- Statistiken -->
+  <div class="statistics-grid">
+    <div class="statistics-card bg-yellow-50 border-yellow-200">
+      <div class="text-yellow-800">
+        <div class="statistics-number">{{ pendingProductionCount() }}</div>
+        <div class="statistics-label">Zur Produktion anstehend</div>
+      </div>
+    </div>
+    <div class="statistics-card bg-blue-50 border-blue-200">
+      <div class="text-blue-800">
+        <div class="statistics-number">{{ readyForShippingCount() }}</div>
+        <div class="statistics-label">Zum Versand anstehend</div>
+      </div>
+    </div>
+    <div class="statistics-card bg-green-50 border-green-200">
+      <div class="text-green-800">
+        <div class="statistics-number">{{ completedCount() }}</div>
+        <div class="statistics-label">Abgeschlossen</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste der Aufträge -->
+  <p-dataView [value]="filteredOrders()" [loading]="loading()" class="w-full">
+    <ng-template #list let-orders>
+      @if (orders.length === 0) {
+        <div class="text-center p-6">
+          <i class="pi pi-inbox text-4xl text-gray-400 mb-3 block"></i>
+          <p class="text-gray-600">Keine Produktionsaufträge gefunden.</p>
+        </div>
+      }
+
+      @for (order of orders; track order.id; let first = $first) {
+        <div class="grid grid-nogutter w-full">
+          <div class="col-12">
+            <div
+              class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
+              [ngClass]="{ 'border-top-1 surface-border': !first }"
+            >
+              <!-- Order Icon/Visual -->
+              <div class="flex align-items-center justify-content-center">
+                <div class="bg-primary-100 text-primary-700 border-circle w-4rem h-4rem flex align-items-center justify-content-center">
+                  <i class="pi pi-cog text-2xl"></i>
+                </div>
+              </div>
+
+              <!-- Order Details -->
+              <div class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+                <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+                  <div class="text-2xl font-bold text-900">Auftrag #{{ order.id }}</div>
+
+                  <div class="flex align-items-center gap-3 flex-wrap">
+                    <span class="flex align-items-center gap-2">
+                      <i class="pi pi-box"></i>
+                      <span class="font-semibold">{{ order.configuredProductName }}</span>
+                    </span>
+                    <span class="flex align-items-center gap-2">
+                      <i class="pi pi-hashtag"></i>
+                      <span>{{ order.anzahl }} Stück</span>
+                    </span>
+                    <p-tag
+                      [severity]="getStatusSeverity(order)"
+                      [value]="getStatusLabel(order)"
+                    ></p-tag>
+                  </div>
+
+                  <div class="flex flex-column gap-2">
+                    <div class="flex align-items-center gap-2">
+                      <i class="pi pi-map-marker text-sm"></i>
+                      <span class="text-sm text-600">{{ getFullAddress(order) }}</span>
+                    </div>
+                    <div class="flex align-items-center gap-2">
+                      <i class="pi pi-calendar text-sm"></i>
+                      <span class="text-sm text-600">Erstellt: {{ formatDate(order.createdAt) }}</span>
+                    </div>
+                    @if (order.fertigstellungsDatum) {
+                      <div class="flex align-items-center gap-2">
+                        <i class="pi pi-check-circle text-sm"></i>
+                        <span class="text-sm text-600">Fertiggestellt: {{ formatDate(order.fertigstellungsDatum) }}</span>
+                      </div>
+                    }
+                    @if (order.versandDatum) {
+                      <div class="flex align-items-center gap-2">
+                        <i class="pi pi-send text-sm"></i>
+                        <span class="text-sm text-600">Versandt: {{ formatDate(order.versandDatum) }}</span>
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
+                  @if (!order.produktionAbgeschlossen) {
+                    <p-button
+                      label="Produktion starten"
+                      icon="pi pi-play"
+                      severity="info"
+                      size="small"
+                      (onClick)="startProduction(order)"
+                      [loading]="loading()"
+                    ></p-button>
+                  }
+
+                  @if (order.produktionAbgeschlossen && !order.versandt) {
+                    <p-button
+                      label="Als versandt markieren"
+                      icon="pi pi-send"
+                      severity="success"
+                      size="small"
+                      (onClick)="markAsShipped(order)"
+                      [loading]="loading()"
+                    ></p-button>
+                  }
+
+                  @if (order.versandt) {
+                    <p-button
+                      label="Abgeschlossen"
+                      icon="pi pi-check-circle"
+                      severity="success"
+                      size="small"
+                      [disabled]="true"
+                    ></p-button>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </ng-template>
+  </p-dataView>
+</div>
