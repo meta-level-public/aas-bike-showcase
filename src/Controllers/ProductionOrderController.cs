@@ -30,7 +30,7 @@ namespace AasDemoapp.Controllers
         {
             try
             {
-                var productionOrders = await Task.FromResult(_productionOrderService.GetAll());
+                var productionOrders = await _productionOrderService.GetAllAsync();
                 return _mapper.Map<List<ProductionOrderDto>>(productionOrders);
             }
             catch (Exception ex)
@@ -45,7 +45,7 @@ namespace AasDemoapp.Controllers
         {
             try
             {
-                var productionOrder = await Task.FromResult(_productionOrderService.GetById(id));
+                var productionOrder = await _productionOrderService.GetByIdAsync(id);
                 if (productionOrder == null)
                 {
                     return NotFound();
@@ -73,7 +73,7 @@ namespace AasDemoapp.Controllers
                     productionOrder.Address = _mapper.Map<Address>(createDto.Address);
                 }
 
-                var createdOrder = await Task.FromResult(_productionOrderService.Create(productionOrder));
+                var createdOrder = await _productionOrderService.CreateAsync(productionOrder);
                 
                 return Ok(new ProductionOrderResponseDto
                 {
@@ -99,7 +99,7 @@ namespace AasDemoapp.Controllers
         {
             try
             {
-                var productionOrder = await Task.FromResult(_productionOrderService.MarkProductionCompleted(id));
+                var productionOrder = await _productionOrderService.MarkProductionCompletedAsync(id);
                 if (productionOrder == null)
                 {
                     return NotFound(new ProductionOrderResponseDto
@@ -134,7 +134,7 @@ namespace AasDemoapp.Controllers
         {
             try
             {
-                var productionOrder = await Task.FromResult(_productionOrderService.MarkAsShipped(id));
+                var productionOrder = await _productionOrderService.MarkAsShippedAsync(id);
                 if (productionOrder == null)
                 {
                     return NotFound(new ProductionOrderResponseDto

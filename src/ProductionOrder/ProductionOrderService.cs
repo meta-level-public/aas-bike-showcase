@@ -19,35 +19,35 @@ namespace AasDemoapp.Services.ProductionOrder
             _logger = logger;
         }
 
-        public List<Database.Model.ProductionOrder> GetAll()
+        public async Task<List<Database.Model.ProductionOrder>> GetAllAsync()
         {
-            return _context.ProductionOrders
+            return await _context.ProductionOrders
                 .Include(po => po.ConfiguredProduct)
                 .Include(po => po.Address)
                 .OrderByDescending(po => po.CreatedAt)
-                .ToList();
+                .ToListAsync();
         }
 
-        public Database.Model.ProductionOrder? GetById(long id)
+        public async Task<Database.Model.ProductionOrder?> GetByIdAsync(long id)
         {
-            return _context.ProductionOrders
+            return await _context.ProductionOrders
                 .Include(po => po.ConfiguredProduct)
                 .Include(po => po.Address)
-                .FirstOrDefault(po => po.Id == id);
+                .FirstOrDefaultAsync(po => po.Id == id);
         }
 
-        public Database.Model.ProductionOrder Create(Database.Model.ProductionOrder productionOrder)
+        public async Task<Database.Model.ProductionOrder> CreateAsync(Database.Model.ProductionOrder productionOrder)
         {
             productionOrder.CreatedAt = DateTime.Now;
             _context.ProductionOrders.Add(productionOrder);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             
-            return GetById(productionOrder.Id!.Value)!;
+            return (await GetByIdAsync(productionOrder.Id!.Value))!;
         }
 
-        public Database.Model.ProductionOrder? MarkProductionCompleted(long id)
+        public async Task<Database.Model.ProductionOrder?> MarkProductionCompletedAsync(long id)
         {
-            var productionOrder = GetById(id);
+            var productionOrder = await GetByIdAsync(id);
             if (productionOrder == null)
             {
                 return null;
@@ -57,13 +57,13 @@ namespace AasDemoapp.Services.ProductionOrder
             productionOrder.FertigstellungsDatum = DateTime.Now;
             productionOrder.UpdatedAt = DateTime.Now;
             
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return productionOrder;
         }
 
-        public Database.Model.ProductionOrder? MarkAsShipped(long id)
+        public async Task<Database.Model.ProductionOrder?> MarkAsShippedAsync(long id)
         {
-            var productionOrder = GetById(id);
+            var productionOrder = await GetByIdAsync(id);
             if (productionOrder == null)
             {
                 return null;
@@ -78,7 +78,7 @@ namespace AasDemoapp.Services.ProductionOrder
             productionOrder.VersandDatum = DateTime.Now;
             productionOrder.UpdatedAt = DateTime.Now;
             
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return productionOrder;
         }
     }

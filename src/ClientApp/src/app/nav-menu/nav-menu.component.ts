@@ -115,6 +115,17 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         ],
       },
       {
+        label: 'Produktionsaufträge',
+        icon: 'pi pi-fw pi-box',
+        items: [
+          {
+            label: 'Aufträge Auflisten',
+            icon: 'pi pi-fw pi-list',
+            routerLink: '/production-orders/list',
+          },
+        ],
+      },
+      {
         label: 'Produktion',
         icon: 'pi pi-fw pi-step-forward',
         items: [
