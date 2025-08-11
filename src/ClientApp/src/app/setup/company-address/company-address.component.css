@@ -32,3 +32,16 @@ h5 {
 .gap-2 {
   gap: 0.5rem;
 }
+
+.map-container {
+  margin-top: 1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+h6 {
+  margin-bottom: 0.5rem;
+  color: var(--text-color-secondary);
+  font-weight: 600;
+}

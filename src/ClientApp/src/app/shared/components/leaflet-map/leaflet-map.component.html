@@ -1,0 +1,12 @@
+<div class="leaflet-map-container">
+  <div #mapContainer class="leaflet-map"></div>
+
+  @if (isLoading()) {
+    <div class="loading-overlay">
+      <div class="loading-spinner">
+        <i class="pi pi-spin pi-spinner"></i>
+        Karte wird geladen...
+      </div>
+    </div>
+  }
+</div>

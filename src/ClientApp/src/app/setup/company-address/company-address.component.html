@@ -94,32 +94,72 @@
       </div>
 
       <!-- Koordinaten (optional) -->
-      <div class="field col-12 md:col-6">
-        <label for="latitude">Breitengrad (Lat)</label>
-        <input
-          id="latitude"
-          type="number"
-          pInputText
-          class="w-full"
-          [value]="address().lat || ''"
-          (input)="updateAddress('lat', $any($event.target).value ? +$any($event.target).value : undefined)"
-          placeholder="z.B. 52.520008"
-          step="any"
-        />
-      </div>
+      <div class="field col-12">
+        <div class="grid">
+          <div class="col-12 md:col-6">
+            <label for="latitude">
+              Breitengrad (Lat)
+              @if (isGeocodingLoading()) {
+                <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem;"></i>
+              }
+            </label>
+            <input
+              id="latitude"
+              type="number"
+              pInputText
+              class="w-full"
+              [value]="address().lat || ''"
+              (input)="updateAddress('lat', $any($event.target).value ? +$any($event.target).value : undefined)"
+              placeholder="z.B. 52.520008"
+              step="any"
+            />
+          </div>
 
-      <div class="field col-12 md:col-6">
-        <label for="longitude">Längengrad (Long)</label>
-        <input
-          id="longitude"
-          type="number"
-          pInputText
-          class="w-full"
-          [value]="address().long || ''"
-          (input)="updateAddress('long', $any($event.target).value ? +$any($event.target).value : undefined)"
-          placeholder="z.B. 13.404954"
-          step="any"
-        />
+          <div class="col-12 md:col-6">
+            <label for="longitude">Längengrad (Long)</label>
+            <input
+              id="longitude"
+              type="number"
+              pInputText
+              class="w-full"
+              [value]="address().long || ''"
+              (input)="updateAddress('long', $any($event.target).value ? +$any($event.target).value : undefined)"
+              placeholder="z.B. 13.404954"
+              step="any"
+            />
+          </div>
+
+          <!-- Geocoding Controls -->
+          <div class="col-12">
+            <div class="flex gap-2 align-items-center mt-2">
+              <p-button
+                label="Koordinaten ermitteln"
+                icon="pi pi-map-marker"
+                size="small"
+                severity="secondary"
+                [outlined]="true"
+                (click)="geocodeAddress()"
+                [loading]="isGeocodingLoading()"
+                [disabled]="!hasAddressData()"
+              />
+              @if (hasCoordinates()) {
+                <p-button
+                  label="Koordinaten löschen"
+                  icon="pi pi-times"
+                  size="small"
+                  severity="danger"
+                  [outlined]="true"
+                  (click)="clearCoordinates()"
+                />
+              }
+              @if (isGeocodingLoading()) {
+                <small class="text-color-secondary">
+                  Koordinaten werden automatisch ermittelt...
+                </small>
+              }
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Buttons -->
@@ -136,6 +176,42 @@
           icon="pi pi-check"
         />
       </div>
+
+      <!-- Map Section -->
+      @if (hasAddressData() || hasCoordinates()) {
+        <div class="field col-12">
+          <div class="flex justify-content-between align-items-center mb-3">
+            <h6 class="m-0">Kartenansicht</h6>
+            <div class="flex align-items-center gap-2">
+              <p-toggleButton
+                [ngModel]="mapClickMode()"
+                (ngModelChange)="mapClickMode.set($event)"
+                [onLabel]="'Klick-Modus: Ein'"
+                [offLabel]="'Klick-Modus: Aus'"
+                [onIcon]="'pi pi-map-marker'"
+                [offIcon]="'pi pi-map'"
+                [style]="{'min-width': '160px'}"
+                severity="secondary"
+              />
+              @if (mapClickMode()) {
+                <small class="text-color-secondary">
+                  Klicken Sie auf die Karte, um Position zu setzen
+                </small>
+              }
+            </div>
+          </div>
+          <div class="map-container">
+            <app-leaflet-map
+              [location]="getMapLocation()"
+              [address]="hasCoordinates() ? undefined : getFormattedAddress()"
+              height="400px"
+              [zoom]="15"
+              [enableClickToSet]="mapClickMode()"
+              (locationClicked)="onMapLocationClicked($event)"
+            />
+          </div>
+        </div>
+      }
     </div>
 
     <p-toast />
