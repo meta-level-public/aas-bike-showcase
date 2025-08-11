@@ -306,7 +306,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
         // Find street and house number with enhanced logic
         let streetName = '';
         let houseNumber = '';
-        
+
         // First pass: look for combined street+number in one part
         for (let i = 0; i < Math.min(3, parts.length); i++) {
           const part = parts[i];
@@ -323,7 +323,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
         if (!result.strasse) {
           let foundStreetPart = '';
           let foundNumberPart = '';
-          
+
           // Look for street name (text without numbers, longer than 2 chars)
           for (let i = 0; i < Math.min(3, parts.length); i++) {
             const part = parts[i];
@@ -332,7 +332,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
               break;
             }
           }
-          
+
           // Look for house number (mostly numbers, could have letters like "12a")
           for (let i = 0; i < Math.min(3, parts.length); i++) {
             const part = parts[i];
@@ -341,7 +341,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
               break;
             }
           }
-          
+
           // Combine street name and house number
           if (foundStreetPart && foundNumberPart) {
             result.strasse = `${foundStreetPart} ${foundNumberPart}`;
@@ -408,11 +408,11 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
   // Normalize street address to ensure house number is at the end
   private normalizeStreetAddress(streetPart: string): string {
     const trimmed = streetPart.trim();
-    
+
     // Pattern to match house numbers (digits possibly followed by letters like "12a")
     const houseNumberPattern = /(\d+[a-zA-Z]?)\s*(.+)|(.+)\s*(\d+[a-zA-Z]?)/;
     const match = trimmed.match(houseNumberPattern);
-    
+
     if (match) {
       if (match[1] && match[2]) {
         // Pattern: "123 Musterstraße" -> "Musterstraße 123"
@@ -424,7 +424,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
         return trimmed;
       }
     }
-    
+
     // No clear pattern found, return as is
     return trimmed;
   }
