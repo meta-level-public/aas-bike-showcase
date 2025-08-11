@@ -1,0 +1,173 @@
+<div class="container mx-auto p-4 max-w-4xl">
+  <div class="mb-4">
+    <button
+      pButton
+      label="Zurück zur Konfigurationsliste"
+      icon="pi pi-arrow-left"
+      class="p-button-text"
+      (click)="cancel()">
+    </button>
+  </div>
+
+  <div class="grid">
+    <div class="col-12">
+      <p-card header="Neue Bestellung erstellen">
+        <div class="flex flex-column gap-4">
+
+          <!-- Produkt Info -->
+          @if (product) {
+            <div class="bg-primary-50 border-round p-4">
+              <div class="flex align-items-center gap-3">
+                <i class="pi pi-cog text-primary text-3xl"></i>
+                <div class="flex-1">
+                  <h2 class="text-primary m-0 mb-2">{{ product.name }}</h2>
+                  <p class="text-600 m-0 text-lg">Preis pro Stück: <strong>${{ product.price }}</strong></p>
+                  @if (product.bestandteile && product.bestandteile.length > 0) {
+                    <p class="text-600 m-0">{{ product.bestandteile.length }} Bestandteile</p>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (loading && !product) {
+            <div class="flex justify-content-center p-4">
+              <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            </div>
+          }
+
+          <!-- Bestellformular -->
+          @if (product) {
+            <form [formGroup]="orderForm" class="flex flex-column gap-4">
+
+              <!-- Anzahl -->
+              <div class="field">
+                <label for="anzahl" class="font-semibold block mb-2 text-lg">
+                  <i class="pi pi-hashtag mr-2"></i>Anzahl *
+                </label>
+                <p-inputNumber
+                  id="anzahl"
+                  formControlName="anzahl"
+                  [min]="1"
+                  [max]="100"
+                  class="w-full"
+                  [showButtons]="true"
+                  buttonLayout="horizontal"
+                  incrementButtonIcon="pi pi-plus"
+                  decrementButtonIcon="pi pi-minus"
+                  size="large">
+                </p-inputNumber>
+                @if (orderForm.get('anzahl')?.invalid && orderForm.get('anzahl')?.touched) {
+                  <small class="p-error block mt-1">Anzahl ist erforderlich und muss mindestens 1 sein.</small>
+                }
+              </div>
+
+              <!-- Gesamtpreis -->
+              <div class="field">
+                <div class="bg-surface-100 border-round p-4 flex justify-content-between align-items-center">
+                  <span class="font-semibold text-900 text-lg">
+                    <i class="pi pi-calculator mr-2"></i>Gesamtpreis:
+                  </span>
+                  <span class="text-primary font-bold text-2xl">${{ getTotalPrice().toFixed(2) }}</span>
+                </div>
+              </div>
+
+              <!-- Lieferadresse (Optional) -->
+              <div class="field">
+                <h3 class="text-900 mb-3">
+                  <i class="pi pi-map-marker mr-2"></i>Lieferadresse (Optional)
+                </h3>
+
+                <div class="grid">
+                  <div class="col-12 md:col-6">
+                    <label for="vorname" class="block mb-2">Vorname</label>
+                    <input
+                      pInputText
+                      id="vorname"
+                      formControlName="vorname"
+                      class="w-full"
+                      placeholder="Max">
+                  </div>
+
+                  <div class="col-12 md:col-6">
+                    <label for="name" class="block mb-2">Nachname</label>
+                    <input
+                      pInputText
+                      id="name"
+                      formControlName="name"
+                      class="w-full"
+                      placeholder="Mustermann">
+                  </div>
+
+                  <div class="col-12">
+                    <label for="strasse" class="block mb-2">Straße</label>
+                    <input
+                      pInputText
+                      id="strasse"
+                      formControlName="strasse"
+                      class="w-full"
+                      placeholder="Musterstraße 123">
+                  </div>
+
+                  <div class="col-12 md:col-4">
+                    <label for="plz" class="block mb-2">PLZ</label>
+                    <input
+                      pInputText
+                      id="plz"
+                      formControlName="plz"
+                      class="w-full"
+                      placeholder="12345">
+                  </div>
+
+                  <div class="col-12 md:col-5">
+                    <label for="ort" class="block mb-2">Ort</label>
+                    <input
+                      pInputText
+                      id="ort"
+                      formControlName="ort"
+                      class="w-full"
+                      placeholder="Musterstadt">
+                  </div>
+
+                  <div class="col-12 md:col-3">
+                    <label for="land" class="block mb-2">Land</label>
+                    <input
+                      pInputText
+                      id="land"
+                      formControlName="land"
+                      class="w-full">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Aktionsbuttons -->
+              <div class="flex gap-2 justify-content-end pt-4">
+                <button
+                  pButton
+                  label="Abbrechen"
+                  icon="pi pi-times"
+                  class="p-button-text p-button-secondary"
+                  (click)="cancel()"
+                  [disabled]="loading">
+                </button>
+
+                <button
+                  pButton
+                  label="Bestellung erstellen"
+                  icon="pi pi-check"
+                  class="p-button-primary"
+                  (click)="createOrder()"
+                  [loading]="loading"
+                  [disabled]="orderForm.invalid">
+                </button>
+              </div>
+
+            </form>
+          }
+        </div>
+      </p-card>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

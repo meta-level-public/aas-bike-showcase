@@ -1,0 +1,38 @@
+.container {
+  min-height: 100vh;
+}
+
+.field {
+  margin-bottom: 1.5rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.p-inputnumber {
+  width: 100%;
+}
+
+.bg-primary-50 {
+  background-color: #eff6ff;
+}
+
+.text-primary {
+  color: #3b82f6;
+}
+
+.p-card .p-card-content {
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .p-card .p-card-content {
+    padding: 1rem;
+  }
+}
