@@ -303,26 +303,50 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
       console.log('Parsing address parts:', parts); // Debug log
 
       if (parts.length >= 2) {
-        // Find street and house number - look for patterns like "Straßenname 123" or "123 Straßenname"
-        let streetWithNumber = '';
+        // Find street and house number with enhanced logic
+        let streetName = '';
+        let houseNumber = '';
+        
+        // First pass: look for combined street+number in one part
         for (let i = 0; i < Math.min(3, parts.length); i++) {
           const part = parts[i];
           // Check if this part contains both letters and numbers (likely street with house number)
           if (/[a-zA-ZäöüÄÖÜß]/.test(part) && /\d/.test(part)) {
-            streetWithNumber = part;
+            const processedStreet = this.normalizeStreetAddress(part);
+            result.strasse = processedStreet;
+            streetName = processedStreet; // Store for potential combination later
             break;
           }
         }
 
-        if (streetWithNumber) {
-          result.strasse = streetWithNumber;
-        } else {
-          // Fallback: if no combined street+number found, take the first part that has letters
-          for (const part of parts.slice(0, 3)) {
-            if (/[a-zA-ZäöüÄÖÜß]/.test(part) && part.length > 2) {
-              result.strasse = part;
+        // Second pass: if no combined street found, look for separate street and number
+        if (!result.strasse) {
+          let foundStreetPart = '';
+          let foundNumberPart = '';
+          
+          // Look for street name (text without numbers, longer than 2 chars)
+          for (let i = 0; i < Math.min(3, parts.length); i++) {
+            const part = parts[i];
+            if (/[a-zA-ZäöüÄÖÜß]/.test(part) && !/\d/.test(part) && part.length > 2) {
+              foundStreetPart = part;
               break;
             }
+          }
+          
+          // Look for house number (mostly numbers, could have letters like "12a")
+          for (let i = 0; i < Math.min(3, parts.length); i++) {
+            const part = parts[i];
+            if (/^\d+[a-zA-Z]?$/.test(part.trim())) { // Pattern like "123" or "123a"
+              foundNumberPart = part.trim();
+              break;
+            }
+          }
+          
+          // Combine street name and house number
+          if (foundStreetPart && foundNumberPart) {
+            result.strasse = `${foundStreetPart} ${foundNumberPart}`;
+          } else if (foundStreetPart) {
+            result.strasse = foundStreetPart;
           }
         }
 
@@ -379,5 +403,29 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     return result;
+  }
+
+  // Normalize street address to ensure house number is at the end
+  private normalizeStreetAddress(streetPart: string): string {
+    const trimmed = streetPart.trim();
+    
+    // Pattern to match house numbers (digits possibly followed by letters like "12a")
+    const houseNumberPattern = /(\d+[a-zA-Z]?)\s*(.+)|(.+)\s*(\d+[a-zA-Z]?)/;
+    const match = trimmed.match(houseNumberPattern);
+    
+    if (match) {
+      if (match[1] && match[2]) {
+        // Pattern: "123 Musterstraße" -> "Musterstraße 123"
+        const number = match[1];
+        const street = match[2].trim();
+        return `${street} ${number}`;
+      } else if (match[3] && match[4]) {
+        // Pattern: "Musterstraße 123" -> keep as is
+        return trimmed;
+      }
+    }
+    
+    // No clear pattern found, return as is
+    return trimmed;
   }
 }
