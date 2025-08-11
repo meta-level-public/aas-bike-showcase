@@ -22,6 +22,8 @@ namespace AasDemoapp.Database
         public DbSet<ConfiguredProduct> ConfiguredProducts { get; set; }
         public DbSet<ProducedProduct> ProducedProducts { get; set; }
         public DbSet<ProductPart> ProductParts { get; set; }
+        public DbSet<ProductionOrder> ProductionOrders { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         public string DbPath { get; }
 
@@ -132,6 +134,22 @@ namespace AasDemoapp.Database
                 .HasConversion(
                     v => DBJsonConverter.Serialize(v),
                     v => DBJsonConverter.Deserialize<SecuritySetting>(v));
+
+            // ProductionOrder -> ConfiguredProduct (N:1)
+            modelBuilder.Entity<ProductionOrder>()
+                .HasOne(e => e.ConfiguredProduct)
+                .WithMany()
+                .HasForeignKey(e => e.ConfiguredProductId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(true);
+
+            // ProductionOrder -> Address (N:1)
+            modelBuilder.Entity<ProductionOrder>()
+                .HasOne(e => e.Address)
+                .WithMany()
+                .HasForeignKey(e => e.AddressId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             // Global Query Filter für Soft Delete
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
