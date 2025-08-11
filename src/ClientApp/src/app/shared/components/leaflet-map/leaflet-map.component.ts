@@ -33,6 +33,8 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
   private map: L.Map | null = null;
   private marker: L.Marker | null = null;
   private clickHandler: ((e: L.LeafletMouseEvent) => void) | null = null;
+  private lastLocation: { lat: number; lng: number } | null = null;
+  private lastAddress: string | null = null;
 
   // Public properties
   isLoading = signal(false);
@@ -43,9 +45,23 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       const loc = this.location();
       const addr = this.address();
 
-      if (loc) {
-        this.updateMapWithCoordinates(loc);
-      } else if (addr) {
+      // Check if location has actually changed
+      if (loc && loc.lat !== null && loc.lat !== undefined &&
+          loc.lng !== null && loc.lng !== undefined &&
+          !isNaN(loc.lat) && !isNaN(loc.lng)) {
+
+        // Only update if coordinates have actually changed
+        if (!this.lastLocation ||
+            this.lastLocation.lat !== loc.lat ||
+            this.lastLocation.lng !== loc.lng) {
+
+          this.lastLocation = { lat: loc.lat, lng: loc.lng };
+          this.lastAddress = null; // Clear last address since we have coordinates
+          this.updateMapWithCoordinates(loc);
+        }
+      } else if (addr && addr.trim() && addr !== this.lastAddress) {
+        this.lastAddress = addr;
+        this.lastLocation = null; // Clear last location since we have new address
         this.geocodeAndUpdateMap(addr);
       }
     });
@@ -74,6 +90,10 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       this.map.remove();
       this.map = null;
     }
+
+    // Clear cached values
+    this.lastLocation = null;
+    this.lastAddress = null;
   }
 
   private initMap() {
@@ -115,6 +135,26 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       this.map?.invalidateSize(true);
     }, 500);
 
+    // Add event listeners for zoom and resize events to fix coordinate issues
+    this.map.on('zoomend', () => {
+      setTimeout(() => {
+        this.map?.invalidateSize(true);
+      }, 100);
+    });
+
+    this.map.on('resize', () => {
+      setTimeout(() => {
+        this.map?.invalidateSize(true);
+      }, 50);
+    });
+
+    // Add event listener for when the map finishes loading tiles
+    this.map.on('load', () => {
+      setTimeout(() => {
+        this.map?.invalidateSize(true);
+      }, 100);
+    });
+
     // Check for initial location or address
     const initialLocation = this.location();
     const initialAddress = this.address();
@@ -124,35 +164,103 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
     } else if (initialAddress) {
       this.geocodeAndUpdateMap(initialAddress);
     }
+
+    // Set up click handler after map initialization
+    this.updateClickHandler(this.enableClickToSet());
   }
 
   // Update click handler based on enableClickToSet
   private updateClickHandler(enabled: boolean) {
-    if (!this.map) return;
+    if (!this.map) {
+      console.log('Map not initialized yet, skipping click handler update');
+      return;
+    }
+
+    console.log('Updating click handler, enabled:', enabled); // Debug-Log
+    console.log('Map container element:', this.mapContainer?.nativeElement); // Debug-Log
 
     // Remove existing click handler
     if (this.clickHandler) {
       this.map.off('click', this.clickHandler);
       this.clickHandler = null;
+      console.log('Removed existing click handler'); // Debug-Log
     }
 
     // Add new click handler if enabled
     if (enabled) {
-      this.clickHandler = (e: L.LeafletMouseEvent) => {
-        this.handleMapClick(e.latlng.lat, e.latlng.lng);
-      };
-      this.map.on('click', this.clickHandler);
+      // Test: Simple click handler first
+      console.log('Adding simple test click handler'); // Debug-Log
 
-      // Change cursor to indicate clickable map
-      this.mapContainer.nativeElement.style.cursor = 'crosshair';
+      this.clickHandler = (e: L.LeafletMouseEvent) => {
+        console.log('=== CLICK DETECTED ==='); // Debug-Log
+        console.log('Raw click event:', e); // Debug-Log
+        console.log('Map clicked at:', e.latlng.lat, e.latlng.lng); // Debug-Log
+        console.log('enableClickToSet at click time:', this.enableClickToSet()); // Debug-Log
+
+        // Add small delay to ensure map is fully rendered after zoom
+        setTimeout(() => {
+          this.handleMapClick(e.latlng.lat, e.latlng.lng);
+        }, 50);
+      };
+
+      // Add the handler to the map
+      this.map.on('click', this.clickHandler);
+      console.log('Click handler registered on map'); // Debug-Log
+
+      // Change cursor to indicate clickable map - try multiple approaches
+      if (this.mapContainer?.nativeElement) {
+        this.mapContainer.nativeElement.style.cursor = 'crosshair !important';
+        this.mapContainer.nativeElement.style.setProperty('cursor', 'crosshair', 'important');
+
+        // Also try to set cursor on the map div itself
+        const mapDiv = this.mapContainer.nativeElement.querySelector('.leaflet-container');
+        if (mapDiv) {
+          (mapDiv as HTMLElement).style.cursor = 'crosshair !important';
+          (mapDiv as HTMLElement).style.setProperty('cursor', 'crosshair', 'important');
+        }
+
+        console.log('Click handler added, cursor set to crosshair on:', this.mapContainer.nativeElement); // Debug-Log
+        console.log('Map div found:', mapDiv); // Debug-Log
+      }
     } else {
       // Reset cursor
-      this.mapContainer.nativeElement.style.cursor = '';
+      if (this.mapContainer?.nativeElement) {
+        this.mapContainer.nativeElement.style.cursor = '';
+        this.mapContainer.nativeElement.style.removeProperty('cursor');
+
+        const mapDiv = this.mapContainer.nativeElement.querySelector('.leaflet-container');
+        if (mapDiv) {
+          (mapDiv as HTMLElement).style.cursor = '';
+          (mapDiv as HTMLElement).style.removeProperty('cursor');
+        }
+      }
+      console.log('Click handler disabled, cursor reset'); // Debug-Log
     }
   }
 
   private updateMapWithCoordinates(location: MapLocation) {
-    if (!this.map) return;
+    if (!this.map) {
+      console.log('Map not initialized, skipping coordinate update'); // Debug-Log
+      return;
+    }
+
+    if (!location) {
+      console.error('Location is null or undefined'); // Debug-Log
+      return;
+    }
+
+    if (location.lat === null || location.lat === undefined ||
+        location.lng === null || location.lng === undefined ||
+        isNaN(location.lat) || isNaN(location.lng)) {
+      console.error('Invalid coordinates in location:', location); // Debug-Log
+      return;
+    }
+
+    // Reduced logging - only log significant updates
+    console.log('Map updated with coordinates:', location.lat, location.lng); // Debug-Log
+
+    // Force invalidate size before updating coordinates
+    this.map.invalidateSize(true);
 
     // Remove existing marker
     if (this.marker) {
@@ -180,6 +288,11 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
 
     // Center map on location
     this.map.setView([location.lat, location.lng], this.zoom());
+
+    // Ensure map is properly rendered after coordinate update
+    setTimeout(() => {
+      this.map?.invalidateSize(true);
+    }, 100);
   }
 
   private async geocodeAndUpdateMap(address: string) {
@@ -245,12 +358,30 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
 
   // Handle map click events
   private async handleMapClick(lat: number, lng: number) {
-    if (!this.enableClickToSet()) return;
+    console.log('=== HandleMapClick START ==='); // Debug-Log
+    console.log('enableClickToSet():', this.enableClickToSet()); // Debug-Log
+    console.log('Coordinates received:', lat, lng); // Debug-Log
+
+    if (!this.enableClickToSet()) {
+      console.log('Click to set is disabled, ignoring click'); // Debug-Log
+      return;
+    }
+
+    console.log('HandleMapClick called with coordinates:', lat, lng); // Debug-Log
+
+    // Ensure coordinates are valid
+    if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
+      console.error('Invalid coordinates received:', lat, lng);
+      return;
+    }
+
+    // Invalidate map size to ensure correct coordinate calculation
+    this.map?.invalidateSize(true);
 
     // Update marker position immediately
     const tempLocation: MapLocation = {
-      lat,
-      lng,
+      lat: Number(lat),
+      lng: Number(lng),
       title: 'Ausgewählte Position'
     };
 
@@ -262,8 +393,8 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
     try {
       const address = await this.reverseGeocode(lat, lng);
       const locationWithAddress: MapLocation = {
-        lat,
-        lng,
+        lat: Number(lat),
+        lng: Number(lng),
         address,
         title: address || 'Ausgewählte Position'
       };
