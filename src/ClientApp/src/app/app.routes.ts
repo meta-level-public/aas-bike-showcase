@@ -9,6 +9,7 @@ import { DiscoveryComponent } from './discovery/discovery.component';
 import { DppComponent } from './dpp/dpp.component';
 import { GoodsIncomingComponent } from './goods-incoming/goods-incoming.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
+import { OrderCreateComponent } from './order-create/order-create.component';
 import { ProductionOrderListComponent } from './production-order-list/production-order-list.component';
 import { RegistryComponent } from './registry/registry.component';
 import { RepositoryComponent } from './repository/repository.component';
@@ -35,6 +36,12 @@ export const routes: Routes = [
     children: [
       { path: 'list', component: ConfigurationListComponent },
       { path: 'create', component: ConfigurationCreateComponent },
+    ],
+  },
+  {
+    path: 'orders',
+    children: [
+      { path: 'create/:id', component: OrderCreateComponent },
     ],
   },
   {
