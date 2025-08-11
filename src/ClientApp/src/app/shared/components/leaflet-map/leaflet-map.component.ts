@@ -172,7 +172,6 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
   // Update click handler based on enableClickToSet
   private updateClickHandler(enabled: boolean) {
     if (!this.map) {
-      console.log('Map not initialized yet, skipping click handler update');
       return;
     }
 
@@ -192,17 +191,12 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       console.log('Adding simple test click handler'); // Debug-Log
 
       this.clickHandler = (e: L.LeafletMouseEvent) => {
-        console.log('=== CLICK DETECTED ==='); // Debug-Log
-        console.log('Raw click event:', e); // Debug-Log
-        console.log('Map clicked at:', e.latlng.lat, e.latlng.lng); // Debug-Log
-        console.log('enableClickToSet at click time:', this.enableClickToSet()); // Debug-Log
-
         // Add small delay to ensure map is fully rendered after zoom
         setTimeout(() => {
           this.handleMapClick(e.latlng.lat, e.latlng.lng);
         }, 50);
       };
-
+      
       // Add the handler to the map
       this.map.on('click', this.clickHandler);
       console.log('Click handler registered on map'); // Debug-Log
@@ -211,53 +205,43 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       if (this.mapContainer?.nativeElement) {
         this.mapContainer.nativeElement.style.cursor = 'crosshair !important';
         this.mapContainer.nativeElement.style.setProperty('cursor', 'crosshair', 'important');
-
+        
         // Also try to set cursor on the map div itself
         const mapDiv = this.mapContainer.nativeElement.querySelector('.leaflet-container');
         if (mapDiv) {
           (mapDiv as HTMLElement).style.cursor = 'crosshair !important';
           (mapDiv as HTMLElement).style.setProperty('cursor', 'crosshair', 'important');
         }
-
-        console.log('Click handler added, cursor set to crosshair on:', this.mapContainer.nativeElement); // Debug-Log
-        console.log('Map div found:', mapDiv); // Debug-Log
       }
     } else {
       // Reset cursor
       if (this.mapContainer?.nativeElement) {
         this.mapContainer.nativeElement.style.cursor = '';
         this.mapContainer.nativeElement.style.removeProperty('cursor');
-
+        
         const mapDiv = this.mapContainer.nativeElement.querySelector('.leaflet-container');
         if (mapDiv) {
           (mapDiv as HTMLElement).style.cursor = '';
           (mapDiv as HTMLElement).style.removeProperty('cursor');
         }
       }
-      console.log('Click handler disabled, cursor reset'); // Debug-Log
     }
   }
 
   private updateMapWithCoordinates(location: MapLocation) {
     if (!this.map) {
-      console.log('Map not initialized, skipping coordinate update'); // Debug-Log
       return;
     }
 
     if (!location) {
-      console.error('Location is null or undefined'); // Debug-Log
       return;
     }
 
     if (location.lat === null || location.lat === undefined ||
         location.lng === null || location.lng === undefined ||
         isNaN(location.lat) || isNaN(location.lng)) {
-      console.error('Invalid coordinates in location:', location); // Debug-Log
       return;
     }
-
-    // Reduced logging - only log significant updates
-    console.log('Map updated with coordinates:', location.lat, location.lng); // Debug-Log
 
     // Force invalidate size before updating coordinates
     this.map.invalidateSize(true);
@@ -358,20 +342,12 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
 
   // Handle map click events
   private async handleMapClick(lat: number, lng: number) {
-    console.log('=== HandleMapClick START ==='); // Debug-Log
-    console.log('enableClickToSet():', this.enableClickToSet()); // Debug-Log
-    console.log('Coordinates received:', lat, lng); // Debug-Log
-
     if (!this.enableClickToSet()) {
-      console.log('Click to set is disabled, ignoring click'); // Debug-Log
       return;
     }
 
-    console.log('HandleMapClick called with coordinates:', lat, lng); // Debug-Log
-
     // Ensure coordinates are valid
     if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
-      console.error('Invalid coordinates received:', lat, lng);
       return;
     }
 

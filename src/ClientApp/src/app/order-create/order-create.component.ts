@@ -206,8 +206,6 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
   }
 
   onMapLocationClicked(location: MapLocation) {
-    console.log('Map location clicked:', location); // Debug-Log
-
     // Die Position für die Karte setzen
     this.mapLocation = location;
 
@@ -222,13 +220,11 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
   }
 
   onMapClickModeChange(enabled: boolean) {
-    console.log('Map click mode changed to:', enabled);
     this.mapClickMode = enabled;
   }
 
   toggleMapClickMode() {
     this.mapClickMode = !this.mapClickMode;
-    console.log('Map click mode toggled to:', this.mapClickMode);
   }
 
   private async performReverseGeocoding(lat: number, lng: number) {
@@ -240,8 +236,6 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
 
       if (data && data.address) {
         const address = data.address;
-        console.log('Reverse geocoding result:', address); // Debug-Log
-
         // Formular mit strukturierten Adressdaten füllen
         this.orderForm.patchValue({
           strasse: this.buildStreetAddress(address),
