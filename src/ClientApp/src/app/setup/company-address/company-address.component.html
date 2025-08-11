@@ -12,7 +12,7 @@
 
     <div class="grid">
       <!-- Name und Vorname -->
-      <div class="field col-12 md:col-6">
+      <div class="field col-12 md:col-12">
         <label for="companyName">Firmenname</label>
         <input
           id="companyName"
@@ -22,19 +22,6 @@
           [value]="address().name || ''"
           (input)="updateAddress('name', $any($event.target).value)"
           placeholder="Firmenname eingeben..."
-        />
-      </div>
-
-      <div class="field col-12 md:col-6">
-        <label for="firstName">Ansprechpartner Vorname</label>
-        <input
-          id="firstName"
-          type="text"
-          pInputText
-          class="w-full"
-          [value]="address().vorname || ''"
-          (input)="updateAddress('vorname', $any($event.target).value)"
-          placeholder="Vorname eingeben..."
         />
       </div>
 
