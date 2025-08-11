@@ -56,6 +56,25 @@ namespace AasDemoapp.Mapping
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
             CreateMap<UpdateSupplierDto, Supplier>();
 
+            // ProductionOrder mappings
+            CreateMap<ProductionOrder, ProductionOrderDto>()
+                .ForMember(dest => dest.ConfiguredProductName,
+                        opt => opt.MapFrom(src => src.ConfiguredProduct.Name));
+            CreateMap<CreateProductionOrderDto, ProductionOrder>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ConfiguredProduct, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.FertigstellungsDatum, opt => opt.Ignore())
+                .ForMember(dest => dest.ProduktionAbgeschlossen, opt => opt.Ignore())
+                .ForMember(dest => dest.Versandt, opt => opt.Ignore())
+                .ForMember(dest => dest.VersandDatum, opt => opt.Ignore())
+                .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
+                .ForMember(dest => dest.DeletedAt, opt => opt.Ignore());
+
+            // Address mappings
+            CreateMap<Address, AddressDto>().ReverseMap();
+
             // Reverse Mappings (falls benötigt)
             CreateMap<ProducedProductDto, ProducedProduct>()
                 .ForMember(dest => dest.ConfiguredProduct, opt => opt.Ignore())
