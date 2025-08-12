@@ -2,7 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
 import { CatalogItemComponent } from '../catalog-list/catalog-item/catalog-item.component';
 import { KatalogEintrag } from '../model/katalog-eintrag';
 import { NotificationService } from '../notification.service';
@@ -12,7 +15,16 @@ import { GoodsIncomingService } from './goods-incoming.service';
   selector: 'app-goods-incoming',
   templateUrl: './goods-incoming.component.html',
   styleUrl: './goods-incoming.component.css',
-  imports: [CommonModule, FormsModule, InputTextModule, CatalogItemComponent, ButtonModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    InputTextModule,
+    InputNumberModule,
+    CatalogItemComponent,
+    ButtonModule,
+    CardModule,
+    MessageModule
+  ]
 })
 export class GoodsIncomingComponent {
   newKatalogEintrag: KatalogEintrag = {} as KatalogEintrag;
