@@ -1,125 +1,139 @@
-<div class="surface-ground px-4 py-5 md:px-6 lg:px-8 min-h-full min-w-full">
-  <div class="card flex flex-column mt-2 gap-2 w-full">
-    @if (!isRouteBasedSelection()) {
-    <div class="card flex flex-column gap-2">
-      <label>Produktionsauftrag wählen</label>
-      <p-select
-        [options]="productionOrders()"
-        [ngModel]="selectedProductionOrder()"
-        (ngModelChange)="
-          selectedProductionOrder.set($event); productionOrderSelected()
-        "
-        optionLabel="configuredProductName"
-        placeholder="Wählen Sie einen Produktionsauftrag"
-      >
-        <ng-template #selectedItem>
-          @if (selectedProductionOrder()) {
-          <div class="flex align-items-center gap-2">
-            <span class="font-medium">{{
-              selectedProductionOrder()!.configuredProductName
-            }}</span>
-            <span class="text-sm text-500"
-              >({{ selectedProductionOrder()!.anzahl }} Stück)</span
-            >
-          </div>
-          }
-        </ng-template>
-        <ng-template #item let-order>
-          <div class="flex align-items-center gap-2">
-            <div class="flex flex-column">
-              <span class="font-medium">{{ order.configuredProductName }}</span>
+<div class="assembly-container">
+  <!-- Header Section -->
+  <div class="assembly-header">
+    <h1 class="assembly-title">
+      <i class="pi pi-wrench"></i>
+      Montage
+    </h1>
+    <p class="assembly-subtitle">Geführte Montage für Produktionsaufträge</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="assembly-content">
+    <!-- Left Panel - Production Order Selection -->
+    <div class="order-panel">
+      <div class="panel-header">
+        <i class="pi pi-list"></i>
+        <h3>Produktionsauftrag</h3>
+      </div>
+
+      @if (!isRouteBasedSelection()) {
+      <div class="form-group">
+        <label class="form-label">Produktionsauftrag wählen</label>
+        <p-select
+          [options]="productionOrders()"
+          [ngModel]="selectedProductionOrder()"
+          (ngModelChange)="
+            selectedProductionOrder.set($event); productionOrderSelected()
+          "
+          optionLabel="configuredProductName"
+          placeholder="Wählen Sie einen Produktionsauftrag"
+          class="w-full"
+        >
+          <ng-template #selectedItem>
+            @if (selectedProductionOrder()) {
+            <div class="flex align-items-center gap-2">
+              <span class="font-medium">{{
+                selectedProductionOrder()!.configuredProductName
+              }}</span>
               <span class="text-sm text-500"
-                >Anzahl: {{ order.anzahl }} | Erstellt:
-                {{ order.createdAt | date : "short" }}</span
+                >({{ selectedProductionOrder()!.anzahl }} Stück)</span
               >
             </div>
-          </div>
-        </ng-template>
-      </p-select>
-    </div>
-    }
+            }
+          </ng-template>
+          <ng-template #item let-order>
+            <div class="flex align-items-center gap-2">
+              <div class="flex flex-column">
+                <span class="font-medium">{{ order.configuredProductName }}</span>
+                <span class="text-sm text-500"
+                  >Anzahl: {{ order.anzahl }} | Erstellt:
+                  {{ order.createdAt | date : "short" }}</span
+                >
+              </div>
+            </div>
+          </ng-template>
+        </p-select>
+      </div>
+      }
 
-    <!-- Anzeige der ausgewählten ProductionOrder wenn über Route ausgewählt -->
-    @if (isRouteBasedSelection() && selectedProductionOrder()) {
-    <div class="card flex flex-column gap-2">
-      <label>Ausgewählter Produktionsauftrag</label>
-      <div class="p-3 border-1 border-200 border-round">
-        <div class="flex align-items-center gap-2">
-          <span class="font-medium text-lg">{{
+      @if (isRouteBasedSelection() && selectedProductionOrder()) {
+      <div class="selected-order-card">
+        <h4 class="order-title">
+          <i class="pi pi-check-circle"></i>
+          Ausgewählter Produktionsauftrag
+        </h4>
+        <div class="order-details">
+          <div class="order-name">{{
             selectedProductionOrder()!.configuredProductName
-          }}</span>
-          <span class="text-sm text-500"
-            >({{ selectedProductionOrder()!.anzahl }} Stück)</span
-          >
-        </div>
-        <div class="text-sm text-500 mt-1">
-          Erstellt: {{ selectedProductionOrder()!.createdAt | date : "short" }}
-        </div>
-      </div>
-    </div>
-    }
-
-    <!-- Geführte Montage -->
-    @if (selectedProductionOrder() && selectedItem() && hasBestandteile()) {
-    <!-- Fortschrittsanzeige -->
-    <div class="card flex flex-column gap-2">
-      <div class="text-lg font-bold">Montage-Fortschritt</div>
-      <div class="flex align-items-center gap-2">
-        <span
-          >Schritt {{ currentAssemblyStep() + 1 }} von
-          {{ bestandteileLength() }}</span
-        >
-        <div class="flex-1 bg-gray-200 border-round-lg h-1rem">
-          <div
-            class="bg-primary border-round-lg h-full transition-all transition-duration-300"
-            [style.width.%]="
-              (currentAssemblyStep() / bestandteileLength()) * 100
-            "
-          ></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Aktueller Montageschritt -->
-    @if (currentAssemblyStep() < bestandteileLength()) {
-    <div class="card flex flex-column gap-2">
-      <div class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
-        <div class="w-12rem">
-          <img
-            class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
-            height="100"
-            [src]="
-              'data:image/jpeg;base64, ' +
-              selectedItem()!.bestandteile[currentAssemblyStep()].katalogEintrag
-                ?.image
-            "
-            [alt]="selectedItem()!.bestandteile[currentAssemblyStep()].name"
-          />
-        </div>
-        <div
-          class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
-        >
-          <div
-            class="flex flex-column align-items-center sm:align-items-start gap-3 w-20rem"
-          >
-            <div class="text-2xl font-bold text-900">
-              {{ selectedItem()!.bestandteile[currentAssemblyStep()].name }}
-            </div>
-            <div class="text-2xl font-medium text-900">
-              {{ selectedItem()!.bestandteile[currentAssemblyStep()].amount }}
-              Stück
-            </div>
-            <div class="text-lg text-600">
-              Bitte scannen Sie das zu verbauende Teil
-            </div>
+          }}</div>
+          <div class="order-info">
+            <span>({{ selectedProductionOrder()!.anzahl }} Stück)</span>
+            <span>Erstellt: {{ selectedProductionOrder()!.createdAt | date : "short" }}</span>
           </div>
-          <div
-            class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2 flex-1"
-          >
-            @if (selectedItem()!.bestandteile[currentAssemblyStep()]) { @for
-            (teil of
-            getParts(selectedItem()!.bestandteile[currentAssemblyStep()]); track
-            $index) {
+        </div>
+      </div>
+      }
+
+      <!-- Progress Section -->
+      @if (selectedProductionOrder() && selectedItem() && hasBestandteile()) {
+      <div class="progress-section">
+        <h4 class="progress-title">
+          <i class="pi pi-chart-line"></i>
+          Montage-Fortschritt
+        </h4>
+        <div class="progress-info">
+          <span>Schritt {{ currentAssemblyStep() + 1 }} von {{ bestandteileLength() }}</span>
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="(currentAssemblyStep() / bestandteileLength()) * 100"
+            ></div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Right Panel - Assembly Process -->
+    <div class="assembly-panel">
+      <div class="panel-header">
+        <i class="pi pi-cog"></i>
+        <h3>Montageschritte</h3>
+      </div>
+
+      <!-- Current Assembly Step -->
+      @if (selectedProductionOrder() && selectedItem() && hasBestandteile() && currentAssemblyStep() < bestandteileLength()) {
+      <div class="assembly-step-card">
+        <div class="step-content">
+          <div class="step-image">
+            <img
+              [src]="
+                'data:image/jpeg;base64, ' +
+                selectedItem()!.bestandteile[currentAssemblyStep()].katalogEintrag?.image
+              "
+              [alt]="selectedItem()!.bestandteile[currentAssemblyStep()].name"
+              class="part-image"
+            />
+          </div>
+
+          <div class="step-info">
+            <h4 class="part-name">
+              {{ selectedItem()!.bestandteile[currentAssemblyStep()].name }}
+            </h4>
+            <div class="part-amount">
+              {{ selectedItem()!.bestandteile[currentAssemblyStep()].amount }} Stück
+            </div>
+            <p class="step-instruction">
+              Bitte scannen Sie das zu verbauende Teil
+            </p>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          @if (selectedItem()!.bestandteile[currentAssemblyStep()]) {
+          @for (teil of getParts(selectedItem()!.bestandteile[currentAssemblyStep()]); track $index) {
+          <div class="form-group">
             <input
               pInputText
               type="text"
@@ -141,39 +155,44 @@
               "
               [(ngModel)]="teil.instanceGlobalAssetId"
             />
-            } } @if (selectedItem()!.bestandteile[currentAssemblyStep()] &&
-            isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])) {
-            <div class="flex flex-row gap-1 text-green-600">
-              <i class="pi pi-check-circle"></i>
-              Teil korrekt erfasst
-            </div>
-            } @if (selectedItem()!.bestandteile[currentAssemblyStep()] &&
-            !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])) {
-            <div class="flex flex-row gap-1 text-orange-600">
-              <i class="pi pi-exclamation-triangle"></i>
-              Teil noch nicht korrekt erfasst
-            </div>
-            }
-            <!-- Weiter-Button für aktuellen Schritt -->
+          </div>
+          } }
+
+          @if (selectedItem()!.bestandteile[currentAssemblyStep()] &&
+          isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])) {
+          <div class="status-message success">
+            <i class="pi pi-check-circle"></i>
+            Teil korrekt erfasst
+          </div>
+          }
+
+          @if (selectedItem()!.bestandteile[currentAssemblyStep()] &&
+          !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])) {
+          <div class="status-message warning">
+            <i class="pi pi-exclamation-triangle"></i>
+            Teil noch nicht korrekt erfasst
+          </div>
+          }
+
+          <div class="action-buttons">
             <button
               pButton
               label="Nächster Schritt"
-              class="w-full mt-2"
+              class="w-full next-step-btn"
               (click)="nextAssemblyStep()"
               [disabled]="
                 !selectedItem()!.bestandteile[currentAssemblyStep()] ||
                 !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])
               "
-              severity="secondary"
+              severity="primary"
             ></button>
 
-            <!-- Schrauben-Button für Lenker-Schritte -->
             @if (isLenkerStep()) {
             <button
               pButton
               label="Zum Schrauben"
               icon="pi pi-external-link"
-              class="w-full mt-2"
+              class="w-full screw-btn"
               (click)="openSchraubenDialog()"
               severity="info"
             ></button>
@@ -181,33 +200,46 @@
           </div>
         </div>
       </div>
-    </div>
-    }
+      }
 
-    <!-- Alle Schritte abgeschlossen -->
-    @if (selectedItem()) {
-    <div class="card flex flex-column gap-2">
-      <label>Keine zu verbauenden Teile vorhanden</label>
-    </div>
-    } @if (assemblyComplete()) {
-    <div class="card flex flex-column gap-2 text-center">
-      <div class="text-2xl font-bold text-green-600 mb-3">
-        <i class="pi pi-check-circle mr-2"></i>
-        Alle Teile erfolgreich verbaut!
+      <!-- Assembly Complete -->
+      @if (assemblyComplete()) {
+      <div class="completion-card">
+        <div class="completion-icon">
+          <i class="pi pi-check-circle"></i>
+        </div>
+        <h4 class="completion-title">
+          Alle Teile erfolgreich verbaut!
+        </h4>
+        <p class="completion-message">
+          Die Montage ist abgeschlossen. Sie können nun das fertige Produkt speichern.
+        </p>
+        <button
+          pButton
+          label="Verbau Fertig"
+          class="w-full completion-btn"
+          (click)="saveProducedProduct()"
+          severity="success"
+        ></button>
       </div>
-      <div class="text-lg text-600 mb-4">
-        Die Montage ist abgeschlossen. Sie können nun das fertige Produkt
-        speichern.
+      }
+
+      <!-- No parts available -->
+      @if (selectedItem() && !hasBestandteile() && !assemblyComplete()) {
+      <div class="empty-state">
+        <i class="pi pi-info-circle"></i>
+        <p>Keine zu verbauenden Teile vorhanden</p>
       </div>
-      <button
-        pButton
-        label="Verbau Fertig"
-        class="w-full"
-        (click)="saveProducedProduct()"
-        severity="success"
-      ></button>
+      }
+
+      <!-- No order selected -->
+      @if (!selectedProductionOrder()) {
+      <div class="empty-state">
+        <i class="pi pi-list"></i>
+        <p>Bitte wählen Sie einen Produktionsauftrag aus</p>
+      </div>
+      }
     </div>
-    } }
   </div>
 </div>
 
