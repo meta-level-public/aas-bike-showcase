@@ -1,3 +1,326 @@
 :host {
   display: block;
+  background: var(--p-content-background);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.assembly-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.assembly-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.assembly-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.assembly-title i {
+  color: var(--p-primary-color);
+  margin-right: 0.5rem;
+}
+
+.assembly-subtitle {
+  color: var(--p-text-muted-color);
+}
+
+/* Main Layout */
+.assembly-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Order Panel */
+.order-panel {
+  background: var(--p-content-background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--p-content-border-color);
+}
+
+/* Assembly Panel */
+.assembly-panel {
+  background: var(--p-content-background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--p-content-border-color);
+}
+
+/* Panel Headers */
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--p-content-border-color);
+}
+
+.panel-header h3 {
+  margin: 0;
+  color: var(--p-text-color);
+  font-weight: 600;
+}
+
+.panel-header i {
+  color: var(--p-primary-color);
+}
+
+/* Form Styling */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+}
+
+/* Selected Order Card */
+.selected-order-card {
+  background: var(--p-highlight-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.order-title {
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  color: var(--p-text-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.order-title i {
+  color: var(--p-primary-color);
+}
+
+.order-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin-bottom: 0.25rem;
+}
+
+.order-info {
+  font-size: 0.875rem;
+  color: var(--p-text-muted-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Progress Section */
+.progress-section {
+  margin-bottom: 1rem;
+}
+
+.progress-title {
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+  color: var(--p-text-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-title i {
+  color: var(--p-primary-color);
+}
+
+.progress-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progress-bar {
+  height: 0.5rem;
+  background: var(--p-surface-200);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--p-primary-color);
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Assembly Step Card */
+.assembly-step-card {
+  background: var(--p-highlight-background);
+  border: 1px solid var(--p-content-border-color);
+  border-radius: 6px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.step-content {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.step-image {
+  flex-shrink: 0;
+}
+
+.part-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--p-content-border-color);
+}
+
+.step-info {
+  flex: 1;
+}
+
+.part-name {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+}
+
+.part-amount {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.step-instruction {
+  color: var(--p-text-muted-color);
+  margin: 0;
+}
+
+/* Step Actions */
+.step-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Status Messages */
+.status-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-message.success {
+  background: var(--p-green-50);
+  color: var(--p-green-700);
+  border: 1px solid var(--p-green-200);
+}
+
+.status-message.warning {
+  background: var(--p-orange-50);
+  color: var(--p-orange-700);
+  border: 1px solid var(--p-orange-200);
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.next-step-btn {
+  margin-top: 0.5rem;
+}
+
+/* Completion Card */
+.completion-card {
+  text-align: center;
+  background: var(--p-green-50);
+  border: 1px solid var(--p-green-200);
+  border-radius: 6px;
+  padding: 2rem;
+}
+
+.completion-icon {
+  font-size: 3rem;
+  color: var(--p-green-600);
+  margin-bottom: 1rem;
+}
+
+.completion-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--p-green-700);
+}
+
+.completion-message {
+  color: var(--p-green-600);
+  margin-bottom: 1.5rem;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  color: var(--p-text-muted-color);
+  padding: 3rem 1rem;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  color: var(--p-primary-color);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .assembly-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .assembly-title {
+    font-size: 1.5rem;
+  }
+
+  .step-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .part-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+  }
 }
