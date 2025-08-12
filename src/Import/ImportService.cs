@@ -21,6 +21,7 @@ namespace AasDemoapp.Import
         private readonly AasDemoappContext _AasDemoappContext;
         private const string nameplateId = "https://admin-shell.io/zvei/nameplate/2/0/Nameplate";
         private const string productFamiliyId = "0173-1#02-AAU731#001";
+        private const string carbonFootprintId = "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/0/9";
 
         public ImportService(AasDemoappContext AasDemoappContext)
         {
@@ -138,6 +139,18 @@ namespace AasDemoapp.Import
 
             var nameplate = (Submodel?)GetNameplate(env);
             return nameplate != null ? GetKategorie(nameplate) : kategorie;
+        }
+
+        public Submodel? GetCarbonFootprint(AasCore.Aas3_0.Environment env)
+        {
+            var carbonFootprint = env.Submodels?.Find(sm => sm.SemanticId != null && sm.SemanticId.Keys != null && sm.SemanticId.Keys.Exists(id => id.Value == carbonFootprintId));
+
+            return (Submodel?)carbonFootprint;
+        }
+
+        public bool HasCarbonFootprintSubmodel(AasCore.Aas3_0.Environment env)
+        {
+            return GetCarbonFootprint(env) != null;
         }
 
         public async Task PushNewToLocalRegistryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl, SecuritySetting securitySetting)

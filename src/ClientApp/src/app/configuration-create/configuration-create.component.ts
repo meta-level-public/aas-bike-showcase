@@ -1,14 +1,18 @@
 
 import { CommonModule } from '@angular/common';
 import {
-    ChangeDetectorRef,
-    Component,
-    OnInit
+  ChangeDetectorRef,
+  Component,
+  OnInit
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { PickListModule } from 'primeng/picklist';
+import { ToastModule } from 'primeng/toast';
 import { ConfiguredProduct } from '../model/configured-product';
 import { KatalogEintrag } from '../model/katalog-eintrag';
 import { NotificationService } from '../notification.service';
@@ -18,7 +22,8 @@ import { ConfigurationCreateService } from './configuration-create.service';
   selector: 'app-configuration-create',
   templateUrl: './configuration-create.component.html',
   styleUrl: './configuration-create.component.css',
-  imports: [CommonModule, FormsModule, PickListModule, InputTextModule, ButtonModule]
+  imports: [CommonModule, FormsModule, PickListModule, InputTextModule, ButtonModule, ConfirmDialogModule, ToastModule],
+  providers: [ConfirmationService, MessageService]
 })
 export class ConfigurationCreateComponent implements OnInit {
   rohteile: KatalogEintrag[] = [];
@@ -30,7 +35,9 @@ export class ConfigurationCreateComponent implements OnInit {
   constructor(
     private service: ConfigurationCreateService,
     private cdRef: ChangeDetectorRef,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -120,17 +127,35 @@ export class ConfigurationCreateComponent implements OnInit {
 
     try {
       this.loading = true;
-      await this.service.createProduct(this.newProduct);
-      this.notificationService.showMessageAlways(
-        'Konfiguration erfolgreich erstellt'
-        );
-        this.newProduct = {} as ConfiguredProduct;
-        this.bestandteile = [];
-        this.calculatePrice();
-      } finally {
-        this.loading = false;
-      }
+      const createdProduct = await this.service.createProduct(this.newProduct);
+
+      // Zeige Bestätigungsdialog für Bestellung
+      this.confirmationService.confirm({
+        message: 'Ihre Konfiguration wurde erfolgreich erstellt! Möchten Sie das konfigurierte Produkt nun bestellen?',
+        header: 'Bestellung erstellen',
+        icon: 'pi pi-shopping-cart',
+        accept: () => {
+          // Navigiere zur Order-Erstellungsseite
+          if (createdProduct && createdProduct.configuredProduct?.id) {
+            this.router.navigate(['/orders/create', createdProduct.configuredProduct.id]);
+          }
+        },
+        reject: () => {
+          // Reset the form after declining
+          this.resetForm();
+        }
+      });
+
+    } finally {
+      this.loading = false;
     }
+  }
+
+  private resetForm() {
+    this.newProduct = {} as ConfiguredProduct;
+    this.bestandteile = [];
+    this.calculatePrice();
+  }
 
     calculatePrice() {
       let price = 0;

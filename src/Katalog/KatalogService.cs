@@ -59,8 +59,6 @@ namespace AasDemoapp.Katalog
             var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
             katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.Value ?? "", katalogEintrag, securitySetting, katalogEintrag.AasId);
 
-            // TODO: Adresse der Firma im PCF ergänzen
-
             _context.SaveChanges();
             return katalogEintrag;
         }
