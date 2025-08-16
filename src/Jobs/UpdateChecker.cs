@@ -50,20 +50,21 @@ namespace AasDemoapp.Jobs
                 var now = DateTime.Today;
                 var discovery = _settingsService?.GetSetting(SettingTypes.DiscoveryUrl);
                 var aasRepo = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
-                var allShellIds = _proxyService?.Discover(discovery?.value ?? "", string.Empty);
+                var securitySetting = _settingsService?.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+                var allShellIds = _proxyService?.Discover(discovery?.Value ?? "", securitySetting, string.Empty);
 
                 _context?.KatalogEintraege.Where(k => k.RemoteRepositoryUrl != null).ToList().ForEach(async eintrag =>
                 {
                     try
                     {
 
-                        var client = new HttpClient();
+                        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
                         using HttpResponseMessage remoteResponse = await client.GetAsync(eintrag.RemoteRepositoryUrl + $"/shells/{eintrag.AasId.ToBase64()}");
                         remoteResponse.EnsureSuccessStatusCode();
                         string remoteResponseBody = await remoteResponse.Content.ReadAsStringAsync();
                         var remoteShell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(remoteResponseBody));
 
-                        using HttpResponseMessage localResponse = await client.GetAsync($"{aasRepo?.value ?? ""}/shells/{eintrag.LocalAasId.ToBase64()}");
+                        using HttpResponseMessage localResponse = await client.GetAsync($"{aasRepo?.Value ?? ""}/shells/{eintrag.LocalAasId.ToBase64()}");
                         localResponse.EnsureSuccessStatusCode();
                         string localResponseBody = await localResponse.Content.ReadAsStringAsync();
                         var localShell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(localResponseBody));

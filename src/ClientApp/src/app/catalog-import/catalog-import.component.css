@@ -1,3 +1,225 @@
 :host {
   display: block;
+  background: var(--p-content-background);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.catalog-import-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.catalog-import-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.catalog-import-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin-bottom: 0.5rem;
+}
+
+.catalog-import-title i {
+  color: var(--p-primary-color);
+  margin-right: 0.5rem;
+}
+
+.catalog-import-subtitle {
+  color: var(--p-text-muted-color);
+}
+
+/* Main Layout */
+.catalog-import-content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 1.5rem;
+}
+
+/* Input Panel */
+.input-panel {
+  background: var(--p-content-background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--p-content-border-color);
+}
+
+/* Data Panel */
+.data-panel {
+  background: var(--p-content-background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--p-content-border-color);
+}
+
+/* Panel Headers */
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--p-content-border-color);
+}
+
+.panel-header h3 {
+  margin: 0;
+  color: var(--p-text-color);
+  font-weight: 600;
+}
+
+.panel-header i {
+  color: var(--p-primary-color);
+}
+
+/* Form Styling */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+}
+
+.form-label i {
+  color: var(--p-primary-color);
+}
+
+/* Section Titles */
+.section-title {
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  color: var(--p-text-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title i {
+  color: var(--p-primary-color);
+}
+
+/* Suppliers Section */
+.suppliers-section {
+  margin-bottom: 2rem;
+}
+
+.suppliers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.supplier-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--p-highlight-background);
+  border: 2px solid var(--p-content-border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  min-height: 120px;
+}
+
+.supplier-card:hover {
+  border-color: var(--p-primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.supplier-card.selected {
+  border-color: var(--p-primary-color);
+  background: var(--p-primary-50);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.supplier-logo {
+  width: 80px;
+  height: auto;
+  max-height: 60px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.supplier-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+  text-align: center;
+}
+
+/* Table Section */
+.table-section {
+  overflow: hidden;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  color: var(--p-text-muted-color);
+  padding: 2rem;
+  grid-column: 1 / -1;
+}
+
+.empty-state i {
+  font-size: 2rem;
+  color: var(--p-primary-color);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+/* Button Styling */
+.save-btn {
+  margin-top: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  :host {
+    padding: 1rem;
+  }
+
+  .catalog-import-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .catalog-import-title {
+    font-size: 1.5rem;
+  }
+
+  .suppliers-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .supplier-card {
+    min-height: 100px;
+    padding: 0.75rem;
+  }
+
+  .supplier-logo {
+    width: 60px;
+    max-height: 50px;
+  }
 }

@@ -13,5 +13,6 @@ namespace AasDemoapp.Settings
         public const string SubmodelRegistryUrl = "SubmodelRegistryUrl";
         public const string DiscoveryUrl = "DiscoveryUrl";
         public const string ConceptDescriptionUrl = "ConceptDescriptionUrl";
+        public const string InfrastructureSecurity = "InfrastructureSecurity";
     }
 }

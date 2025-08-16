@@ -21,6 +21,7 @@ namespace AasDemoapp.Import
         private readonly AasDemoappContext _AasDemoappContext;
         private const string nameplateId = "https://admin-shell.io/zvei/nameplate/2/0/Nameplate";
         private const string productFamiliyId = "0173-1#02-AAU731#001";
+        private const string carbonFootprintId = "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/0/9";
 
         public ImportService(AasDemoappContext AasDemoappContext)
         {
@@ -28,10 +29,10 @@ namespace AasDemoapp.Import
 
         }
 
-        public async Task<string> ImportFromRepository(string decodedLocalUrl, string decodedRemoteUrl, string decodedId, bool saveChanges = true)
+        public async Task<string> ImportFromRepository(string decodedLocalUrl, KatalogEintrag katalogEintrag, SecuritySetting securitySetting, string decodedId, bool saveChanges = true)
         {
-            var client = new HttpClient();
-            using HttpResponseMessage response = await client.GetAsync(decodedRemoteUrl + $"/shells/{decodedId.ToBase64()}");
+            using var clientSource = HttpClientCreator.CreateHttpClient(securitySetting);
+            using HttpResponseMessage response = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteRepositoryUrl + $"/shells/{decodedId.ToBase64()}");
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -40,7 +41,7 @@ namespace AasDemoapp.Import
 
             foreach (var smRef in shell.Submodels ?? [])
             {
-                using var resp = await client.GetAsync(decodedRemoteUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}");
+                using var resp = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteRepositoryUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}");
                 resp.EnsureSuccessStatusCode();
                 responseBody = await resp.Content.ReadAsStringAsync();
 
@@ -55,13 +56,13 @@ namespace AasDemoapp.Import
             shell.DerivedFrom.Keys.Add(new Key(KeyTypes.AssetAdministrationShell, shell.Id));
             shell.Id = Guid.NewGuid().ToString();
 
-            await PushNewToLocalRepositoryAsync(shell, submodels, decodedLocalUrl);
-            await PushNewToLocalRegistryAsync(shell, submodels, decodedLocalUrl);
-            // await PushNewToLocalDiscoveryAsync(shell, submodels, decodedLocalUrl);
+            await PushNewToLocalRepositoryAsync(shell, submodels, decodedLocalUrl, securitySetting);
+            await PushNewToLocalRegistryAsync(shell, submodels, decodedLocalUrl, securitySetting);
+            await PushNewToLocalDiscoveryAsync(shell, submodels, decodedLocalUrl, securitySetting);
 
             ImportedShell importedShell = new()
             {
-                RemoteRegistryUrl = decodedRemoteUrl
+                RemoteRegistryUrl = katalogEintrag.Supplier.RemoteRepositoryUrl,
             };
 
             _AasDemoappContext.Add(importedShell);
@@ -70,9 +71,9 @@ namespace AasDemoapp.Import
             return shell.Id;
         }
 
-        public async Task<string> GetImageString(string decodedRemoteUrl, string decodedId)
+        public async Task<string> GetImageString(string decodedRemoteUrl, SecuritySetting securitySetting, string decodedId)
         {
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             using HttpResponseMessage response = await client.GetAsync(decodedRemoteUrl + $"/shells/{decodedId.ToBase64()}/asset-information/thumbnail");
             response.EnsureSuccessStatusCode();
             var responseBody = await response.Content.ReadAsByteArrayAsync();
@@ -80,9 +81,9 @@ namespace AasDemoapp.Import
             return Convert.ToBase64String(responseBody);
         }
 
-        public async Task<AasCore.Aas3_0.Environment> GetEnvironment(string decodedRemoteUrl, string decodedId)
+        public async Task<AasCore.Aas3_0.Environment> GetEnvironment(string decodedRemoteUrl, SecuritySetting securitySetting, string decodedId)
         {
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             var url = decodedRemoteUrl + $"/shells/{decodedId.ToBase64UrlEncoded(Encoding.UTF8)}";
             using HttpResponseMessage response = await client.GetAsync(url);
             response.EnsureSuccessStatusCode();
@@ -140,11 +141,23 @@ namespace AasDemoapp.Import
             return nameplate != null ? GetKategorie(nameplate) : kategorie;
         }
 
-        public async Task PushNewToLocalRegistryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl)
+        public Submodel? GetCarbonFootprint(AasCore.Aas3_0.Environment env)
+        {
+            var carbonFootprint = env.Submodels?.Find(sm => sm.SemanticId != null && sm.SemanticId.Keys != null && sm.SemanticId.Keys.Exists(id => id.Value == carbonFootprintId));
+
+            return (Submodel?)carbonFootprint;
+        }
+
+        public bool HasCarbonFootprintSubmodel(AasCore.Aas3_0.Environment env)
+        {
+            return GetCarbonFootprint(env) != null;
+        }
+
+        public async Task PushNewToLocalRegistryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl, SecuritySetting securitySetting)
         {
             var jsonString = CreateShellDescriptorString(shell, submodels, localRegistryUrl);
 
-            var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRegistryUrl}/shell-descriptors");
 
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -156,28 +169,28 @@ namespace AasDemoapp.Import
 
         }
 
-        public async Task<bool> PushNewToLocalDiscoveryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl)
+        public async Task<bool> PushNewToLocalDiscoveryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRegistryUrl, SecuritySetting securitySetting)
         {
-            // var jsonString = CreateShellDescriptorString(shell, submodels, localRegistryUrl);
+            var jsonString = CreateShellDescriptorString(shell, submodels, localRegistryUrl);
 
-            // var client = new HttpClient();
-            // using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRegistryUrl}/registry/shell-descriptors");
+            var client = HttpClientCreator.CreateHttpClient(securitySetting);
+            using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRegistryUrl}/registry/shell-descriptors");
 
-            // var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            // request.Content = content;
-            // var result = await client.SendAsync(request);
-            // var resultContent = await result.Content.ReadAsStringAsync();
+            var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            request.Content = content;
+            var result = await client.SendAsync(request);
+            var resultContent = await result.Content.ReadAsStringAsync();
 
-            // Console.WriteLine(resultContent);
+            Console.WriteLine(resultContent);
             return await Task.FromResult(true);
 
         }
 
-        public async Task PushNewToLocalRepositoryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRepositoryUrl)
+        public async Task PushNewToLocalRepositoryAsync(AssetAdministrationShell shell, List<Submodel> submodels, string localRepositoryUrl, SecuritySetting securitySetting)
         {
             var jsonString = Jsonization.Serialize.ToJsonObject(shell).ToJsonString();
 
-            var client = new HttpClient();
+            var client = HttpClientCreator.CreateHttpClient(securitySetting);
             using var request = new HttpRequestMessage(HttpMethod.Post, $"{localRepositoryUrl.AppendSlash()}shells");
 
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");

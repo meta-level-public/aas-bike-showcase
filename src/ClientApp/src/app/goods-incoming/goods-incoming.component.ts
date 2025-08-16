@@ -2,7 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
 import { CatalogItemComponent } from '../catalog-list/catalog-item/catalog-item.component';
 import { KatalogEintrag } from '../model/katalog-eintrag';
 import { NotificationService } from '../notification.service';
@@ -12,7 +15,16 @@ import { GoodsIncomingService } from './goods-incoming.service';
   selector: 'app-goods-incoming',
   templateUrl: './goods-incoming.component.html',
   styleUrl: './goods-incoming.component.css',
-  imports: [CommonModule, FormsModule, InputTextModule, CatalogItemComponent, ButtonModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    InputTextModule,
+    InputNumberModule,
+    CatalogItemComponent,
+    ButtonModule,
+    CardModule,
+    MessageModule
+  ]
 })
 export class GoodsIncomingComponent {
   newKatalogEintrag: KatalogEintrag = {} as KatalogEintrag;
@@ -44,6 +56,15 @@ export class GoodsIncomingComponent {
         this.newKatalogEintrag.globalAssetId
       );
 
+      console.log(res);
+
+      if (res.typeKatalogEintrag == null) {
+        this.notificationService.showMessageAlways(
+          'Rohteil nicht gefunden'
+        );
+        return;
+      }
+
       this.parentRohteil = res.typeKatalogEintrag;
       this.newKatalogEintrag.aasId = res.aasId;
       this.newKatalogEintrag.price = this.parentRohteil.price;
@@ -52,6 +73,7 @@ export class GoodsIncomingComponent {
       this.newKatalogEintrag.referencedType = this.parentRohteil;
       this.newKatalogEintrag.remoteRepositoryUrl =
         this.parentRohteil.remoteRepositoryUrl;
+      this.newKatalogEintrag.supplier = this.parentRohteil.supplier;
 
       this.importImageUrl =
         this.parentRohteil.remoteRepositoryUrl +
@@ -90,6 +112,7 @@ export class GoodsIncomingComponent {
 
   // LKW Animation Methods
   async startDelivery() {
+    console.log('Start delivery animation');
 
     const randomRohteil = await this.goodsIncomingService.getRandomRohteil();
 
@@ -126,5 +149,20 @@ export class GoodsIncomingComponent {
       this.showTruck = false;
       this.truckPosition = 'start';
     }, 2000);
+  }
+
+  resetDelivery() {
+    // Alle Animationszustände zurücksetzen
+    this.showTruck = false;
+    this.showBox = false;
+    this.truckPosition = 'start';
+    this.isBoxClickable = false;
+
+    // Form-Daten zurücksetzen
+    this.newKatalogEintrag = {} as KatalogEintrag;
+    this.parentRohteil = undefined;
+    this.loaded = false;
+    this.importImageUrl = '';
+
   }
 }

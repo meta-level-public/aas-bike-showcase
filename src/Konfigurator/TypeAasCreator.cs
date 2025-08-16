@@ -33,8 +33,9 @@ namespace AasDemoapp.Konfigurator
 
         private static async Task SaveAasToRepositories(AssetAdministrationShell aas, Submodel nameplate, Submodel handoverdoc, Submodel hierarchicalStructures, ImportService importService, SettingService settingsService)
         {
-            var aasRepositoryUrl = settingsService.GetSetting(SettingTypes.AasRepositoryUrl)?.value ?? "";
-            await importService.PushNewToLocalRepositoryAsync(aas, [nameplate, handoverdoc, hierarchicalStructures], aasRepositoryUrl);
+            var aasRepositoryUrl = settingsService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
+            var securitySetting = settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+            await importService.PushNewToLocalRepositoryAsync(aas, [nameplate, handoverdoc, hierarchicalStructures], aasRepositoryUrl, securitySetting);
 
             var env = new AasCore.Aas3_0.Environment
             {
@@ -43,9 +44,9 @@ namespace AasDemoapp.Konfigurator
             };
             var plainJson = AasCore.Aas3_0.Jsonization.Serialize.ToJsonObject(env).ToJsonString();
 
-            var submodelRepositoryUrl = settingsService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.value ?? "";
-            var aasRegistryUrl = settingsService.GetSetting(SettingTypes.AasRegistryUrl)?.value ?? "";
-            var submodelRegistryUrl = settingsService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.value ?? "";
+            var submodelRepositoryUrl = settingsService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
+            var aasRegistryUrl = settingsService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
+            var submodelRegistryUrl = settingsService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
             await SaveShellSaver.SaveSingle(
                 new AasUrls
                 {
@@ -54,6 +55,7 @@ namespace AasDemoapp.Konfigurator
                     AasRegistryUrl = aasRegistryUrl,
                     SubmodelRegistryUrl = submodelRegistryUrl
                 },
+                securitySetting,
                 plainJson,
                 [],
                 default);

@@ -9,6 +9,7 @@ using Newtonsoft.Json.Converters;
 using AasDemoapp.Import;
 using System.Text.Json.Nodes;
 using AasDemoapp.Proxy;
+using AasDemoapp.Settings;
 
 namespace AasDemoapp.Controllers;
 
@@ -18,19 +19,22 @@ public class ProxyController : ControllerBase
 {
     private readonly ImportService _importService;
     private readonly ProxyService _proxyService;
+    private readonly SettingService _settingService;
 
-    public ProxyController(ImportService importService, ProxyService proxyService)
+    public ProxyController(ImportService importService, ProxyService proxyService, SettingService settingService)
     {
         _importService = importService;
         _proxyService = proxyService;
+        _settingService = settingService;
     }
 
     [HttpGet]
     public async Task<object> Shells(string registryUrl)
     {
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
+        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
 
-        var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
         using HttpResponseMessage response = await client.GetAsync(decodedUrl + "/shells");
         response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();
@@ -42,8 +46,9 @@ public class ProxyController : ControllerBase
     public async Task<object> Registry(string registryUrl)
     {
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
+        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
 
-        var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
         using HttpResponseMessage response = await client.GetAsync(decodedUrl + "/shell-descriptors");
         response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();
@@ -56,8 +61,9 @@ public class ProxyController : ControllerBase
     {
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
         var decodedId = HttpUtility.UrlDecode(aasId) ?? string.Empty;
+        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
 
-        var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
         using HttpResponseMessage response = await client.GetAsync(decodedUrl  + $"/shells/{decodedId?.ToBase64()}");
         response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();
@@ -69,7 +75,8 @@ public class ProxyController : ControllerBase
     public async Task<object> Discovery(string registryUrl, string? assetId)
     {
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
-        var res = await _proxyService.Discover(decodedUrl, assetId);
+        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+        var res = await _proxyService.Discover(decodedUrl, securitySetting, assetId);
         return res;
     }
 
@@ -77,11 +84,17 @@ public class ProxyController : ControllerBase
     [HttpGet]
     public async Task<bool> Import(string localRegistryUrl, string remoteRegistryUrl, string id)
     {
-        var decodedLocalUrl = HttpUtility.UrlDecode(localRegistryUrl);
-        var decodedRemoteUrl = HttpUtility.UrlDecode(remoteRegistryUrl);
-        var decodedId = HttpUtility.UrlDecode(id);
+        throw new NotImplementedException();
+        // var decodedLocalUrl = HttpUtility.UrlDecode(localRegistryUrl);
+        // var decodedRemoteUrl = HttpUtility.UrlDecode(remoteRegistryUrl);
 
-        await _importService.ImportFromRepository(decodedLocalUrl, decodedRemoteUrl, decodedId);
+        // // TODO: korrigieren
+        // var katalogEintrag
+
+        // var decodedId = HttpUtility.UrlDecode(id);
+        // var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+
+        // await _importService.ImportFromRepository(decodedLocalUrl, decodedRemoteUrl, securitySetting, decodedId);
 
 
         return await Task.FromResult(true);

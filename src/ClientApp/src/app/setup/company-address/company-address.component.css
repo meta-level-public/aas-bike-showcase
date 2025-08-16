@@ -1,0 +1,47 @@
+/* Company Address Component Styles */
+
+.field {
+  margin-bottom: 1rem;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.field input {
+  width: 100%;
+}
+
+.text-color-secondary {
+  color: var(--text-color-secondary);
+  margin-bottom: 1.5rem;
+}
+
+h5 {
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.map-container {
+  margin-top: 1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+h6 {
+  margin-bottom: 0.5rem;
+  color: var(--text-color-secondary);
+  font-weight: 600;
+}

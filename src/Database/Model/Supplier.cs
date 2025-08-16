@@ -11,5 +11,6 @@ namespace AasDemoapp.Database.Model
         public string Name { get; set; } = string.Empty;
         public string Logo { get; set; } = string.Empty;
         public string RemoteRepositoryUrl { get; set; } = string.Empty;
+        public SecuritySetting SecuritySetting { get; set; } = new SecuritySetting();
     }
 }

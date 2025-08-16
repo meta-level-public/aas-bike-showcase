@@ -15,35 +15,37 @@ namespace IO.Swagger.Model
     /// </summary>
     [DataMember(Name="code", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "code")]
-    public string Code { get; set; }
+    public string Code { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or Sets CorrelationId
     /// </summary>
     [DataMember(Name="correlationId", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "correlationId")]
-    public string CorrelationId { get; set; }
+    public string CorrelationId { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or Sets MessageType
     /// </summary>
     [DataMember(Name="messageType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "messageType")]
-    public IOSwaggerRegistryLibV3ModelsMessageMessageTypeEnum MessageType { get; set; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        public IOSwaggerRegistryLibV3ModelsMessageMessageTypeEnum MessageType { get; set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    /// <summary>
-    /// Gets or Sets Text
-    /// </summary>
-    [DataMember(Name="text", EmitDefaultValue=false)]
+        /// <summary>
+        /// Gets or Sets Text
+        /// </summary>
+        [DataMember(Name="text", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "text")]
-    public string Text { get; set; }
+    public string Text { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or Sets Timestamp
     /// </summary>
     [DataMember(Name="timestamp", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "timestamp")]
-    public string Timestamp { get; set; }
+    public string Timestamp { get; set; } = string.Empty;
 
 
     /// <summary>

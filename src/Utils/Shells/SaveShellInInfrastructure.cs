@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using AasCore.Aas3_0;
+using AasDemoapp.Database.Model;
 using AasDemoapp.Utils;
 using AasDemoapp.Utils.Serialization;
 using Newtonsoft.Json;
@@ -17,7 +18,7 @@ namespace AasDemoapp.Utils.Shells;
 
 public class SaveShellSaver
 {
-    public static async Task<SaveShellResult> SaveSingle(AasUrls aasUrls, string plainJson, List<ProvidedFile> providedFileStreams, CancellationToken cancellationToken)
+    public static async Task<SaveShellResult> SaveSingle(AasUrls aasUrls, SecuritySetting securitySetting, string plainJson, List<ProvidedFile> providedFileStreams, CancellationToken cancellationToken)
     {
         var result = new SaveShellResult();
 
@@ -26,7 +27,7 @@ public class SaveShellSaver
         // De-serialize from the JSON node
         environment = Deserialize.EnvironmentFrom(jsonNode);
 
-        using var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
         var aasId = string.Empty;
 
@@ -156,7 +157,7 @@ public class SaveShellSaver
                             var contLoad = fileResponseLoad.Content.ReadAsStringAsync(cancellationToken);
 
                             var contJson = JsonConvert.DeserializeObject<JObject>(contLoad.Result);
-                            var filenameNew = contJson["value"].ToString();
+                            var filenameNew = contJson?["value"]?.ToString() ?? "newFile";
 
                             // Liste bauen mit alt/neu
                             if (!result.OldNewFileNames.ContainsKey(providedFile.Filename))
@@ -192,21 +193,21 @@ public class SaveShellSaver
     }
 
 
-    public static async Task<SaveShellResult> UpdateSingle(AasUrls aasUrls, string plainJson, List<ProvidedFile> providedFileStreams, CancellationToken cancellationToken, EditorDescriptor editorDescriptor, List<string>? deletedSubmodels = null)
+    public static async Task<SaveShellResult> UpdateSingle(AasUrls aasUrls, SecuritySetting securitySetting, string plainJson, List<ProvidedFile> providedFileStreams, CancellationToken cancellationToken, EditorDescriptor editorDescriptor, List<string>? deletedSubmodels = null)
     {
         var jsonNode = JsonNode.Parse(plainJson) ?? throw new System.Exception("Could not parse JSON");
         // De-serialize from the JSON node
         AasCore.Aas3_0.Environment? environment = Deserialize.EnvironmentFrom(jsonNode);
 
-        return await UpdateSingle(aasUrls, environment, providedFileStreams, cancellationToken, editorDescriptor, deletedSubmodels);
+        return await UpdateSingle(aasUrls, securitySetting, environment, providedFileStreams, cancellationToken, editorDescriptor, deletedSubmodels);
     }
 
 
-    public static async Task<SaveShellResult> UpdateSingle(AasUrls aasUrls, AasCore.Aas3_0.Environment environment, List<ProvidedFile> providedFileStreams, CancellationToken cancellationToken, EditorDescriptor editorDescriptor, List<string>? deletedSubmodels = null)
+    public static async Task<SaveShellResult> UpdateSingle(AasUrls aasUrls, SecuritySetting securitySetting, AasCore.Aas3_0.Environment environment, List<ProvidedFile> providedFileStreams, CancellationToken cancellationToken, EditorDescriptor editorDescriptor, List<string>? deletedSubmodels = null)
     {
         var result = new SaveShellResult();
 
-        using var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
         var aasId = string.Empty;
 
         foreach (var aas in environment.AssetAdministrationShells ?? [])
@@ -247,6 +248,7 @@ public class SaveShellSaver
                 var id = smRef.Keys.FirstOrDefault()?.Value ?? string.Empty;
 
                 var sm = GetSubmodelFromEnv(environment, id);
+                if (sm == null) continue;
 
                 var smUrl = aasUrls.SubmodelRepositoryUrl.AppendSlash() + "submodels/" + id.ToBase64UrlEncoded(Encoding.UTF8);
                 var smJsonString = BasyxSerializer.Serialize(sm);
@@ -297,6 +299,7 @@ public class SaveShellSaver
         {
             foreach (var providedFile in providedFileStreams.Where(f => f.Type != ProvidedFileType.Deleted))
             {
+                if (environment?.AssetAdministrationShells?[0] == null) continue;
                 if (providedFile.Type == ProvidedFileType.Thumbnail)
                 {
                     var thumbUrl = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + environment.AssetAdministrationShells[0].Id.ToBase64UrlEncoded(Encoding.UTF8).AppendSlash() + "asset-information/thumbnail?fileName=" + providedFile.Filename;
@@ -352,7 +355,7 @@ public class SaveShellSaver
                                 var contLoad = fileResponseLoad.Content.ReadAsStringAsync(cancellationToken);
 
                                 var contJson = JsonConvert.DeserializeObject<JObject>(contLoad.Result);
-                                var filenameNew = contJson["value"].ToString();
+                                var filenameNew = contJson?["value"]?.ToString() ?? "newFile";
 
                                 // Liste bauen mit alt/neu
                                 result.OldNewFileNames.Add(providedFile.Filename, filenameNew);
@@ -367,7 +370,7 @@ public class SaveShellSaver
             }
         }
 
-        foreach (var cd in environment.ConceptDescriptions ?? [])
+        foreach (var cd in environment?.ConceptDescriptions ?? [])
         {
             var cdUrl = aasUrls.ConceptDescriptionRepositoryUrl.AppendSlash() + "concept-descriptions".AppendSlash() + cd.Id.ToBase64UrlEncoded(Encoding.UTF8);
             var cdJsonString = BasyxSerializer.Serialize(cd);

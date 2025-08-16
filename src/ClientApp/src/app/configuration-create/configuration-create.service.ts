@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
-import { KatalogEintrag } from '../model/katalog-eintrag';
+import { ConfigurationResponseDto } from '../model/configuration-response-dto';
 import { ConfiguredProduct } from '../model/configured-product';
+import { KatalogEintrag } from '../model/katalog-eintrag';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,7 @@ export class ConfigurationCreateService {
 
   createProduct(newProduct: ConfiguredProduct) {
     return lastValueFrom(
-      this.http.post<ConfiguredProduct>(
+      this.http.post<ConfigurationResponseDto>(
         `${this.baseUrl}api/konfigurator/createProduct`,
         newProduct
       )

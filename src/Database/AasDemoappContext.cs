@@ -22,6 +22,8 @@ namespace AasDemoapp.Database
         public DbSet<ConfiguredProduct> ConfiguredProducts { get; set; }
         public DbSet<ProducedProduct> ProducedProducts { get; set; }
         public DbSet<ProductPart> ProductParts { get; set; }
+        public DbSet<ProductionOrder> ProductionOrders { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         public string DbPath { get; }
 
@@ -103,13 +105,13 @@ namespace AasDemoapp.Database
                 .WithMany()
                 .UsingEntity<ProductPart>(
                     j => j.HasOne(pp => pp.ConfiguredProduct)
-                          .WithMany(cp => cp.Bestandteile)
-                          .HasForeignKey(pp => pp.ConfiguredProductId)
-                          .OnDelete(DeleteBehavior.Cascade),
+                        .WithMany(cp => cp.Bestandteile)
+                        .HasForeignKey(pp => pp.ConfiguredProductId)
+                        .OnDelete(DeleteBehavior.Cascade),
                     j => j.HasOne(pp => pp.KatalogEintrag)
-                          .WithMany()
-                          .HasForeignKey(pp => pp.KatalogEintragId)
-                          .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany()
+                        .HasForeignKey(pp => pp.KatalogEintragId)
+                        .OnDelete(DeleteBehavior.Restrict)
                 );
 
             // UpdateableShell -> KatalogEintrag (1:1)
@@ -118,6 +120,36 @@ namespace AasDemoapp.Database
                 .WithMany()
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(true);
+
+            // KatalogEintrag -> Supplier (N:1)
+            modelBuilder.Entity<KatalogEintrag>()
+                .HasOne(e => e.Supplier)
+                .WithMany()
+                .HasForeignKey(e => e.SupplierId)
+                .OnDelete(DeleteBehavior.Restrict) // Verhindert Löschen von Supplier wenn KatalogEintrag existiert
+                .IsRequired(false);
+
+            modelBuilder.Entity<Supplier>()
+                .Property(e => e.SecuritySetting)
+                .HasConversion(
+                    v => DBJsonConverter.Serialize(v),
+                    v => DBJsonConverter.Deserialize<SecuritySetting>(v));
+
+            // ProductionOrder -> ConfiguredProduct (N:1)
+            modelBuilder.Entity<ProductionOrder>()
+                .HasOne(e => e.ConfiguredProduct)
+                .WithMany()
+                .HasForeignKey(e => e.ConfiguredProductId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(true);
+
+            // ProductionOrder -> Address (N:1)
+            modelBuilder.Entity<ProductionOrder>()
+                .HasOne(e => e.Address)
+                .WithMany()
+                .HasForeignKey(e => e.AddressId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             // Global Query Filter für Soft Delete
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -129,7 +161,7 @@ namespace AasDemoapp.Database
                         Expression.Property(parameter, nameof(ISoftDelete.IsDeleted)),
                         Expression.Constant(false));
                     var lambda = Expression.Lambda(body, parameter);
-                    
+
                     modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
                 }
             }

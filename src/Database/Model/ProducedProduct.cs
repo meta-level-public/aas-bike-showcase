@@ -18,7 +18,7 @@ namespace AasDemoapp.Database.Model
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
         
-        public long PCFValue { get; set; }
+        public double PCFValue { get; set; }
 
     }
 }

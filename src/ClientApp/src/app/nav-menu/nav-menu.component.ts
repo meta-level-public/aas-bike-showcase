@@ -45,27 +45,27 @@ export class NavMenuComponent implements OnInit, OnDestroy {
         icon: 'pi pi-fw pi-th-large',
         routerLink: '/',
       },
-      {
-        label: 'Browse',
-        icon: 'pi pi-fw pi-th-large',
-        items: [
-          {
-            label: 'AAS Discovery',
-            icon: 'pi pi-fw pi-file',
-            routerLink: '/browse/discovery',
-          },
-          {
-            label: 'AAS Registry',
-            icon: 'pi pi-fw pi-file',
-            routerLink: '/browse/registry',
-          },
-          {
-            label: 'AAS Repository',
-            icon: 'pi pi-fw pi-file',
-            routerLink: '/browse/repository',
-          },
-        ],
-      },
+      // {
+      //   label: 'Browse',
+      //   icon: 'pi pi-fw pi-th-large',
+      //   items: [
+      //     {
+      //       label: 'AAS Discovery',
+      //       icon: 'pi pi-fw pi-file',
+      //       routerLink: '/browse/discovery',
+      //     },
+      //     {
+      //       label: 'AAS Registry',
+      //       icon: 'pi pi-fw pi-file',
+      //       routerLink: '/browse/registry',
+      //     },
+      //     {
+      //       label: 'AAS Repository',
+      //       icon: 'pi pi-fw pi-file',
+      //       routerLink: '/browse/repository',
+      //     },
+      //   ],
+      // },
       {
         label: 'Katalog',
         icon: 'pi pi-fw pi-book',
@@ -111,6 +111,17 @@ export class NavMenuComponent implements OnInit, OnDestroy {
             label: 'Eingang Buchen',
             icon: 'pi pi-fw pi-check-square',
             routerLink: '/goods/incoming',
+          },
+        ],
+      },
+      {
+        label: 'Produktionsaufträge',
+        icon: 'pi pi-fw pi-box',
+        items: [
+          {
+            label: 'Aufträge Auflisten',
+            icon: 'pi pi-fw pi-receipt', // TODO: Auftragsicon finden
+            routerLink: '/production-orders/list',
           },
         ],
       },

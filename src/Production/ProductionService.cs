@@ -38,17 +38,19 @@ namespace AasDemoapp.Production
 
             var aasId = IdGenerationUtil.GenerateId(IdType.Aas, "https://oi4-nextbike.de");
             var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, "https://oi4-nextbike.de");
+            var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+            var semanticID = "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/1/0";
 
             // Produkt zusammenbauen
-            var accumulatedPCF = 0; // TODO: kann der Wert schon vorbefüllt sein?
+            var accumulatedPCF = 0.0; // TODO: kann der Wert schon vorbefüllt sein?
             foreach (var component in producedProductRequest.BestandteilRequests)
             {
-                var ids = _proxyService.Discover(_settingService.GetSetting(SettingTypes.AasRegistryUrl)?.value ?? "", component.GlobalAssetId);
+                var ids = _proxyService.Discover(_settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "", securitySetting, component.GlobalAssetId);
                 var aas_id = ids.Result[0];
-                var submodelRepositoryUrl = _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.value ?? "";
-                var aasRegistryUrl = _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.value ?? "";
-                var submodelRegistryUrl = _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.value ?? "";
-                var aasRepositoryUrl = _settingService.GetSetting(SettingTypes.AasRepositoryUrl)?.value ?? "";
+                var submodelRepositoryUrl = _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
+                var aasRegistryUrl = _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
+                var submodelRegistryUrl = _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
+                var aasRepositoryUrl = _settingService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
                 LoadShellResult componentAAS = await ShellLoader.LoadAsync(
                     new AasUrls
                     {
@@ -56,11 +58,18 @@ namespace AasDemoapp.Production
                         SubmodelRepositoryUrl = submodelRepositoryUrl,
                         AasRegistryUrl = aasRegistryUrl,
                         SubmodelRegistryUrl = submodelRegistryUrl
-                    }, aas_id, default);
-                // TODO: hole korrektes AAS SMT für PCF über Semantic ID
-                var componentPCF = 0; // TODO: setze PCF Wert korrekt hier aus dem SMT
+                    }, securitySetting, aas_id, default);
+                var componentPCF = 10.0;
+                foreach (var submodel in componentAAS.EditorDescriptor.SubmodelDescriptorEntries)
+                {
+                    // todo: check if semantic ID = semanticID
+                    // todo: foreach SMC in (shortID = ProductCarbonFootprints)
+                    // todo: get value of property with idShort = PcfCO2eq and add it to overall PCD of bike
+                }
                 accumulatedPCF += componentPCF * component.Amount;
             }
+
+            accumulatedPCF *= 1.2; // 20 % extra for mounting
             
             var producedProduct = new ProducedProduct()
             {

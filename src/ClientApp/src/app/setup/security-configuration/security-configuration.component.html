@@ -1,0 +1,99 @@
+<p-fieldset [legend]="legend()" class="w-12" [collapsed]="true" [toggleable]="true">
+    <div class="flex flex-column gap-2">
+    <div class="flex flex-row align-items-end">
+      <p-button
+      label="Header-Parameter hinzufügen"
+      class="w-full"
+      (click)="addHeaderRow()"
+      icon="pi pi-plus"
+      ></p-button>
+    </div>
+    <p-message
+    >Wenn Ihre Infrastruktur eine Authentifizierung erfordert, können Sie hier
+    Header Parameter angeben, die für den Zugriff notwendig sind</p-message
+    >
+    </div>
+
+    @for (headerParam of localHeaderParameters(); track $index; let indx =
+    $index) {
+    <div class="flex flex-row gap-2 align-items-end">
+      <div class="field w-5">
+        <label for="headerName{{ indx }}"> Name </label>
+        <input
+          pInputText
+          id="headerName{{ indx }}"
+          name="headerName{{ indx }}"
+          type="text"
+          [(ngModel)]="headerParam.name"
+          (ngModelChange)="onHeaderParameterChange()"
+          class="w-full"
+          required
+        />
+      </div>
+      <div class="field w-5">
+        <label for="headerValue{{ indx }}"> Wert </label>
+        <input
+          pInputText
+          id="headerValue{{ indx }}"
+          name="headerValue{{ indx }}"
+          type="text"
+          [(ngModel)]="headerParam.value"
+          (ngModelChange)="onHeaderParameterChange()"
+          class="w-full"
+          required
+        />
+      </div>
+      <div class="field w-2">
+        <p-button
+          icon="pi pi-trash"
+          [outlined]="true"
+          severity="danger"
+          class="w-full"
+          (click)="removeHeaderRow(headerParam)"
+        ></p-button>
+      </div>
+    </div>
+    } @if (showCertificate()) {
+    <div class="flex flex-column mt-5">
+      <p-message severity="info"
+        >Wenn Ihre Infrastruktur eine Zertifikatsdatei erfordert, können Sie
+        diese hier hinterlegen.</p-message
+      >
+      <div class="field">
+        <label for="certificate"> Zertifikatsdatei</label>
+        <p-fileUpload
+          #uploader
+          chooseIcon="pi pi-upload"
+          accept=".pfx,"
+          [auto]="false"
+          chooseLabel="Datei auswählen"
+          [customUpload]="true"
+          (onSelect)="setCertificateFile($event)"
+          [showUploadButton]="false"
+        >
+          <ng-template pTemplate="content" let-files>
+            @if (localCertificate() != null && localCertificate().length > 0) {
+            <em> Zertifikat wurde angegeben. </em>
+            } @else {
+            <em> Wählen Sie eine Datei aus oder ziehen Sie sie hierher </em>
+            }
+          </ng-template>
+        </p-fileUpload>
+      </div>
+      <div class="field">
+        <label for="certificatePassword"> Passwort </label>
+        <p-password
+          [ngModel]="localCertificatePassword()"
+          (ngModelChange)="onCertificatePasswordChange($event)"
+          type="text"
+          class="w-full"
+          inputStyleClass="w-full"
+          required
+          name="certificatePassword"
+          id="certificatePassword"
+          feedback="false"
+        />
+      </div>
+    </div>
+    }
+</p-fieldset>

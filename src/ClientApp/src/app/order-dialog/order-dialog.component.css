@@ -1,0 +1,71 @@
+/* Komponenten-spezifische Styles für OrderDialog */
+
+.field {
+  margin-bottom: 1rem;
+}
+
+.field label {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.p-error {
+  color: var(--red-500);
+  font-size: 0.875rem;
+}
+
+.bg-primary-50 {
+  background-color: var(--primary-50);
+}
+
+.bg-surface-100 {
+  background-color: var(--surface-100);
+}
+
+/* Dialog angepasste Styles */
+::ng-deep .p-dialog .p-dialog-header {
+  background: var(--primary-500);
+  color: white;
+  border-radius: 6px 6px 0 0;
+}
+
+::ng-deep .p-dialog .p-dialog-header .p-dialog-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+::ng-deep .p-dialog .p-dialog-header .p-dialog-header-icon {
+  color: white;
+}
+
+::ng-deep .p-dialog .p-dialog-header .p-dialog-header-icon:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Form Styles */
+.grid {
+  margin: 0 -0.5rem;
+}
+
+.grid .col-12,
+.grid .col-6,
+.grid .col-4,
+.grid .col-5,
+.grid .col-3 {
+  padding: 0 0.5rem;
+}
+
+/* Responsive Anpassungen */
+@media screen and (max-width: 768px) {
+  ::ng-deep .p-dialog {
+    width: 95vw !important;
+    max-width: none !important;
+  }
+
+  .grid .col-12,
+  .grid [class*="col-"] {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+}

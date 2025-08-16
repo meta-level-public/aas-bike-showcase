@@ -1,0 +1,308 @@
+<div class="container mx-auto p-4 max-w-4xl">
+  <div class="mb-4">
+    <button
+      pButton
+      label="Zurück zur Konfigurationsliste"
+      icon="pi pi-arrow-left"
+      class="p-button-text"
+      (click)="cancel()">
+    </button>
+  </div>
+
+  <div class="grid">
+    <div class="col-12">
+      <p-card header="Neue Bestellung erstellen">
+        <div class="flex flex-column gap-4">
+
+          <!-- Produkt Info -->
+          @if (product) {
+            <div class="bg-primary-50 border-round p-4">
+              <div class="flex align-items-center gap-3">
+                <i class="pi pi-cog text-primary text-3xl"></i>
+                <div class="flex-1">
+                  <h2 class="text-primary m-0 mb-2">{{ product.name }}</h2>
+                  <p class="text-600 m-0 text-lg">Preis pro Stück: <strong>${{ product.price }}</strong></p>
+                  @if (product.bestandteile && product.bestandteile.length > 0) {
+                    <p class="text-600 m-0">{{ product.bestandteile.length }} Bestandteile</p>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (loading && !product) {
+            <div class="flex justify-content-center p-4">
+              <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+            </div>
+          }
+
+          <!-- Bestellformular -->
+          @if (product) {
+            <form [formGroup]="orderForm" class="flex flex-column gap-4">
+
+              <!-- Anzahl -->
+              <div class="field">
+                <label for="anzahl" class="font-semibold block mb-2 text-lg">
+                  <i class="pi pi-hashtag mr-2"></i>Anzahl *
+                </label>
+                <p-inputNumber
+                  id="anzahl"
+                  formControlName="anzahl"
+                  [min]="1"
+                  [max]="100"
+                  class="w-full"
+                  [showButtons]="true"
+                  buttonLayout="horizontal"
+                  incrementButtonIcon="pi pi-plus"
+                  decrementButtonIcon="pi pi-minus"
+                  size="large">
+                </p-inputNumber>
+                @if (orderForm.get('anzahl')?.invalid && orderForm.get('anzahl')?.touched) {
+                  <small class="p-error block mt-1">Anzahl ist erforderlich und muss mindestens 1 sein.</small>
+                }
+              </div>
+
+              <!-- Gesamtpreis -->
+              <div class="field">
+                <div class="bg-surface-100 border-round p-4 flex justify-content-between align-items-center">
+                  <span class="font-semibold text-900 text-lg">
+                    <i class="pi pi-calculator mr-2"></i>Gesamtpreis:
+                  </span>
+                  <span class="text-primary font-bold text-2xl">${{ getTotalPrice().toFixed(2) }}</span>
+                </div>
+              </div>
+
+              <!-- Lieferadresse (Optional) -->
+              <div class="field">
+                <h3 class="text-900 mb-3">
+                  <i class="pi pi-map-marker mr-2"></i>Lieferadresse (Optional)
+                </h3>
+
+                <div class="grid">
+                  <!-- Persönliche Daten -->
+                  <div class="col-12">
+                    <div class="grid">
+                      <div class="col-12 md:col-6">
+                        <label for="vorname" class="block mb-2">Vorname</label>
+                        <input
+                          pInputText
+                          id="vorname"
+                          formControlName="vorname"
+                          class="w-full"
+                          placeholder="Max">
+                      </div>
+
+                      <div class="col-12 md:col-6">
+                        <label for="name" class="block mb-2">Nachname</label>
+                        <input
+                          pInputText
+                          id="name"
+                          formControlName="name"
+                          class="w-full"
+                          placeholder="Mustermann">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Adressfelder mit Suchbutton -->
+                  <div class="col-12">
+                    <h4 class="text-900 mb-2">Adresse</h4>
+                    <div class="grid">
+                      <div class="col-12">
+                        <label for="strasse" class="block mb-2">Straße</label>
+                        <div class="flex gap-2">
+                          <input
+                            pInputText
+                            id="strasse"
+                            formControlName="strasse"
+                            class="flex-1"
+                            placeholder="Musterstraße 123"
+                            (input)="onAddressFieldChange()">
+                          <button
+                            pButton
+                            type="button"
+                            label="Suchen"
+                            icon="pi pi-search"
+                            class="p-button-outlined"
+                            (click)="searchAddress()">
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="col-12 md:col-4">
+                        <label for="plz" class="block mb-2">PLZ</label>
+                        <input
+                          pInputText
+                          id="plz"
+                          formControlName="plz"
+                          class="w-full"
+                          placeholder="12345"
+                          (input)="onAddressFieldChange()">
+                      </div>
+
+                      <div class="col-12 md:col-5">
+                        <label for="ort" class="block mb-2">Ort</label>
+                        <input
+                          pInputText
+                          id="ort"
+                          formControlName="ort"
+                          class="w-full"
+                          placeholder="Musterstadt"
+                          (input)="onAddressFieldChange()">
+                      </div>
+
+                      <div class="col-12 md:col-3">
+                        <label for="land" class="block mb-2">Land</label>
+                        <input
+                          pInputText
+                          id="land"
+                          formControlName="land"
+                          class="w-full"
+                          (input)="onAddressFieldChange()">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Koordinaten (optional) -->
+                  <div class="col-12">
+                    <h4 class="text-900 mb-2">Koordinaten (optional)</h4>
+                    <div class="grid">
+                      <div class="col-12 md:col-6">
+                        <label for="latitude" class="block mb-2">
+                          Breitengrad (Lat)
+                          @if (isGeocodingLoading) {
+                            <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem;"></i>
+                          }
+                        </label>
+                        <input
+                          pInputText
+                          id="latitude"
+                          type="number"
+                          formControlName="lat"
+                          class="w-full"
+                          placeholder="z.B. 52.520008"
+                          step="any">
+                      </div>
+
+                      <div class="col-12 md:col-6">
+                        <label for="longitude" class="block mb-2">Längengrad (Long)</label>
+                        <input
+                          pInputText
+                          id="longitude"
+                          type="number"
+                          formControlName="long"
+                          class="w-full"
+                          placeholder="z.B. 13.404954"
+                          step="any">
+                      </div>
+
+                      <!-- Geocoding Controls -->
+                      <div class="col-12">
+                        <div class="flex gap-2 align-items-center mt-2">
+                          <button
+                            pButton
+                            type="button"
+                            label="Koordinaten ermitteln"
+                            icon="pi pi-map-marker"
+                            size="small"
+                            class="p-button-outlined p-button-secondary"
+                            (click)="geocodeAddress()"
+                            [loading]="isGeocodingLoading"
+                            [disabled]="!hasAddressData()">
+                          </button>
+                          @if (hasCoordinates()) {
+                            <button
+                              pButton
+                              type="button"
+                              label="Koordinaten löschen"
+                              icon="pi pi-times"
+                              size="small"
+                              class="p-button-outlined p-button-danger"
+                              (click)="clearCoordinates()">
+                            </button>
+                          }
+                          @if (isGeocodingLoading) {
+                            <small class="text-600">
+                              Koordinaten werden automatisch ermittelt...
+                            </small>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Kartenbereich -->
+                  @if (hasAddressData() || hasCoordinates()) {
+                    <div class="col-12">
+                      <div class="bg-surface-50 border-round p-3 mb-3">
+                        <div class="flex justify-content-between align-items-center mb-3">
+                          <h4 class="text-900 m-0">
+                            <i class="pi pi-map mr-2"></i>Kartenansicht
+                          </h4>
+                          <div class="flex align-items-center gap-2">
+                            <!-- Alternative: Normaler Button statt Toggle Button -->
+                            <button
+                              pButton
+                              [label]="mapClickMode ? 'Klick-Modus: Ein' : 'Klick-Modus: Aus'"
+                              [icon]="mapClickMode ? 'pi pi-map-marker' : 'pi pi-map'"
+                              [severity]="mapClickMode ? 'success' : 'secondary'"
+                              (click)="toggleMapClickMode()"
+                              class="p-button-sm">
+                            </button>
+
+                            @if (mapClickMode) {
+                              <small class="text-600">
+                                Klicken Sie auf die Karte, um Position zu setzen
+                              </small>
+                            }
+                            <small class="text-500 ml-2">
+                              Status: {{mapClickMode ? 'Aktiviert' : 'Deaktiviert'}}
+                            </small>
+                          </div>
+                        </div>
+
+                        <app-leaflet-map
+                          [location]="getMapLocation()"
+                          [address]="hasCoordinates() ? undefined : getFormattedAddress()"
+                          [height]="'400px'"
+                          [zoom]="15"
+                          [enableClickToSet]="mapClickMode"
+                          (locationClicked)="onMapLocationClicked($event)">
+                        </app-leaflet-map>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Aktionsbuttons -->
+              <div class="flex gap-2 justify-content-end pt-4">
+                <button
+                  pButton
+                  label="Abbrechen"
+                  icon="pi pi-times"
+                  class="p-button-text p-button-secondary"
+                  (click)="cancel()"
+                  [disabled]="loading">
+                </button>
+
+                <button
+                  pButton
+                  label="Bestellung erstellen"
+                  icon="pi pi-check"
+                  class="p-button-primary"
+                  (click)="createOrder()"
+                  [loading]="loading"
+                  [disabled]="orderForm.invalid">
+                </button>
+              </div>
+
+            </form>
+          }
+        </div>
+      </p-card>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

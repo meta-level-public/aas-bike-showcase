@@ -9,6 +9,8 @@ import { DiscoveryComponent } from './discovery/discovery.component';
 import { DppComponent } from './dpp/dpp.component';
 import { GoodsIncomingComponent } from './goods-incoming/goods-incoming.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
+import { OrderCreateComponent } from './order-create/order-create.component';
+import { ProductionOrderListComponent } from './production-order-list/production-order-list.component';
 import { RegistryComponent } from './registry/registry.component';
 import { RepositoryComponent } from './repository/repository.component';
 import { SetupComponent } from './setup/setup.component';
@@ -37,8 +39,17 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'orders',
+    children: [
+      { path: 'create/:id', component: OrderCreateComponent },
+    ],
+  },
+  {
     path: 'production',
-    children: [{ path: 'assembly', component: AssemblyComponent }],
+    children: [
+      { path: 'assembly', component: AssemblyComponent },
+      { path: 'assembly/:id', component: AssemblyComponent }
+    ],
   },
   {
     path: 'goods',
@@ -46,6 +57,10 @@ export const routes: Routes = [
       { path: 'list', component: GoodsListComponent },
       { path: 'incoming', component: GoodsIncomingComponent },
     ],
+  },
+  {
+    path: 'production-orders',
+    children: [{ path: 'list', component: ProductionOrderListComponent }],
   },
   {
     path: 'documentation',

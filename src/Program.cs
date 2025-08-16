@@ -7,6 +7,7 @@ using AasDemoapp.Jobs;
 using AasDemoapp.Katalog;
 using AasDemoapp.Konfigurator;
 using AasDemoapp.Production;
+using AasDemoapp.Services.ProductionOrder;
 using AasDemoapp.Proxy;
 using AasDemoapp.Settings;
 using AasDemoapp.Suppliers;
@@ -64,6 +65,7 @@ builder.Services.AddScoped<ProxyService>();
 builder.Services.AddScoped<KonfiguratorService>();
 builder.Services.AddScoped<DashboardService>();
 builder.Services.AddScoped<ProductionService>();
+builder.Services.AddScoped<ProductionOrderService>();
 builder.Services.AddScoped<DppService>();
 
 

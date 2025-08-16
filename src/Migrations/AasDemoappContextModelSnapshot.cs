@@ -17,6 +17,41 @@ namespace AasDemoapp.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.1");
 
+            modelBuilder.Entity("AasDemoapp.Database.Model.Address", b =>
+                {
+                    b.Property<long?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Land")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Lat")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("Long")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Ort")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Plz")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Strasse")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Vorname")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("AasDemoapp.Database.Model.ConfiguredProduct", b =>
                 {
                     b.Property<long?>("Id")
@@ -126,9 +161,14 @@ namespace AasDemoapp.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<long>("SupplierId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ReferencedTypeId");
+
+                    b.HasIndex("SupplierId");
 
                     b.ToTable("KatalogEintraege");
                 });
@@ -212,6 +252,54 @@ namespace AasDemoapp.Migrations
                     b.ToTable("ProductParts");
                 });
 
+            modelBuilder.Entity("AasDemoapp.Database.Model.ProductionOrder", b =>
+                {
+                    b.Property<long?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("AddressId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Anzahl")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("ConfiguredProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("FertigstellungsDatum")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("ProduktionAbgeschlossen")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("VersandDatum")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Versandt")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("ConfiguredProductId");
+
+                    b.ToTable("ProductionOrders");
+                });
+
             modelBuilder.Entity("AasDemoapp.Database.Model.Setting", b =>
                 {
                     b.Property<long?>("Id")
@@ -222,7 +310,7 @@ namespace AasDemoapp.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("value")
+                    b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -246,6 +334,10 @@ namespace AasDemoapp.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RemoteRepositoryUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SecuritySetting")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -286,7 +378,14 @@ namespace AasDemoapp.Migrations
                         .HasForeignKey("ReferencedTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("AasDemoapp.Database.Model.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("ReferencedType");
+
+                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("AasDemoapp.Database.Model.ProducedProduct", b =>
@@ -323,6 +422,24 @@ namespace AasDemoapp.Migrations
                     b.Navigation("KatalogEintrag");
 
                     b.Navigation("ProducedProduct");
+                });
+
+            modelBuilder.Entity("AasDemoapp.Database.Model.ProductionOrder", b =>
+                {
+                    b.HasOne("AasDemoapp.Database.Model.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AasDemoapp.Database.Model.ConfiguredProduct", "ConfiguredProduct")
+                        .WithMany()
+                        .HasForeignKey("ConfiguredProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("ConfiguredProduct");
                 });
 
             modelBuilder.Entity("AasDemoapp.Database.Model.UpdateableShell", b =>

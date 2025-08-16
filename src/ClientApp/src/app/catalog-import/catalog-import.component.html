@@ -1,120 +1,186 @@
-<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
-  <div class="flex flex-column gap-2 mt-2">
-    <div class="flex flex-row gap-2">
-      <div class="gap-2 flex-column md:w-4">
-        <label for="name" class="block text-900 font-medium mb-2">Name</label>
-        <input
-          id="name"
-          type="text"
-          placeholder="Name"
-          pInputText
-          class="w-full mb-3"
-          [(ngModel)]="newKatalogEintrag.name"
+<div class="catalog-import-container">
+  <!-- Header Section -->
+  <div class="catalog-import-header">
+    <h1 class="catalog-import-title">
+      <i class="pi pi-download"></i>
+      Katalog Import
+    </h1>
+    <p class="catalog-import-subtitle">Teile aus externen Katalogen importieren</p>
+  </div>
+
+  <!-- Main Content -->
+  <div class="catalog-import-content">
+    <!-- Left Panel - Form Input -->
+    <div class="input-panel">
+      <div class="panel-header">
+        <i class="pi pi-pencil"></i>
+        <h3>Teil Details</h3>
+      </div>
+
+      <div class="form-section">
+        <div class="form-group">
+          <label for="name" class="form-label">
+            <i class="pi pi-tag"></i>
+            Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            placeholder="Name eingeben"
+            pInputText
+            class="w-full"
+            [(ngModel)]="newKatalogEintrag.name"
           />
-        <label for="price" class="block text-900 font-medium mb-2">Preis</label>
-        <input
-          id="price"
-          type="text"
-          placeholder="Preis"
-          pInputText
-          class="w-full mb-3"
-          [(ngModel)]="newKatalogEintrag.price"
-          />
-        <label for="price" class="block text-900 font-medium mb-2">AasId</label>
-        <input
-          id="price"
-          type="text"
-          placeholder="AasId"
-          pInputText
-          [(ngModel)]="newKatalogEintrag.aasId"
-          class="w-full mb-3"
-          />
-        <label for="price" class="block text-900 font-medium mb-2"
-          >GlobalAssetId</label
-          >
+        </div>
+
+        <div class="form-group">
+          <label for="price" class="form-label">
+            <i class="pi pi-euro"></i>
+            Preis
+          </label>
           <input
             id="price"
             type="text"
-            placeholder="GlobalAssetId"
+            placeholder="Preis eingeben"
+            pInputText
+            class="w-full"
+            [(ngModel)]="newKatalogEintrag.price"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="aasId" class="form-label">
+            <i class="pi pi-id-card"></i>
+            AasId
+          </label>
+          <input
+            id="aasId"
+            type="text"
+            placeholder="AasId eingeben"
+            pInputText
+            [(ngModel)]="newKatalogEintrag.aasId"
+            class="w-full"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="globalAssetId" class="form-label">
+            <i class="pi pi-globe"></i>
+            GlobalAssetId
+          </label>
+          <input
+            id="globalAssetId"
+            type="text"
+            placeholder="GlobalAssetId eingeben"
             pInputText
             [(ngModel)]="newKatalogEintrag.globalAssetId"
-            class="w-full mb-3"
-            />
-        </div>
-        <div class="flex gap-2 flex-column md:w-8">
-          <div class="flex flex-row gap-2">
-            @for (item of suppliers; track $index) {
-              <div [ngClass]="{'border-solid': item.remoteRepositoryUrl === currentRepositoryUrl}" class="border-indigo-400 h-full flex align-items-center p-2">
-                <img
-                  [src]="'/assets/logos/' + item.logo"
-                  width="100px"
-                  (click)="loadRegistry(item.remoteRepositoryUrl)"
-                  [alt]="item.name"
-                  class="cursor-pointer"
-                  />
-              </div>
-              } @empty {
-              <p>
-                Keine Lieferanten erfasst. Bitte zuerst im Grundsetup einrichten
-              </p>
-            }
-          </div>
-          <p-table
-            [value]="shells"
             class="w-full"
-            styleClass="p-datatable-sm p-datatable-striped p-datatable-gridlines"
-            [scrollable]="true"
-            scrollHeight="250px"
-            [tableStyle]="{ 'min-width': '50rem' }"
-            [loading]="loading"
-            >
-            <ng-template pTemplate="header">
-              <tr>
-                <th scope="col">Aas IdShort</th>
-                <th scope="col">AasId</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-shell>
-              @if (shell != null) {
-                <tr>
-                  <td>{{ shell.idShort }}</td>
-                  <td>{{ shell.id }}</td>
-                  <td>
-                    <button
-                      pButton
-                      class="p-button-sm"
-                      label="übernehmen"
-                      (click)="apply(shell)"
-                    ></button>
-                  </td>
-                  <td>
-                    <p-popover #op
-                      ><ngx-json-viewer
-                      [json]="shell"
-                      [expanded]="false"
-                    ></ngx-json-viewer>
-                  </p-popover>
-                  <button
-                    pButton
-                    (click)="op.toggle($event)"
-                    icon="pi pi-eye"
-                  ></button>
-                </td>
-              </tr>
+          />
+        </div>
+
+        <div class="form-group">
+          <p-button
+            label="Speichern"
+            icon="pi pi-save"
+            class="w-full save-btn"
+            (click)="save()"
+            severity="success"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel - Supplier Selection and Data -->
+    <div class="data-panel">
+      <div class="panel-header">
+        <i class="pi pi-building"></i>
+        <h3>Lieferanten & Katalog</h3>
+      </div>
+
+      <!-- Supplier Selection -->
+      <div class="suppliers-section">
+        <h4 class="section-title">
+          <i class="pi pi-users"></i>
+          Lieferant auswählen
+        </h4>
+        <div class="suppliers-grid">
+          @for (item of suppliers; track $index) {
+          <div
+            class="supplier-card"
+            [ngClass]="{'selected': item.remoteRepositoryUrl === currentRepositoryUrl}"
+            (click)="loadRegistry(item.remoteRepositoryUrl)"
+          >
+            <img
+              [src]="'/assets/logos/' + item.logo"
+              [alt]="item.name"
+              class="supplier-logo"
+            />
+            <span class="supplier-name">{{ item.name }}</span>
+          </div>
+          } @empty {
+          <div class="empty-state">
+            <i class="pi pi-info-circle"></i>
+            <p>Keine Lieferanten erfasst. Bitte zuerst im Grundsetup einrichten</p>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="table-section">
+        <h4 class="section-title">
+          <i class="pi pi-list"></i>
+          Verfügbare Teile
+        </h4>
+        <p-table
+          [value]="shells"
+          class="w-full"
+          styleClass="p-datatable-sm p-datatable-striped p-datatable-gridlines"
+          [scrollable]="true"
+          scrollHeight="300px"
+          [tableStyle]="{ 'min-width': '50rem' }"
+          [loading]="loading"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th scope="col">Aas IdShort</th>
+              <th scope="col">AasId</th>
+              <th scope="col">Aktionen</th>
+              <th scope="col">Details</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-shell>
+            @if (shell != null) {
+            <tr>
+              <td>{{ shell.idShort }}</td>
+              <td>{{ shell.id }}</td>
+              <td>
+                <p-button
+                  size="small"
+                  label="Übernehmen"
+                  (click)="apply(shell)"
+                  severity="info"
+                ></p-button>
+              </td>
+              <td>
+                <p-popover #op>
+                  <ngx-json-viewer
+                    [json]="shell"
+                    [expanded]="false"
+                  ></ngx-json-viewer>
+                </p-popover>
+                <p-button
+                  (click)="op.toggle($event)"
+                  icon="pi pi-eye"
+                  size="small"
+                  severity="secondary"
+                ></p-button>
+              </td>
+            </tr>
             }
           </ng-template>
         </p-table>
       </div>
     </div>
-    <button
-      pButton
-      pRipple
-      label="Speichern"
-      icon="pi pi-save"
-      class="w-full"
-      (click)="save()"
-    ></button>
   </div>
 </div>

@@ -5,8 +5,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using AasDemoapp.Utils.ConceptDescriptions;
+using AasDemoapp.Database.Model;
 
 namespace AasDemoapp.Utils.Shells;
+
 public class LoadShellResult
 {
     public AasCore.Aas3_0.Environment? Environment { get; set; }
@@ -30,18 +32,18 @@ public class EditorDescriptorEntry
 
 public static class ShellLoader
 {
-    public static async Task<LoadShellResult> LoadAsync(AasUrls aasUrls, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<LoadShellResult> LoadAsync(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
     {
         var result = new LoadShellResult();
 
         // jetzt den BasyxServer anfragen
-        using var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
         // zunächst in aas-Registry die aas-url laden, falls das nicht klappt, direkten zugriff aufs repo versuchen
         var aasUrl = string.Empty;
         try
         {
-            aasUrl = await GetAasUrl(aasUrls, aasIdentifier, cancellationToken);
+            aasUrl = await GetAasUrl(aasUrls, securitySetting, aasIdentifier, cancellationToken);
         }
         catch (Exception e)
         {
@@ -82,7 +84,7 @@ public static class ShellLoader
             foreach (var smRef in aas.Submodels ?? [])
             {
                 // submodelUrl aus SM-Registry laden
-                var submodelUrl = await GetSmUrl(aasUrls, aasIdentifier, smRef.Keys[0].Value, cancellationToken);
+                var submodelUrl = await GetSmUrl(aasUrls, securitySetting, aasIdentifier, smRef.Keys[0].Value, cancellationToken);
                 // var submodelUrl = aasInfrastructureSettings.SubmodelRepositoryUrl.AppendSlash() + "submodels/" + smRef.Keys[0].Value.ToBase64UrlEncoded(Encoding.UTF8);
                 HttpResponseMessage submodelResponse = await client.GetAsync(submodelUrl, cancellationToken);
 
@@ -161,15 +163,15 @@ public static class ShellLoader
         return result;
     }
 
-    public static async Task<AssetAdministrationShell?> LoadShellOnly(AasUrls aasUrls, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<AssetAdministrationShell?> LoadShellOnly(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
     {
-        using var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
         // zunächst in aas-Registry die aas-url laden, falls das nicht klappt, direkten zugriff aufs repo versuchen
         var url = string.Empty;
         try
         {
-            url = await GetAasUrl(aasUrls, aasIdentifier, cancellationToken);
+            url = await GetAasUrl(aasUrls, securitySetting, aasIdentifier, cancellationToken);
         }
         catch (Exception e)
         {
@@ -200,15 +202,15 @@ public static class ShellLoader
         return null;
     }
 
-    public static async Task<AssetInformation?> LoadAssetInformationOnly(AasUrls aasUrls, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<AssetInformation?> LoadAssetInformationOnly(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
     {
-        using var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
         // zunächst in aas-Registry die aas-url laden, falls das nicht klappt, direkten zugriff aufs repo versuchen
         var url = string.Empty;
         try
         {
-            url = await GetAasUrl(aasUrls, aasIdentifier, cancellationToken) + '/' + "asset-information";
+            url = await GetAasUrl(aasUrls, securitySetting, aasIdentifier, cancellationToken) + '/' + "asset-information";
         }
         catch (Exception e)
         {
@@ -238,9 +240,9 @@ public static class ShellLoader
         return null;
     }
 
-    public static async Task<bool> CheckIfExists(AasUrls aasUrls, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<bool> CheckIfExists(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
     {
-        using var client = new HttpClient();
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
         var url = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
 
@@ -258,7 +260,7 @@ public static class ShellLoader
 
     }
 
-    public static async Task<string> GetAasUrl(AasUrls aasUrls, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<string> GetAasUrl(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
     {
         var result = string.Empty;
 
@@ -266,7 +268,7 @@ public static class ShellLoader
         {
             var url = aasUrls.AasRegistryUrl.AppendSlash() + "shell-descriptors/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
 
-            using var client = new HttpClient();
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
             HttpResponseMessage response = await client.GetAsync(url, cancellationToken);
 
@@ -312,14 +314,14 @@ public static class ShellLoader
     }
 
 
-    public static async Task<string> GetSmUrl(AasUrls aasUrls, string aasIdentifier, string smIdentifier, CancellationToken cancellationToken)
+    public static async Task<string> GetSmUrl(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, string smIdentifier, CancellationToken cancellationToken)
     {
         var result = string.Empty;
+        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
         if (!string.IsNullOrWhiteSpace(aasUrls.AasRegistryUrl))
         {
             var url = aasUrls.AasRegistryUrl.AppendSlash() + "shell-descriptors/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
 
-            using var client = new HttpClient();
 
             HttpResponseMessage response = await client.GetAsync(url, cancellationToken);
 
@@ -354,8 +356,6 @@ public static class ShellLoader
             if (!string.IsNullOrWhiteSpace(aasUrls.SubmodelRegistryUrl))
             {
                 var url = aasUrls.SubmodelRegistryUrl.AppendSlash() + "submodel-descriptors/" + smIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
-
-                using var client = new HttpClient();
 
                 HttpResponseMessage response = await client.GetAsync(url, cancellationToken);
 

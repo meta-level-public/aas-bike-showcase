@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
@@ -26,7 +27,7 @@ namespace AasDemoapp.Settings
             }
             else
             {
-                dbSetting.value = setting.value;
+                dbSetting.Value = setting.Value;
             }
             _context.SaveChanges();
 
@@ -41,6 +42,19 @@ namespace AasDemoapp.Settings
         public Setting? GetSetting(string name)
         {
             return _context.Settings.FirstOrDefault(s => s.Name == name);
+        }
+
+        public SecuritySetting GetSecuritySetting(string name)
+        {
+            var setting = _context.Settings.FirstOrDefault(s => s.Name == name);
+            if (setting == null) return new SecuritySetting();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var securitySetting = JsonSerializer.Deserialize<SecuritySetting>(setting.Value, options);
+            return securitySetting ?? new SecuritySetting();
         }
     }
 }

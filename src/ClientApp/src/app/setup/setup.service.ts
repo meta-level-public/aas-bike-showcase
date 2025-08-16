@@ -19,6 +19,12 @@ export class SetupService {
     );
   }
 
+  async updateSupplier(supplier: Supplier) {
+    return lastValueFrom(
+      this.http.put<any>(`${this.baseUrl}api/supplier/update`, supplier)
+    );
+  }
+
   async deleteSupplier(supplier: Supplier) {
     return lastValueFrom(
       this.http.delete(`${this.baseUrl}api/supplier/delete/${supplier.id}`)

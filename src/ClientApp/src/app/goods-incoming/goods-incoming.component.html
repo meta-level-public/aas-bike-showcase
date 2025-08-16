@@ -1,94 +1,200 @@
-Wareneingangsbuchung
+<div class="goods-incoming-container">
+  <!-- Header Section -->
+  <div class="goods-incoming-header">
+    <h1 class="goods-incoming-title">
+      <i class="pi pi-truck"></i>
+      Wareneingang
+    </h1>
+    <p class="goods-incoming-subtitle">Lieferungen verwalten und Teile einbuchen</p>
+  </div>
 
-<!-- LKW Lieferung Animation -->
-<div class="delivery-section">
-  <button
-    pButton
-    label="Lieferung starten"
-    icon="pi pi-truck"
-    class="delivery-button"
-    (click)="startDelivery()"
-    [disabled]="showTruck">
-  </button>
-
-  @if (showTruck) {
-    <div class="delivery-animation">
-      <!-- Hintergrund Wolken -->
-      <div class="cloud cloud1"></div>
-      <div class="cloud cloud2"></div>
-      <!-- Fabrikgebäude -->
-      <div class="factory-building factory-building-1"></div>
-      <div class="factory-building factory-building-2"></div>
-      <div class="factory-chimney"></div>
-      <!-- LKW -->
-      <div class="truck" [ngClass]="truckPosition">
-        <div class="truck-cab"></div>
-        <div class="truck-body">
-          <!-- Kiste auf der Ladefläche -->
-          @if (showBox) {
-            <div
-              class="delivery-box"
-              [ngClass]="{'clickable': isBoxClickable}"
-              (click)="onBoxClick()"
-              >
-              <div class="box-text"></div>
-            </div>
-          }
-        </div>
-        <div class="truck-wheel wheel-front"></div>
-        <div class="truck-wheel wheel-back"></div>
+  <!-- Main Content -->
+  <div class="goods-incoming-content">
+    <!-- Left Panel - Delivery Simulation -->
+    <div class="delivery-panel">
+      <div class="panel-header">
+        <i class="pi pi-play-circle"></i>
+        <h3>Lieferung simulieren</h3>
       </div>
-    </div>
-  }
 
-  @if (showTruck && isBoxClickable) {
-    <div class="delivery-status">
-      <p><i class="pi pi-info-circle"></i> Klicken Sie auf die Kiste, um die GlobalAssetId zu übernehmen</p>
-    </div>
-  }
-</div>
+      <div class="delivery-controls mb-3">
+        @if (!showTruck) {
+        <p-button
+          label="Lieferung starten"
+          icon="pi pi-truck"
+          class="w-full delivery-button"
+          (onClick)="startDelivery()"
+          [disabled]="showTruck"
+          severity="success"
+        >
+        </p-button>
+        }
 
-<div class="flex flex-column gap-2 mt-2">
-  <div class="flex flex-row gap-2">
-    <div class="gap-2 flex-column md:w-4">
-      <div class="gap-2 flex-column">
-        <label for="name" class="block text-900 font-medium mb-2"
-          >GlobalAssetId des gelieferten Teils scannen</label
-          >
-          <input
-            id="name"
-            type="text"
-            placeholder="Name"
-            pInputText
-            class="w-full mb-3"
-            [(ngModel)]="newKatalogEintrag.globalAssetId"
-            />
-        </div>
-        <div class="gap-2 flex-column">
-          <button pButton label="Lookup" (click)="lookup()" [loading]="loading" ></button>
-          <label for="price" class="block text-900 font-medium mb-2"
-            >Anzahl</label
-            >
-            <input
-              id="price"
-              type="text"
-              placeholder="Anzahl"
-              pInputText
-              class="w-full mb-3"
-              [(ngModel)]="newKatalogEintrag.amount"
-              />
-          </div>
-          <button pButton label="Buchen" (click)="createRohteilInstanz()" [loading]="loading" [disabled]="!parentRohteil || !newKatalogEintrag.amount"></button>
-        </div>
-        @if (loaded) {
-          <div class="gap-2 flex-column md:w-8">
-            Teil im lokalen Katalog:
-            <app-catalog-item [item]="parentRohteil" [showDelete]="false"></app-catalog-item>
-            Instanz beim Hersteller:
-            @if (loaded) {
-              <app-catalog-item [item]="newKatalogEintrag" [imgUrl]="importImageUrl" [showDelete]="false"></app-catalog-item>
-            }
-          </div>
+        @if (showTruck) {
+        <p-button
+          label="Lieferung zurücksetzen"
+          icon="pi pi-refresh"
+          class="w-full reset-button"
+          severity="secondary"
+          (onClick)="resetDelivery()"
+        ></p-button>
         }
       </div>
+
+      @if (showTruck) {
+      <div class="delivery-animation">
+        <!-- Hintergrund Wolken -->
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <!-- Fabrikgebäude -->
+        <div class="factory-building factory-building-1"></div>
+        <div class="factory-building factory-building-2"></div>
+        <div class="factory-chimney"></div>
+        <!-- LKW -->
+        <div class="truck" [ngClass]="truckPosition">
+          <div class="truck-cab"></div>
+          <div class="truck-body">
+            <!-- Kiste auf der Ladefläche -->
+            @if (showBox) {
+            <div
+              class="delivery-box"
+              [ngClass]="{ clickable: isBoxClickable }"
+              (click)="onBoxClick()"
+            >
+              <div class="box-text"></div>
+            </div>
+            }
+          </div>
+          <div class="truck-wheel wheel-front"></div>
+          <div class="truck-wheel wheel-back"></div>
+        </div>
+      </div>
+      }
+
+      @if (showTruck && isBoxClickable) {
+      <div class="delivery-status mt-3">
+        <p-message
+          severity="info"
+          text="Klicken Sie auf die Kiste, um die GlobalAssetId zu übernehmen"
+          [closable]="false"
+        ></p-message>
+      </div>
+      }
     </div>
+
+    <!-- Right Panel - Part Booking -->
+    <div class="booking-panel">
+      <div class="panel-header">
+        <i class="pi pi-barcode"></i>
+        <h3>Teil einbuchen</h3>
+      </div>
+
+      <!-- Input Form -->
+      <div class="booking-form">
+        <div class="form-group">
+          <label for="globalAssetId" class="form-label">
+            <i class="pi pi-qrcode"></i>
+            GlobalAssetId des gelieferten Teils
+          </label>
+          <span class="p-input-icon-right w-full">
+            <i class="pi pi-search"></i>
+            <input
+              id="globalAssetId"
+              type="text"
+              placeholder="Teil scannen oder eingeben"
+              pInputText
+              class="w-full"
+              [(ngModel)]="newKatalogEintrag.globalAssetId"
+            />
+          </span>
+        </div>
+
+        <div class="form-group">
+          <p-button
+            label="Lookup"
+            icon="pi pi-search"
+            (click)="lookup()"
+            [loading]="loading"
+            class="w-full"
+            severity="info"
+          ></p-button>
+        </div>
+
+        <div class="form-group">
+          <label for="amount" class="form-label">
+            <i class="pi pi-hashtag"></i>
+            Anzahl
+          </label>
+          <p-inputNumber
+            id="amount"
+            [(ngModel)]="newKatalogEintrag.amount"
+            [showButtons]="true"
+            [min]="1"
+            placeholder="Anzahl eingeben"
+            class="w-full"
+            buttonLayout="horizontal"
+            inputStyleClass="w-full text-center"
+            incrementButtonClass="p-button-secondary"
+            decrementButtonClass="p-button-secondary"
+          ></p-inputNumber>
+        </div>
+
+        <div class="form-group">
+          <p-button
+            label="Teil einbuchen"
+            icon="pi pi-check"
+            (click)="createRohteilInstanz()"
+            [loading]="loading"
+            [disabled]="!parentRohteil || !newKatalogEintrag.amount"
+            class="w-full create-btn"
+            severity="success"
+          ></p-button>
+        </div>
+      </div>
+
+      <!-- Preview Section -->
+      @if (loaded) {
+      <div class="preview-section">
+        <div class="preview-card">
+          <h4 class="preview-title">
+            <i class="pi pi-box"></i>
+            Teil im lokalen Katalog
+          </h4>
+          <app-catalog-item
+            [item]="parentRohteil"
+            [showDelete]="false"
+          ></app-catalog-item>
+        </div>
+
+        <div class="preview-card">
+          <h4 class="preview-title">
+            <i class="pi pi-external-link"></i>
+            Instanz beim Hersteller
+          </h4>
+          <app-catalog-item
+            [item]="newKatalogEintrag"
+            [imgUrl]="importImageUrl"
+            [showDelete]="false"
+          ></app-catalog-item>
+        </div>
+      </div>
+      }
+
+      @if (!loaded && (parentRohteil || loading)) {
+      <div class="loading-section">
+        @if (loading) {
+        <div class="loading-state">
+          <i class="pi pi-spin pi-spinner"></i>
+          <p>Lade Teiledaten...</p>
+        </div>
+        } @else {
+        <div class="empty-state">
+          <i class="pi pi-info-circle"></i>
+          <p>Geben Sie eine GlobalAssetId ein und klicken Sie auf "Lookup"</p>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+</div>

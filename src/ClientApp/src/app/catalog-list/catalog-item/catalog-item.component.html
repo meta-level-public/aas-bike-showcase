@@ -40,6 +40,21 @@
             </span>
             <!-- <p-tag [value]="item.inventoryStatus" [severity]="getSeverity(item)"></p-tag> -->
           </div>
+          @if (item.globalAssetId) {
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-id-card"></i>
+              <span class="text-sm text-600">GlobalAssetId: {{ item.globalAssetId }}</span>
+              <button
+                pButton
+                icon="pi pi-copy"
+                class="p-button-text p-button-sm copy-button"
+                [pTooltip]="'GlobalAssetId kopieren'"
+                tooltipPosition="top"
+                (click)="copyGlobalAssetId()"
+                type="button">
+              </button>
+            </div>
+          }
         </div>
         <div
           class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"

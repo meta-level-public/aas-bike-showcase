@@ -37,12 +37,16 @@ namespace AasDemoapp.Katalog
         {
             _context.KatalogEintraege.Add(katalogEintrag);
             katalogEintrag.KatalogEintragTyp = KatalogEintragTyp.RohteilTyp;
+            var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+            var securitySettingSupplier = katalogEintrag.Supplier.SecuritySetting;
 
-            katalogEintrag.Image = await _importService.GetImageString(katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId);
+            _context.Suppliers.Update(katalogEintrag.Supplier);
+
+            katalogEintrag.Image = await _importService.GetImageString(katalogEintrag.Supplier.RemoteRepositoryUrl, securitySettingSupplier, katalogEintrag.AasId);
 
             var kategorie = "unklassifiziert";
 
-            var env = await _importService.GetEnvironment(katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId);
+            var env = await _importService.GetEnvironment(katalogEintrag.Supplier.RemoteRepositoryUrl, securitySettingSupplier, katalogEintrag.AasId);
             if (env != null)
             {
                 var nameplate = _importService.GetNameplate(env);
@@ -53,7 +57,8 @@ namespace AasDemoapp.Katalog
             }
             katalogEintrag.Kategorie = kategorie;
             var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
-            katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.value ?? "", katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId);
+            katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.Value ?? "", katalogEintrag, securitySetting, katalogEintrag.AasId);
+
             _context.SaveChanges();
             return katalogEintrag;
         }
@@ -63,17 +68,18 @@ namespace AasDemoapp.Katalog
             var suppliers = _context.Suppliers.ToList();
             var parentGlobalAssetId = string.Empty;
             var aasId = string.Empty;
+            var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
             foreach (var suppl in suppliers)
             {
                 try
                 {
-                    var aasIds = await _proxyService.Discover(suppl.RemoteRepositoryUrl, instanzGlobalAssetId);
+                    var aasIds = await _proxyService.Discover(suppl.RemoteRepositoryUrl, securitySetting, instanzGlobalAssetId);
 
                     foreach (var id in aasIds)
                     {
                         try
                         {
-                            var env = await _importService.GetEnvironment(suppl.RemoteRepositoryUrl, id);
+                            var env = await _importService.GetEnvironment(suppl.RemoteRepositoryUrl, securitySetting, id);
                             if (env != null && env.AssetAdministrationShells?[0].AssetInformation.GlobalAssetId == instanzGlobalAssetId)
                             {
                                 parentGlobalAssetId = env.AssetAdministrationShells?[0].AssetInformation.AssetType;
@@ -106,14 +112,17 @@ namespace AasDemoapp.Katalog
         {
 
             var existing = _context.KatalogEintraege.FirstOrDefault(k => k.GlobalAssetId == katalogEintrag.GlobalAssetId);
+            var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
             if (existing == null)
             {
                 _context.KatalogEintraege.Add(katalogEintrag);
                 katalogEintrag.KatalogEintragTyp = KatalogEintragTyp.RohteilInstanz;
+                _context.Suppliers.Update(katalogEintrag.Supplier);
+
 
                 try
                 {
-                    katalogEintrag.Image = await _importService.GetImageString(katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId);
+                    katalogEintrag.Image = await _importService.GetImageString(katalogEintrag.RemoteRepositoryUrl, securitySetting, katalogEintrag.AasId);
                 }
                 catch (Exception ex)
                 {
@@ -123,7 +132,7 @@ namespace AasDemoapp.Katalog
 
                 var kategorie = "unklassifiziert";
 
-                var env = await _importService.GetEnvironment(katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId);
+                var env = await _importService.GetEnvironment(katalogEintrag.RemoteRepositoryUrl, securitySetting, katalogEintrag.AasId);
                 if (env != null)
                 {
                     var nameplate = _importService.GetNameplate(env);
@@ -133,11 +142,13 @@ namespace AasDemoapp.Katalog
                     }
                 }
                 katalogEintrag.Kategorie = kategorie;
-
-                _context.KatalogEintraege.Attach(katalogEintrag.ReferencedType);
+                if (katalogEintrag.ReferencedType != null)
+                {
+                    _context.KatalogEintraege.Attach(katalogEintrag.ReferencedType);
+                }
 
                 var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
-                katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.value ?? "", katalogEintrag.RemoteRepositoryUrl, katalogEintrag.AasId, false);
+                katalogEintrag.LocalAasId = await _importService.ImportFromRepository(aasRepositoryUrl?.Value ?? "", katalogEintrag, securitySetting, katalogEintrag.AasId, false);
             }
             else
             {
@@ -152,6 +163,7 @@ namespace AasDemoapp.Katalog
         public async Task Delete(long id)
         {
             var eintrag = _context.KatalogEintraege.First(k => k.Id == id);
+            var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
             var transaction = _context.Database.BeginTransaction();
             try
             {
@@ -161,7 +173,7 @@ namespace AasDemoapp.Katalog
                 try
                 {
                     var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
-                    await _proxyService.Delete(aasRepositoryUrl?.value ?? "", eintrag.LocalAasId);
+                    await _proxyService.Delete(aasRepositoryUrl?.Value ?? "", securitySetting, eintrag.LocalAasId);
                 }
                 catch (Exception ex)
                 {
