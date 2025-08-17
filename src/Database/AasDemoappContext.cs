@@ -14,7 +14,7 @@ namespace AasDemoapp.Database
     public class AasDemoappContext : DbContext
     {
         public DbSet<ImportedShell> ImportedShells { get; set; }
-        public DbSet<KatalogEintrag> KatalogEintraege { get; set; }
+        public DbSet<KatalogEintrag>    KatalogEintraege { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
 
         public DbSet<Setting> Settings { get; set; }

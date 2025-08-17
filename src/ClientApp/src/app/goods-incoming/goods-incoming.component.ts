@@ -23,8 +23,8 @@ import { GoodsIncomingService } from './goods-incoming.service';
     CatalogItemComponent,
     ButtonModule,
     CardModule,
-    MessageModule
-  ]
+    MessageModule,
+  ],
 })
 export class GoodsIncomingComponent {
   newKatalogEintrag: KatalogEintrag = {} as KatalogEintrag;
@@ -59,9 +59,7 @@ export class GoodsIncomingComponent {
       console.log(res);
 
       if (res.typeKatalogEintrag == null) {
-        this.notificationService.showMessageAlways(
-          'Rohteil nicht gefunden'
-        );
+        this.notificationService.showMessageAlways('Rohteil nicht gefunden');
         return;
       }
 
@@ -90,7 +88,6 @@ export class GoodsIncomingComponent {
   async createRohteilInstanz() {
     if (this.parentRohteil == null) return;
 
-
     try {
       this.loading = true;
 
@@ -116,18 +113,27 @@ export class GoodsIncomingComponent {
 
     const randomRohteil = await this.goodsIncomingService.getRandomRohteil();
 
-    this.boxText = randomRohteil.id;
+    if (randomRohteil && randomRohteil.id != '') {
 
-    this.showTruck = true;
-    this.showBox = true;
-    this.truckPosition = 'moving';
-    this.isBoxClickable = false;
+      // Set the box text to the random Rohteil's global asset ID
+      this.boxText = randomRohteil.id;
 
-    // LKW fährt zur Mitte und stoppt nach 2 Sekunden
-    setTimeout(() => {
-      this.truckPosition = 'center';
-      this.isBoxClickable = true;
-    }, 2000);
+      this.showTruck = true;
+      this.showBox = true;
+      this.truckPosition = 'moving';
+      this.isBoxClickable = false;
+
+      // LKW fährt zur Mitte und stoppt nach 2 Sekunden
+      setTimeout(() => {
+        this.truckPosition = 'center';
+        this.isBoxClickable = true;
+      }, 2000);
+    } else {
+      this.resetDelivery();
+      this.notificationService.showMessageAlways(
+        'Kein zufälliges Teil beim Liefereanten gefunden'
+      );
+    }
   }
 
   onBoxClick() {
@@ -163,6 +169,5 @@ export class GoodsIncomingComponent {
     this.parentRohteil = undefined;
     this.loaded = false;
     this.importImageUrl = '';
-
   }
 }

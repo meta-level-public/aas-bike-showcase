@@ -78,7 +78,7 @@ export class CatalogImportComponent implements OnInit {
       this.newKatalogEintrag.price = Number(
         String(this.newKatalogEintrag.price as any).replace(',', '.')
       );
-      this.newKatalogEintrag.supplier = this.suppliers.find(s => s.remoteRepositoryUrl === this.currentRepositoryUrl) ?? {} as Supplier;
+      this.newKatalogEintrag.supplier = this.suppliers.find(s => s.remoteAasRepositoryUrl === this.currentRepositoryUrl) ?? {} as Supplier;
       await this.catalogService.save(this.newKatalogEintrag);
       this.notificationService.showMessageAlways('Eintrag erfolgreich gespeichert');
       this.newKatalogEintrag = {} as KatalogEintrag;

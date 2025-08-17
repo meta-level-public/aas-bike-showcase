@@ -44,7 +44,12 @@ namespace AasDemoapp.Suppliers
 
             existingSupplier.Name = supplier.Name;
             existingSupplier.Logo = supplier.Logo;
-            existingSupplier.RemoteRepositoryUrl = supplier.RemoteRepositoryUrl;
+            existingSupplier.RemoteAasRepositoryUrl = supplier.RemoteAasRepositoryUrl;
+            existingSupplier.RemoteSmRepositoryUrl = supplier.RemoteSmRepositoryUrl;
+            existingSupplier.RemoteAasRegistryUrl = supplier.RemoteAasRegistryUrl;
+            existingSupplier.RemoteSmRegistryUrl = supplier.RemoteSmRegistryUrl;
+            existingSupplier.RemoteDiscoveryUrl = supplier.RemoteDiscoveryUrl;
+            existingSupplier.RemoteCdRepositoryUrl = supplier.RemoteCdRepositoryUrl;
             existingSupplier.SecuritySetting = supplier.SecuritySetting;
 
             await _context.SaveChangesAsync();

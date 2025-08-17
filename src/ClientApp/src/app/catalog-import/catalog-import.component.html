@@ -107,8 +107,8 @@
           @for (item of suppliers; track $index) {
           <div
             class="supplier-card"
-            [ngClass]="{'selected': item.remoteRepositoryUrl === currentRepositoryUrl}"
-            (click)="loadRegistry(item.remoteRepositoryUrl)"
+            [ngClass]="{'selected': item.remoteAasRepositoryUrl === currentRepositoryUrl}"
+            (click)="loadRegistry(item.remoteAasRepositoryUrl)"
           >
             <img
               [src]="'/assets/logos/' + item.logo"

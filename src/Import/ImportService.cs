@@ -32,7 +32,7 @@ namespace AasDemoapp.Import
         public async Task<string> ImportFromRepository(string decodedLocalUrl, KatalogEintrag katalogEintrag, SecuritySetting securitySetting, string decodedId, bool saveChanges = true)
         {
             using var clientSource = HttpClientCreator.CreateHttpClient(securitySetting);
-            using HttpResponseMessage response = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteRepositoryUrl + $"/shells/{decodedId.ToBase64()}");
+            using HttpResponseMessage response = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteAasRepositoryUrl + $"/shells/{decodedId.ToBase64()}");
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -41,7 +41,7 @@ namespace AasDemoapp.Import
 
             foreach (var smRef in shell.Submodels ?? [])
             {
-                using var resp = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteRepositoryUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}");
+                using var resp = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteSmRepositoryUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}");
                 resp.EnsureSuccessStatusCode();
                 responseBody = await resp.Content.ReadAsStringAsync();
 
@@ -62,7 +62,8 @@ namespace AasDemoapp.Import
 
             ImportedShell importedShell = new()
             {
-                RemoteRegistryUrl = katalogEintrag.Supplier.RemoteRepositoryUrl,
+                RemoteAasRegistryUrl = katalogEintrag.Supplier.RemoteAasRegistryUrl,
+                RemoteSmRegistryUrl = katalogEintrag.Supplier.RemoteSmRegistryUrl
             };
 
             _AasDemoappContext.Add(importedShell);

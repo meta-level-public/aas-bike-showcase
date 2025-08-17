@@ -4,6 +4,11 @@ export interface Supplier {
   id?: number;
   name: string;
   logo: string;
-  remoteRepositoryUrl: string;
+  remoteAasRepositoryUrl: string;
+  remoteSmRepositoryUrl: string;
+  remoteAasRegistryUrl: string;
+  remoteSmRegistryUrl: string;
+  remoteDiscoveryUrl: string;
+  remoteCdRepositoryUrl: string;
   securitySetting: SecuritySetting;
 }
