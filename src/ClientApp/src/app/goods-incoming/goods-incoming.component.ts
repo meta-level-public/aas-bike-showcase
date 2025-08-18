@@ -114,6 +114,7 @@ export class GoodsIncomingComponent {
   // LKW Animation Methods
   async startDelivery() {
     console.log('Start delivery animation');
+    this.loading = true;
 
     const randomRohteil = await this.goodsIncomingService.getRandomRohteil();
 
@@ -138,6 +139,7 @@ export class GoodsIncomingComponent {
         'Kein zufälliges Teil beim Liefereanten gefunden'
       );
     }
+    this.loading = false;
   }
 
   onBoxClick() {
