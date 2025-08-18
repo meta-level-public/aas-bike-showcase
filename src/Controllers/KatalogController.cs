@@ -75,8 +75,9 @@ namespace AasDemoapp.Controllers
                     
                     triedIndices.Add(randomIndex);
                     var typId = eintraege[randomIndex].GlobalAssetId;
-                    var instanzId = await _katalogService.GetInstanzIdByType(typId);
-                    
+                    var supplier = eintraege[randomIndex].Supplier;
+                    var instanzId = await _katalogService.GetInstanzIdByType(typId, supplier);
+
                     if (!string.IsNullOrEmpty(instanzId))
                     {
                         return new RndResult()

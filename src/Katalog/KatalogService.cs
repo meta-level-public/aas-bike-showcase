@@ -34,7 +34,10 @@ namespace AasDemoapp.Katalog
 
         public List<KatalogEintrag> GetAll(KatalogEintragTyp typ)
         {
-            return _context.KatalogEintraege.Where(k => k.KatalogEintragTyp == typ).ToList();
+            return _context.KatalogEintraege
+                .Include(k => k.Supplier)
+                .Where(k => k.KatalogEintragTyp == typ)
+                .ToList();
         }
 
         public async Task<KatalogEintrag> ImportRohteilTyp(KatalogEintrag katalogEintrag)
@@ -211,54 +214,39 @@ namespace AasDemoapp.Katalog
             return _context.KatalogEintraege.Include(k => k.ReferencedType).FirstOrDefault(k => k.GlobalAssetId == globalAssetId && k.KatalogEintragTyp == KatalogEintragTyp.RohteilInstanz);
         }
 
-        public async Task<string> GetInstanzIdByType(string typeGlobalAssetId)
+        public async Task<string> GetInstanzIdByType(string typeGlobalAssetId, Supplier supplier)
         {
-            var suppliers = _context.Suppliers.ToList();
             var instanzGlobalAssetId = string.Empty;
-            foreach (var suppl in suppliers)
+            if (string.IsNullOrWhiteSpace(supplier.RemoteAasRegistryUrl)) return instanzGlobalAssetId;
+
+            try
             {
-                try
+                var client = HttpClientCreator.CreateHttpClient(supplier.SecuritySetting);
+                var url = supplier.RemoteAasRegistryUrl.AppendSlash() + "shell-descriptors?assetKind=Instance&assetType=" + typeGlobalAssetId.ToBase64UrlEncoded(Encoding.UTF8);
+                var registryResponse = await client.GetAsync(url, CancellationToken.None);
+
+                if (registryResponse.IsSuccessStatusCode)
                 {
-                    if (string.IsNullOrWhiteSpace(suppl.RemoteAasRegistryUrl)) continue;
-                    try
-                        {   
-                            var client = HttpClientCreator.CreateHttpClient(suppl.SecuritySetting);
-                            var url = suppl.RemoteAasRegistryUrl.AppendSlash() + "shell-descriptors?assetKind=Instance&assetType=" + typeGlobalAssetId.ToBase64UrlEncoded(Encoding.UTF8);
-                            var registryResponse = await client.GetAsync(url, CancellationToken.None);
+                    var registryContent = await registryResponse.Content.ReadAsStringAsync();
 
-                            if (registryResponse.IsSuccessStatusCode)
-                            {
-                                Console.WriteLine($"Successfully fetched registry for {suppl.Name}");
-                                var registryContent = await registryResponse.Content.ReadAsStringAsync();
-                                Console.WriteLine($"Registry content: {registryContent}");
+                    // Extract the result array from the JSON
+                    var jsonDoc = JsonDocument.Parse(registryContent);
+                    var resultArray = jsonDoc.RootElement.GetProperty("result");
 
-                                // Extract the result array from the JSON
-                                var jsonDoc = JsonDocument.Parse(registryContent);
-                                var resultArray = jsonDoc.RootElement.GetProperty("result");
+                    // Take the first descriptor from the array
+                    if (resultArray.GetArrayLength() > 0)
+                    {
+                        var firstDescriptor = resultArray[0];
+                        var descriptorString = JsonSerializer.Serialize(firstDescriptor);
 
-                                // Take the first descriptor from the array
-                                if (resultArray.GetArrayLength() > 0)
-                                {
-                                    var firstDescriptor = resultArray[0];
-                                    var descriptorString = JsonSerializer.Serialize(firstDescriptor);
-
-                                    var descriptor = DescriptorSerialization.Deserialize(descriptorString);
-                                    instanzGlobalAssetId = descriptor.GlobalAssetId;
-
-                                    break;
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            // ignore
-                            Console.WriteLine(ex);
-                        }
+                        var descriptor = DescriptorSerialization.Deserialize(descriptorString);
+                        instanzGlobalAssetId = descriptor.GlobalAssetId;
+                    }
                 }
-                catch
-                {
-                    // nicht gefunden, nächsten Lieferanten testen
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching instance ID for {supplier.Name}: {ex.Message}");
             }
 
             return instanzGlobalAssetId ?? string.Empty;
