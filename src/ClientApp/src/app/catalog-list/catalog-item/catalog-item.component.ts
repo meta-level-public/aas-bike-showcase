@@ -18,7 +18,10 @@ export class CatalogItemComponent {
   @Input() item: KatalogEintrag | undefined;
   @Input() first: boolean = false;
   @Input() showDelete: boolean = false;
-  @Input() imgUrl: string = '';
+  @Input() showTag: boolean = false;
+  @Input() showRating: boolean = false;
+  @Input() imgUrl: SafeUrl = '';
+  @Input() showPrice: boolean = true;
   InventoryStatus = InventoryStatus;
   loading: boolean = false;
   @Output() itemDeleted: EventEmitter<number> = new EventEmitter<number>();
