@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
@@ -78,11 +81,7 @@ export class GoodsIncomingComponent {
         this.parentRohteil.remoteRepositoryUrl;
       this.newKatalogEintrag.supplier = this.parentRohteil.supplier;
 
-      this.importImageUrl =
-        this.parentRohteil.remoteRepositoryUrl +
-        '/shells/' +
-        btoa(this.newKatalogEintrag.aasId) +
-        '/asset-information/thumbnail';
+      this.importImageUrl = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64, ' + res.image) || '';
 
       this.loaded = true;
     } finally {

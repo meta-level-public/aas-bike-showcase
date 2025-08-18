@@ -4,4 +4,5 @@ export interface RohteilLookupResult {
   typeKatalogEintrag: KatalogEintrag;
   aasId: string;
   globalAssetId: string;
+  image: string;
 }
