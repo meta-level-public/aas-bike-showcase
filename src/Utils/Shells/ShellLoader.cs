@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using AasDemoapp.Utils.ConceptDescriptions;
 using AasDemoapp.Database.Model;
+using Microsoft.Extensions.Logging;
 
 namespace AasDemoapp.Utils.Shells;
 
@@ -32,6 +33,7 @@ public class EditorDescriptorEntry
 
 public static class ShellLoader
 {
+
     public static async Task<LoadShellResult> LoadAsync(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
     {
         var result = new LoadShellResult();
@@ -45,7 +47,7 @@ public static class ShellLoader
         {
             aasUrl = await GetAasUrl(aasUrls, securitySetting, aasIdentifier, cancellationToken);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             aasUrl = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
         }
@@ -173,7 +175,7 @@ public static class ShellLoader
         {
             url = await GetAasUrl(aasUrls, securitySetting, aasIdentifier, cancellationToken);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             url = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
         }
@@ -212,9 +214,10 @@ public static class ShellLoader
         {
             url = await GetAasUrl(aasUrls, securitySetting, aasIdentifier, cancellationToken) + '/' + "asset-information";
         }
-        catch (Exception e)
+        catch (Exception)
         {
             url = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8) + '/' + "asset-information";
+            
         }
 
 

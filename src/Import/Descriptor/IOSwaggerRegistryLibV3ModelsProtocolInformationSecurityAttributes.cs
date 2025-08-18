@@ -15,21 +15,21 @@ namespace IO.Swagger.Model
     /// </summary>
     [DataMember(Name="type", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "type")]
-    public ProtocolInformationSecurityAttributesTypeEnum Type { get; set; }
+    public ProtocolInformationSecurityAttributesTypeEnum? Type { get; set; }
 
     /// <summary>
     /// Gets or Sets Key
     /// </summary>
     [DataMember(Name="key", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "key")]
-    public string Key { get; set; }
+    public string? Key { get; set; }
 
     /// <summary>
     /// Gets or Sets Value
     /// </summary>
     [DataMember(Name="value", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "value")]
-    public string Value { get; set; }
+    public string? Value { get; set; }
 
 
     /// <summary>

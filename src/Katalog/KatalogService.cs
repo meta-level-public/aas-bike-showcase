@@ -45,7 +45,14 @@ namespace AasDemoapp.Katalog
             _context.KatalogEintraege.Add(katalogEintrag);
             katalogEintrag.KatalogEintragTyp = KatalogEintragTyp.RohteilTyp;
             var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
-            var securitySettingSupplier = katalogEintrag.Supplier.SecuritySetting;
+
+            if (katalogEintrag.Supplier == null)
+            {
+                throw new ArgumentNullException(nameof(katalogEintrag.Supplier));
+            }
+
+            var securitySettingSupplier = katalogEintrag.Supplier.SecuritySetting ?? new SecuritySetting();
+
 
             _context.Suppliers.Update(katalogEintrag.Supplier);
 
@@ -100,7 +107,7 @@ namespace AasDemoapp.Katalog
                                     // Bild erfolgreich geladen
                                     image = imageResult;
                                 }
-                                    break;
+                                break;
                             }
                         }
                         catch (Exception ex)
@@ -136,8 +143,10 @@ namespace AasDemoapp.Katalog
             {
                 _context.KatalogEintraege.Add(katalogEintrag);
                 katalogEintrag.KatalogEintragTyp = KatalogEintragTyp.RohteilInstanz;
-                _context.Suppliers.Update(katalogEintrag.Supplier);
-
+                if (katalogEintrag.Supplier != null)
+                {
+                    _context.Suppliers.Update(katalogEintrag.Supplier);
+                }
 
                 try
                 {

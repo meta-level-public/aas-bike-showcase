@@ -50,7 +50,8 @@ namespace AasDemoapp.Jobs
                 var now = DateTime.Today;
                 var discovery = _settingsService?.GetSetting(SettingTypes.DiscoveryUrl);
                 var aasRepo = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
-                var securitySetting = _settingsService?.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+                var securitySetting = _settingsService?.GetSecuritySetting(SettingTypes.InfrastructureSecurity) ?? new SecuritySetting();
+                
                 var allShellIds = _proxyService?.Discover(discovery?.Value ?? "", securitySetting, string.Empty);
 
                 _context?.KatalogEintraege.Where(k => k.RemoteRepositoryUrl != null).ToList().ForEach(async eintrag =>
@@ -62,12 +63,24 @@ namespace AasDemoapp.Jobs
                         using HttpResponseMessage remoteResponse = await client.GetAsync(eintrag.RemoteRepositoryUrl + $"/shells/{eintrag.AasId.ToBase64()}");
                         remoteResponse.EnsureSuccessStatusCode();
                         string remoteResponseBody = await remoteResponse.Content.ReadAsStringAsync();
-                        var remoteShell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(remoteResponseBody));
+                        var remoteJsonNode = JsonNode.Parse(remoteResponseBody);
+                        if (remoteJsonNode == null)
+                        {
+                            _logger.LogWarning("Failed to parse remote response JSON for shell {ShellId}", eintrag.AasId);
+                            return;
+                        }
+                        var remoteShell = Jsonization.Deserialize.AssetAdministrationShellFrom(remoteJsonNode);
 
                         using HttpResponseMessage localResponse = await client.GetAsync($"{aasRepo?.Value ?? ""}/shells/{eintrag.LocalAasId.ToBase64()}");
                         localResponse.EnsureSuccessStatusCode();
                         string localResponseBody = await localResponse.Content.ReadAsStringAsync();
-                        var localShell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(localResponseBody));
+                        var localJsonNode = JsonNode.Parse(localResponseBody);
+                        if (localJsonNode == null)
+                        {
+                            _logger.LogWarning("Failed to parse local response JSON for shell {ShellId}", eintrag.LocalAasId);
+                            return;
+                        }
+                        var localShell = Jsonization.Deserialize.AssetAdministrationShellFrom(localJsonNode);
 
                         Console.WriteLine(localShell.Administration?.Version);
                         Console.WriteLine(remoteShell.Administration?.Version);

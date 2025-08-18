@@ -72,8 +72,13 @@ public class ProxyController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<object> Discovery(string registryUrl, string? assetId)
+    public async Task<string[]> Discovery(string registryUrl, string? assetId)
     {
+        if (string.IsNullOrEmpty(assetId))
+        {
+            return [];
+        }
+
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
         var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
         var res = await _proxyService.Discover(decodedUrl, securitySetting, assetId);
@@ -82,7 +87,9 @@ public class ProxyController : ControllerBase
 
 
     [HttpGet]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     public async Task<bool> Import(string localRegistryUrl, string remoteRegistryUrl, string id)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
     {
         throw new NotImplementedException();
         // var decodedLocalUrl = HttpUtility.UrlDecode(localRegistryUrl);
@@ -97,7 +104,7 @@ public class ProxyController : ControllerBase
         // await _importService.ImportFromRepository(decodedLocalUrl, decodedRemoteUrl, securitySetting, decodedId);
 
 
-        return await Task.FromResult(true);
+        // return await Task.FromResult(true);
     }
 
 
