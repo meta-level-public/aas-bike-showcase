@@ -73,6 +73,7 @@ namespace AasDemoapp.Katalog
             var parentGlobalAssetId = string.Empty;
             var aasId = string.Empty;
             var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+            var image = string.Empty;
             foreach (var suppl in suppliers)
             {
                 try
@@ -88,7 +89,15 @@ namespace AasDemoapp.Katalog
                             {
                                 parentGlobalAssetId = env.AssetAdministrationShells?[0].AssetInformation.AssetType;
                                 aasId = env.AssetAdministrationShells?[0].Id ?? string.Empty;
-                                break;
+
+                                // Bild laden
+                                var imageResult = await _importService.GetImageString(suppl.RemoteAasRepositoryUrl, securitySetting, aasId);
+                                if (!string.IsNullOrEmpty(imageResult))
+                                {
+                                    // Bild erfolgreich geladen
+                                    image = imageResult;
+                                }
+                                    break;
                             }
                         }
                         catch (Exception ex)
@@ -108,7 +117,8 @@ namespace AasDemoapp.Katalog
             {
                 TypeKatalogEintrag = _context.KatalogEintraege.FirstOrDefault(k => k.GlobalAssetId == parentGlobalAssetId),
                 AasId = aasId,
-                GlobalAssetId = instanzGlobalAssetId
+                GlobalAssetId = instanzGlobalAssetId,
+                Image = image
             };
         }
 
