@@ -24,13 +24,18 @@ import { GoodsIncomingService } from './goods-incoming.service';
     ButtonModule,
     CardModule,
     MessageModule,
+    InputGroupModule,
+    InputGroupAddonModule
   ],
 })
 export class GoodsIncomingComponent {
+
+  sanitizer = inject(DomSanitizer);
+
   newKatalogEintrag: KatalogEintrag = {} as KatalogEintrag;
   parentRohteil: KatalogEintrag | undefined;
   loading: boolean = false;
-  importImageUrl: string = '';
+  importImageUrl: SafeUrl = '';
   loaded: boolean = false;
 
   // LKW Animation Properties
