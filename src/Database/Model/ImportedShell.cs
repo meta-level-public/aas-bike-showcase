@@ -9,6 +9,8 @@ namespace AasDemoapp.Database.Model
     {
         public int Id { get; set; }
         public string RemoteRegistryUrl { get; set; } = string.Empty;
+        public string RemoteAasRegistryUrl { get; set; } = string.Empty;
+        public string RemoteSmRegistryUrl { get; set; } = string.Empty;
         public string AasId { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }

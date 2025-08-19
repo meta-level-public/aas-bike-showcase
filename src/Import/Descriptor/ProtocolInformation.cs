@@ -15,49 +15,49 @@ namespace IO.Swagger.Model
     /// </summary>
     [DataMember(Name="href", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "href")]
-    public string Href { get; set; }
+    public string? Href { get; set; }
 
     /// <summary>
     /// Gets or Sets EndpointProtocol
     /// </summary>
     [DataMember(Name="endpointProtocol", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "endpointProtocol")]
-    public string EndpointProtocol { get; set; }
+    public string? EndpointProtocol { get; set; }
 
     /// <summary>
     /// Gets or Sets EndpointProtocolVersion
     /// </summary>
     [DataMember(Name="endpointProtocolVersion", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "endpointProtocolVersion")]
-    public List<string> EndpointProtocolVersion { get; set; }
+    public List<string>? EndpointProtocolVersion { get; set; }
 
     /// <summary>
     /// Gets or Sets Subprotocol
     /// </summary>
     [DataMember(Name="subprotocol", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "subprotocol")]
-    public string Subprotocol { get; set; }
+    public string? Subprotocol { get; set; }
 
     /// <summary>
     /// Gets or Sets SubprotocolBody
     /// </summary>
     [DataMember(Name="subprotocolBody", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "subprotocolBody")]
-    public string SubprotocolBody { get; set; }
+    public string? SubprotocolBody { get; set; }
 
     /// <summary>
     /// Gets or Sets SubprotocolBodyEncoding
     /// </summary>
     [DataMember(Name="subprotocolBodyEncoding", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "subprotocolBodyEncoding")]
-    public string SubprotocolBodyEncoding { get; set; }
+    public string? SubprotocolBodyEncoding { get; set; }
 
     /// <summary>
     /// Gets or Sets SecurityAttributes
     /// </summary>
     [DataMember(Name="securityAttributes", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "securityAttributes")]
-    public List<ProtocolInformationSecurityAttributes> SecurityAttributes { get; set; }
+    public List<ProtocolInformationSecurityAttributes>? SecurityAttributes { get; set; }
 
 
     /// <summary>

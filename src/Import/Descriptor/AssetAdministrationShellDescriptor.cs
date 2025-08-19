@@ -16,7 +16,7 @@ namespace IO.Swagger.Model
     /// </summary>
     [DataMember(Name="administration", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "administration")]
-    public AdministrativeInformation Administration { get; set; }
+    public AdministrativeInformation? Administration { get; set; }
 
     /// <summary>
     /// Gets or Sets AssetKind
@@ -30,70 +30,70 @@ namespace IO.Swagger.Model
     /// </summary>
     [DataMember(Name="assetType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "assetType")]
-    public string AssetType { get; set; }
+    public string? AssetType { get; set; }
 
     /// <summary>
     /// Gets or Sets Endpoints
     /// </summary>
     [DataMember(Name="endpoints", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "endpoints")]
-    public List<Endpoint> Endpoints { get; set; }
+    public List<Endpoint>? Endpoints { get; set; }
 
     /// <summary>
     /// Gets or Sets GlobalAssetId
     /// </summary>
     [DataMember(Name="globalAssetId", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "globalAssetId")]
-    public string GlobalAssetId { get; set; }
+    public string? GlobalAssetId { get; set; }
 
     /// <summary>
     /// Gets or Sets IdShort
     /// </summary>
     [DataMember(Name="idShort", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "idShort")]
-    public string IdShort { get; set; }
+    public string? IdShort { get; set; }
 
     /// <summary>
     /// Gets or Sets Id
     /// </summary>
     [DataMember(Name="id", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "id")]
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
     /// <summary>
     /// Gets or Sets SpecificAssetIds
     /// </summary>
     [DataMember(Name="specificAssetIds", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "specificAssetIds")]
-    public List<ISpecificAssetId> SpecificAssetIds { get; set; }
+    public List<ISpecificAssetId>? SpecificAssetIds { get; set; }
 
     /// <summary>
     /// Gets or Sets SubmodelDescriptors
     /// </summary>
     [DataMember(Name="submodelDescriptors", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "submodelDescriptors")]
-    public List<SubmodelDescriptor> SubmodelDescriptors { get; set; }
+    public List<SubmodelDescriptor>? SubmodelDescriptors { get; set; }
 
     /// <summary>
     /// Gets or Sets Description
     /// </summary>
     [DataMember(Name="description", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "description")]
-    public List<ILangStringTextType> Description { get; set; }
+    public List<ILangStringTextType>? Description { get; set; }
 
     /// <summary>
     /// Gets or Sets DisplayName
     /// </summary>
     [DataMember(Name="displayName", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "displayName")]
-    public List<ILangStringNameType> DisplayName { get; set; }
+    public List<ILangStringNameType>? DisplayName { get; set; }
 
     /// <summary>
     /// Gets or Sets Extensions
     /// </summary>
     [DataMember(Name="extensions", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "extensions")]
-    public List<IExtension> Extensions { get; set; }
+    public List<IExtension>? Extensions { get; set; }
 
 
     /// <summary>

@@ -1,8 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
@@ -23,14 +26,19 @@ import { GoodsIncomingService } from './goods-incoming.service';
     CatalogItemComponent,
     ButtonModule,
     CardModule,
-    MessageModule
-  ]
+    MessageModule,
+    InputGroupModule,
+    InputGroupAddonModule
+  ],
 })
 export class GoodsIncomingComponent {
+
+  sanitizer = inject(DomSanitizer);
+
   newKatalogEintrag: KatalogEintrag = {} as KatalogEintrag;
   parentRohteil: KatalogEintrag | undefined;
   loading: boolean = false;
-  importImageUrl: string = '';
+  importImageUrl: SafeUrl = '';
   loaded: boolean = false;
 
   // LKW Animation Properties
@@ -59,9 +67,7 @@ export class GoodsIncomingComponent {
       console.log(res);
 
       if (res.typeKatalogEintrag == null) {
-        this.notificationService.showMessageAlways(
-          'Rohteil nicht gefunden'
-        );
+        this.notificationService.showMessageAlways('Rohteil nicht gefunden');
         return;
       }
 
@@ -75,11 +81,7 @@ export class GoodsIncomingComponent {
         this.parentRohteil.remoteRepositoryUrl;
       this.newKatalogEintrag.supplier = this.parentRohteil.supplier;
 
-      this.importImageUrl =
-        this.parentRohteil.remoteRepositoryUrl +
-        '/shells/' +
-        btoa(this.newKatalogEintrag.aasId) +
-        '/asset-information/thumbnail';
+      this.importImageUrl = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64, ' + res.image) || '';
 
       this.loaded = true;
     } finally {
@@ -89,7 +91,6 @@ export class GoodsIncomingComponent {
 
   async createRohteilInstanz() {
     if (this.parentRohteil == null) return;
-
 
     try {
       this.loading = true;
@@ -113,21 +114,32 @@ export class GoodsIncomingComponent {
   // LKW Animation Methods
   async startDelivery() {
     console.log('Start delivery animation');
+    this.loading = true;
 
     const randomRohteil = await this.goodsIncomingService.getRandomRohteil();
 
-    this.boxText = randomRohteil.id;
+    if (randomRohteil && randomRohteil.id != '') {
 
-    this.showTruck = true;
-    this.showBox = true;
-    this.truckPosition = 'moving';
-    this.isBoxClickable = false;
+      // Set the box text to the random Rohteil's global asset ID
+      this.boxText = randomRohteil.id;
 
-    // LKW fährt zur Mitte und stoppt nach 2 Sekunden
-    setTimeout(() => {
-      this.truckPosition = 'center';
-      this.isBoxClickable = true;
-    }, 2000);
+      this.showTruck = true;
+      this.showBox = true;
+      this.truckPosition = 'moving';
+      this.isBoxClickable = false;
+
+      // LKW fährt zur Mitte und stoppt nach 2 Sekunden
+      setTimeout(() => {
+        this.truckPosition = 'center';
+        this.isBoxClickable = true;
+      }, 2000);
+    } else {
+      this.resetDelivery();
+      this.notificationService.showMessageAlways(
+        'Kein zufälliges Teil beim Liefereanten gefunden'
+      );
+    }
+    this.loading = false;
   }
 
   onBoxClick() {
@@ -163,6 +175,5 @@ export class GoodsIncomingComponent {
     this.parentRohteil = undefined;
     this.loaded = false;
     this.importImageUrl = '';
-
   }
 }

@@ -5,7 +5,9 @@
       <i class="pi pi-truck"></i>
       Wareneingang
     </h1>
-    <p class="goods-incoming-subtitle">Lieferungen verwalten und Teile einbuchen</p>
+    <p class="goods-incoming-subtitle">
+      Lieferungen verwalten und Teile einbuchen
+    </p>
   </div>
 
   <!-- Main Content -->
@@ -25,12 +27,11 @@
           class="w-full delivery-button"
           (onClick)="startDelivery()"
           [disabled]="showTruck"
+          [loading]="loading"
           severity="success"
         >
         </p-button>
-        }
-
-        @if (showTruck) {
+        } @if (showTruck) {
         <p-button
           label="Lieferung zurücksetzen"
           icon="pi pi-refresh"
@@ -69,9 +70,7 @@
           <div class="truck-wheel wheel-back"></div>
         </div>
       </div>
-      }
-
-      @if (showTruck && isBoxClickable) {
+      } @if (showTruck && isBoxClickable) {
       <div class="delivery-status mt-3">
         <p-message
           severity="info"
@@ -96,8 +95,10 @@
             <i class="pi pi-qrcode"></i>
             GlobalAssetId des gelieferten Teils
           </label>
-          <span class="p-input-icon-right w-full">
-            <i class="pi pi-search"></i>
+          <p-inputgroup>
+            <p-inputgroup-addon>
+              <i class="pi pi-search"></i>
+            </p-inputgroup-addon>
             <input
               id="globalAssetId"
               type="text"
@@ -106,7 +107,9 @@
               class="w-full"
               [(ngModel)]="newKatalogEintrag.globalAssetId"
             />
-          </span>
+          </p-inputgroup>
+
+          <span class="p-input-icon-right w-full"> </span>
         </div>
 
         <div class="form-group">
@@ -117,6 +120,7 @@
             [loading]="loading"
             class="w-full"
             severity="info"
+            [disabled]="!newKatalogEintrag.globalAssetId"
           ></p-button>
         </div>
 
@@ -175,12 +179,12 @@
             [item]="newKatalogEintrag"
             [imgUrl]="importImageUrl"
             [showDelete]="false"
+            [showPrice]="false"
+            [showTag]="false"
           ></app-catalog-item>
         </div>
       </div>
-      }
-
-      @if (!loaded && (parentRohteil || loading)) {
+      } @if (!loaded && (parentRohteil || loading)) {
       <div class="loading-section">
         @if (loading) {
         <div class="loading-state">

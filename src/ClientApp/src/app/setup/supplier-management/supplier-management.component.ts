@@ -50,7 +50,12 @@ export class SupplierManagementComponent {
     this.newSupplier.set({
       name: '',
       logo: '',
-      remoteRepositoryUrl: '',
+      remoteAasRepositoryUrl: '',
+      remoteSmRepositoryUrl: '',
+      remoteAasRegistryUrl: '',
+      remoteSmRegistryUrl: '',
+      remoteDiscoveryUrl: '',
+      remoteCdRepositoryUrl: '',
       securitySetting: {
         certificate: '',
         certificatePassword: '',
@@ -115,8 +120,28 @@ export class SupplierManagementComponent {
     this.newSupplier.update(s => s ? {...s, logo} : s);
   }
 
-  updateSupplierUrl(remoteRepositoryUrl: string) {
-    this.newSupplier.update(s => s ? {...s, remoteRepositoryUrl} : s);
+  updateSupplierAasRepositoryUrl(remoteAasRepositoryUrl: string) {
+    this.newSupplier.update(s => s ? {...s, remoteAasRepositoryUrl} : s);
+  }
+
+  updateSupplierSmRepositoryUrl(remoteSmRepositoryUrl: string) {
+    this.newSupplier.update(s => s ? {...s, remoteSmRepositoryUrl} : s);
+  }
+
+  updateSupplierAasRegistryUrl(remoteAasRegistryUrl: string) {
+    this.newSupplier.update(s => s ? {...s, remoteAasRegistryUrl} : s);
+  }
+
+  updateSupplierSmRegistryUrl(remoteSmRegistryUrl: string) {
+    this.newSupplier.update(s => s ? {...s, remoteSmRegistryUrl} : s);
+  }
+
+  updateSupplierDiscoveryUrl(remoteDiscoveryUrl: string) {
+    this.newSupplier.update(s => s ? {...s, remoteDiscoveryUrl} : s);
+  }
+
+  updateSupplierCdRepositoryUrl(remoteCdRepositoryUrl: string) {
+    this.newSupplier.update(s => s ? {...s, remoteCdRepositoryUrl} : s);
   }
 
   // Helper methods for editing supplier
@@ -128,8 +153,28 @@ export class SupplierManagementComponent {
     this.supplierToEdit.update(s => s ? {...s, logo} : s);
   }
 
-  updateEditSupplierUrl(remoteRepositoryUrl: string) {
-    this.supplierToEdit.update(s => s ? {...s, remoteRepositoryUrl} : s);
+  updateEditSupplierAasRepositoryUrl(remoteAasRepositoryUrl: string) {
+    this.supplierToEdit.update(s => s ? {...s, remoteAasRepositoryUrl} : s);
+  }
+
+  updateEditSupplierSmRepositoryUrl(remoteSmRepositoryUrl: string) {
+    this.supplierToEdit.update(s => s ? {...s, remoteSmRepositoryUrl} : s);
+  }
+
+  updateEditSupplierAasRegistryUrl(remoteAasRegistryUrl: string) {
+    this.supplierToEdit.update(s => s ? {...s, remoteAasRegistryUrl} : s);
+  }
+
+  updateEditSupplierSmRegistryUrl(remoteSmRegistryUrl: string) {
+    this.supplierToEdit.update(s => s ? {...s, remoteSmRegistryUrl} : s);
+  }
+
+  updateEditSupplierDiscoveryUrl(remoteDiscoveryUrl: string) {
+    this.supplierToEdit.update(s => s ? {...s, remoteDiscoveryUrl} : s);
+  }
+
+  updateEditSupplierCdRepositoryUrl(remoteCdRepositoryUrl: string) {
+    this.supplierToEdit.update(s => s ? {...s, remoteCdRepositoryUrl} : s);
   }
 
   // Security configuration for suppliers

@@ -16,7 +16,7 @@ namespace AasDemoapp.Database.Model
         public string Kategorie { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string RemoteRepositoryUrl { get; set; } = string.Empty; // hier besser auf die Konfiguration verweisen, da wir darüber die security Settings haben
-        public Supplier Supplier { get; set; }
+        public Supplier? Supplier { get; set; } // muss nicht initialisiert sein!
         public long SupplierId { get; set; }
 
         public int? Rating { get; set; } = 0;

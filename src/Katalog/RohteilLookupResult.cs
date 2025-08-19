@@ -10,6 +10,8 @@ namespace AasDemoapp.Katalog
     {
         public KatalogEintrag? TypeKatalogEintrag { get; set; }
         public string AasId { get; set; } = string.Empty;
-        public string GlobalAssetId { get; set; }   = string.Empty;
+        public string GlobalAssetId { get; set; } = string.Empty;
+        public string? Image { get; set; } = string.Empty;
+
     }
 }

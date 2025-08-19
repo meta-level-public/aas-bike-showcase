@@ -31,21 +31,36 @@ namespace AasDemoapp.Import
 
         public async Task<string> ImportFromRepository(string decodedLocalUrl, KatalogEintrag katalogEintrag, SecuritySetting securitySetting, string decodedId, bool saveChanges = true)
         {
+            if (katalogEintrag.Supplier?.RemoteAasRepositoryUrl == null)
+            {
+                throw new ArgumentException("Supplier or RemoteAasRepositoryUrl is null", nameof(katalogEintrag));
+            }
+            
             using var clientSource = HttpClientCreator.CreateHttpClient(securitySetting);
-            using HttpResponseMessage response = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteRepositoryUrl + $"/shells/{decodedId.ToBase64()}");
+            using HttpResponseMessage response = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteAasRepositoryUrl + $"/shells/{decodedId.ToBase64()}");
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            var shell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(responseBody));
+            var shellNode = JsonNode.Parse(responseBody);
+            if (shellNode == null)
+            {
+                throw new InvalidOperationException("Failed to parse shell JSON response");
+            }
+            var shell = Jsonization.Deserialize.AssetAdministrationShellFrom(shellNode);
             var submodels = new List<Submodel>();
 
             foreach (var smRef in shell.Submodels ?? [])
             {
-                using var resp = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteRepositoryUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}");
+                using var resp = await clientSource.GetAsync(katalogEintrag.Supplier.RemoteSmRepositoryUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}");
                 resp.EnsureSuccessStatusCode();
                 responseBody = await resp.Content.ReadAsStringAsync();
 
-                var sm = Jsonization.Deserialize.SubmodelFrom(JsonNode.Parse(responseBody));
+                var smNode = JsonNode.Parse(responseBody);
+                if (smNode == null)
+                {
+                    throw new InvalidOperationException("Failed to parse submodel JSON response");
+                }
+                var sm = Jsonization.Deserialize.SubmodelFrom(smNode);
                 submodels.Add(sm);
             }
             // Id umschreiben
@@ -62,7 +77,8 @@ namespace AasDemoapp.Import
 
             ImportedShell importedShell = new()
             {
-                RemoteRegistryUrl = katalogEintrag.Supplier.RemoteRepositoryUrl,
+                RemoteAasRegistryUrl = katalogEintrag.Supplier.RemoteAasRegistryUrl,
+                RemoteSmRegistryUrl = katalogEintrag.Supplier.RemoteSmRegistryUrl
             };
 
             _AasDemoappContext.Add(importedShell);
@@ -89,7 +105,12 @@ namespace AasDemoapp.Import
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            var shell = Jsonization.Deserialize.AssetAdministrationShellFrom(JsonNode.Parse(responseBody));
+            var shellNode = JsonNode.Parse(responseBody);
+            if (shellNode == null)
+            {
+                throw new InvalidOperationException("Failed to parse shell JSON response");
+            }
+            var shell = Jsonization.Deserialize.AssetAdministrationShellFrom(shellNode);
             var submodels = new List<ISubmodel>();
 
             foreach (var smRef in shell.Submodels ?? [])
@@ -98,7 +119,12 @@ namespace AasDemoapp.Import
                 resp.EnsureSuccessStatusCode();
                 responseBody = await resp.Content.ReadAsStringAsync();
 
-                var sm = Jsonization.Deserialize.SubmodelFrom(JsonNode.Parse(responseBody));
+                var smNode = JsonNode.Parse(responseBody);
+                if (smNode == null)
+                {
+                    throw new InvalidOperationException("Failed to parse submodel JSON response");
+                }
+                var sm = Jsonization.Deserialize.SubmodelFrom(smNode);
                 submodels.Add(sm);
             }
 

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { SafeUrl } from '@angular/platform-browser';
 import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { TooltipModule } from 'primeng/tooltip';
@@ -18,7 +19,10 @@ export class CatalogItemComponent {
   @Input() item: KatalogEintrag | undefined;
   @Input() first: boolean = false;
   @Input() showDelete: boolean = false;
-  @Input() imgUrl: string = '';
+  @Input() showTag: boolean = false;
+  @Input() showRating: boolean = false;
+  @Input() imgUrl: SafeUrl = '';
+  @Input() showPrice: boolean = true;
   InventoryStatus = InventoryStatus;
   loading: boolean = false;
   @Output() itemDeleted: EventEmitter<number> = new EventEmitter<number>();

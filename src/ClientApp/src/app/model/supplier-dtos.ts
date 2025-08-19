@@ -2,13 +2,23 @@ export interface SupplierDto {
   id?: number;
   name: string;
   logo: string;
-  remoteRepositoryUrl: string;
+  remoteAasRepositoryUrl: string;
+  remoteSmRepositoryUrl: string;
+  remoteAasRegistryUrl: string;
+  remoteSmRegistryUrl: string;
+  remoteDiscoveryUrl: string;
+  remoteCdRepositoryUrl: string;
 }
 
 export interface CreateSupplierDto {
   name: string;
   logo: string;
-  remoteRepositoryUrl: string;
+  remoteAasRepositoryUrl: string;
+  remoteSmRepositoryUrl: string;
+  remoteAasRegistryUrl: string;
+  remoteSmRegistryUrl: string;
+  remoteDiscoveryUrl: string;
+  remoteCdRepositoryUrl: string;
 }
 
 export interface SupplierResponseDto {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AasDemoapp.Database;
@@ -8,6 +9,9 @@ using AasDemoapp.Database.Model;
 using AasDemoapp.Import;
 using AasDemoapp.Proxy;
 using AasDemoapp.Settings;
+using AasDemoapp.Utils;
+using AasDemoapp.Utils.Registry;
+using AasDemoapp.Utils.Shells;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 
@@ -30,7 +34,10 @@ namespace AasDemoapp.Katalog
 
         public List<KatalogEintrag> GetAll(KatalogEintragTyp typ)
         {
-            return _context.KatalogEintraege.Where(k => k.KatalogEintragTyp == typ).ToList();
+            return _context.KatalogEintraege
+                .Include(k => k.Supplier)
+                .Where(k => k.KatalogEintragTyp == typ)
+                .ToList();
         }
 
         public async Task<KatalogEintrag> ImportRohteilTyp(KatalogEintrag katalogEintrag)
@@ -38,15 +45,22 @@ namespace AasDemoapp.Katalog
             _context.KatalogEintraege.Add(katalogEintrag);
             katalogEintrag.KatalogEintragTyp = KatalogEintragTyp.RohteilTyp;
             var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
-            var securitySettingSupplier = katalogEintrag.Supplier.SecuritySetting;
+
+            if (katalogEintrag.Supplier == null)
+            {
+                throw new ArgumentNullException(nameof(katalogEintrag.Supplier));
+            }
+
+            var securitySettingSupplier = katalogEintrag.Supplier.SecuritySetting ?? new SecuritySetting();
+
 
             _context.Suppliers.Update(katalogEintrag.Supplier);
 
-            katalogEintrag.Image = await _importService.GetImageString(katalogEintrag.Supplier.RemoteRepositoryUrl, securitySettingSupplier, katalogEintrag.AasId);
+            katalogEintrag.Image = await _importService.GetImageString(katalogEintrag.Supplier.RemoteAasRepositoryUrl, securitySettingSupplier, katalogEintrag.AasId);
 
             var kategorie = "unklassifiziert";
 
-            var env = await _importService.GetEnvironment(katalogEintrag.Supplier.RemoteRepositoryUrl, securitySettingSupplier, katalogEintrag.AasId);
+            var env = await _importService.GetEnvironment(katalogEintrag.Supplier.RemoteAasRepositoryUrl, securitySettingSupplier, katalogEintrag.AasId);
             if (env != null)
             {
                 var nameplate = _importService.GetNameplate(env);
@@ -69,21 +83,30 @@ namespace AasDemoapp.Katalog
             var parentGlobalAssetId = string.Empty;
             var aasId = string.Empty;
             var securitySetting = _settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+            var image = string.Empty;
             foreach (var suppl in suppliers)
             {
                 try
                 {
-                    var aasIds = await _proxyService.Discover(suppl.RemoteRepositoryUrl, securitySetting, instanzGlobalAssetId);
+                    var aasIds = await _proxyService.Discover(suppl.RemoteDiscoveryUrl, suppl.SecuritySetting, instanzGlobalAssetId);
 
                     foreach (var id in aasIds)
                     {
                         try
                         {
-                            var env = await _importService.GetEnvironment(suppl.RemoteRepositoryUrl, securitySetting, id);
+                            var env = await _importService.GetEnvironment(suppl.RemoteAasRepositoryUrl, securitySetting, id);
                             if (env != null && env.AssetAdministrationShells?[0].AssetInformation.GlobalAssetId == instanzGlobalAssetId)
                             {
                                 parentGlobalAssetId = env.AssetAdministrationShells?[0].AssetInformation.AssetType;
                                 aasId = env.AssetAdministrationShells?[0].Id ?? string.Empty;
+
+                                // Bild laden
+                                var imageResult = await _importService.GetImageString(suppl.RemoteAasRepositoryUrl, securitySetting, aasId);
+                                if (!string.IsNullOrEmpty(imageResult))
+                                {
+                                    // Bild erfolgreich geladen
+                                    image = imageResult;
+                                }
                                 break;
                             }
                         }
@@ -104,9 +127,12 @@ namespace AasDemoapp.Katalog
             {
                 TypeKatalogEintrag = _context.KatalogEintraege.FirstOrDefault(k => k.GlobalAssetId == parentGlobalAssetId),
                 AasId = aasId,
-                GlobalAssetId = instanzGlobalAssetId
+                GlobalAssetId = instanzGlobalAssetId,
+                Image = image
             };
         }
+
+
 
         public async Task<KatalogEintrag?> ImportRohteilInstanz(KatalogEintrag katalogEintrag)
         {
@@ -117,8 +143,10 @@ namespace AasDemoapp.Katalog
             {
                 _context.KatalogEintraege.Add(katalogEintrag);
                 katalogEintrag.KatalogEintragTyp = KatalogEintragTyp.RohteilInstanz;
-                _context.Suppliers.Update(katalogEintrag.Supplier);
-
+                if (katalogEintrag.Supplier != null)
+                {
+                    _context.Suppliers.Update(katalogEintrag.Supplier);
+                }
 
                 try
                 {
@@ -193,6 +221,44 @@ namespace AasDemoapp.Katalog
         public KatalogEintrag? GetRohteilKatalogEintrag(string globalAssetId)
         {
             return _context.KatalogEintraege.Include(k => k.ReferencedType).FirstOrDefault(k => k.GlobalAssetId == globalAssetId && k.KatalogEintragTyp == KatalogEintragTyp.RohteilInstanz);
+        }
+
+        public async Task<string> GetInstanzIdByType(string typeGlobalAssetId, Supplier supplier)
+        {
+            var instanzGlobalAssetId = string.Empty;
+            if (string.IsNullOrWhiteSpace(supplier.RemoteAasRegistryUrl)) return instanzGlobalAssetId;
+
+            try
+            {
+                var client = HttpClientCreator.CreateHttpClient(supplier.SecuritySetting);
+                var url = supplier.RemoteAasRegistryUrl.AppendSlash() + "shell-descriptors?assetKind=Instance&assetType=" + typeGlobalAssetId.ToBase64UrlEncoded(Encoding.UTF8);
+                var registryResponse = await client.GetAsync(url, CancellationToken.None);
+
+                if (registryResponse.IsSuccessStatusCode)
+                {
+                    var registryContent = await registryResponse.Content.ReadAsStringAsync();
+
+                    // Extract the result array from the JSON
+                    var jsonDoc = JsonDocument.Parse(registryContent);
+                    var resultArray = jsonDoc.RootElement.GetProperty("result");
+
+                    // Take the first descriptor from the array
+                    if (resultArray.GetArrayLength() > 0)
+                    {
+                        var firstDescriptor = resultArray[0];
+                        var descriptorString = JsonSerializer.Serialize(firstDescriptor);
+
+                        var descriptor = DescriptorSerialization.Deserialize(descriptorString);
+                        instanzGlobalAssetId = descriptor.GlobalAssetId;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching instance ID for {supplier.Name}: {ex.Message}");
+            }
+
+            return instanzGlobalAssetId ?? string.Empty;
         }
     }
 }

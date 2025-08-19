@@ -45,29 +45,55 @@ namespace AasDemoapp.Controllers
         [HttpGet]
         public async Task<RndResult> GetRandomRohteil()
         {
-            // wären die instanzen
-            List<string> eintraege = ["https://meta-level.de/ids/asset/5608_3028_6333_7157", "https://meta-level.de/ids/asset/4094_2880_5477_5296", "https://meta-level.de/ids/asset/4633_9370_4324_9117", "https://meta-level.de/ids/asset/6080_8024_1964_2138", "https://meta-level.de/ids/asset/8033_4071_2840_3443", "https://meta-level.de/ids/asset/1039_7696_3939_2957", "https://meta-level.de/ids/asset/9745_9188_5962_5247", "https://meta-level.de/ids/asset/3231_2344_2659_9352"];
-            var random = new Random();
-            var res = new RndResult()
-            {
-                id = eintraege[random.Next(eintraege.Count)]
-            };
-            return await Task.FromResult(res);
+            // // wären die instanzen
+            // List<string> eintraege = ["https://meta-level.de/ids/asset/5608_3028_6333_7157", "https://meta-level.de/ids/asset/4094_2880_5477_5296", "https://meta-level.de/ids/asset/4633_9370_4324_9117", "https://meta-level.de/ids/asset/6080_8024_1964_2138", "https://meta-level.de/ids/asset/8033_4071_2840_3443", "https://meta-level.de/ids/asset/1039_7696_3939_2957", "https://meta-level.de/ids/asset/9745_9188_5962_5247", "https://meta-level.de/ids/asset/3231_2344_2659_9352"];
+            // var random = new Random();
+            // var res = new RndResult()
+            // {
+            //     id = eintraege[random.Next(eintraege.Count)]
+            // };
+            // return await Task.FromResult(res);
 
-            // var eintraege = _katalogService.GetAll(KatalogEintragTyp.RohteilTyp);
-            // if (eintraege.Count == 0)
-            // {
-            //     return new RndResult { id = string.Empty };
-            // }
-            // else
-            // {
-            //     var random = new Random();
-            //     var res = new RndResult()
-            //     {
-            //         id = eintraege[random.Next(eintraege.Count)].GlobalAssetId
-            //     };
-            //     return await Task.FromResult(res);
-            // }
+            var eintraege = _katalogService.GetAll(KatalogEintragTyp.RohteilTyp);
+            if (eintraege.Count == 0)
+            {
+                return new RndResult { id = string.Empty };
+            }
+            else
+            {
+                var random = new Random();
+                var triedIndices = new HashSet<int>();
+                const int maxAttempts = 20;
+                
+                for (int attempt = 0; attempt < maxAttempts && triedIndices.Count < eintraege.Count; attempt++)
+                {
+                    int randomIndex;
+                    do
+                    {
+                        randomIndex = random.Next(eintraege.Count);
+                    } while (triedIndices.Contains(randomIndex));
+                    
+                    triedIndices.Add(randomIndex);
+                    var typId = eintraege[randomIndex].GlobalAssetId;
+                    var supplier = eintraege[randomIndex].Supplier;
+                    if (supplier == null)
+                    {
+                        continue;
+                    }
+                    var instanzId = await _katalogService.GetInstanzIdByType(typId, supplier);
+
+                    if (!string.IsNullOrEmpty(instanzId))
+                    {
+                        return new RndResult()
+                        {
+                            id = instanzId
+                        };
+                    }
+                }
+                
+                // Wenn nach 10 Versuchen keine Instanz gefunden wurde
+                return new RndResult { id = string.Empty };
+            }
         }
 
         [HttpPost]
