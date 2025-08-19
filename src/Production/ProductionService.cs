@@ -45,7 +45,8 @@ namespace AasDemoapp.Production
             var accumulatedPCF = 0.0; // TODO: kann der Wert schon vorbefüllt sein?
             foreach (var component in producedProductRequest.BestandteilRequests)
             {
-                var ids = _proxyService.Discover(_settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "", securitySetting, component.GlobalAssetId);
+                var ids = _proxyService.Discover(_settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "",
+                    securitySetting, component.GlobalAssetId);
                 var aas_id = ids.Result[0];
                 var submodelRepositoryUrl = _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
                 var aasRegistryUrl = _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
@@ -60,12 +61,12 @@ namespace AasDemoapp.Production
                         SubmodelRegistryUrl = submodelRegistryUrl
                     }, securitySetting, aas_id, default);
                 var componentPCF = 10.0;
-                foreach (var submodel in componentAAS.EditorDescriptor.SubmodelDescriptorEntries)
-                {
-                    // todo: check if semantic ID = semanticID
-                    // todo: foreach SMC in (shortID = ProductCarbonFootprints)
-                    // todo: get value of property with idShort = PcfCO2eq and add it to overall PCD of bike
-                }
+                //var  pcfSubmodel = componentAAS.Environment.Submodels.Find(submodel => submodel.SemanticId == semanticID);
+                // SubmodelElementList pcfList = (SubmodelElementList)pcfSubmodel.SubmodelElements.Find(elem => elem.IdShort == "ProductCarbonFootprints");
+
+                // todo: check if semantic ID = semanticID
+                // todo: foreach SMC in (shortID = ProductCarbonFootprints)
+                // todo: get value of property with idShort = PcfCO2eq and add it to overall PCD of bike
                 accumulatedPCF += componentPCF * component.Amount;
             }
 
