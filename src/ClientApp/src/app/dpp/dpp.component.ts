@@ -33,15 +33,12 @@ export class DppComponent  extends UrlBase implements OnInit {
     this.productList = await this.dppService.getAll();
   }
 
-  async loadShell(aasId: string, op: any, event: any) {
+  async loadShell(productId: number, op: any, event: any) {
     try {
       this.loading = true;
       this.shell = null;
       op.toggle(event);
-      this.shell = await this.dppService.loadShell(
-        this.localRegistryUrl,
-        aasId
-      );
+      this.shell = await this.dppService.loadShell(productId);
     } finally {
       this.loading = false;
     }
