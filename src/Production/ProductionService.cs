@@ -7,12 +7,14 @@ using AasDemoapp.AasHandling;
 using AasDemoapp.AasHandling.SubmodelCreators;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
+using AasDemoapp.Database.Model.DTOs;
 using AasDemoapp.Import;
 using AasDemoapp.Proxy;
 using AasDemoapp.Settings;
 using AasDemoapp.Utils.Shells;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Namotion.Reflection;
 
 namespace AasDemoapp.Production
 {
@@ -39,10 +41,9 @@ namespace AasDemoapp.Production
             var aasId = IdGenerationUtil.GenerateId(IdType.Aas, "https://oi4-nextbike.de");
             var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, "https://oi4-nextbike.de");
             var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
-            var semanticID = "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/1/0";
 
             // Produkt zusammenbauen
-            var accumulatedPCF = 0.0; // TODO: kann der Wert schon vorbefüllt sein?
+            var accumulatedPCF = 0.0; // TODO: could this value be pre-filled from the configuredProduct?
             foreach (var component in producedProductRequest.BestandteilRequests)
             {
                 try
@@ -64,13 +65,14 @@ namespace AasDemoapp.Production
                             AasRegistryUrl = aasRegistryUrl,
                             SubmodelRegistryUrl = submodelRegistryUrl
                         }, securitySetting, aas_id, default);
-                    var componentPCF = 10.0;
-                    //var  pcfSubmodel = componentAAS.Environment.Submodels.Find(submodel => submodel.SemanticId == semanticID);
-                    // SubmodelElementList pcfList = (SubmodelElementList)pcfSubmodel.SubmodelElements.Find(elem => elem.IdShort == "ProductCarbonFootprints");
-
-                    // todo: check if semantic ID = semanticID
-                    // todo: foreach SMC in (shortID = ProductCarbonFootprints)
-                    // todo: get value of property with idShort = PcfCO2eq and add it to overall PCD of bike
+                    var componentPCF = 0.0;
+                    var  pcfSubmodel = componentAAS.Environment.Submodels.Find(submodel => submodel.IdShort == "CarbonFootprint"); // todo: this should be the SemanticID https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/1/0
+                    foreach (SubmodelElementCollection elem in pcfSubmodel.SubmodelElements)
+                    {
+                        List<ISubmodelElement> elems = elem.Value;
+                        IProperty pcfElem =  (IProperty)elems.Find(property => property.IdShort == "PCFCO2eq");
+                        componentPCF += double.Parse(pcfElem.Value, System.Globalization.CultureInfo.InvariantCulture);
+                    }
                     accumulatedPCF += componentPCF * component.Amount;
                 }
                 catch (Exception e)
@@ -91,6 +93,7 @@ namespace AasDemoapp.Production
             };
 
             var configuredProduct = await _context.ConfiguredProducts.FirstAsync(c => c.Id == producedProductRequest.ConfiguredProductId);
+            var order = _context.ProductionOrders.FirstAsync(c => c.Id == producedProduct.Id);
 
             producedProductRequest.BestandteilRequests.ForEach((bestandteil) =>
             {
