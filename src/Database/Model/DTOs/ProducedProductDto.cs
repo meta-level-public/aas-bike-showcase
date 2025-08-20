@@ -12,5 +12,6 @@ namespace AasDemoapp.Database.Model.DTOs
         public string AasId { get; set; } = string.Empty;
         public string GlobalAssetId { get; set; } = string.Empty;
         public DateTime ProductionDate { get; set; }
+        public double PCFValue { get; set; }
     }
 }

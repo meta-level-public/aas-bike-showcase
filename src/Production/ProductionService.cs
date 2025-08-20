@@ -45,29 +45,38 @@ namespace AasDemoapp.Production
             var accumulatedPCF = 0.0; // TODO: kann der Wert schon vorbefüllt sein?
             foreach (var component in producedProductRequest.BestandteilRequests)
             {
-                var ids = _proxyService.Discover(_settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "",
-                    securitySetting, component.GlobalAssetId);
-                var aas_id = ids.Result[0];
-                var submodelRepositoryUrl = _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
-                var aasRegistryUrl = _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
-                var submodelRegistryUrl = _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
-                var aasRepositoryUrl = _settingService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
-                LoadShellResult componentAAS = await ShellLoader.LoadAsync(
-                    new AasUrls
-                    {
-                        AasRepositoryUrl = aasRepositoryUrl,
-                        SubmodelRepositoryUrl = submodelRepositoryUrl,
-                        AasRegistryUrl = aasRegistryUrl,
-                        SubmodelRegistryUrl = submodelRegistryUrl
-                    }, securitySetting, aas_id, default);
-                var componentPCF = 10.0;
-                //var  pcfSubmodel = componentAAS.Environment.Submodels.Find(submodel => submodel.SemanticId == semanticID);
-                // SubmodelElementList pcfList = (SubmodelElementList)pcfSubmodel.SubmodelElements.Find(elem => elem.IdShort == "ProductCarbonFootprints");
+                try
+                {
+                    var ids = await _proxyService.Discover(
+                        _settingService.GetSetting(SettingTypes.DiscoveryUrl)?.Value ?? "",
+                        securitySetting, component.GlobalAssetId);
+                    var aas_id = ids[0];
+                    var submodelRepositoryUrl =
+                        _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
+                    var aasRegistryUrl = _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
+                    var submodelRegistryUrl = _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
+                    var aasRepositoryUrl = _settingService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
+                    LoadShellResult componentAAS = await ShellLoader.LoadAsync(
+                        new AasUrls
+                        {
+                            AasRepositoryUrl = aasRepositoryUrl,
+                            SubmodelRepositoryUrl = submodelRepositoryUrl,
+                            AasRegistryUrl = aasRegistryUrl,
+                            SubmodelRegistryUrl = submodelRegistryUrl
+                        }, securitySetting, aas_id, default);
+                    var componentPCF = 10.0;
+                    //var  pcfSubmodel = componentAAS.Environment.Submodels.Find(submodel => submodel.SemanticId == semanticID);
+                    // SubmodelElementList pcfList = (SubmodelElementList)pcfSubmodel.SubmodelElements.Find(elem => elem.IdShort == "ProductCarbonFootprints");
 
-                // todo: check if semantic ID = semanticID
-                // todo: foreach SMC in (shortID = ProductCarbonFootprints)
-                // todo: get value of property with idShort = PcfCO2eq and add it to overall PCD of bike
-                accumulatedPCF += componentPCF * component.Amount;
+                    // todo: check if semantic ID = semanticID
+                    // todo: foreach SMC in (shortID = ProductCarbonFootprints)
+                    // todo: get value of property with idShort = PcfCO2eq and add it to overall PCD of bike
+                    accumulatedPCF += componentPCF * component.Amount;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+                }
             }
 
             accumulatedPCF *= 1.2; // 20 % extra for mounting
