@@ -29,5 +29,19 @@ namespace AasDemoapp.Controllers
             var products = await Task.FromResult(_dppService.GetAll());
             return _mapper.Map<List<ProducedProductDto>>(products);
         }
+
+        [HttpGet]
+        public async Task<string> GetShell(long idProducedProduct)
+        {
+            try
+            {
+                var res = await _dppService.GetShell(idProducedProduct);
+                return res;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
     }
 }
