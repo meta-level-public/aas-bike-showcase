@@ -9,6 +9,7 @@ using AasDemoapp.Database.Model;
 using AasDemoapp.Import;
 using AasDemoapp.Settings;
 using AasDemoapp.Utils.Shells;
+using Namotion.Reflection;
 
 namespace AasDemoapp.Production;
 
@@ -126,7 +127,11 @@ public class InstanceAasCreator
     private static Submodel CreateProductCarbonFootprintSubmodel(ProducedProduct producedProduct)
     {
         var pcf = PCFCreator.CreateFromJson();
-        Property pcfValue = new Property(DataTypeDefXsd.String, idShort: "PcfCO2eq", value: producedProduct.PCFValue.ToString());
+        var  productFootprints = (SubmodelElementList)pcf.SubmodelElements.Find(submodel => submodel.IdShort == "ProductCarbonFootprints");
+        //Property pcfValue = new Property(DataTypeDefXsd.Double, idShort: "PcfCO2eq", value: producedProduct.PCFValue.ToString());
+        SubmodelElementCollection pcfComponent = (SubmodelElementCollection)productFootprints.Value.First();
+        Property pcfElem =  (Property)pcfComponent.Value.Find(property => property.IdShort == "PcfCO2eq");
+        pcfElem.Value = producedProduct.PCFValue.ToString();
         // todo: anything else to add here?
         return pcf;
     }

@@ -35,6 +35,32 @@ namespace AasDemoapp.Production
             _logger = logger;
         }
 
+        private double getPCFValueV09(Submodel pcfSubmodel)
+        {
+            double componentPCF = 0.0;
+            foreach (SubmodelElementCollection elem in pcfSubmodel.SubmodelElements)
+            {
+                List<ISubmodelElement> elems = elem.Value;
+                var pcfElem = (IProperty)elems.Find(property => property.SemanticId.Keys.First().Value == "0173-1#02-ABG855#001");
+                componentPCF += double.Parse(pcfElem.Value, System.Globalization.CultureInfo.InvariantCulture);
+                
+            }
+            return componentPCF;
+        }
+        
+        private double getPCFValueV10(Submodel pcfSubmodel)
+        {
+            double componentPCF = 0.0;
+            var  productFootprints = (SubmodelElementList)pcfSubmodel.SubmodelElements.Find(submodel => submodel.SemanticId.Keys.First().Value == "https://admin-shell.io/idta/CarbonFootprint/ProductCarbonFootprints/1/0");
+            foreach (SubmodelElementCollection elem in pcfSubmodel.SubmodelElements)
+            {
+                Property pcfProperty = (Property)elem.Value.Find(property => property.SemanticId.Keys.First().Value == "0173-1#02-ABG855#003");
+                componentPCF += double.Parse(pcfProperty.Value, System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            return componentPCF;
+        }
+        
         public async Task<ProducedProduct> CreateProduct(ProducedProductRequest producedProductRequest)
         {
 
@@ -65,15 +91,19 @@ namespace AasDemoapp.Production
                             AasRegistryUrl = aasRegistryUrl,
                             SubmodelRegistryUrl = submodelRegistryUrl
                         }, securitySetting, aas_id, default);
-                    var componentPCF = 0.0;
-                    var  pcfSubmodel = componentAAS.Environment.Submodels.Find(submodel => submodel.IdShort == "CarbonFootprint"); // todo: this should be the SemanticID https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/1/0
-                    foreach (SubmodelElementCollection elem in pcfSubmodel.SubmodelElements)
+                    Submodel  pcfSubmodel = (Submodel)componentAAS.Environment.Submodels.Find(submodel => submodel.SemanticId.Keys.First().Value == "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/1/0");
+                    if (pcfSubmodel != null)
                     {
-                        List<ISubmodelElement> elems = elem.Value;
-                        IProperty pcfElem =  (IProperty)elems.Find(property => property.IdShort == "PCFCO2eq");
-                        componentPCF += double.Parse(pcfElem.Value, System.Globalization.CultureInfo.InvariantCulture);
+                        accumulatedPCF += getPCFValueV10(pcfSubmodel) * component.Amount;
                     }
-                    accumulatedPCF += componentPCF * component.Amount;
+                    else
+                    {
+                        pcfSubmodel = (Submodel)componentAAS.Environment.Submodels.Find(submodel => submodel.SemanticId.Keys.First().Value == "0173-1#01-AHE712#001");
+                        if (pcfSubmodel != null)
+                        {
+                            accumulatedPCF += getPCFValueV09(pcfSubmodel) * component.Amount;
+                        } 
+                    }
                 }
                 catch (Exception e)
                 {
