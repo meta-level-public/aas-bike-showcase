@@ -20,7 +20,7 @@ export class DppService {
     );
 
     const instanceOrErrorPlain =
-      aas.jsonization.assetAdministrationShellFromJsonable(result);
+    aas.jsonization.assetAdministrationShellFromJsonable(result);
     if (instanceOrErrorPlain.value != null) {
       return instanceOrErrorPlain.value;
     } else {
@@ -33,6 +33,12 @@ export class DppService {
   async getAll() {
     return lastValueFrom(
       this.http.get<ProducedProduct[]>(`${this.baseUrl}api/dpp/getAll`)
+    );
+  }
+
+  deleteProduct(id: number) {
+    return lastValueFrom(
+      this.http.delete(`${this.baseUrl}api/dpp/delete/${id}`)
     );
   }
 }

@@ -43,5 +43,19 @@ namespace AasDemoapp.Controllers
                 return string.Empty;
             }
         }
+
+        [HttpDelete("{idProducedProduct}")]
+        public async Task<IActionResult> Delete(long idProducedProduct)
+        {
+            try
+            {
+                await _dppService.Delete(idProducedProduct);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

@@ -26,6 +26,16 @@ namespace AasDemoapp.Dpp
             return _context.ProducedProducts.Include(p => p.ConfiguredProduct).ToList();
         }
 
+        internal async Task Delete(long idProducedProduct)
+        {
+            var product = await _context.ProducedProducts.FindAsync(idProducedProduct);
+            if (product != null)
+            {
+                _context.ProducedProducts.Remove(product);
+                await _context.SaveChangesAsync();
+            }
+        }
+
         internal async Task<string> GetShell(long idProducedProduct)
         {
             var product = _context.ProducedProducts
