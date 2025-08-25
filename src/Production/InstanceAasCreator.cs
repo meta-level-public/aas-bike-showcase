@@ -9,6 +9,7 @@ using AasDemoapp.Database.Model;
 using AasDemoapp.Import;
 using AasDemoapp.Settings;
 using AasDemoapp.Utils.Shells;
+using Namotion.Reflection;
 
 namespace AasDemoapp.Production;
 
@@ -29,27 +30,29 @@ public class InstanceAasCreator
         var hierarchicalStructures = CreateHierarchicalStructuresSubmodel(producedProduct);
         aas.Submodels.Add(new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, hierarchicalStructures.Id)]));
 
-        await SaveAasToRepositories(aas, nameplate, handoverdoc, hierarchicalStructures, importService, settingsService);
+        var productCarbonFootprint = CreateProductCarbonFootprintSubmodel(producedProduct);
+        aas.Submodels.Add(new Reference(ReferenceTypes.ModelReference,  [new Key(KeyTypes.Submodel, productCarbonFootprint.Id)]));
+
+        await SaveAasToRepositories(aas, [nameplate, handoverdoc, hierarchicalStructures, productCarbonFootprint], importService, settingsService);
 
         return aas;
     }
 
-    private static async Task SaveAasToRepositories(AssetAdministrationShell aas, Submodel nameplate, Submodel handoverdoc, Submodel hierarchicalStructures, ImportService importService, SettingService settingsService)
+    private static async Task SaveAasToRepositories(AssetAdministrationShell aas, List<ISubmodel> submodels, ImportService importService, SettingService settingsService)
     {
-        var aasRepositoryUrl = settingsService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
         var securitySetting = settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
-        await importService.PushNewToLocalRepositoryAsync(aas, [nameplate, handoverdoc, hierarchicalStructures], aasRepositoryUrl, securitySetting);
+        var aasRepositoryUrl = settingsService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
+        var submodelRepositoryUrl = settingsService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
+        var aasRegistryUrl = settingsService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
+        var submodelRegistryUrl = settingsService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
 
         var env = new AasCore.Aas3_0.Environment
         {
             AssetAdministrationShells = [aas],
-            Submodels = [nameplate, handoverdoc, hierarchicalStructures]
+            Submodels = submodels
         };
         var plainJson = AasCore.Aas3_0.Jsonization.Serialize.ToJsonObject(env).ToJsonString();
 
-        var submodelRepositoryUrl = settingsService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
-        var aasRegistryUrl = settingsService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
-        var submodelRegistryUrl = settingsService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
         await SaveShellSaver.SaveSingle(
             new AasUrls
             {
@@ -59,6 +62,7 @@ public class InstanceAasCreator
                 SubmodelRegistryUrl = submodelRegistryUrl
             },
             securitySetting,
+
             plainJson,
             [],
             default);
@@ -118,5 +122,17 @@ public class InstanceAasCreator
         hierarchicalStructures.SubmodelElements = [entryNode];
 
         return hierarchicalStructures;
+    }
+
+    private static Submodel CreateProductCarbonFootprintSubmodel(ProducedProduct producedProduct)
+    {
+        var pcf = PCFCreator.CreateFromJson();
+        var  productFootprints = (SubmodelElementList)pcf.SubmodelElements.Find(submodel => submodel.IdShort == "ProductCarbonFootprints");
+        //Property pcfValue = new Property(DataTypeDefXsd.Double, idShort: "PcfCO2eq", value: producedProduct.PCFValue.ToString());
+        SubmodelElementCollection pcfComponent = (SubmodelElementCollection)productFootprints.Value.First();
+        Property pcfElem =  (Property)pcfComponent.Value.Find(property => property.IdShort == "PcfCO2eq");
+        pcfElem.Value = producedProduct.PCFValue.ToString();
+        // todo: anything else to add here?
+        return pcf;
     }
 }

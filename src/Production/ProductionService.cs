@@ -7,10 +7,14 @@ using AasDemoapp.AasHandling;
 using AasDemoapp.AasHandling.SubmodelCreators;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
+using AasDemoapp.Database.Model.DTOs;
 using AasDemoapp.Import;
+using AasDemoapp.Proxy;
 using AasDemoapp.Settings;
 using AasDemoapp.Utils.Shells;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Namotion.Reflection;
 
 namespace AasDemoapp.Production
 {
@@ -19,32 +23,107 @@ namespace AasDemoapp.Production
         private readonly AasDemoappContext _context;
         private readonly ImportService _importService;
         private readonly SettingService _settingService;
+        private readonly ProxyService _proxyService;
         private readonly ILogger<ProductionService> _logger;
 
-        public ProductionService(AasDemoappContext aasDemoappContext, ImportService importService, SettingService settingService, ILogger<ProductionService> logger)
+        public ProductionService(AasDemoappContext aasDemoappContext, ImportService importService, SettingService settingService, ProxyService proxyService, ILogger<ProductionService> logger)
         {
             _context = aasDemoappContext;
             _importService = importService;
             _settingService = settingService;
+            _proxyService = proxyService;
             _logger = logger;
         }
 
+        private double getPCFValueV09(Submodel pcfSubmodel)
+        {
+            double componentPCF = 0.0;
+            foreach (SubmodelElementCollection elem in pcfSubmodel.SubmodelElements)
+            {
+                List<ISubmodelElement> elems = elem.Value;
+                var pcfElem = (IProperty)elems.Find(property => property.SemanticId.Keys.First().Value == "0173-1#02-ABG855#001");
+                componentPCF += double.Parse(pcfElem.Value, System.Globalization.CultureInfo.InvariantCulture);
+                
+            }
+            return componentPCF;
+        }
+        
+        private double getPCFValueV10(Submodel pcfSubmodel)
+        {
+            double componentPCF = 0.0;
+            var  productFootprints = (SubmodelElementList)pcfSubmodel.SubmodelElements.Find(submodel => submodel.SemanticId.Keys.First().Value == "https://admin-shell.io/idta/CarbonFootprint/ProductCarbonFootprints/1/0");
+            foreach (SubmodelElementCollection elem in pcfSubmodel.SubmodelElements)
+            {
+                Property pcfProperty = (Property)elem.Value.Find(property => property.SemanticId.Keys.First().Value == "0173-1#02-ABG855#003");
+                componentPCF += double.Parse(pcfProperty.Value, System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            return componentPCF;
+        }
+        
         public async Task<ProducedProduct> CreateProduct(ProducedProductRequest producedProductRequest)
         {
 
             var aasId = IdGenerationUtil.GenerateId(IdType.Aas, "https://oi4-nextbike.de");
             var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, "https://oi4-nextbike.de");
+            var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
 
             // Produkt zusammenbauen
+            var accumulatedPCF = 0.0; // TODO: could this value be pre-filled from the configuredProduct?
+            foreach (var component in producedProductRequest.BestandteilRequests)
+            {
+                try
+                {
+                    var ids = await _proxyService.Discover(
+                        _settingService.GetSetting(SettingTypes.DiscoveryUrl)?.Value ?? "",
+                        securitySetting, component.GlobalAssetId);
+                    var aas_id = ids[0];
+                    var submodelRepositoryUrl =
+                        _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
+                    var aasRegistryUrl = _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
+                    var submodelRegistryUrl = _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
+                    var aasRepositoryUrl = _settingService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
+                    LoadShellResult componentAAS = await ShellLoader.LoadAsync(
+                        new AasUrls
+                        {
+                            AasRepositoryUrl = aasRepositoryUrl,
+                            SubmodelRepositoryUrl = submodelRepositoryUrl,
+                            AasRegistryUrl = aasRegistryUrl,
+                            SubmodelRegistryUrl = submodelRegistryUrl
+                        }, securitySetting, aas_id, default);
+                    Submodel  pcfSubmodel = (Submodel)componentAAS.Environment.Submodels.Find(submodel => submodel.SemanticId.Keys.First().Value == "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/1/0");
+                    if (pcfSubmodel != null)
+                    {
+                        accumulatedPCF += getPCFValueV10(pcfSubmodel) * component.Amount;
+                    }
+                    else
+                    {
+                        pcfSubmodel = (Submodel)componentAAS.Environment.Submodels.Find(submodel => submodel.SemanticId.Keys.First().Value == "0173-1#01-AHE712#001");
+                        if (pcfSubmodel != null)
+                        {
+                            accumulatedPCF += getPCFValueV09(pcfSubmodel) * component.Amount;
+                        } 
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.Message);
+                }
+            }
+
+            accumulatedPCF *= 1.2; // 20 % extra for mounting
+            
             var producedProduct = new ProducedProduct()
             {
                 ConfiguredProductId = producedProductRequest.ConfiguredProductId,
                 ProductionDate = DateTime.Now,
                 AasId = aasId,
                 GlobalAssetId = globalAssetId,
+                PCFValue = accumulatedPCF
             };
 
             var configuredProduct = await _context.ConfiguredProducts.FirstAsync(c => c.Id == producedProductRequest.ConfiguredProductId);
+            var order = _context.ProductionOrders.FirstAsync(c => c.Id == producedProduct.Id);
 
             producedProductRequest.BestandteilRequests.ForEach((bestandteil) =>
             {

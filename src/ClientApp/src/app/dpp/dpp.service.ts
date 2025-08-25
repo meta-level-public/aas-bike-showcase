@@ -1,7 +1,7 @@
+import * as aas from '@aas-core-works/aas-core3.0-typescript';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
-import * as aas from '@aas-core-works/aas-core3.0-typescript';
 import { ProducedProduct } from '../model/produced-product';
 
 @Injectable({
@@ -13,16 +13,14 @@ export class DppService {
     @Inject('BASE_URL') private baseUrl: string
   ) {}
 
-  async loadShell(registryUrl: string, aasId: string) {
-    const params = new HttpParams()
-      .set('registryUrl', encodeURIComponent(`${registryUrl}`))
-      .set('aasId', encodeURIComponent(`${aasId}`));
+  async loadShell(productId: number) {
+    const params = new HttpParams().set('idProducedProduct', productId.toString());
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/proxy/shell`, { params })
+      this.http.get<any>(`${this.baseUrl}api/dpp/getshell`, { params })
     );
 
     const instanceOrErrorPlain =
-      aas.jsonization.assetAdministrationShellFromJsonable(result);
+    aas.jsonization.assetAdministrationShellFromJsonable(result);
     if (instanceOrErrorPlain.value != null) {
       return instanceOrErrorPlain.value;
     } else {
@@ -35,6 +33,12 @@ export class DppService {
   async getAll() {
     return lastValueFrom(
       this.http.get<ProducedProduct[]>(`${this.baseUrl}api/dpp/getAll`)
+    );
+  }
+
+  deleteProduct(id: number) {
+    return lastValueFrom(
+      this.http.delete(`${this.baseUrl}api/dpp/delete/${id}`)
     );
   }
 }

@@ -29,5 +29,33 @@ namespace AasDemoapp.Controllers
             var products = await Task.FromResult(_dppService.GetAll());
             return _mapper.Map<List<ProducedProductDto>>(products);
         }
+
+        [HttpGet]
+        public async Task<string> GetShell(long idProducedProduct)
+        {
+            try
+            {
+                var res = await _dppService.GetShell(idProducedProduct);
+                return res;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        [HttpDelete("{idProducedProduct}")]
+        public async Task<IActionResult> Delete(long idProducedProduct)
+        {
+            try
+            {
+                await _dppService.Delete(idProducedProduct);
+                return NoContent();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

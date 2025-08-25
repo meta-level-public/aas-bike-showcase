@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
-import { TableModule } from 'primeng/table';
+import { DataViewModule } from 'primeng/dataview';
 import { UrlBase } from '../base/url-base';
 import { ProducedProduct } from '../model/produced-product';
 import { DppService } from './dpp.service';
@@ -14,7 +14,7 @@ import { DppService } from './dpp.service';
   selector: 'app-dpp',
   templateUrl: './dpp.component.html',
   styleUrl: './dpp.component.css',
-  imports: [CommonModule, FormsModule, PopoverModule, TableModule, NgxJsonViewerModule, ButtonModule]
+  imports: [CommonModule, FormsModule, PopoverModule, DataViewModule, NgxJsonViewerModule, ButtonModule]
 })
 export class DppComponent  extends UrlBase implements OnInit {
   shell: AssetAdministrationShell | null = null;
@@ -33,17 +33,23 @@ export class DppComponent  extends UrlBase implements OnInit {
     this.productList = await this.dppService.getAll();
   }
 
-  async loadShell(aasId: string, op: any, event: any) {
+  async loadShell(productId: number, op: any, event: any) {
     try {
       this.loading = true;
       this.shell = null;
       op.toggle(event);
-      this.shell = await this.dppService.loadShell(
-        this.localRegistryUrl,
-        aasId
-      );
+      this.shell = await this.dppService.loadShell(productId);
     } finally {
       this.loading = false;
+    }
+  }
+
+  async deleteProduct(id: number) {
+    try {
+      await this.dppService.deleteProduct(id);
+      this.loadData();
+    } catch (error) {
+      console.error('Error deleting product:', error);
     }
   }
 

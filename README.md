@@ -79,7 +79,7 @@ Diese Showcase-Anwendung demonstriert die praktische Umsetzung von Digital Produ
 ```bash
 # Repository klonen
 git clone <repository-url>
-cd aas-bike-showcase
+cd aas-bike-showcase/src
 
 # Dependencies wiederherstellen
 dotnet restore
