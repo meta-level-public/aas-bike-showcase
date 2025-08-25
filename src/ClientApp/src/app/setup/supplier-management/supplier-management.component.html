@@ -108,107 +108,28 @@
       />
     </div>
 
-    <div class="flex flex-column gap-2">
-      <label for="aasRepositoryUrl" class="block text-900 font-medium"
-        >AAS Repository URL</label
-      >
-      <input
-        id="aasRepositoryUrl"
-        type="text"
-        placeholder="https://example.com/aas-repository"
-        pInputText
-        class="w-full"
-        [ngModel]="newSupplier()?.remoteAasRepositoryUrl"
-        (ngModelChange)="updateSupplierAasRepositoryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="smRepositoryUrl" class="block text-900 font-medium"
-        >SM Repository URL</label
-      >
-      <input
-        id="smRepositoryUrl"
-        type="text"
-        placeholder="https://example.com/sm-repository"
-        pInputText
-        class="w-full"
-        [ngModel]="newSupplier()?.remoteSmRepositoryUrl"
-        (ngModelChange)="updateSupplierSmRepositoryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="aasRegistryUrl" class="block text-900 font-medium"
-        >AAS Registry URL</label
-      >
-      <input
-        id="aasRegistryUrl"
-        type="text"
-        placeholder="https://example.com/aas-registry"
-        pInputText
-        class="w-full"
-        [ngModel]="newSupplier()?.remoteAasRegistryUrl"
-        (ngModelChange)="updateSupplierAasRegistryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="smRegistryUrl" class="block text-900 font-medium"
-        >SM Registry URL</label
-      >
-      <input
-        id="smRegistryUrl"
-        type="text"
-        placeholder="https://example.com/sm-registry"
-        pInputText
-        class="w-full"
-        [ngModel]="newSupplier()?.remoteSmRegistryUrl"
-        (ngModelChange)="updateSupplierSmRegistryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="discoveryUrl" class="block text-900 font-medium"
-        >Discovery URL</label
-      >
-      <input
-        id="discoveryUrl"
-        type="text"
-        placeholder="https://example.com/discovery"
-        pInputText
-        class="w-full"
-        [ngModel]="newSupplier()?.remoteDiscoveryUrl"
-        (ngModelChange)="updateSupplierDiscoveryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="cdRepositoryUrl" class="block text-900 font-medium"
-        >CD Repository URL</label
-      >
-      <input
-        id="cdRepositoryUrl"
-        type="text"
-        placeholder="https://example.com/cd-repository"
-        pInputText
-        class="w-full"
-        [ngModel]="newSupplier()?.remoteCdRepositoryUrl"
-        (ngModelChange)="updateSupplierCdRepositoryUrl($event)"
-      />
-    </div>
-
-    <!-- Supplier Security Configuration -->
-    <app-security-configuration
+    <app-aas-endpoints-configuration
+      [aasRepositoryUrl]="newSupplier()?.remoteAasRepositoryUrl || ''"
+      [submodelRepositoryUrl]="newSupplier()?.remoteSmRepositoryUrl || ''"
+      [aasRegistryUrl]="newSupplier()?.remoteAasRegistryUrl || ''"
+      [submodelRegistryUrl]="newSupplier()?.remoteSmRegistryUrl || ''"
+      [discoveryUrl]="newSupplier()?.remoteDiscoveryUrl || ''"
+      [conceptDescriptionUrl]="newSupplier()?.remoteCdRepositoryUrl || ''"
       [headerParameters]="newSupplier()?.securitySetting?.headerParameters || []"
       [certificate]="newSupplier()?.securitySetting?.certificate || ''"
       [certificatePassword]="newSupplier()?.securitySetting?.certificatePassword || ''"
-      [legend]="'Supplier-Authentifizierung'"
+      [securityLegend]="'Supplier-Authentifizierung'"
       [showCertificate]="true"
+      (aasRepositoryUrlChange)="updateSupplierAasRepositoryUrl($event)"
+      (submodelRepositoryUrlChange)="updateSupplierSmRepositoryUrl($event)"
+      (aasRegistryUrlChange)="updateSupplierAasRegistryUrl($event)"
+      (submodelRegistryUrlChange)="updateSupplierSmRegistryUrl($event)"
+      (discoveryUrlChange)="updateSupplierDiscoveryUrl($event)"
+      (conceptDescriptionUrlChange)="updateSupplierCdRepositoryUrl($event)"
       (headerParametersChange)="onSupplierSecurityHeadersChange($event)"
       (certificateChange)="onSupplierCertificateChange($event)"
       (certificatePasswordChange)="onSupplierCertificatePasswordChange($event)">
-    </app-security-configuration>
+    </app-aas-endpoints-configuration>
 
     <div class="flex justify-content-end gap-2 mt-3">
       <p-button
@@ -266,107 +187,28 @@
       />
     </div>
 
-    <div class="flex flex-column gap-2">
-      <label for="editAasRepositoryUrl" class="block text-900 font-medium"
-        >AAS Repository URL</label
-      >
-      <input
-        id="editAasRepositoryUrl"
-        type="text"
-        placeholder="https://example.com/aas-repository"
-        pInputText
-        class="w-full"
-        [ngModel]="supplierToEdit()?.remoteAasRepositoryUrl"
-        (ngModelChange)="updateEditSupplierAasRepositoryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="editSmRepositoryUrl" class="block text-900 font-medium"
-        >SM Repository URL</label
-      >
-      <input
-        id="editSmRepositoryUrl"
-        type="text"
-        placeholder="https://example.com/sm-repository"
-        pInputText
-        class="w-full"
-        [ngModel]="supplierToEdit()?.remoteSmRepositoryUrl"
-        (ngModelChange)="updateEditSupplierSmRepositoryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="editAasRegistryUrl" class="block text-900 font-medium"
-        >AAS Registry URL</label
-      >
-      <input
-        id="editAasRegistryUrl"
-        type="text"
-        placeholder="https://example.com/aas-registry"
-        pInputText
-        class="w-full"
-        [ngModel]="supplierToEdit()?.remoteAasRegistryUrl"
-        (ngModelChange)="updateEditSupplierAasRegistryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="editSmRegistryUrl" class="block text-900 font-medium"
-        >SM Registry URL</label
-      >
-      <input
-        id="editSmRegistryUrl"
-        type="text"
-        placeholder="https://example.com/sm-registry"
-        pInputText
-        class="w-full"
-        [ngModel]="supplierToEdit()?.remoteSmRegistryUrl"
-        (ngModelChange)="updateEditSupplierSmRegistryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="editDiscoveryUrl" class="block text-900 font-medium"
-        >Discovery URL</label
-      >
-      <input
-        id="editDiscoveryUrl"
-        type="text"
-        placeholder="https://example.com/discovery"
-        pInputText
-        class="w-full"
-        [ngModel]="supplierToEdit()?.remoteDiscoveryUrl"
-        (ngModelChange)="updateEditSupplierDiscoveryUrl($event)"
-      />
-    </div>
-
-    <div class="flex flex-column gap-2">
-      <label for="editCdRepositoryUrl" class="block text-900 font-medium"
-        >CD Repository URL</label
-      >
-      <input
-        id="editCdRepositoryUrl"
-        type="text"
-        placeholder="https://example.com/cd-repository"
-        pInputText
-        class="w-full"
-        [ngModel]="supplierToEdit()?.remoteCdRepositoryUrl"
-        (ngModelChange)="updateEditSupplierCdRepositoryUrl($event)"
-      />
-    </div>
-
-    <!-- Supplier Security Configuration -->
-    <app-security-configuration
+    <app-aas-endpoints-configuration
+      [aasRepositoryUrl]="supplierToEdit()?.remoteAasRepositoryUrl || ''"
+      [submodelRepositoryUrl]="supplierToEdit()?.remoteSmRepositoryUrl || ''"
+      [aasRegistryUrl]="supplierToEdit()?.remoteAasRegistryUrl || ''"
+      [submodelRegistryUrl]="supplierToEdit()?.remoteSmRegistryUrl || ''"
+      [discoveryUrl]="supplierToEdit()?.remoteDiscoveryUrl || ''"
+      [conceptDescriptionUrl]="supplierToEdit()?.remoteCdRepositoryUrl || ''"
       [headerParameters]="supplierToEdit()?.securitySetting?.headerParameters || []"
       [certificate]="supplierToEdit()?.securitySetting?.certificate || ''"
       [certificatePassword]="supplierToEdit()?.securitySetting?.certificatePassword || ''"
-      [legend]="'Supplier-Authentifizierung'"
+      [securityLegend]="'Supplier-Authentifizierung'"
       [showCertificate]="true"
+      (aasRepositoryUrlChange)="updateEditSupplierAasRepositoryUrl($event)"
+      (submodelRepositoryUrlChange)="updateEditSupplierSmRepositoryUrl($event)"
+      (aasRegistryUrlChange)="updateEditSupplierAasRegistryUrl($event)"
+      (submodelRegistryUrlChange)="updateEditSupplierSmRegistryUrl($event)"
+      (discoveryUrlChange)="updateEditSupplierDiscoveryUrl($event)"
+      (conceptDescriptionUrlChange)="updateEditSupplierCdRepositoryUrl($event)"
       (headerParametersChange)="onEditSupplierSecurityHeadersChange($event)"
       (certificateChange)="onEditSupplierCertificateChange($event)"
       (certificatePasswordChange)="onEditSupplierCertificatePasswordChange($event)">
-    </app-security-configuration>
+    </app-aas-endpoints-configuration>
 
     <div class="flex justify-content-end gap-2 mt-3">
       <p-button

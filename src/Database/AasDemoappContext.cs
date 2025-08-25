@@ -14,8 +14,9 @@ namespace AasDemoapp.Database
     public class AasDemoappContext : DbContext
     {
         public DbSet<ImportedShell> ImportedShells { get; set; }
-        public DbSet<KatalogEintrag>    KatalogEintraege { get; set; }
+        public DbSet<KatalogEintrag> KatalogEintraege { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<ToolRepo> ToolRepos { get; set; }
 
         public DbSet<Setting> Settings { get; set; }
         public DbSet<UpdateableShell> UpdateableShells { get; set; }
@@ -130,6 +131,12 @@ namespace AasDemoapp.Database
                 .IsRequired(false);
 
             modelBuilder.Entity<Supplier>()
+                .Property(e => e.SecuritySetting)
+                .HasConversion(
+                    v => DBJsonConverter.Serialize(v),
+                    v => DBJsonConverter.Deserialize<SecuritySetting>(v));
+
+            modelBuilder.Entity<ToolRepo>()
                 .Property(e => e.SecuritySetting)
                 .HasConversion(
                     v => DBJsonConverter.Serialize(v),

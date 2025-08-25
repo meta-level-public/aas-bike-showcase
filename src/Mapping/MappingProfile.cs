@@ -56,6 +56,12 @@ namespace AasDemoapp.Mapping
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
             CreateMap<UpdateSupplierDto, Supplier>();
 
+            // ToolRepo mappings
+            CreateMap<ToolRepo, ToolRepoDto>().ReverseMap();
+            CreateMap<CreateToolRepoDto, ToolRepo>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<UpdateToolRepoDto, ToolRepo>();
+
             // ProductionOrder mappings
             CreateMap<ProductionOrder, ProductionOrderDto>()
                 .ForMember(dest => dest.ConfiguredProductName,

@@ -1,10 +1,9 @@
-<p-accordion-panel value="1">
-  <p-accordion-header>AAS Infrastructure URLs</p-accordion-header>
+<p-accordion-panel value="5">
+  <p-accordion-header>Werkzeug-Repository</p-accordion-header>
   <p-accordion-content>
     <div class="flex flex-column gap-4 p-4">
       <p>
-        Konfiguration der Asset Administration Shell (AAS) Infrastruktur
-        URLs
+        Konfiguration der Endpunkte und Sicherheit für das Werkzeuge-Repository.
       </p>
 
       <app-aas-endpoints-configuration
@@ -17,7 +16,7 @@
         [headerParameters]="headerParameters()"
         [certificate]="certificate()"
         [certificatePassword]="certificatePassword()"
-        [securityLegend]="'Sicherheit'"
+        [securityLegend]="'Authentifizierung'"
         [showCertificate]="true"
         (aasRepositoryUrlChange)="aasRepositoryUrl.set($event)"
         (aasRegistryUrlChange)="aasRegistryUrl.set($event)"
@@ -34,7 +33,7 @@
         pButton
         type="button"
         label="Einstellungen speichern"
-        (click)="saveAasUrls()"
+        (click)="save()"
         class="w-auto"
         icon="pi pi-save"
       ></button>

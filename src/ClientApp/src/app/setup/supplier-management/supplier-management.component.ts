@@ -9,8 +9,9 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { HeaderParameter } from '../../model/header-parameter';
 import { Supplier } from '../../model/supplier';
-import { SecurityConfigurationComponent } from '../security-configuration/security-configuration.component';
+// removed: SecurityConfigurationComponent (now handled by shared component)
 import { SetupService } from '../setup.service';
+import { AasEndpointsConfigurationComponent } from '../shared/aas-endpoints-configuration.component';
 
 @Component({
   selector: 'app-supplier-management',
@@ -24,7 +25,7 @@ import { SetupService } from '../setup.service';
     ButtonModule,
     DialogModule,
     InputTextModule,
-    SecurityConfigurationComponent,
+  AasEndpointsConfigurationComponent,
   ],
 })
 export class SupplierManagementComponent {

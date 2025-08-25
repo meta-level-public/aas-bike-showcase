@@ -10,6 +10,7 @@ import { ErpConfigurationComponent } from './erp-configuration/erp-configuration
 import { Setting } from './setting';
 import { SetupService } from './setup.service';
 import { SupplierManagementComponent } from './supplier-management/supplier-management.component';
+import { ToolsRepositoryComponent } from './tools-repository/tools-repository.component';
 
 @Component({
   selector: 'app-setup',
@@ -21,6 +22,7 @@ import { SupplierManagementComponent } from './supplier-management/supplier-mana
     AccordionModule,
     ErpConfigurationComponent,
     AasInfrastructureComponent,
+  ToolsRepositoryComponent,
     SupplierManagementComponent,
     CompanyAddressComponent,
   ],
@@ -84,6 +86,10 @@ export class SetupComponent implements OnInit {
   }
 
   async onCompanyAddressUpdated() {
+    await this.loadSettings();
+  }
+
+  async onToolsRepositoryUpdated() {
     await this.loadSettings();
   }
 }

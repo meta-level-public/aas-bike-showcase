@@ -225,11 +225,14 @@ export class AssemblyComponent implements OnInit {
 
   // Öffnet den Schrauben-Dialog
   openSchraubenDialog(): void {
+    // hier muss jetzt das benötigte drehmoment an den schrauber übergeben werden
+
     this.showSchraubenDialog.set(true);
   }
 
   // Schließt den Schrauben-Dialog
   closeSchraubenDialog(): void {
+    // hier muss das genutzte drehmoment vom schrauber gelesen und überprüft werden
     this.showSchraubenDialog.set(false);
   }
 

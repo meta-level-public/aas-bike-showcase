@@ -14,6 +14,12 @@
         (settingsUpdated)="onAasSettingsUpdated()">
       </app-aas-infrastructure>
 
+      <!-- Werkzeuge-Repository Bereich -->
+      <app-tools-repository
+        [settings]="settings()"
+        (settingsUpdated)="onToolsRepositoryUpdated()">
+      </app-tools-repository>
+
       <!-- Lieferanten Bereich -->
       <app-supplier-management
         [suppliers]="suppliers()"

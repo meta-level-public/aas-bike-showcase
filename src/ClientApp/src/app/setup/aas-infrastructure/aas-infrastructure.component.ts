@@ -6,9 +6,9 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { HeaderParameter } from '../../model/header-parameter';
 import { SecuritySetting } from '../../model/security-setting';
-import { SecurityConfigurationComponent } from '../security-configuration/security-configuration.component';
 import { Setting } from '../setting';
 import { SetupService } from '../setup.service';
+import { AasEndpointsConfigurationComponent } from '../shared/aas-endpoints-configuration.component';
 
 @Component({
   selector: 'app-aas-infrastructure',
@@ -20,7 +20,7 @@ import { SetupService } from '../setup.service';
     AccordionModule,
     ButtonModule,
     InputTextModule,
-    SecurityConfigurationComponent,
+  AasEndpointsConfigurationComponent,
   ],
 })
 export class AasInfrastructureComponent implements OnInit, OnChanges {
