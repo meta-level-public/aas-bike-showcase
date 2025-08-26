@@ -34,13 +34,13 @@ namespace AasDemoapp.Controllers
             {
                 // DTO zu Entity Model konvertieren
                 var request = _mapper.Map<ProducedProductRequest>(requestDto);
-                
+
                 // Produktion ausführen
                 var producedProduct = await _productionService.CreateProduct(request);
-                
+
                 // Entity Model zu DTO konvertieren
                 var responseDto = _mapper.Map<ProducedProductDto>(producedProduct);
-                
+
                 return Ok(new ProductionResponseDto
                 {
                     Success = true,
@@ -60,12 +60,39 @@ namespace AasDemoapp.Controllers
         }
 
         [HttpGet]
+        public async Task<ActionResult<string>> GetAssemblyPropertiesSubmodel(long partId)
+        {
+            var smString = await _productionService.GetAssemblyPropertiesSubmodel(partId);
+            return Ok(smString);
+        }
+        [HttpGet]
+        public async Task<ActionResult<string>> GetToolData(string aasId)
+        {
+            var smString = await _productionService.GetToolData(aasId);
+            return Ok(smString);
+        }
+
+        public class ToolData
+        {
+            public string AasId { get; set; } = string.Empty;
+            public string PropertyIdShortPath { get; set; } = string.Empty;
+            public string PropertyValue { get; set; } = string.Empty;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<bool>> InitializeTool(ToolData toolData)
+        {
+            var result = await _productionService.SetRequiredToolProperty(toolData.AasId, toolData.PropertyIdShortPath, toolData.PropertyValue);
+            return Ok(result);
+        }
+
+        [HttpGet]
         public ActionResult<HandoverDocumentationDto> TestHandoverDocumentation()
         {
             try
             {
                 var submodel = HandoverDocumentationCreator.CreateFromJson();
-                
+
                 var submodelDto = new SubmodelSummaryDto
                 {
                     Id = submodel.Id,

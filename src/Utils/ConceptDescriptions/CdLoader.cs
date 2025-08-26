@@ -16,31 +16,35 @@ public class CdLoader
 
     public static ConceptDescription? GetSingle(string url, HttpClient client)
     {
-        try
+        if (!string.IsNullOrWhiteSpace(url) && url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
         {
-            HttpResponseMessage response = client.GetAsync(url).Result;
 
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                return null;
-                // nicht schlimm - kennen wir eben nicht
+                HttpResponseMessage response = client.GetAsync(url).Result;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                    // nicht schlimm - kennen wir eben nicht
+                }
+
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+
+                JObject? res = JsonConvert.DeserializeObject<JObject>(responseContent);
+
+                if (res != null)
+                {
+                    var jsonNode = JsonNode.Parse(res.ToString());
+                    if (jsonNode == null) throw new Exception("Could not parse JSON");
+
+                    return Jsonization.Deserialize.ConceptDescriptionFrom(jsonNode);
+                }
             }
-
-            var responseContent = response.Content.ReadAsStringAsync().Result;
-
-            JObject? res = JsonConvert.DeserializeObject<JObject>(responseContent);
-
-            if (res != null)
+            catch (Exception e)
             {
-                var jsonNode = JsonNode.Parse(res.ToString());
-                if (jsonNode == null) throw new Exception("Could not parse JSON");
-
-                return Jsonization.Deserialize.ConceptDescriptionFrom(jsonNode);
+                Console.WriteLine(e);
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
         }
 
         return null;
