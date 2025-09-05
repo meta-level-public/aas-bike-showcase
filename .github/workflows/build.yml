@@ -52,8 +52,11 @@ jobs:
           else
             echo "tag=aasdemoapp:preview" >> $GITHUB_OUTPUT
           fi
+      - name: Ensure build script is executable
+        run: chmod +x build/build.ps1
+        working-directory: ${{ github.workspace }}
       - name: Build Docker image using PowerShell script
-        run: pwsh -File "${{ github.workspace }}/build/build.ps1" -Configuration Release -Target final -Tag ${{ steps.set_tag.outputs.tag }}
+        run: pwsh -File build/build.ps1 -Configuration Release -Target final -Tag ${{ steps.set_tag.outputs.tag }}
         shell: pwsh
         working-directory: ${{ github.workspace }}
 
