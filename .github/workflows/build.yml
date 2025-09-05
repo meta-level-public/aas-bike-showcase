@@ -46,6 +46,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build Docker image
         run: docker build -f build/Dockerfile -t aasdemoapp:latest .
+        working-directory: ${{ github.workspace }}
 
       # Optional: Push to Docker Hub (set secrets.DOCKERHUB_USERNAME and secrets.DOCKERHUB_TOKEN)
       # - name: Login to Docker Hub
