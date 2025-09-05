@@ -33,7 +33,7 @@ services:
   ######################## APPLICATIONS ########################
 
   aas-demoapp:
-    image: aas-bike-showcase:local
+    image: ghcr.io/meta-level-public/aasdemoapp:preview
     container_name: aas-demoapp
     restart: unless-stopped
     volumes:
@@ -41,9 +41,9 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.aas-demoapp.rule=Host(`app.aas-bike.showcasehub.de`)'
-      - 'traefik.http.routers.aas-demoapp.entrypoints=websecure'
+      - 'traefik.http.routers.aas-demoapp.entrypoints=web,websecure'
       - 'traefik.http.routers.aas-demoapp.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.aas-demoapp.middlewares=auth-demoapp@file'
+      - 'traefik.http.routers.aas-demoapp.middlewares=redirect-to-https@file'
 
   aas-env:
     image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
@@ -53,8 +53,6 @@ services:
     volumes:
       - ./aas:/application/aas
       - ./basyx/aas-env.properties:/application/application.properties
-    ports:
-      - '8081:8081'
     restart: always
     depends_on:
       aas-registry:
@@ -70,7 +68,8 @@ services:
       - 'traefik.http.routers.aas-env.rule=Host(`aas-env.aas-bike.showcasehub.de`)'
       - 'traefik.http.routers.aas-env.entrypoints=websecure'
       - 'traefik.http.routers.aas-env.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.aas-env.middlewares=auth-demoapp@file'
+      - 'traefik.http.routers.aas-env.middlewares=redirect-to-https@file'
+
   aas-registry:
     image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
     container_name: aas-registry
@@ -89,12 +88,11 @@ services:
       - 'traefik.http.routers.aas-registry.rule=Host(`aas-registry.aas-bike.showcasehub.de`)'
       - 'traefik.http.routers.aas-registry.entrypoints=websecure'
       - 'traefik.http.routers.aas-registry.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.aas-registry.middlewares=auth-demoapp@file'
+      - 'traefik.http.routers.aas-registry.middlewares=redirect-to-https@file'
+
   sm-registry:
     image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
     container_name: sm-registry
-    ports:
-      - '8083:8080'
     environment:
       - SERVER_PORT=8080
     volumes:
@@ -108,7 +106,8 @@ services:
       - 'traefik.http.routers.sm-registry.rule=Host(`sm-registry.aas-bike.showcasehub.de`)'
       - 'traefik.http.routers.sm-registry.entrypoints=websecure'
       - 'traefik.http.routers.sm-registry.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.sm-registry.middlewares=auth-demoapp@file'
+      - 'traefik.http.routers.sm-registry.middlewares=redirect-to-https@file'
+
   mongo:
     image: mongo:5.0.10
     container_name: mongo
@@ -121,6 +120,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   aas-discovery:
     image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
     container_name: aas-discovery
@@ -128,8 +128,6 @@ services:
       - SERVER_PORT=8081
     volumes:
       - ./basyx/aas-discovery.properties:/application/application.properties
-    ports:
-      - '8084:8081'
     restart: always
     depends_on:
       mongo:
@@ -139,7 +137,8 @@ services:
       - 'traefik.http.routers.aas-discovery.rule=Host(`aas-discovery.aas-bike.showcasehub.de`)'
       - 'traefik.http.routers.aas-discovery.entrypoints=websecure'
       - 'traefik.http.routers.aas-discovery.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.aas-discovery.middlewares=auth-demoapp@file'
+      - 'traefik.http.routers.aas-discovery.middlewares=redirect-to-https@file'
+
   mosquitto:
     image: eclipse-mosquitto:2.0.15
     container_name: mosquitto
@@ -156,17 +155,16 @@ services:
       timeout: 10s
       start_period: 1s
       retries: 3
+
   aas-web-ui:
     image: eclipsebasyx/aas-gui:SNAPSHOT
     container_name: aas-ui
-    ports:
-      - '3000:3000'
     environment:
       AAS_REGISTRY_PATH: https://aas-registry.aas-bike.showcasehub.de/shell-descriptors
       SUBMODEL_REGISTRY_PATH: https://sm-registry.aas-bike.showcasehub.de/submodel-descriptors
-      AAS_REPO_PATH: https://aas-discovery.aas-bike.showcasehub.de/shells
-      SUBMODEL_REPO_PATH: https://aas-discovery.aas-bike.showcasehub.de/submodels
-      CD_REPO_PATH: https://aas-discovery.aas-bike.showcasehub.de/concept-descriptions
+      AAS_REPO_PATH: https://aas-env.aas-bike.showcasehub.de/shells
+      SUBMODEL_REPO_PATH: https://aas-env.aas-bike.showcasehub.de/submodels
+      CD_REPO_PATH: https://aas-env.aas-bike.showcasehub.de/concept-descriptions
       AAS_DISCOVERY_PATH: https://aas-discovery.aas-bike.showcasehub.de/lookup/shells
       PRIMARY_COLOR: '#76B82A'
       LOGO_PATH: OI4_Signet_color_RGB.png
@@ -176,6 +174,13 @@ services:
         condition: service_healthy
     volumes:
       - ./logo:/usr/src/app/dist/Logo
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-ui.rule=Host(`aas-ui.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-ui.entrypoints=web,websecure'
+      - 'traefik.http.routers.aas-ui.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-ui.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.aas-ui.loadbalancer.server.port=3000'
 
 volumes:
   traefik-letsencrypt:

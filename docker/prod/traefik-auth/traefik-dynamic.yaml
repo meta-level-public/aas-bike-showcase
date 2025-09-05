@@ -1,5 +1,6 @@
 http:
   middlewares:
-    auth-demoapp:
-      basicAuth:
-        usersFile: '/etc/traefik/traefik-auth/.htpasswd'
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
