@@ -280,8 +280,7 @@ export default {
           activeColor: '{primary.contrast.color}',
           focusRing: {
             color: 'transparent',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {primary.color}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {primary.color}, transparent 80%)',
           },
         },
         secondary: {
@@ -296,8 +295,7 @@ export default {
           activeColor: '{surface.100}',
           focusRing: {
             color: 'transparent',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {surface.300}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {surface.300}, transparent 80%)',
           },
         },
         info: {
@@ -312,8 +310,7 @@ export default {
           activeColor: '{sky.950}',
           focusRing: {
             color: 'transparent',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {sky.400}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {sky.400}, transparent 80%)',
           },
         },
         success: {
@@ -328,8 +325,7 @@ export default {
           activeColor: '{green.950}',
           focusRing: {
             color: 'transparent',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {green.400}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {green.400}, transparent 80%)',
           },
         },
         warn: {
@@ -344,8 +340,7 @@ export default {
           activeColor: '{orange.950}',
           focusRing: {
             color: 'transparent',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {orange.400}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {orange.400}, transparent 80%)',
           },
         },
         help: {
@@ -360,8 +355,7 @@ export default {
           activeColor: '{purple.950}',
           focusRing: {
             color: 'transparent',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {purple.400}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {purple.400}, transparent 80%)',
           },
         },
         danger: {
@@ -376,8 +370,7 @@ export default {
           activeColor: '{red.950}',
           focusRing: {
             color: 'transparent',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {red.400}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {red.400}, transparent 80%)',
           },
         },
         contrast: {
@@ -392,17 +385,14 @@ export default {
           activeColor: '{surface.950}',
           focusRing: {
             color: 'transparent',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {surface.0}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {surface.0}, transparent 80%)',
           },
         },
       },
       outlined: {
         primary: {
-          hoverBackground:
-            'color-mix(in srgb, {primary.color}, transparent 96%)',
-          activeBackground:
-            'color-mix(in srgb, {primary.color}, transparent 84%)',
+          hoverBackground: 'color-mix(in srgb, {primary.color}, transparent 96%)',
+          activeBackground: 'color-mix(in srgb, {primary.color}, transparent 84%)',
           borderColor: '{primary.700}',
           color: '{primary.color}',
         },
@@ -457,10 +447,8 @@ export default {
       },
       text: {
         primary: {
-          hoverBackground:
-            'color-mix(in srgb, {primary.color}, transparent 96%)',
-          activeBackground:
-            'color-mix(in srgb, {primary.color}, transparent 84%)',
+          hoverBackground: 'color-mix(in srgb, {primary.color}, transparent 96%)',
+          activeBackground: 'color-mix(in srgb, {primary.color}, transparent 84%)',
           color: '{primary.color}',
         },
         secondary: {

@@ -13,32 +13,24 @@ import { ProducedProductRequest } from '../model/produced-product-request';
 export class AssemblyService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   async getAllFertigteil() {
     return lastValueFrom(
-      this.http.get<ConfiguredProduct[]>(
-        `${this.baseUrl}api/Konfigurator/getAll`,
-      ),
+      this.http.get<ConfiguredProduct[]>(`${this.baseUrl}api/Konfigurator/getAll`)
     );
   }
   async getRohteilInstanz(globalAssetId: string) {
     const params = new HttpParams().set('globalAssetId', globalAssetId);
     return lastValueFrom(
-      this.http.get<KatalogEintrag>(
-        `${this.baseUrl}api/Katalog/GetRohteilInstanz`,
-        { params },
-      ),
+      this.http.get<KatalogEintrag>(`${this.baseUrl}api/Katalog/GetRohteilInstanz`, { params })
     );
   }
 
   createProduct(newProduct: ProducedProductRequest) {
     return lastValueFrom(
-      this.http.post<ProducedProduct>(
-        `${this.baseUrl}api/production/createProduct`,
-        newProduct,
-      ),
+      this.http.post<ProducedProduct>(`${this.baseUrl}api/production/createProduct`, newProduct)
     );
   }
 
@@ -47,7 +39,7 @@ export class AssemblyService {
     return lastValueFrom(
       this.http.get<boolean>(`${this.baseUrl}api/production/isToolRequired`, {
         params,
-      }),
+      })
     );
   }
 
@@ -56,10 +48,10 @@ export class AssemblyService {
       const params = new HttpParams().set('partId', partId);
       // Get raw JSON string for the submodel
       const smString = await lastValueFrom(
-        this.http.get<string>(
-          `${this.baseUrl}api/production/getassemblypropertiessubmodel`,
-          { params, responseType: 'text' as 'json' },
-        ),
+        this.http.get<string>(`${this.baseUrl}api/production/getassemblypropertiessubmodel`, {
+          params,
+          responseType: 'text' as 'json',
+        })
       );
 
       if (!smString) return null;
@@ -75,18 +67,11 @@ export class AssemblyService {
     }
   }
 
-  async initializeTool(
-    aasId: string,
-    propertyIdShortPath: string,
-    propertyValue: string,
-  ) {
+  async initializeTool(aasId: string, propertyIdShortPath: string, propertyValue: string) {
     const toolData = { aasId, propertyIdShortPath, propertyValue };
 
     return lastValueFrom(
-      this.http.post<boolean>(
-        `${this.baseUrl}api/production/initializeTool`,
-        toolData,
-      ),
+      this.http.post<boolean>(`${this.baseUrl}api/production/initializeTool`, toolData)
     );
   }
 
@@ -96,7 +81,7 @@ export class AssemblyService {
       this.http.get<string>(`${this.baseUrl}api/production/getToolData`, {
         params,
         responseType: 'text' as 'json',
-      }),
+      })
     );
 
     if (!smString) return null;

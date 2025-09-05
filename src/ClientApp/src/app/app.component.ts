@@ -23,7 +23,7 @@ import { NotificationService } from './notification.service';
 export class AppComponent {
   constructor(
     private notificationService: NotificationService,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {}
 
   onConfirm(): void {

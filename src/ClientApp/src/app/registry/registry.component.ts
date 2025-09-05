@@ -10,13 +10,7 @@ import { RegistryService } from './registry.service';
 @Component({
   selector: 'app-registry-component',
   templateUrl: './registry.component.html',
-  imports: [
-    CommonModule,
-    FormsModule,
-    TableModule,
-    ButtonModule,
-    InputTextModule,
-  ],
+  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule],
 })
 export class RegistryComponent extends UrlBase {
   aasId: string = '';
@@ -28,28 +22,20 @@ export class RegistryComponent extends UrlBase {
 
   async queryLocal() {
     this.descriptors = [];
-    this.descriptors = await this.registryService.loadShells(
-      this.localRegistryUrl,
-      this.aasId,
-    );
+    this.descriptors = await this.registryService.loadShells(this.localRegistryUrl, this.aasId);
   }
   async queryRemote() {
     this.descriptors = [];
-    this.descriptors = await this.registryService.loadShells(
-      this.remoteRegistryUrl,
-      this.aasId,
-    );
+    this.descriptors = await this.registryService.loadShells(this.remoteRegistryUrl, this.aasId);
   }
 
   getSubmodels(descriptor: any) {
     return descriptor.submodels?.map((submodel: any) =>
-      submodel?.keys?.map((key: any) => key.value),
+      submodel?.keys?.map((key: any) => key.value)
     );
   }
 
   getSpecificAssetIds(descriptor: any) {
-    return descriptor.assetInformation?.specificAssetIds?.map(
-      (a: any) => a.name + ': ' + a.value,
-    );
+    return descriptor.assetInformation?.specificAssetIds?.map((a: any) => a.name + ': ' + a.value);
   }
 }

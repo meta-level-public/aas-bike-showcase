@@ -5,9 +5,7 @@
       <i class="pi pi-download"></i>
       Katalog Import
     </h1>
-    <p class="catalog-import-subtitle">
-      Teile aus externen Katalogen importieren
-    </p>
+    <p class="catalog-import-subtitle">Teile aus externen Katalogen importieren</p>
   </div>
 
   <!-- Main Content -->
@@ -114,19 +112,13 @@
               }"
               (click)="loadRegistry(item.remoteAasRepositoryUrl)"
             >
-              <img
-                [src]="'/assets/logos/' + item.logo"
-                [alt]="item.name"
-                class="supplier-logo"
-              />
+              <img [src]="'/assets/logos/' + item.logo" [alt]="item.name" class="supplier-logo" />
               <span class="supplier-name">{{ item.name }}</span>
             </div>
           } @empty {
             <div class="empty-state">
               <i class="pi pi-info-circle"></i>
-              <p>
-                Keine Lieferanten erfasst. Bitte zuerst im Grundsetup einrichten
-              </p>
+              <p>Keine Lieferanten erfasst. Bitte zuerst im Grundsetup einrichten</p>
             </div>
           }
         </div>
@@ -170,10 +162,7 @@
                 </td>
                 <td>
                   <p-popover #op>
-                    <ngx-json-viewer
-                      [json]="shell"
-                      [expanded]="false"
-                    ></ngx-json-viewer>
+                    <ngx-json-viewer [json]="shell" [expanded]="false"></ngx-json-viewer>
                   </p-popover>
                   <p-button
                     (click)="op.toggle($event)"

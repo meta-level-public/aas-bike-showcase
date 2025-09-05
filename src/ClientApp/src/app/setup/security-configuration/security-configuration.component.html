@@ -1,9 +1,4 @@
-<p-fieldset
-  [legend]="legend()"
-  class="w-12"
-  [collapsed]="true"
-  [toggleable]="true"
->
+<p-fieldset [legend]="legend()" class="w-12" [collapsed]="true" [toggleable]="true">
   <div class="flex flex-column gap-2">
     <div class="flex flex-row align-items-end">
       <p-button
@@ -14,16 +9,12 @@
       ></p-button>
     </div>
     <p-message
-      >Wenn Ihre Infrastruktur eine Authentifizierung erfordert, können Sie hier
-      Header Parameter angeben, die für den Zugriff notwendig sind</p-message
+      >Wenn Ihre Infrastruktur eine Authentifizierung erfordert, können Sie hier Header Parameter
+      angeben, die für den Zugriff notwendig sind</p-message
     >
   </div>
 
-  @for (
-    headerParam of localHeaderParameters();
-    track $index;
-    let indx = $index
-  ) {
+  @for (headerParam of localHeaderParameters(); track $index; let indx = $index) {
     <div class="flex flex-row gap-2 align-items-end">
       <div class="field w-5">
         <label for="headerName{{ indx }}"> Name </label>
@@ -65,8 +56,8 @@
   @if (showCertificate()) {
     <div class="flex flex-column mt-5">
       <p-message severity="info"
-        >Wenn Ihre Infrastruktur eine Zertifikatsdatei erfordert, können Sie
-        diese hier hinterlegen.</p-message
+        >Wenn Ihre Infrastruktur eine Zertifikatsdatei erfordert, können Sie diese hier
+        hinterlegen.</p-message
       >
       <div class="field">
         <label for="certificate"> Zertifikatsdatei</label>

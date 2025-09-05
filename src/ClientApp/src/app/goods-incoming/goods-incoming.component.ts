@@ -49,7 +49,7 @@ export class GoodsIncomingComponent {
 
   constructor(
     private goodsIncomingService: GoodsIncomingService,
-    private notificationService: NotificationService,
+    private notificationService: NotificationService
   ) {}
 
   async lookup() {
@@ -60,7 +60,7 @@ export class GoodsIncomingComponent {
       // Typ des Rohteils suchen
       // aas des Lieferanten suchen
       const res = await this.goodsIncomingService.lookupRohteil(
-        this.newKatalogEintrag.globalAssetId,
+        this.newKatalogEintrag.globalAssetId
       );
 
       console.log(res);
@@ -76,14 +76,11 @@ export class GoodsIncomingComponent {
       this.newKatalogEintrag.name = this.parentRohteil.name;
       this.newKatalogEintrag.kategorie = this.parentRohteil.kategorie;
       this.newKatalogEintrag.referencedType = this.parentRohteil;
-      this.newKatalogEintrag.remoteRepositoryUrl =
-        this.parentRohteil.remoteRepositoryUrl;
+      this.newKatalogEintrag.remoteRepositoryUrl = this.parentRohteil.remoteRepositoryUrl;
       this.newKatalogEintrag.supplier = this.parentRohteil.supplier;
 
       this.importImageUrl =
-        this.sanitizer.bypassSecurityTrustResourceUrl(
-          'data:image/jpeg;base64, ' + res.image,
-        ) || '';
+        this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64, ' + res.image) || '';
 
       this.loaded = true;
     } finally {
@@ -97,12 +94,8 @@ export class GoodsIncomingComponent {
     try {
       this.loading = true;
 
-      await this.goodsIncomingService.createRohteilInstanz(
-        this.newKatalogEintrag,
-      );
-      this.notificationService.showMessageAlways(
-        'Wareneingang erfolgreich gebucht',
-      );
+      await this.goodsIncomingService.createRohteilInstanz(this.newKatalogEintrag);
+      this.notificationService.showMessageAlways('Wareneingang erfolgreich gebucht');
       this.newKatalogEintrag = {} as KatalogEintrag;
       this.parentRohteil = undefined;
       this.loaded = false;
@@ -136,9 +129,7 @@ export class GoodsIncomingComponent {
       }, 2000);
     } else {
       this.resetDelivery();
-      this.notificationService.showMessageAlways(
-        'Kein zufälliges Teil beim Liefereanten gefunden',
-      );
+      this.notificationService.showMessageAlways('Kein zufälliges Teil beim Liefereanten gefunden');
     }
     this.loading = false;
   }

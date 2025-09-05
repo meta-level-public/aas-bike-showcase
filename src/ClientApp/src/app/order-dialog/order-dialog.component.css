@@ -63,7 +63,7 @@
   }
 
   .grid .col-12,
-  .grid [class*="col-"] {
+  .grid [class*='col-'] {
     width: 100% !important;
     flex: 0 0 100% !important;
     max-width: 100% !important;

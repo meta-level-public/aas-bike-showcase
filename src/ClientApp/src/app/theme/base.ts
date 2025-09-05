@@ -557,8 +557,7 @@ export default {
           focusColor: 'rgba(255,255,255,.87)',
         },
         focusRing: {
-          shadow:
-            '0 0 0 0.2rem color-mix(in srgb, {primary.color}, transparent 80%)',
+          shadow: '0 0 0 0.2rem color-mix(in srgb, {primary.color}, transparent 80%)',
         },
         mask: {
           background: 'rgba(0,0,0,0.6)',

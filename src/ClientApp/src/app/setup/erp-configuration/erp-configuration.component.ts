@@ -11,13 +11,7 @@ import { SetupService } from '../setup.service';
   selector: 'app-erp-configuration',
   templateUrl: './erp-configuration.component.html',
   styleUrl: './erp-configuration.component.css',
-  imports: [
-    CommonModule,
-    FormsModule,
-    AccordionModule,
-    SelectButtonModule,
-    ButtonModule,
-  ],
+  imports: [CommonModule, FormsModule, AccordionModule, SelectButtonModule, ButtonModule],
 })
 export class ErpConfigurationComponent {
   // Input signals

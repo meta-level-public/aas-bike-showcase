@@ -10,20 +10,16 @@ import { ProducedProduct } from '../model/produced-product';
 export class DppService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   async loadShell(productId: number) {
-    const params = new HttpParams().set(
-      'idProducedProduct',
-      productId.toString(),
-    );
+    const params = new HttpParams().set('idProducedProduct', productId.toString());
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/dpp/getshell`, { params }),
+      this.http.get<any>(`${this.baseUrl}api/dpp/getshell`, { params })
     );
 
-    const instanceOrErrorPlain =
-      aas.jsonization.assetAdministrationShellFromJsonable(result);
+    const instanceOrErrorPlain = aas.jsonization.assetAdministrationShellFromJsonable(result);
     if (instanceOrErrorPlain.value != null) {
       return instanceOrErrorPlain.value;
     } else {
@@ -34,14 +30,10 @@ export class DppService {
   }
 
   async getAll() {
-    return lastValueFrom(
-      this.http.get<ProducedProduct[]>(`${this.baseUrl}api/dpp/getAll`),
-    );
+    return lastValueFrom(this.http.get<ProducedProduct[]>(`${this.baseUrl}api/dpp/getAll`));
   }
 
   deleteProduct(id: number) {
-    return lastValueFrom(
-      this.http.delete(`${this.baseUrl}api/dpp/delete/${id}`),
-    );
+    return lastValueFrom(this.http.delete(`${this.baseUrl}api/dpp/delete/${id}`));
   }
 }

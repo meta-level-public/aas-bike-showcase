@@ -5,8 +5,8 @@
       <div class="col-12">
         <h5>Firmenadresse konfigurieren</h5>
         <p class="text-color-secondary">
-          Konfigurieren Sie hier die Adresse Ihres Unternehmens. Diese wird als
-          Setting "CompanyAddress" gespeichert.
+          Konfigurieren Sie hier die Adresse Ihres Unternehmens. Diese wird als Setting
+          "CompanyAddress" gespeichert.
         </p>
       </div>
     </div>
@@ -88,10 +88,7 @@
             <label for="latitude">
               Breitengrad (Lat)
               @if (isGeocodingLoading()) {
-                <i
-                  class="pi pi-spin pi-spinner ml-2"
-                  style="font-size: 0.8rem"
-                ></i>
+                <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem"></i>
               }
             </label>
             <input
@@ -103,9 +100,7 @@
               (input)="
                 updateAddress(
                   'lat',
-                  $any($event.target).value
-                    ? +$any($event.target).value
-                    : undefined
+                  $any($event.target).value ? +$any($event.target).value : undefined
                 )
               "
               placeholder="z.B. 52.520008"
@@ -124,9 +119,7 @@
               (input)="
                 updateAddress(
                   'long',
-                  $any($event.target).value
-                    ? +$any($event.target).value
-                    : undefined
+                  $any($event.target).value ? +$any($event.target).value : undefined
                 )
               "
               placeholder="z.B. 13.404954"
@@ -175,11 +168,7 @@
           (click)="resetAddress()"
           [outlined]="true"
         />
-        <p-button
-          label="Speichern"
-          (click)="saveAddress()"
-          icon="pi pi-check"
-        />
+        <p-button label="Speichern" (click)="saveAddress()" icon="pi pi-check" />
       </div>
 
       <!-- Map Section -->

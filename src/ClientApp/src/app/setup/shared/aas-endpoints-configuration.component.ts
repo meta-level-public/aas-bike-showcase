@@ -106,9 +106,7 @@ export class AasEndpointsConfigurationComponent {
           'conceptDescriptionUrl' in data ||
           'security' in data);
       if (!hasAny) {
-        alert(
-          'Kein passendes Konfigurationsobjekt in der Zwischenablage gefunden.',
-        );
+        alert('Kein passendes Konfigurationsobjekt in der Zwischenablage gefunden.');
         return;
       }
 
@@ -117,29 +115,21 @@ export class AasEndpointsConfigurationComponent {
       if (data.aasRegistryUrl !== undefined)
         this.aasRegistryUrlChange.emit(String(data.aasRegistryUrl));
       if (data.submodelRepositoryUrl !== undefined)
-        this.submodelRepositoryUrlChange.emit(
-          String(data.submodelRepositoryUrl),
-        );
+        this.submodelRepositoryUrlChange.emit(String(data.submodelRepositoryUrl));
       if (data.submodelRegistryUrl !== undefined)
         this.submodelRegistryUrlChange.emit(String(data.submodelRegistryUrl));
-      if (data.discoveryUrl !== undefined)
-        this.discoveryUrlChange.emit(String(data.discoveryUrl));
+      if (data.discoveryUrl !== undefined) this.discoveryUrlChange.emit(String(data.discoveryUrl));
       if (data.conceptDescriptionUrl !== undefined)
-        this.conceptDescriptionUrlChange.emit(
-          String(data.conceptDescriptionUrl),
-        );
+        this.conceptDescriptionUrlChange.emit(String(data.conceptDescriptionUrl));
 
       const sec = data.security ?? {};
       if (sec.headerParameters !== undefined)
         this.headerParametersChange.emit(
-          Array.isArray(sec.headerParameters) ? sec.headerParameters : [],
+          Array.isArray(sec.headerParameters) ? sec.headerParameters : []
         );
-      if (sec.certificate !== undefined)
-        this.certificateChange.emit(String(sec.certificate ?? ''));
+      if (sec.certificate !== undefined) this.certificateChange.emit(String(sec.certificate ?? ''));
       if (sec.certificatePassword !== undefined)
-        this.certificatePasswordChange.emit(
-          String(sec.certificatePassword ?? ''),
-        );
+        this.certificatePasswordChange.emit(String(sec.certificatePassword ?? ''));
     } catch (err) {
       console.error('Clipboard paste failed', err);
       alert('Konnte keine Konfiguration aus der Zwischenablage einfügen.');

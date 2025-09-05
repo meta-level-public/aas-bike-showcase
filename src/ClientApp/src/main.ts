@@ -1,8 +1,4 @@
-import {
-  enableProdMode,
-  ErrorHandler,
-  importProvidersFrom,
-} from '@angular/core';
+import { enableProdMode, ErrorHandler, importProvidersFrom } from '@angular/core';
 
 import { provideHttpClient } from '@angular/common/http';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';

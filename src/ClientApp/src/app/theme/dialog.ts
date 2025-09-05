@@ -17,12 +17,10 @@ export default {
     fontWeight: '600',
   },
   content: {
-    padding:
-      '0 {overlay.modal.padding} {overlay.modal.padding} {overlay.modal.padding}',
+    padding: '0 {overlay.modal.padding} {overlay.modal.padding} {overlay.modal.padding}',
   },
   footer: {
-    padding:
-      '0 {overlay.modal.padding} {overlay.modal.padding} {overlay.modal.padding}',
+    padding: '0 {overlay.modal.padding} {overlay.modal.padding} {overlay.modal.padding}',
     gap: '0.5rem',
   },
 } satisfies DialogDesignTokens;

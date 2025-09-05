@@ -40,7 +40,7 @@ export class SetupComponent implements OnInit {
   constructor(
     private setupService: SetupService,
     private cdRef: ChangeDetectorRef,
-    private confirmationService: ConfirmationService,
+    private confirmationService: ConfirmationService
   ) {}
 
   async ngOnInit() {

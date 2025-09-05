@@ -8,31 +8,23 @@ import { lastValueFrom } from 'rxjs';
 export class DashboardService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   async countAas() {
     return lastValueFrom(
-      this.http.get<number>(
-        `${this.baseUrl}api/Dashboard/GetCountContainedShells`,
-      ),
+      this.http.get<number>(`${this.baseUrl}api/Dashboard/GetCountContainedShells`)
     );
   }
   async countUpdateable() {
     return lastValueFrom(
-      this.http.get<number>(
-        `${this.baseUrl}api/Dashboard/GetCountAvailableUpdateCount`,
-      ),
+      this.http.get<number>(`${this.baseUrl}api/Dashboard/GetCountAvailableUpdateCount`)
     );
   }
   async countConfiguredProducts() {
-    return lastValueFrom(
-      this.http.get<number>(`${this.baseUrl}api/Dashboard/GetCountProducts`),
-    );
+    return lastValueFrom(this.http.get<number>(`${this.baseUrl}api/Dashboard/GetCountProducts`));
   }
   async countProducedProducts() {
-    return lastValueFrom(
-      this.http.get<number>(`${this.baseUrl}api/Dashboard/GetCountProduced`),
-    );
+    return lastValueFrom(this.http.get<number>(`${this.baseUrl}api/Dashboard/GetCountProduced`));
   }
 }

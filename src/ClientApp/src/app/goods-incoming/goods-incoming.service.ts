@@ -10,24 +10,19 @@ import { RohteilLookupResult } from './rohteil-lookup-result';
 export class GoodsIncomingService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   async lookupRohteil(globalAssetId: string) {
     const params = new HttpParams().set('instanzGlobalAssetId', globalAssetId);
     return lastValueFrom(
-      this.http.get<RohteilLookupResult>(
-        `${this.baseUrl}api/katalog/lookupRohteil`,
-        { params },
-      ),
+      this.http.get<RohteilLookupResult>(`${this.baseUrl}api/katalog/lookupRohteil`, { params })
     );
   }
 
   async getRandomRohteil() {
     return lastValueFrom(
-      this.http.get<{ id: string }>(
-        `${this.baseUrl}api/katalog/getRandomRohteil`,
-      ),
+      this.http.get<{ id: string }>(`${this.baseUrl}api/katalog/getRandomRohteil`)
     );
   }
 
@@ -35,8 +30,8 @@ export class GoodsIncomingService {
     return lastValueFrom(
       this.http.post<KatalogEintrag>(
         `${this.baseUrl}api/katalog/importRohteilInstanz`,
-        newKatalogEintrag,
-      ),
+        newKatalogEintrag
+      )
     );
   }
 }

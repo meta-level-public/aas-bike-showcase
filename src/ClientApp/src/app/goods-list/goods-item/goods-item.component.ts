@@ -13,14 +13,7 @@ import { GoodsListService } from '../goods-list.service';
   selector: 'app-goods-item',
   templateUrl: './goods-item.component.html',
   styleUrl: './goods-item.component.css',
-  imports: [
-    CommonModule,
-    FormsModule,
-    RatingModule,
-    ButtonModule,
-    TagModule,
-    TooltipModule,
-  ],
+  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, TagModule, TooltipModule],
 })
 export class GoodsItemComponent {
   @Input() item: KatalogEintrag | undefined;
@@ -62,10 +55,7 @@ export class GoodsItemComponent {
     if (this.item?.globalAssetId) {
       try {
         await navigator.clipboard.writeText(this.item.globalAssetId);
-        console.log(
-          'GlobalAssetId copied to clipboard:',
-          this.item.globalAssetId,
-        );
+        console.log('GlobalAssetId copied to clipboard:', this.item.globalAssetId);
       } catch (err) {
         console.error('Failed to copy GlobalAssetId to clipboard:', err);
         // Fallback für ältere Browser
@@ -87,10 +77,7 @@ export class GoodsItemComponent {
       document.execCommand('copy');
       console.log('GlobalAssetId copied to clipboard (fallback):', text);
     } catch (err) {
-      console.error(
-        'Fallback: Failed to copy GlobalAssetId to clipboard:',
-        err,
-      );
+      console.error('Fallback: Failed to copy GlobalAssetId to clipboard:', err);
     }
     document.body.removeChild(textArea);
   }

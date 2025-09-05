@@ -29,7 +29,7 @@ export class CatalogListComponent implements OnInit {
 
   constructor(
     private catalogService: CatalogListService,
-    private cdRef: ChangeDetectorRef,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -39,10 +39,7 @@ export class CatalogListComponent implements OnInit {
   async loadData() {
     this.items = await this.catalogService.getAllRohteil();
 
-    this.groups = [
-      'Alle',
-      ...new Set(this.items.map((item) => item.kategorie)),
-    ];
+    this.groups = ['Alle', ...new Set(this.items.map((item) => item.kategorie))];
     this.selectedCategory = 'Alle';
     this.setCurrentGroupItems();
   }
@@ -52,7 +49,7 @@ export class CatalogListComponent implements OnInit {
       this.currentGroupItems = this.items;
     } else {
       this.currentGroupItems = this.items.filter(
-        (item) => item.kategorie === this.selectedCategory,
+        (item) => item.kategorie === this.selectedCategory
       );
     }
   }

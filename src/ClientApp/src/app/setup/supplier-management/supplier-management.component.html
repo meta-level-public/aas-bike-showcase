@@ -31,19 +31,13 @@
                   <div
                     class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
                   >
-                    <div
-                      class="flex flex-column align-items-center sm:align-items-start gap-3"
-                    >
+                    <div class="flex flex-column align-items-center sm:align-items-start gap-3">
                       <div class="text-2xl font-bold text-900">
                         {{ item.name }}
                       </div>
-                      <div class="text-900">
-                        AAS Repository: {{ item.remoteAasRepositoryUrl }}
-                      </div>
+                      <div class="text-900">AAS Repository: {{ item.remoteAasRepositoryUrl }}</div>
                       @if (item.remoteSmRepositoryUrl) {
-                        <div class="text-900">
-                          SM Repository: {{ item.remoteSmRepositoryUrl }}
-                        </div>
+                        <div class="text-900">SM Repository: {{ item.remoteSmRepositoryUrl }}</div>
                       }
                     </div>
                   </div>
@@ -115,13 +109,9 @@
         [submodelRegistryUrl]="newSupplier()?.remoteSmRegistryUrl || ''"
         [discoveryUrl]="newSupplier()?.remoteDiscoveryUrl || ''"
         [conceptDescriptionUrl]="newSupplier()?.remoteCdRepositoryUrl || ''"
-        [headerParameters]="
-          newSupplier()?.securitySetting?.headerParameters || []
-        "
+        [headerParameters]="newSupplier()?.securitySetting?.headerParameters || []"
         [certificate]="newSupplier()?.securitySetting?.certificate || ''"
-        [certificatePassword]="
-          newSupplier()?.securitySetting?.certificatePassword || ''
-        "
+        [certificatePassword]="newSupplier()?.securitySetting?.certificatePassword || ''"
         [securityLegend]="'Supplier-Authentifizierung'"
         [showCertificate]="true"
         (aasRepositoryUrlChange)="updateSupplierAasRepositoryUrl($event)"
@@ -132,9 +122,7 @@
         (conceptDescriptionUrlChange)="updateSupplierCdRepositoryUrl($event)"
         (headerParametersChange)="onSupplierSecurityHeadersChange($event)"
         (certificateChange)="onSupplierCertificateChange($event)"
-        (certificatePasswordChange)="
-          onSupplierCertificatePasswordChange($event)
-        "
+        (certificatePasswordChange)="onSupplierCertificatePasswordChange($event)"
       >
       </app-aas-endpoints-configuration>
 
@@ -201,30 +189,20 @@
         [submodelRegistryUrl]="supplierToEdit()?.remoteSmRegistryUrl || ''"
         [discoveryUrl]="supplierToEdit()?.remoteDiscoveryUrl || ''"
         [conceptDescriptionUrl]="supplierToEdit()?.remoteCdRepositoryUrl || ''"
-        [headerParameters]="
-          supplierToEdit()?.securitySetting?.headerParameters || []
-        "
+        [headerParameters]="supplierToEdit()?.securitySetting?.headerParameters || []"
         [certificate]="supplierToEdit()?.securitySetting?.certificate || ''"
-        [certificatePassword]="
-          supplierToEdit()?.securitySetting?.certificatePassword || ''
-        "
+        [certificatePassword]="supplierToEdit()?.securitySetting?.certificatePassword || ''"
         [securityLegend]="'Supplier-Authentifizierung'"
         [showCertificate]="true"
         (aasRepositoryUrlChange)="updateEditSupplierAasRepositoryUrl($event)"
-        (submodelRepositoryUrlChange)="
-          updateEditSupplierSmRepositoryUrl($event)
-        "
+        (submodelRepositoryUrlChange)="updateEditSupplierSmRepositoryUrl($event)"
         (aasRegistryUrlChange)="updateEditSupplierAasRegistryUrl($event)"
         (submodelRegistryUrlChange)="updateEditSupplierSmRegistryUrl($event)"
         (discoveryUrlChange)="updateEditSupplierDiscoveryUrl($event)"
-        (conceptDescriptionUrlChange)="
-          updateEditSupplierCdRepositoryUrl($event)
-        "
+        (conceptDescriptionUrlChange)="updateEditSupplierCdRepositoryUrl($event)"
         (headerParametersChange)="onEditSupplierSecurityHeadersChange($event)"
         (certificateChange)="onEditSupplierCertificateChange($event)"
-        (certificatePasswordChange)="
-          onEditSupplierCertificatePasswordChange($event)
-        "
+        (certificatePasswordChange)="onEditSupplierCertificatePasswordChange($event)"
       >
       </app-aas-endpoints-configuration>
 

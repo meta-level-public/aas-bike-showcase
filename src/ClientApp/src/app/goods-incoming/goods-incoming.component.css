@@ -233,7 +233,7 @@
 
 /* Straße */
 .delivery-animation::before {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
@@ -291,7 +291,7 @@
 
 /* Rauch aus Schornstein */
 .factory-chimney::after {
-  content: "";
+  content: '';
   position: absolute;
   top: -15px;
   left: 50%;
@@ -320,7 +320,7 @@
 
 /* Fabrikfenster */
 .factory-building-1::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 10px;
   left: 10px;
@@ -338,7 +338,7 @@
 }
 
 .factory-building-2::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 8px;
   left: 8px;
@@ -395,7 +395,7 @@
 
 /* Windschutzscheibe */
 .truck-cab::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 8px;
   left: 8px;
@@ -409,19 +409,13 @@
 
 /* Kühlergrill */
 .truck-cab::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 35px;
   left: 8px;
   right: 5px;
   height: 20px;
-  background: repeating-linear-gradient(
-    90deg,
-    #333 0px,
-    #333 2px,
-    #666 2px,
-    #666 4px
-  );
+  background: repeating-linear-gradient(90deg, #333 0px, #333 2px, #666 2px, #666 4px);
   border-radius: 2px;
 }
 
@@ -441,7 +435,7 @@
 
 /* Ladefläche Details */
 .truck-body::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 5px;
   left: 5px;
@@ -454,7 +448,7 @@
 
 /* Heckleuchten */
 .truck-body::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 15px;
   left: -2px;
@@ -482,7 +476,7 @@
 
 /* Felgen-Details */
 .truck-wheel::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -496,7 +490,7 @@
 
 /* Speichen */
 .truck-wheel::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -505,27 +499,9 @@
   height: 20px;
   background:
     linear-gradient(0deg, transparent 45%, #777 49%, #777 51%, transparent 55%),
-    linear-gradient(
-      90deg,
-      transparent 45%,
-      #777 49%,
-      #777 51%,
-      transparent 55%
-    ),
-    linear-gradient(
-      45deg,
-      transparent 45%,
-      #777 49%,
-      #777 51%,
-      transparent 55%
-    ),
-    linear-gradient(
-      -45deg,
-      transparent 45%,
-      #777 49%,
-      #777 51%,
-      transparent 55%
-    );
+    linear-gradient(90deg, transparent 45%, #777 49%, #777 51%, transparent 55%),
+    linear-gradient(45deg, transparent 45%, #777 49%, #777 51%, transparent 55%),
+    linear-gradient(-45deg, transparent 45%, #777 49%, #777 51%, transparent 55%);
   border-radius: 50%;
 }
 
@@ -539,7 +515,7 @@
 
 /* Zusätzliches Hinterrad für LKW */
 .truck::before {
-  content: "";
+  content: '';
   position: absolute;
   bottom: -15px;
   left: 17px;
@@ -575,20 +551,14 @@
 
 /* Kisten-Details (Holzmaserung) */
 .delivery-box::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 2px;
   left: 2px;
   right: 2px;
   bottom: 2px;
   background:
-    repeating-linear-gradient(
-      90deg,
-      #a0522d 0px,
-      #a0522d 1px,
-      #8b4513 1px,
-      #8b4513 3px
-    ),
+    repeating-linear-gradient(90deg, #a0522d 0px, #a0522d 1px, #8b4513 1px, #8b4513 3px),
     repeating-linear-gradient(
       0deg,
       transparent 0px,
@@ -601,7 +571,7 @@
 
 /* Kistengriffe/Verstärkungen */
 .delivery-box::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 10px;
   left: -2px;
@@ -679,7 +649,7 @@
 
 .cloud:before,
 .cloud:after {
-  content: "";
+  content: '';
   position: absolute;
   background: white;
   border-radius: 25px;

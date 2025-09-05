@@ -7,9 +7,7 @@
       <div
         class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
       >
-        <div
-          class="flex flex-column align-items-center sm:align-items-start gap-3"
-        >
+        <div class="flex flex-column align-items-center sm:align-items-start gap-3">
           <div class="text-2xl font-bold text-900">{{ item.name }}</div>
           <div class="flex align-items-center gap-3">
             <span class="flex align-items-center gap-2">
@@ -19,17 +17,13 @@
             @if (getTotalBestandteile() > 0) {
               <span class="flex align-items-center gap-2">
                 <i class="pi pi-list"></i>
-                <span class="font-semibold"
-                  >{{ getTotalBestandteile() }} Bestandteile</span
-                >
+                <span class="font-semibold">{{ getTotalBestandteile() }} Bestandteile</span>
               </span>
             }
           </div>
         </div>
-        <div
-          class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
-        >
-          <span class="text-2xl font-semibold">{{ "$" + item.price }}</span>
+        <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
+          <span class="text-2xl font-semibold">{{ '$' + item.price }}</span>
           <div class="flex flex-row gap-1">
             @if (getTotalBestandteile() > 0) {
               <button
@@ -66,9 +60,7 @@
   <!-- Bestandteile Popover -->
   <p-popover #bestandteilePopover [style]="{ width: '450px' }">
     <div class="flex flex-column gap-3 p-0">
-      <div
-        class="flex flex-row align-items-center gap-2 bestandteile-header p-3 border-round-top"
-      >
+      <div class="flex flex-row align-items-center gap-2 bestandteile-header p-3 border-round-top">
         <i class="pi pi-list text-primary text-lg"></i>
         <span class="text-lg font-bold">Bestandteile von {{ item.name }}</span>
       </div>
@@ -80,24 +72,19 @@
               class="bestandteile-item flex flex-row justify-content-between align-items-center p-3 border-round"
             >
               <div class="flex flex-column gap-1">
-                <span class="font-semibold text-900">{{
-                  bestandteil.name
-                }}</span>
+                <span class="font-semibold text-900">{{ bestandteil.name }}</span>
                 <div class="flex align-items-center gap-3 text-sm">
                   <span class="text-600">
                     <i class="pi pi-hashtag"></i> {{ bestandteil.amount }}x
                   </span>
                   <span class="text-600">
-                    <i class="pi pi-dollar"></i> {{ bestandteil.price }} p.
-                    Stück
+                    <i class="pi pi-dollar"></i> {{ bestandteil.price }} p. Stück
                   </span>
                 </div>
               </div>
               <div class="flex flex-column align-items-end gap-1">
                 <span class="font-bold text-primary text-lg"
-                  >${{
-                    (bestandteil.price * bestandteil.amount).toFixed(2)
-                  }}</span
+                  >${{ (bestandteil.price * bestandteil.amount).toFixed(2) }}</span
                 >
                 <small class="text-600">Gesamt</small>
               </div>
@@ -112,16 +99,14 @@
             <i class="pi pi-calculator text-primary"></i>
             <span class="font-bold text-900">Gesamtkosten Bestandteile:</span>
           </div>
-          <span class="font-bold text-primary text-xl"
-            >${{ getTotalPrice().toFixed(2) }}</span
-          >
+          <span class="font-bold text-primary text-xl">${{ getTotalPrice().toFixed(2) }}</span>
         </div>
 
         <div class="px-3 pb-3">
           <small class="text-600">
             <i class="pi pi-info-circle mr-1"></i>
             {{ getTotalBestandteile() }}
-            {{ getTotalBestandteile() === 1 ? "Bestandteil" : "Bestandteile" }}
+            {{ getTotalBestandteile() === 1 ? 'Bestandteil' : 'Bestandteile' }}
             insgesamt
           </small>
         </div>
@@ -129,9 +114,7 @@
         <div class="text-center text-600 p-4">
           <i class="pi pi-info-circle text-4xl mb-3 text-300"></i>
           <p class="text-lg font-semibold mb-2">Keine Bestandteile verfügbar</p>
-          <p class="text-sm">
-            Dieses Produkt hat noch keine konfigurierten Bestandteile.
-          </p>
+          <p class="text-sm">Dieses Produkt hat noch keine konfigurierten Bestandteile.</p>
         </div>
       }
     </div>

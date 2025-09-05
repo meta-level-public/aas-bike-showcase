@@ -23,9 +23,7 @@
           <p-select
             [options]="productionOrders()"
             [ngModel]="selectedProductionOrder()"
-            (ngModelChange)="
-              selectedProductionOrder.set($event); productionOrderSelected()
-            "
+            (ngModelChange)="selectedProductionOrder.set($event); productionOrderSelected()"
             optionLabel="configuredProductName"
             placeholder="Wählen Sie einen Produktionsauftrag"
             class="w-full"
@@ -45,12 +43,10 @@
             <ng-template #item let-order>
               <div class="flex align-items-center gap-2">
                 <div class="flex flex-column">
-                  <span class="font-medium">{{
-                    order.configuredProductName
-                  }}</span>
+                  <span class="font-medium">{{ order.configuredProductName }}</span>
                   <span class="text-sm text-500"
                     >Anzahl: {{ order.anzahl }} | Erstellt:
-                    {{ order.createdAt | date: "short" }}</span
+                    {{ order.createdAt | date: 'short' }}</span
                   >
                 </div>
               </div>
@@ -70,10 +66,7 @@
             </div>
             <div class="order-info">
               <span>({{ selectedProductionOrder()!.anzahl }} Stück)</span>
-              <span
-                >Erstellt:
-                {{ selectedProductionOrder()!.createdAt | date: "short" }}</span
-              >
+              <span>Erstellt: {{ selectedProductionOrder()!.createdAt | date: 'short' }}</span>
             </div>
           </div>
         </div>
@@ -87,16 +80,11 @@
             Montage-Fortschritt
           </h4>
           <div class="progress-info">
-            <span
-              >Schritt {{ currentAssemblyStep() + 1 }} von
-              {{ bestandteileLength() }}</span
-            >
+            <span>Schritt {{ currentAssemblyStep() + 1 }} von {{ bestandteileLength() }}</span>
             <div class="progress-bar">
               <div
                 class="progress-fill"
-                [style.width.%]="
-                  (currentAssemblyStep() / bestandteileLength()) * 100
-                "
+                [style.width.%]="(currentAssemblyStep() / bestandteileLength()) * 100"
               ></div>
             </div>
           </div>
@@ -124,8 +112,7 @@
               <img
                 [src]="
                   'data:image/jpeg;base64, ' +
-                  selectedItem()!.bestandteile[currentAssemblyStep()]
-                    .katalogEintrag?.image
+                  selectedItem()!.bestandteile[currentAssemblyStep()].katalogEintrag?.image
                 "
                 [alt]="selectedItem()!.bestandteile[currentAssemblyStep()].name"
                 class="part-image"
@@ -140,18 +127,14 @@
                 {{ selectedItem()!.bestandteile[currentAssemblyStep()].amount }}
                 Stück
               </div>
-              <p class="step-instruction">
-                Bitte scannen Sie das zu verbauende Teil
-              </p>
+              <p class="step-instruction">Bitte scannen Sie das zu verbauende Teil</p>
             </div>
           </div>
 
           <div class="step-actions">
             @if (selectedItem()!.bestandteile[currentAssemblyStep()]) {
               @for (
-                teil of getParts(
-                  selectedItem()!.bestandteile[currentAssemblyStep()]
-                );
+                teil of getParts(selectedItem()!.bestandteile[currentAssemblyStep()]);
                 track $index
               ) {
                 <div class="form-group">
@@ -206,9 +189,7 @@
                 (click)="nextAssemblyStep()"
                 [disabled]="
                   !selectedItem()!.bestandteile[currentAssemblyStep()] ||
-                  !isTeilOk(
-                    selectedItem()!.bestandteile[currentAssemblyStep()]
-                  ) ||
+                  !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()]) ||
                   ((isToolRequired() | async) && !toolResultOk())
                 "
                 severity="primary"
@@ -240,8 +221,7 @@
           </div>
           <h4 class="completion-title">Alle Teile erfolgreich verbaut!</h4>
           <p class="completion-message">
-            Die Montage ist abgeschlossen. Sie können nun das fertige Produkt
-            speichern.
+            Die Montage ist abgeschlossen. Sie können nun das fertige Produkt speichern.
           </p>
           <button
             pButton
@@ -308,9 +288,7 @@
           <i class="pi pi-sliders-h metric-icon"></i>
           <div>
             <div class="metric-label">Erlaubter Bereich</div>
-            <div class="metric-value">
-              {{ $any(range)?.min }} - {{ $any(range)?.max }} Nm
-            </div>
+            <div class="metric-value">{{ $any(range)?.min }} - {{ $any(range)?.max }} Nm</div>
           </div>
         </div>
       }
@@ -342,11 +320,7 @@
     </div> -->
 
     <div class="tool-controls">
-      <p-button
-        label="Tool initialisieren"
-        icon="pi pi-play"
-        (click)="initializeTool()"
-      ></p-button>
+      <p-button label="Tool initialisieren" icon="pi pi-play" (click)="initializeTool()"></p-button>
 
       <div class="live-torque">
         <div class="live-label">
@@ -377,13 +351,7 @@
           src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80"
           title="Schrauber"
           width="100%"
-          style="
-            width: 100%;
-            min-height: 400px;
-            height: 50vh;
-            border: none;
-            border-radius: 8px;
-          "
+          style="width: 100%; min-height: 400px; height: 50vh; border: none; border-radius: 8px"
           allowfullscreen
         ></iframe>
       </div>

@@ -5,9 +5,7 @@
       <i class="pi pi-truck"></i>
       Wareneingang
     </h1>
-    <p class="goods-incoming-subtitle">
-      Lieferungen verwalten und Teile einbuchen
-    </p>
+    <p class="goods-incoming-subtitle">Lieferungen verwalten und Teile einbuchen</p>
   </div>
 
   <!-- Main Content -->
@@ -166,10 +164,7 @@
               <i class="pi pi-box"></i>
               Teil im lokalen Katalog
             </h4>
-            <app-catalog-item
-              [item]="parentRohteil"
-              [showDelete]="false"
-            ></app-catalog-item>
+            <app-catalog-item [item]="parentRohteil" [showDelete]="false"></app-catalog-item>
           </div>
 
           <div class="preview-card">
@@ -197,9 +192,7 @@
           } @else {
             <div class="empty-state">
               <i class="pi pi-info-circle"></i>
-              <p>
-                Geben Sie eine GlobalAssetId ein und klicken Sie auf "Lookup"
-              </p>
+              <p>Geben Sie eine GlobalAssetId ein und klicken Sie auf "Lookup"</p>
             </div>
           }
         </div>

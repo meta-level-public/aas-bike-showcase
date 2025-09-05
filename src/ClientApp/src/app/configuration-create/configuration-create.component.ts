@@ -40,7 +40,7 @@ export class ConfigurationCreateComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     private notificationService: NotificationService,
     private confirmationService: ConfirmationService,
-    private router: Router,
+    private router: Router
   ) {}
 
   async ngOnInit() {
@@ -141,10 +141,7 @@ export class ConfigurationCreateComponent implements OnInit {
         accept: () => {
           // Navigiere zur Order-Erstellungsseite
           if (createdProduct && createdProduct.configuredProduct?.id) {
-            this.router.navigate([
-              '/orders/create',
-              createdProduct.configuredProduct.id,
-            ]);
+            this.router.navigate(['/orders/create', createdProduct.configuredProduct.id]);
           }
         },
         reject: () => {

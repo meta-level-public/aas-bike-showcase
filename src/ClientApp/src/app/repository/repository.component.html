@@ -16,13 +16,7 @@
       placeholder="remote Registry"
       class="w-full"
     />
-    <input
-      pInputText
-      type="text"
-      [(ngModel)]="aasId"
-      placeholder="aasId"
-      class="w-full"
-    />
+    <input pInputText type="text" [(ngModel)]="aasId" placeholder="aasId" class="w-full" />
   </div>
   <div class="flex flex-row gap-2">
     <button pButton (click)="loadLocalRegistry()" label="load local"></button>
@@ -63,16 +57,9 @@
           }
           <td>
             <p-popover #op
-              ><ngx-json-viewer
-                [json]="shell"
-                [expanded]="false"
-              ></ngx-json-viewer>
+              ><ngx-json-viewer [json]="shell" [expanded]="false"></ngx-json-viewer>
             </p-popover>
-            <button
-              pButton
-              (click)="op.toggle($event)"
-              icon="pi pi-eye"
-            ></button>
+            <button pButton (click)="op.toggle($event)" icon="pi pi-eye"></button>
           </td>
         </tr>
       }

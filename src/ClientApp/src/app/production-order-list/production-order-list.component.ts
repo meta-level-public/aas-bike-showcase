@@ -9,10 +9,7 @@ import { DataViewModule } from 'primeng/dataview';
 import { SelectModule } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
-import {
-  ProductionOrder,
-  ProductionOrderStatus,
-} from '../model/production-order';
+import { ProductionOrder, ProductionOrderStatus } from '../model/production-order';
 import { ProductionOrderListService } from './production-order-list.service';
 
 interface FilterOption {
@@ -68,29 +65,23 @@ export class ProductionOrderListComponent implements OnInit {
     if (filter.value === 'ALL') {
       return [...orders];
     } else {
-      return orders.filter(
-        (order) => this.getOrderStatus(order) === filter.value,
-      );
+      return orders.filter((order) => this.getOrderStatus(order) === filter.value);
     }
   });
 
   pendingProductionCount = computed(
-    () => this.allOrders().filter((o) => !o.produktionAbgeschlossen).length,
+    () => this.allOrders().filter((o) => !o.produktionAbgeschlossen).length
   );
 
   readyForShippingCount = computed(
-    () =>
-      this.allOrders().filter((o) => o.produktionAbgeschlossen && !o.versandt)
-        .length,
+    () => this.allOrders().filter((o) => o.produktionAbgeschlossen && !o.versandt).length
   );
 
-  completedCount = computed(
-    () => this.allOrders().filter((o) => o.versandt).length,
-  );
+  completedCount = computed(() => this.allOrders().filter((o) => o.versandt).length);
 
   constructor(
     private service: ProductionOrderListService,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -138,9 +129,7 @@ export class ProductionOrderListComponent implements OnInit {
     }
   }
 
-  getStatusSeverity(
-    order: ProductionOrder,
-  ): 'success' | 'info' | 'warn' | 'danger' {
+  getStatusSeverity(order: ProductionOrder): 'success' | 'info' | 'warn' | 'danger' {
     const status = this.getOrderStatus(order);
     switch (status) {
       case ProductionOrderStatus.PENDING_PRODUCTION:
@@ -171,9 +160,7 @@ export class ProductionOrderListComponent implements OnInit {
         this.showSuccess('Auftrag als versandt markiert');
         await this.loadData(); // Reload data
       } else {
-        this.showError(
-          response.message || 'Fehler beim Markieren des Versands',
-        );
+        this.showError(response.message || 'Fehler beim Markieren des Versands');
       }
     } catch (error) {
       this.showError('Fehler beim Markieren des Versands');
@@ -197,15 +184,11 @@ export class ProductionOrderListComponent implements OnInit {
 
     const parts = [];
     if (order.address.name || order.address.vorname) {
-      parts.push(
-        `${order.address.vorname || ''} ${order.address.name || ''}`.trim(),
-      );
+      parts.push(`${order.address.vorname || ''} ${order.address.name || ''}`.trim());
     }
     if (order.address.strasse) parts.push(order.address.strasse);
     if (order.address.plz || order.address.ort) {
-      parts.push(
-        `${order.address.plz || ''} ${order.address.ort || ''}`.trim(),
-      );
+      parts.push(`${order.address.plz || ''} ${order.address.ort || ''}`.trim());
     }
     if (order.address.land) parts.push(order.address.land);
 

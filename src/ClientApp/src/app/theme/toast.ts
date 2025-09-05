@@ -142,8 +142,7 @@ export default {
           hoverBackground: 'rgba(255, 255, 255, 0.05)',
           focusRing: {
             color: '{focus.ring.color}',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {blue.500}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {blue.500}, transparent 80%)',
           },
         },
       },
@@ -157,8 +156,7 @@ export default {
           hoverBackground: 'rgba(255, 255, 255, 0.05)',
           focusRing: {
             color: '{focus.ring.color}',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {green.500}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {green.500}, transparent 80%)',
           },
         },
       },
@@ -172,8 +170,7 @@ export default {
           hoverBackground: 'rgba(255, 255, 255, 0.05)',
           focusRing: {
             color: '{focus.ring.color}',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {yellow.500}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {yellow.500}, transparent 80%)',
           },
         },
       },
@@ -187,8 +184,7 @@ export default {
           hoverBackground: 'rgba(255, 255, 255, 0.05)',
           focusRing: {
             color: '{focus.ring.color}',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {red.500}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {red.500}, transparent 80%)',
           },
         },
       },
@@ -202,8 +198,7 @@ export default {
           hoverBackground: '{surface.700}',
           focusRing: {
             color: '{focus.ring.color}',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {surface.300}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {surface.300}, transparent 80%)',
           },
         },
       },
@@ -217,8 +212,7 @@ export default {
           hoverBackground: '{surface.100}',
           focusRing: {
             color: '{focus.ring.color}',
-            shadow:
-              '0 0 0 0.2rem color-mix(in srgb, {surface.950}, transparent 80%)',
+            shadow: '0 0 0 0.2rem color-mix(in srgb, {surface.950}, transparent 80%)',
           },
         },
       },

@@ -9,15 +9,15 @@ import { KatalogEintrag } from '../model/katalog-eintrag';
 export class CatalogImportService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   save(newKatalogEintrag: KatalogEintrag) {
     return lastValueFrom(
       this.http.post<KatalogEintrag>(
         `${this.baseUrl}api/katalog/importRohteilTyp`,
-        newKatalogEintrag,
-      ),
+        newKatalogEintrag
+      )
     );
   }
 }

@@ -20,7 +20,6 @@ export default {
   },
   footer: {
     gap: '0.5rem',
-    padding:
-      '0 {overlay.popover.padding} {overlay.popover.padding} {overlay.popover.padding}',
+    padding: '0 {overlay.popover.padding} {overlay.popover.padding} {overlay.popover.padding}',
   },
 } satisfies ConfirmPopupDesignTokens;

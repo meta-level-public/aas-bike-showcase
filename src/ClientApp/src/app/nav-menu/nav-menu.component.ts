@@ -24,19 +24,16 @@ export class NavMenuComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.push(
-      this.router.events
-        .pipe(filter((event) => event instanceof NavigationEnd))
-        .subscribe(() => {
-          this.items.forEach((item) => {
-            item.styleClass =
-              this.router.url === item.routerLink ? 'activeItem' : '';
-            console.log(item);
-          });
-          console.log(this.router.url);
-          if (this.router.url === '/') {
-            this.items[0].styleClass = 'activeItem';
-          }
-        }),
+      this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+        this.items.forEach((item) => {
+          item.styleClass = this.router.url === item.routerLink ? 'activeItem' : '';
+          console.log(item);
+        });
+        console.log(this.router.url);
+        if (this.router.url === '/') {
+          this.items[0].styleClass = 'activeItem';
+        }
+      })
     );
 
     this.items = [

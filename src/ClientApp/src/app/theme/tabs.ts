@@ -72,8 +72,7 @@ export default {
     },
     dark: {
       navButton: {
-        shadow:
-          '0px 0px 10px 50px color-mix(in srgb, {content.background}, transparent 50%)',
+        shadow: '0px 0px 10px 50px color-mix(in srgb, {content.background}, transparent 50%)',
       },
       tab: {
         background: '{surface.800}',

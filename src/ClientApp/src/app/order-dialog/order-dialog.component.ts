@@ -1,17 +1,6 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -19,10 +8,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { ConfiguredProduct } from '../model/configured-product';
-import {
-  CreateProductionOrder,
-  ProductionOrderResponse,
-} from '../model/production-order';
+import { CreateProductionOrder, ProductionOrderResponse } from '../model/production-order';
 import { ProductionOrderListService } from '../production-order-list/production-order-list.service';
 
 @Component({
@@ -52,7 +38,7 @@ export class OrderDialogComponent implements OnChanges {
   constructor(
     private fb: FormBuilder,
     private productionOrderService: ProductionOrderListService,
-    private messageService: MessageService,
+    private messageService: MessageService
   ) {
     this.orderForm = this.fb.group({
       anzahl: [1, [Validators.required, Validators.min(1)]],
@@ -144,11 +130,10 @@ export class OrderDialogComponent implements OnChanges {
   }
 
   private async createProductionOrder(
-    createDto: CreateProductionOrder,
+    createDto: CreateProductionOrder
   ): Promise<ProductionOrderResponse> {
     try {
-      const response =
-        await this.productionOrderService.createProductionOrder(createDto);
+      const response = await this.productionOrderService.createProductionOrder(createDto);
       return response;
     } catch (error) {
       return {

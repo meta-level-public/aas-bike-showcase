@@ -10,12 +10,7 @@ import { ConfigurationListService } from './configuration-list.service';
   selector: 'app-configuration-list',
   templateUrl: './configuration-list.component.html',
   styleUrl: './configuration-list.component.css',
-  imports: [
-    CommonModule,
-    FormsModule,
-    DataViewModule,
-    ConfigurationItemComponent,
-  ],
+  imports: [CommonModule, FormsModule, DataViewModule, ConfigurationItemComponent],
 })
 export class ConfigurationListComponent implements OnInit {
   items: ConfiguredProduct[] = [];

@@ -34,7 +34,7 @@ export class ConfigurationItemComponent {
 
   constructor(
     private service: ConfigurationListService,
-    private router: Router,
+    private router: Router
   ) {}
 
   deleteItem() {
@@ -73,11 +73,6 @@ export class ConfigurationItemComponent {
   }
 
   getTotalPrice(): number {
-    return (
-      this.item?.bestandteile?.reduce(
-        (sum, teil) => sum + teil.price * teil.amount,
-        0,
-      ) || 0
-    );
+    return this.item?.bestandteile?.reduce((sum, teil) => sum + teil.price * teil.amount, 0) || 0;
   }
 }

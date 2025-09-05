@@ -1,12 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  OnChanges,
-  OnInit,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, OnChanges, OnInit, input, output, signal } from '@angular/core';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { HeaderParameter } from '../../model/header-parameter';
@@ -19,12 +12,7 @@ import { AasEndpointsConfigurationComponent } from '../shared/aas-endpoints-conf
   selector: 'app-tools-repository',
   templateUrl: './tools-repository.component.html',
   styleUrl: './tools-repository.component.css',
-  imports: [
-    CommonModule,
-    AccordionModule,
-    ButtonModule,
-    AasEndpointsConfigurationComponent,
-  ],
+  imports: [CommonModule, AccordionModule, ButtonModule, AasEndpointsConfigurationComponent],
 })
 export class ToolsRepositoryComponent implements OnInit, OnChanges {
   // Inputs/Outputs
@@ -54,27 +42,20 @@ export class ToolsRepositoryComponent implements OnInit, OnChanges {
 
   private loadFromSettings() {
     const current = this.settings();
-    this.aasRepositoryUrl.set(
-      current.find((s) => s.name === 'ToolsAASRepositoryUrl')?.value || '',
-    );
-    this.aasRegistryUrl.set(
-      current.find((s) => s.name === 'ToolsAASRegistryUrl')?.value || '',
-    );
+    this.aasRepositoryUrl.set(current.find((s) => s.name === 'ToolsAASRepositoryUrl')?.value || '');
+    this.aasRegistryUrl.set(current.find((s) => s.name === 'ToolsAASRegistryUrl')?.value || '');
     this.submodelRepositoryUrl.set(
-      current.find((s) => s.name === 'ToolsSubmodelRepositoryUrl')?.value || '',
+      current.find((s) => s.name === 'ToolsSubmodelRepositoryUrl')?.value || ''
     );
     this.submodelRegistryUrl.set(
-      current.find((s) => s.name === 'ToolsSubmodelRegistryUrl')?.value || '',
+      current.find((s) => s.name === 'ToolsSubmodelRegistryUrl')?.value || ''
     );
-    this.discoveryUrl.set(
-      current.find((s) => s.name === 'ToolsDiscoveryUrl')?.value || '',
-    );
+    this.discoveryUrl.set(current.find((s) => s.name === 'ToolsDiscoveryUrl')?.value || '');
     this.conceptDescriptionUrl.set(
-      current.find((s) => s.name === 'ToolsConceptDescriptionUrl')?.value || '',
+      current.find((s) => s.name === 'ToolsConceptDescriptionUrl')?.value || ''
     );
 
-    const security =
-      current.find((s) => s.name === 'ToolsRepositorySecurity')?.value || '';
+    const security = current.find((s) => s.name === 'ToolsRepositorySecurity')?.value || '';
     if (security) {
       try {
         const parsed = JSON.parse(security) as SecuritySetting;

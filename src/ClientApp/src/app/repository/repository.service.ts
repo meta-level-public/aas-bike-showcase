@@ -10,22 +10,18 @@ import { AssetAdministrationShell } from '@aas-core-works/aas-core3.0-typescript
 export class RepositoryService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   async loadShells(registryUrl: string) {
-    const params = new HttpParams().set(
-      'registryUrl',
-      encodeURIComponent(`${registryUrl}`),
-    );
+    const params = new HttpParams().set('registryUrl', encodeURIComponent(`${registryUrl}`));
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/proxy/shells`, { params }),
+      this.http.get<any>(`${this.baseUrl}api/proxy/shells`, { params })
     );
 
     if (result.result != null) {
       let mappedDtos = result.result.map((dto: any) => {
-        const instanceOrErrorPlain =
-          aas.jsonization.assetAdministrationShellFromJsonable(dto);
+        const instanceOrErrorPlain = aas.jsonization.assetAdministrationShellFromJsonable(dto);
         if (instanceOrErrorPlain.value != null) {
           return instanceOrErrorPlain.value;
         } else {
@@ -37,8 +33,7 @@ export class RepositoryService {
       return mappedDtos.filter((dto: AssetAdministrationShell) => dto != null);
     } else {
       let mappedDtos = result.map((dto: any) => {
-        const instanceOrErrorPlain =
-          aas.jsonization.assetAdministrationShellFromJsonable(dto);
+        const instanceOrErrorPlain = aas.jsonization.assetAdministrationShellFromJsonable(dto);
         if (instanceOrErrorPlain.value != null) {
           return instanceOrErrorPlain.value;
         } else {
@@ -56,11 +51,10 @@ export class RepositoryService {
       .set('registryUrl', encodeURIComponent(`${registryUrl}`))
       .set('aasId', encodeURIComponent(`${aasId}`));
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/proxy/shell`, { params }),
+      this.http.get<any>(`${this.baseUrl}api/proxy/shell`, { params })
     );
 
-    const instanceOrErrorPlain =
-      aas.jsonization.assetAdministrationShellFromJsonable(result);
+    const instanceOrErrorPlain = aas.jsonization.assetAdministrationShellFromJsonable(result);
     if (instanceOrErrorPlain.value != null) {
       return [instanceOrErrorPlain.value];
     } else {
@@ -70,17 +64,13 @@ export class RepositoryService {
     return [];
   }
 
-  async import(
-    localRegistryUrl: string,
-    remoteRegistryUrl: string,
-    id: string,
-  ) {
+  async import(localRegistryUrl: string, remoteRegistryUrl: string, id: string) {
     const params = new HttpParams()
       .set('localRegistryUrl', encodeURIComponent(`${localRegistryUrl}`))
       .set('remoteRegistryUrl', encodeURIComponent(`${remoteRegistryUrl}`))
       .set('id', encodeURIComponent(id));
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/proxy/import`, { params }),
+      this.http.get<any>(`${this.baseUrl}api/proxy/import`, { params })
     );
 
     return true;

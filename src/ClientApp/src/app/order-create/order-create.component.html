@@ -23,12 +23,8 @@
                   <p class="text-600 m-0 text-lg">
                     Preis pro Stück: <strong>${{ product.price }}</strong>
                   </p>
-                  @if (
-                    product.bestandteile && product.bestandteile.length > 0
-                  ) {
-                    <p class="text-600 m-0">
-                      {{ product.bestandteile.length }} Bestandteile
-                    </p>
+                  @if (product.bestandteile && product.bestandteile.length > 0) {
+                    <p class="text-600 m-0">{{ product.bestandteile.length }} Bestandteile</p>
                   }
                 </div>
               </div>
@@ -62,10 +58,7 @@
                   size="large"
                 >
                 </p-inputNumber>
-                @if (
-                  orderForm.get("anzahl")?.invalid &&
-                  orderForm.get("anzahl")?.touched
-                ) {
+                @if (orderForm.get('anzahl')?.invalid && orderForm.get('anzahl')?.touched) {
                   <small class="p-error block mt-1"
                     >Anzahl ist erforderlich und muss mindestens 1 sein.</small
                   >
@@ -191,10 +184,7 @@
                         <label for="latitude" class="block mb-2">
                           Breitengrad (Lat)
                           @if (isGeocodingLoading) {
-                            <i
-                              class="pi pi-spin pi-spinner ml-2"
-                              style="font-size: 0.8rem"
-                            ></i>
+                            <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem"></i>
                           }
                         </label>
                         <input
@@ -209,9 +199,7 @@
                       </div>
 
                       <div class="col-12 md:col-6">
-                        <label for="longitude" class="block mb-2"
-                          >Längengrad (Long)</label
-                        >
+                        <label for="longitude" class="block mb-2">Längengrad (Long)</label>
                         <input
                           pInputText
                           id="longitude"
@@ -262,27 +250,15 @@
                   @if (hasAddressData() || hasCoordinates()) {
                     <div class="col-12">
                       <div class="bg-surface-50 border-round p-3 mb-3">
-                        <div
-                          class="flex justify-content-between align-items-center mb-3"
-                        >
-                          <h4 class="text-900 m-0">
-                            <i class="pi pi-map mr-2"></i>Kartenansicht
-                          </h4>
+                        <div class="flex justify-content-between align-items-center mb-3">
+                          <h4 class="text-900 m-0"><i class="pi pi-map mr-2"></i>Kartenansicht</h4>
                           <div class="flex align-items-center gap-2">
                             <!-- Alternative: Normaler Button statt Toggle Button -->
                             <button
                               pButton
-                              [label]="
-                                mapClickMode
-                                  ? 'Klick-Modus: Ein'
-                                  : 'Klick-Modus: Aus'
-                              "
-                              [icon]="
-                                mapClickMode ? 'pi pi-map-marker' : 'pi pi-map'
-                              "
-                              [severity]="
-                                mapClickMode ? 'success' : 'secondary'
-                              "
+                              [label]="mapClickMode ? 'Klick-Modus: Ein' : 'Klick-Modus: Aus'"
+                              [icon]="mapClickMode ? 'pi pi-map-marker' : 'pi pi-map'"
+                              [severity]="mapClickMode ? 'success' : 'secondary'"
                               (click)="toggleMapClickMode()"
                               class="p-button-sm"
                             ></button>
@@ -294,16 +270,14 @@
                             }
                             <small class="text-500 ml-2">
                               Status:
-                              {{ mapClickMode ? "Aktiviert" : "Deaktiviert" }}
+                              {{ mapClickMode ? 'Aktiviert' : 'Deaktiviert' }}
                             </small>
                           </div>
                         </div>
 
                         <app-leaflet-map
                           [location]="getMapLocation()"
-                          [address]="
-                            hasCoordinates() ? undefined : getFormattedAddress()
-                          "
+                          [address]="hasCoordinates() ? undefined : getFormattedAddress()"
                           [height]="'400px'"
                           [zoom]="15"
                           [enableClickToSet]="mapClickMode"

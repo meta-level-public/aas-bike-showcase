@@ -12,23 +12,19 @@
                 <div
                   class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
                 >
-                  <div
-                    class="flex flex-column align-items-center sm:align-items-start gap-3"
-                  >
+                  <div class="flex flex-column align-items-center sm:align-items-start gap-3">
                     <div class="text-2xl font-bold text-900">
                       {{ item.configuredProductName }}
                     </div>
                     <div class="flex align-items-center gap-3">
                       <span class="flex align-items-center gap-2">
                         <i class="pi pi-id-card"></i>
-                        <span class="text-sm text-600"
-                          >AAS Id: {{ item.aasId }}</span
-                        >
+                        <span class="text-sm text-600">AAS Id: {{ item.aasId }}</span>
                       </span>
                       <span class="flex align-items-center gap-2">
                         <i class="pi pi-calendar"></i>
                         <span class="text-sm text-600">{{
-                          toDate(item.productionDate) | date: "dd.MM.yyyy HH:mm"
+                          toDate(item.productionDate) | date: 'dd.MM.yyyy HH:mm'
                         }}</span>
                       </span>
                     </div>
@@ -64,16 +60,10 @@
                     class="flex justify-content-center align-items-center"
                     style="min-height: 120px"
                   >
-                    <i
-                      class="pi pi-spin pi-spinner"
-                      style="font-size: 2rem"
-                    ></i>
+                    <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
                   </div>
                 } @else if (shell) {
-                  <ngx-json-viewer
-                    [json]="shell"
-                    [expanded]="false"
-                  ></ngx-json-viewer>
+                  <ngx-json-viewer [json]="shell" [expanded]="false"></ngx-json-viewer>
                 } @else {
                   <span class="text-600">Keine Daten geladen.</span>
                 }
@@ -84,9 +74,7 @@
       </ng-template>
     </p-dataView>
     @if (!productList || productList.length === 0) {
-      <p>
-        Keine Elemente erfasst. Bitte zuerst Elemente in den Katalog importieren
-      </p>
+      <p>Keine Elemente erfasst. Bitte zuerst Elemente in den Katalog importieren</p>
     }
   </div>
 </div>

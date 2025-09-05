@@ -11,14 +11,12 @@ import { KatalogEintrag } from '../model/katalog-eintrag';
 export class ConfigurationCreateService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   async getAllRohteil() {
     return lastValueFrom(
-      this.http.get<KatalogEintrag[]>(
-        `${this.baseUrl}api/katalog/getAllRohteil`,
-      ),
+      this.http.get<KatalogEintrag[]>(`${this.baseUrl}api/katalog/getAllRohteil`)
     );
   }
 
@@ -26,8 +24,8 @@ export class ConfigurationCreateService {
     return lastValueFrom(
       this.http.post<ConfigurationResponseDto>(
         `${this.baseUrl}api/konfigurator/createProduct`,
-        newProduct,
-      ),
+        newProduct
+      )
     );
   }
 }

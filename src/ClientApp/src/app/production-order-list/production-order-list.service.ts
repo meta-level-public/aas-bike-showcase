@@ -18,7 +18,7 @@ export class ProductionOrderListService {
   async getAllProductionOrders(): Promise<ProductionOrder[]> {
     try {
       const response = await firstValueFrom(
-        this.http.get<ProductionOrder[]>(`${this.baseUrl}/GetAll`),
+        this.http.get<ProductionOrder[]>(`${this.baseUrl}/GetAll`)
       );
       return response || [];
     } catch (error) {
@@ -30,7 +30,7 @@ export class ProductionOrderListService {
   async getProductionOrderById(id: number): Promise<ProductionOrder | null> {
     try {
       const response = await firstValueFrom(
-        this.http.get<ProductionOrder>(`${this.baseUrl}/GetById/${id}`),
+        this.http.get<ProductionOrder>(`${this.baseUrl}/GetById/${id}`)
       );
       return response;
     } catch (error) {
@@ -42,10 +42,7 @@ export class ProductionOrderListService {
   async markProductionCompleted(id: number): Promise<ProductionOrderResponse> {
     try {
       const response = await firstValueFrom(
-        this.http.post<ProductionOrderResponse>(
-          `${this.baseUrl}/MarkProductionCompleted/${id}`,
-          {},
-        ),
+        this.http.post<ProductionOrderResponse>(`${this.baseUrl}/MarkProductionCompleted/${id}`, {})
       );
       return response;
     } catch (error) {
@@ -61,10 +58,7 @@ export class ProductionOrderListService {
   async markAsShipped(id: number): Promise<ProductionOrderResponse> {
     try {
       const response = await firstValueFrom(
-        this.http.post<ProductionOrderResponse>(
-          `${this.baseUrl}/MarkAsShipped/${id}`,
-          {},
-        ),
+        this.http.post<ProductionOrderResponse>(`${this.baseUrl}/MarkAsShipped/${id}`, {})
       );
       return response;
     } catch (error) {
@@ -77,15 +71,10 @@ export class ProductionOrderListService {
     }
   }
 
-  async createProductionOrder(
-    createDto: CreateProductionOrder,
-  ): Promise<ProductionOrderResponse> {
+  async createProductionOrder(createDto: CreateProductionOrder): Promise<ProductionOrderResponse> {
     try {
       const response = await firstValueFrom(
-        this.http.post<ProductionOrderResponse>(
-          `${this.baseUrl}/Create`,
-          createDto,
-        ),
+        this.http.post<ProductionOrderResponse>(`${this.baseUrl}/Create`, createDto)
       );
       return response;
     } catch (error) {

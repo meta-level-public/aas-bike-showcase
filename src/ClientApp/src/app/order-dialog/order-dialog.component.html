@@ -18,9 +18,7 @@
               Preis pro Stück: <strong>${{ product.price }}</strong>
             </p>
             @if (product.bestandteile && product.bestandteile.length > 0) {
-              <p class="text-600 m-0 text-sm">
-                {{ product.bestandteile.length }} Bestandteile
-              </p>
+              <p class="text-600 m-0 text-sm">{{ product.bestandteile.length }} Bestandteile</p>
             }
           </div>
         </div>
@@ -46,9 +44,7 @@
           decrementButtonIcon="pi pi-minus"
         >
         </p-inputNumber>
-        @if (
-          orderForm.get("anzahl")?.invalid && orderForm.get("anzahl")?.touched
-        ) {
+        @if (orderForm.get('anzahl')?.invalid && orderForm.get('anzahl')?.touched) {
           <small class="p-error block mt-1"
             >Anzahl ist erforderlich und muss mindestens 1 sein.</small
           >
@@ -63,17 +59,13 @@
           <span class="font-semibold text-900">
             <i class="pi pi-calculator mr-2"></i>Gesamtpreis:
           </span>
-          <span class="text-primary font-bold text-xl"
-            >${{ getTotalPrice().toFixed(2) }}</span
-          >
+          <span class="text-primary font-bold text-xl">${{ getTotalPrice().toFixed(2) }}</span>
         </div>
       </div>
 
       <!-- Lieferadresse (Optional) -->
       <div class="field">
-        <h4 class="text-900 mb-3">
-          <i class="pi pi-map-marker mr-2"></i>Lieferadresse (Optional)
-        </h4>
+        <h4 class="text-900 mb-3"><i class="pi pi-map-marker mr-2"></i>Lieferadresse (Optional)</h4>
 
         <div class="grid">
           <div class="col-12 md:col-6">
@@ -111,13 +103,7 @@
 
           <div class="col-12 md:col-4">
             <label for="plz" class="block mb-2">PLZ</label>
-            <input
-              pInputText
-              id="plz"
-              formControlName="plz"
-              class="w-full"
-              placeholder="12345"
-            />
+            <input pInputText id="plz" formControlName="plz" class="w-full" placeholder="12345" />
           </div>
 
           <div class="col-12 md:col-5">

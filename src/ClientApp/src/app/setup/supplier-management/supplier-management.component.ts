@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ConfirmationService } from 'primeng/api';
@@ -50,7 +44,7 @@ export class SupplierManagementComponent {
   constructor(
     private setupService: SetupService,
     private cdRef: ChangeDetectorRef,
-    private confirmationService: ConfirmationService,
+    private confirmationService: ConfirmationService
   ) {}
 
   showAddSupplierDialog() {
@@ -161,15 +155,11 @@ export class SupplierManagementComponent {
   }
 
   updateEditSupplierAasRepositoryUrl(remoteAasRepositoryUrl: string) {
-    this.supplierToEdit.update((s) =>
-      s ? { ...s, remoteAasRepositoryUrl } : s,
-    );
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteAasRepositoryUrl } : s));
   }
 
   updateEditSupplierSmRepositoryUrl(remoteSmRepositoryUrl: string) {
-    this.supplierToEdit.update((s) =>
-      s ? { ...s, remoteSmRepositoryUrl } : s,
-    );
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteSmRepositoryUrl } : s));
   }
 
   updateEditSupplierAasRegistryUrl(remoteAasRegistryUrl: string) {
@@ -185,9 +175,7 @@ export class SupplierManagementComponent {
   }
 
   updateEditSupplierCdRepositoryUrl(remoteCdRepositoryUrl: string) {
-    this.supplierToEdit.update((s) =>
-      s ? { ...s, remoteCdRepositoryUrl } : s,
-    );
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteCdRepositoryUrl } : s));
   }
 
   // Security configuration for suppliers

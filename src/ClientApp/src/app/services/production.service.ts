@@ -15,18 +15,13 @@ export class ProductionService {
 
   constructor(private http: HttpClient) {}
 
-  createProduct(
-    request: ProducedProductRequest,
-  ): Observable<ProductionResponse> {
-    return this.http.post<ProductionResponse>(
-      `${this.baseUrl}/CreateProduct`,
-      request,
-    );
+  createProduct(request: ProducedProductRequest): Observable<ProductionResponse> {
+    return this.http.post<ProductionResponse>(`${this.baseUrl}/CreateProduct`, request);
   }
 
   testHandoverDocumentation(): Observable<HandoverDocumentationResponse> {
     return this.http.get<HandoverDocumentationResponse>(
-      `${this.baseUrl}/TestHandoverDocumentation`,
+      `${this.baseUrl}/TestHandoverDocumentation`
     );
   }
 }

@@ -10,13 +10,7 @@ import { DiscoveryService } from './discovery.service';
 @Component({
   selector: 'app-discovery-component',
   templateUrl: './discovery.component.html',
-  imports: [
-    CommonModule,
-    FormsModule,
-    TableModule,
-    InputTextModule,
-    ButtonModule,
-  ],
+  imports: [CommonModule, FormsModule, TableModule, InputTextModule, ButtonModule],
 })
 export class DiscoveryComponent extends UrlBase {
   assetId: string = '';
@@ -27,15 +21,9 @@ export class DiscoveryComponent extends UrlBase {
   }
 
   async queryLocal() {
-    this.aasIds = await this.discoveryService.query(
-      this.localRegistryUrl,
-      this.assetId,
-    );
+    this.aasIds = await this.discoveryService.query(this.localRegistryUrl, this.assetId);
   }
   async queryRemote() {
-    this.aasIds = await this.discoveryService.query(
-      this.remoteRegistryUrl,
-      this.assetId,
-    );
+    this.aasIds = await this.discoveryService.query(this.remoteRegistryUrl, this.assetId);
   }
 }

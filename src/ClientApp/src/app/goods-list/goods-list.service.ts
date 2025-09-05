@@ -9,14 +9,12 @@ import { KatalogEintrag } from '../model/katalog-eintrag';
 export class GoodsListService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   async getAllRohteilInstanz() {
     return lastValueFrom(
-      this.http.get<KatalogEintrag[]>(
-        `${this.baseUrl}api/katalog/getAllRohteilInstanz`,
-      ),
+      this.http.get<KatalogEintrag[]>(`${this.baseUrl}api/katalog/getAllRohteilInstanz`)
     );
   }
 
@@ -24,15 +22,13 @@ export class GoodsListService {
     return lastValueFrom(
       this.http.post<KatalogEintrag>(
         `${this.baseUrl}api/katalog/importRohteilInstanz`,
-        newKatalogEintrag,
-      ),
+        newKatalogEintrag
+      )
     );
   }
 
   async deleteItem(id: number) {
     const params = new HttpParams().set('id', id);
-    return lastValueFrom(
-      this.http.delete(`${this.baseUrl}api/Katalog/delete`, { params }),
-    );
+    return lastValueFrom(this.http.delete(`${this.baseUrl}api/Katalog/delete`, { params }));
   }
 }

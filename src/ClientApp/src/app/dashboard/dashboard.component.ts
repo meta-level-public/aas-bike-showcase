@@ -41,15 +41,13 @@ export class DashboardComponent extends UrlBase implements OnInit {
     }
     try {
       this.countConfiguredProductsLoading = true;
-      this.countConfiguredProducts =
-        await this.dashboardService.countConfiguredProducts();
+      this.countConfiguredProducts = await this.dashboardService.countConfiguredProducts();
     } finally {
       this.countConfiguredProductsLoading = false;
     }
     try {
       this.countProducedProductsLoading = true;
-      this.countProducedProducts =
-        await this.dashboardService.countProducedProducts();
+      this.countProducedProducts = await this.dashboardService.countProducedProducts();
     } finally {
       this.countProducedProductsLoading = false;
     }

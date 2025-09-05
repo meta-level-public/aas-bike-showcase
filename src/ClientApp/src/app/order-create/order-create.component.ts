@@ -18,19 +18,13 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ConfigurationListService } from '../configuration-list/configuration-list.service';
 import { Address } from '../model/address';
 import { ConfiguredProduct } from '../model/configured-product';
-import {
-  CreateProductionOrder,
-  ProductionOrderResponse,
-} from '../model/production-order';
+import { CreateProductionOrder, ProductionOrderResponse } from '../model/production-order';
 import { ProductionOrderListService } from '../production-order-list/production-order-list.service';
 import {
   LeafletMapComponent,
   MapLocation,
 } from '../shared/components/leaflet-map/leaflet-map.component';
-import {
-  formatAddressString,
-  hasValidCoordinates,
-} from '../shared/utils/address.utils';
+import { formatAddressString, hasValidCoordinates } from '../shared/utils/address.utils';
 
 @Component({
   selector: 'app-order-create',
@@ -71,7 +65,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     private configurationService: ConfigurationListService,
     private messageService: MessageService,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) {
     this.orderForm = this.fb.group({
       anzahl: [1, [Validators.required, Validators.min(1)]],
@@ -119,9 +113,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     try {
       this.loading = true;
       const products = await this.configurationService.getAllFertigteil();
-      this.product =
-        products.find((p: ConfiguredProduct) => p.id === this.productId) ||
-        null;
+      this.product = products.find((p: ConfiguredProduct) => p.id === this.productId) || null;
 
       if (!this.product) {
         this.messageService.add({
@@ -211,11 +203,10 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
   }
 
   private async createProductionOrder(
-    createDto: CreateProductionOrder,
+    createDto: CreateProductionOrder
   ): Promise<ProductionOrderResponse> {
     try {
-      const response =
-        await this.productionOrderService.createProductionOrder(createDto);
+      const response = await this.productionOrderService.createProductionOrder(createDto);
       return response;
     } catch (error) {
       return {
@@ -258,7 +249,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
 
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
       );
       const data = await response.json();
 
@@ -268,12 +259,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         this.orderForm.patchValue({
           strasse: this.buildStreetAddress(address),
           plz: address.postcode || '',
-          ort:
-            address.city ||
-            address.town ||
-            address.village ||
-            address.municipality ||
-            '',
+          ort: address.city || address.town || address.village || address.municipality || '',
           land: address.country || 'Deutschland',
           lat: lat,
           long: lng,
@@ -302,8 +288,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
   }
   private buildStreetAddress(address: any): string {
     // Verschiedene mögliche Straßen-Felder kombinieren
-    const streetName =
-      address.road || address.street || address.pedestrian || '';
+    const streetName = address.road || address.street || address.pedestrian || '';
     const houseNumber = address.house_number || '';
 
     if (streetName && houseNumber) {
@@ -358,7 +343,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     try {
       const encodedAddress = encodeURIComponent(addressString);
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`,
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`
       );
 
       if (!response.ok) {
@@ -459,12 +444,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
 
   hasAddressData(): boolean {
     const formValue = this.orderForm.value;
-    return !!(
-      formValue.strasse ||
-      formValue.plz ||
-      formValue.ort ||
-      formValue.land
-    );
+    return !!(formValue.strasse || formValue.plz || formValue.ort || formValue.land);
   }
 
   // Method to handle address field changes and trigger geocoding

@@ -9,7 +9,7 @@ import { lastValueFrom } from 'rxjs';
 export class RegistryService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
+    @Inject('BASE_URL') private baseUrl: string
   ) {}
 
   async loadShells(registryUrl: string, aasId: string) {
@@ -17,7 +17,7 @@ export class RegistryService {
       .set('registryUrl', encodeURIComponent(`${registryUrl}`))
       .set('aasId', aasId);
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/proxy/registry`, { params }),
+      this.http.get<any>(`${this.baseUrl}api/proxy/registry`, { params })
     );
 
     if (result.result != null) {
