@@ -54,7 +54,7 @@ jobs:
           fi
       - name: Build Docker image using PowerShell script
         shell: pwsh
-        run: build/build.ps1 -Configuration Release -Target final -Tag ${{ steps.set_tag.outputs.tag }}
+        run: pwsh -File build/build.ps1 -Configuration Release -Target final -Tag ${{ steps.set_tag.outputs.tag }}
         working-directory: ${{ github.workspace }}
 
       # Steps for GitHub Container Registry (ghcr.io):
