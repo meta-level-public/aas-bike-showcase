@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  push:
+    branches: [main, docker-setup]
+  pull_request:
+    branches: [main, docker-setup]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - name: Restore dependencies
+        run: dotnet restore src/AasDemoapp.csproj
+      - name: Build
+        run: dotnet build src/AasDemoapp.csproj --no-restore --configuration Release
+      - name: Test
+        run: dotnet test tests/AasDemoapp.Tests.csproj --no-build --verbosity normal
+
+      - name: Build Docker image
+        run: docker build -f build/Dockerfile -t aasdemoapp:latest .
+
+      # Optional: Push to Docker Hub (set secrets.DOCKERHUB_USERNAME and secrets.DOCKERHUB_TOKEN)
+      # - name: Login to Docker Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # - name: Push Docker image
+      #   run: docker tag aasdemoapp:latest ${{ secrets.DOCKERHUB_USERNAME }}/aasdemoapp:latest && docker push ${{ secrets.DOCKERHUB_USERNAME }}/aasdemoapp:latest
+
+      # Schritte für GitHub Container Registry (ghcr.io):
+      # - name: Login to GitHub Container Registry
+      #   run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      # - name: Tag Docker image for GHCR
+      #   run: docker tag aasdemoapp:latest ghcr.io/${{ github.repository_owner }}/aasdemoapp:latest
+
+      # - name: Push Docker image to GHCR
+      #   run: docker push ghcr.io/${{ github.repository_owner }}/aasdemoapp:latest
