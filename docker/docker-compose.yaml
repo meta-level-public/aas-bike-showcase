@@ -13,15 +13,6 @@ services:
     command: --no-security --data-path /usr/share/aasxs 
     #--external-blazor YOURURL  
 
-  # basyx-registry:
-  #   container_name: bike-corp-basyx-registry
-  #   image: eclipsebasyx/aas-registry:1.5.1
-  #   restart: unless-stopped
-  #   ports:
-  #     - 8081:4001
-  #   volumes:
-  #     - ../dockerfiles/aas-registry/config:/usr/share/config
-
   basyx-server:
     container_name: bike-corp-basyx-server
     image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT

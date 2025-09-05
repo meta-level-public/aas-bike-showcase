@@ -112,6 +112,61 @@ cd docker
 docker-compose up -d
 ```
 
+## 🧱 Build
+
+Die Anwendung wird über ein Multi-Stage-Dockerfile gebaut. Du kannst dafür entweder das PowerShell-Skript verwenden oder den `docker build` Befehl direkt ausführen.
+
+### Option A: PowerShell-Skript (empfohlen)
+
+Voraussetzung: PowerShell 7 (pwsh) und Docker sind installiert.
+
+```powershell
+# Standard-Build (Release, finale Runtime-Stage, Image-Tag: aas-bike-showcase:local)
+./build/build.ps1
+
+# Beispiele
+./build/build.ps1 -Configuration Debug
+./build/build.ps1 -Target publish
+./build/build.ps1 -Tag myrepo/aas-bike-showcase:dev
+```
+
+Parameter:
+
+- `-Configuration`: `Debug` oder `Release` (Default: `Release`)
+- `-Target`: `build` | `publish` | `final` (Default: `final`)
+	- `build`: kompiliert (Zwischen-Stage)
+	- `publish`: veröffentlicht Dateien (Publish-Stage)
+	- `final`: erstellt das lauffähige Runtime-Image (Default)
+- `-Tag`: Docker Image Tag (Default: `aas-bike-showcase:local`)
+
+### Option B: Direkt per Docker
+
+In zsh/Bash aus dem Repo-Root:
+
+```bash
+# Finale Runtime-Stage (empfohlen)
+docker build -f build/Dockerfile \
+	--build-arg BUILD_CONFIGURATION=Release \
+	-t aas-bike-showcase:local .
+
+# Nur bis zur Publish-Stage bauen
+docker build -f build/Dockerfile \
+	--build-arg BUILD_CONFIGURATION=Debug \
+	--target publish \
+	-t aas-bike-showcase:publish .
+```
+
+Nach erfolgreichem Build kannst du das Image starten:
+
+```bash
+docker run --rm -p 8080:8080 -p 8081:8081 aas-bike-showcase:local
+```
+
+Hinweise:
+
+- Das Dockerfile befindet sich unter `build/Dockerfile` und kopiert den Code aus dem Repo-Root (`COPY . .`). Führe den Build daher aus dem Repo-Root aus.
+- Für den lokalen Entwicklungsmodus des Frontends (Angular) ist kein Docker-Image erforderlich; siehe Abschnitt „Frontend Setup“.
+
 ## 🔧 Konfiguration
 
 ### AAS Services
@@ -212,7 +267,7 @@ Dieses Projekt steht unter der [MIT Lizenz](LICENSE).
 
 ## 👥 Team
 
-Entwickelt von Meta Level Software AG
+Entwickelt von Meta Level Software AG & Open Industry Alliance
 
 ## 📞 Support
 
