@@ -28,10 +28,7 @@ export class GoodsListComponent implements OnInit {
   async loadData() {
     this.items = await this.goodsService.getAllRohteilInstanz();
 
-    this.groups = [
-      'Alle',
-      ...new Set(this.items.map((item) => item.kategorie)),
-    ];
+    this.groups = ['Alle', ...new Set(this.items.map((item) => item.kategorie))];
     this.selectedCategory = 'Alle';
     this.setCurrentGroupItems();
   }

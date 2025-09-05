@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -13,7 +12,14 @@ import { CatalogListService } from './catalog-list.service';
   selector: 'app-catalog-list',
   templateUrl: './catalog-list.component.html',
   styleUrl: './catalog-list.component.css',
-  imports: [CommonModule, FormsModule, CatalogItemComponent, SelectModule, DataViewModule, ButtonModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    CatalogItemComponent,
+    SelectModule,
+    DataViewModule,
+    ButtonModule,
+  ],
 })
 export class CatalogListComponent implements OnInit {
   items: KatalogEintrag[] = [];
@@ -21,7 +27,10 @@ export class CatalogListComponent implements OnInit {
   selectedCategory: string | undefined;
   currentGroupItems: KatalogEintrag[] = [];
 
-  constructor(private catalogService: CatalogListService, private cdRef: ChangeDetectorRef) {}
+  constructor(
+    private catalogService: CatalogListService,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadData();
@@ -30,10 +39,7 @@ export class CatalogListComponent implements OnInit {
   async loadData() {
     this.items = await this.catalogService.getAllRohteil();
 
-    this.groups = [
-      'Alle',
-      ...new Set(this.items.map((item) => item.kategorie)),
-    ];
+    this.groups = ['Alle', ...new Set(this.items.map((item) => item.kategorie))];
     this.selectedCategory = 'Alle';
     this.setCurrentGroupItems();
   }

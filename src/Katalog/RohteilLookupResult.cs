@@ -12,6 +12,5 @@ namespace AasDemoapp.Katalog
         public string AasId { get; set; } = string.Empty;
         public string GlobalAssetId { get; set; } = string.Empty;
         public string? Image { get; set; } = string.Empty;
-
     }
 }

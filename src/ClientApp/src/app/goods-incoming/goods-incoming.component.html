@@ -5,9 +5,7 @@
       <i class="pi pi-truck"></i>
       Wareneingang
     </h1>
-    <p class="goods-incoming-subtitle">
-      Lieferungen verwalten und Teile einbuchen
-    </p>
+    <p class="goods-incoming-subtitle">Lieferungen verwalten und Teile einbuchen</p>
   </div>
 
   <!-- Main Content -->
@@ -21,63 +19,65 @@
 
       <div class="delivery-controls mb-3">
         @if (!showTruck) {
-        <p-button
-          label="Lieferung starten"
-          icon="pi pi-truck"
-          class="w-full delivery-button"
-          (onClick)="startDelivery()"
-          [disabled]="showTruck"
-          [loading]="loading"
-          severity="success"
-        >
-        </p-button>
-        } @if (showTruck) {
-        <p-button
-          label="Lieferung zurücksetzen"
-          icon="pi pi-refresh"
-          class="w-full reset-button"
-          severity="secondary"
-          (onClick)="resetDelivery()"
-        ></p-button>
+          <p-button
+            label="Lieferung starten"
+            icon="pi pi-truck"
+            class="w-full delivery-button"
+            (onClick)="startDelivery()"
+            [disabled]="showTruck"
+            [loading]="loading"
+            severity="success"
+          >
+          </p-button>
+        }
+        @if (showTruck) {
+          <p-button
+            label="Lieferung zurücksetzen"
+            icon="pi pi-refresh"
+            class="w-full reset-button"
+            severity="secondary"
+            (onClick)="resetDelivery()"
+          ></p-button>
         }
       </div>
 
       @if (showTruck) {
-      <div class="delivery-animation">
-        <!-- Hintergrund Wolken -->
-        <div class="cloud cloud1"></div>
-        <div class="cloud cloud2"></div>
-        <!-- Fabrikgebäude -->
-        <div class="factory-building factory-building-1"></div>
-        <div class="factory-building factory-building-2"></div>
-        <div class="factory-chimney"></div>
-        <!-- LKW -->
-        <div class="truck" [ngClass]="truckPosition">
-          <div class="truck-cab"></div>
-          <div class="truck-body">
-            <!-- Kiste auf der Ladefläche -->
-            @if (showBox) {
-            <div
-              class="delivery-box"
-              [ngClass]="{ clickable: isBoxClickable }"
-              (click)="onBoxClick()"
-            >
-              <div class="box-text"></div>
+        <div class="delivery-animation">
+          <!-- Hintergrund Wolken -->
+          <div class="cloud cloud1"></div>
+          <div class="cloud cloud2"></div>
+          <!-- Fabrikgebäude -->
+          <div class="factory-building factory-building-1"></div>
+          <div class="factory-building factory-building-2"></div>
+          <div class="factory-chimney"></div>
+          <!-- LKW -->
+          <div class="truck" [ngClass]="truckPosition">
+            <div class="truck-cab"></div>
+            <div class="truck-body">
+              <!-- Kiste auf der Ladefläche -->
+              @if (showBox) {
+                <div
+                  class="delivery-box"
+                  [ngClass]="{ clickable: isBoxClickable }"
+                  (click)="onBoxClick()"
+                >
+                  <div class="box-text"></div>
+                </div>
+              }
             </div>
-            }
+            <div class="truck-wheel wheel-front"></div>
+            <div class="truck-wheel wheel-back"></div>
           </div>
-          <div class="truck-wheel wheel-front"></div>
-          <div class="truck-wheel wheel-back"></div>
         </div>
-      </div>
-      } @if (showTruck && isBoxClickable) {
-      <div class="delivery-status mt-3">
-        <p-message
-          severity="info"
-          text="Klicken Sie auf die Kiste, um die GlobalAssetId zu übernehmen"
-          [closable]="false"
-        ></p-message>
-      </div>
+      }
+      @if (showTruck && isBoxClickable) {
+        <div class="delivery-status mt-3">
+          <p-message
+            severity="info"
+            text="Klicken Sie auf die Kiste, um die GlobalAssetId zu übernehmen"
+            [closable]="false"
+          ></p-message>
+        </div>
       }
     </div>
 
@@ -158,46 +158,44 @@
 
       <!-- Preview Section -->
       @if (loaded) {
-      <div class="preview-section">
-        <div class="preview-card">
-          <h4 class="preview-title">
-            <i class="pi pi-box"></i>
-            Teil im lokalen Katalog
-          </h4>
-          <app-catalog-item
-            [item]="parentRohteil"
-            [showDelete]="false"
-          ></app-catalog-item>
-        </div>
+        <div class="preview-section">
+          <div class="preview-card">
+            <h4 class="preview-title">
+              <i class="pi pi-box"></i>
+              Teil im lokalen Katalog
+            </h4>
+            <app-catalog-item [item]="parentRohteil" [showDelete]="false"></app-catalog-item>
+          </div>
 
-        <div class="preview-card">
-          <h4 class="preview-title">
-            <i class="pi pi-external-link"></i>
-            Instanz beim Hersteller
-          </h4>
-          <app-catalog-item
-            [item]="newKatalogEintrag"
-            [imgUrl]="importImageUrl"
-            [showDelete]="false"
-            [showPrice]="false"
-            [showTag]="false"
-          ></app-catalog-item>
+          <div class="preview-card">
+            <h4 class="preview-title">
+              <i class="pi pi-external-link"></i>
+              Instanz beim Hersteller
+            </h4>
+            <app-catalog-item
+              [item]="newKatalogEintrag"
+              [imgUrl]="importImageUrl"
+              [showDelete]="false"
+              [showPrice]="false"
+              [showTag]="false"
+            ></app-catalog-item>
+          </div>
         </div>
-      </div>
-      } @if (!loaded && (parentRohteil || loading)) {
-      <div class="loading-section">
-        @if (loading) {
-        <div class="loading-state">
-          <i class="pi pi-spin pi-spinner"></i>
-          <p>Lade Teiledaten...</p>
+      }
+      @if (!loaded && (parentRohteil || loading)) {
+        <div class="loading-section">
+          @if (loading) {
+            <div class="loading-state">
+              <i class="pi pi-spin pi-spinner"></i>
+              <p>Lade Teiledaten...</p>
+            </div>
+          } @else {
+            <div class="empty-state">
+              <i class="pi pi-info-circle"></i>
+              <p>Geben Sie eine GlobalAssetId ein und klicken Sie auf "Lookup"</p>
+            </div>
+          }
         </div>
-        } @else {
-        <div class="empty-state">
-          <i class="pi pi-info-circle"></i>
-          <p>Geben Sie eine GlobalAssetId ein und klicken Sie auf "Lookup"</p>
-        </div>
-        }
-      </div>
       }
     </div>
   </div>

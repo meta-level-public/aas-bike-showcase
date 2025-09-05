@@ -10,7 +10,7 @@ import { DiscoveryService } from './discovery.service';
 @Component({
   selector: 'app-discovery-component',
   templateUrl: './discovery.component.html',
-  imports: [CommonModule, FormsModule, TableModule, InputTextModule, ButtonModule]
+  imports: [CommonModule, FormsModule, TableModule, InputTextModule, ButtonModule],
 })
 export class DiscoveryComponent extends UrlBase {
   assetId: string = '';

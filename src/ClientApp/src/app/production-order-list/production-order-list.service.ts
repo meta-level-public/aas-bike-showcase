@@ -1,10 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { CreateProductionOrder, ProductionOrder, ProductionOrderResponse } from '../model/production-order';
+import {
+  CreateProductionOrder,
+  ProductionOrder,
+  ProductionOrderResponse,
+} from '../model/production-order';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductionOrderListService {
   private baseUrl = '/api/ProductionOrder';
@@ -46,7 +50,7 @@ export class ProductionOrderListService {
       return {
         success: false,
         message: 'Failed to mark production as completed',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -62,7 +66,7 @@ export class ProductionOrderListService {
       return {
         success: false,
         message: 'Failed to mark order as shipped',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -78,7 +82,7 @@ export class ProductionOrderListService {
       return {
         success: false,
         message: 'Failed to create production order',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

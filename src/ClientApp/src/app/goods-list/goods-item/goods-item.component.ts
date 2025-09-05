@@ -13,7 +13,7 @@ import { GoodsListService } from '../goods-list.service';
   selector: 'app-goods-item',
   templateUrl: './goods-item.component.html',
   styleUrl: './goods-item.component.css',
-  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, TagModule, TooltipModule]
+  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, TagModule, TooltipModule],
 })
 export class GoodsItemComponent {
   @Input() item: KatalogEintrag | undefined;

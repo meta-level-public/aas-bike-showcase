@@ -7,7 +7,6 @@ namespace AasDemoapp.Utils.Serialization;
 
 public class BasyxSerializer
 {
-
     public static string Serialize(AasCore.Aas3_0.IClass obj)
     {
         if (obj == null)
@@ -23,14 +22,14 @@ public class BasyxSerializer
     {
         DefaultContractResolver contractResolver = new DefaultContractResolver
         {
-            NamingStrategy = new CamelCaseNamingStrategy()
+            NamingStrategy = new CamelCaseNamingStrategy(),
         };
         var serializerSettings = new JsonSerializerSettings
         {
             ContractResolver = contractResolver,
             Formatting = Formatting.Indented,
             Converters = [new StringEnumConverter()],
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
         };
 
         return JsonConvert.SerializeObject(obj, serializerSettings);

@@ -2,18 +2,18 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AasDemoapp.Dashboard;
 using AasDemoapp.Database;
+using AasDemoapp.Dpp;
 using AasDemoapp.Import;
 using AasDemoapp.Jobs;
 using AasDemoapp.Katalog;
 using AasDemoapp.Konfigurator;
+using AasDemoapp.Mapping;
 using AasDemoapp.Production;
-using AasDemoapp.Services.ProductionOrder;
 using AasDemoapp.Proxy;
+using AasDemoapp.Services.ProductionOrder;
 using AasDemoapp.Settings;
 using AasDemoapp.Suppliers;
 using AasDemoapp.ToolRepos;
-using AasDemoapp.Dpp;
-using AasDemoapp.Mapping;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,25 +26,25 @@ builder.Services.AddSwaggerDocument(config =>
     config.PostProcess = document =>
     {
         document.Info.Version = "v1.0";
-        document.Info.Contact = new NSwag.OpenApiContact
-        {
-            Name = "Meta Level Software AG"
-        };
+        document.Info.Contact = new NSwag.OpenApiContact { Name = "Meta Level Software AG" };
     };
-    config.SchemaSettings.DefaultReferenceTypeNullHandling = NJsonSchema.Generation.ReferenceTypeNullHandling.NotNull;
+    config.SchemaSettings.DefaultReferenceTypeNullHandling = NJsonSchema
+        .Generation
+        .ReferenceTypeNullHandling
+        .NotNull;
 });
-
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddControllers().AddJsonOptions(options =>
+builder
+    .Services.AddControllers()
+    .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
-
 
 builder.Services.AddDbContext<AasDemoappContext>(options =>
 {
@@ -70,9 +70,7 @@ builder.Services.AddScoped<ProductionService>();
 builder.Services.AddScoped<ProductionOrderService>();
 builder.Services.AddScoped<DppService>();
 
-
 builder.Services.AddHostedService<UpdateChecker>();
-
 
 var app = builder.Build();
 
@@ -91,14 +89,11 @@ app.UseRouting();
 
 app.MapControllers();
 
-
 // app.MapControllerRoute(
 //     name: "default",
 //     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
-
-
 
 using (var scope = app.Services.CreateScope())
 {

@@ -8,17 +8,26 @@ namespace AasDemoapp.Utils.ConceptDescriptions;
 
 public class CdLoader
 {
-    public static ConceptDescription? GetCdFromDescriptor(ConceptDescriptionMetadata cdDescriptor, string cdEndpoint, HttpClient client)
+    public static ConceptDescription? GetCdFromDescriptor(
+        ConceptDescriptionMetadata cdDescriptor,
+        string cdEndpoint,
+        HttpClient client
+    )
     {
-        var url = cdEndpoint.AppendSlash() + "concept-descriptions".AppendSlash() + cdDescriptor.Irdi.ToBase64UrlEncoded(Encoding.UTF8);
+        var url =
+            cdEndpoint.AppendSlash()
+            + "concept-descriptions".AppendSlash()
+            + cdDescriptor.Irdi.ToBase64UrlEncoded(Encoding.UTF8);
         return GetSingle(url, client);
     }
 
     public static ConceptDescription? GetSingle(string url, HttpClient client)
     {
-        if (!string.IsNullOrWhiteSpace(url) && url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+        if (
+            !string.IsNullOrWhiteSpace(url)
+            && url.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+        )
         {
-
             try
             {
                 HttpResponseMessage response = client.GetAsync(url).Result;
@@ -36,7 +45,8 @@ public class CdLoader
                 if (res != null)
                 {
                     var jsonNode = JsonNode.Parse(res.ToString());
-                    if (jsonNode == null) throw new Exception("Could not parse JSON");
+                    if (jsonNode == null)
+                        throw new Exception("Could not parse JSON");
 
                     return Jsonization.Deserialize.ConceptDescriptionFrom(jsonNode);
                 }

@@ -15,7 +15,8 @@ namespace AasDemoapp.Migrations
                 name: "Addresses",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                    Id = table
+                        .Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Vorname = table.Column<string>(type: "TEXT", nullable: true),
@@ -24,18 +25,20 @@ namespace AasDemoapp.Migrations
                     Ort = table.Column<string>(type: "TEXT", nullable: true),
                     Land = table.Column<string>(type: "TEXT", nullable: true),
                     Lat = table.Column<double>(type: "REAL", nullable: true),
-                    Long = table.Column<double>(type: "REAL", nullable: true)
+                    Long = table.Column<double>(type: "REAL", nullable: true),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Addresses", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "ProductionOrders",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                    Id = table
+                        .Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ConfiguredProductId = table.Column<long>(type: "INTEGER", nullable: false),
                     Anzahl = table.Column<int>(type: "INTEGER", nullable: false),
@@ -43,7 +46,7 @@ namespace AasDemoapp.Migrations
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    DeletedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                 },
                 constraints: table =>
                 {
@@ -53,34 +56,37 @@ namespace AasDemoapp.Migrations
                         column: x => x.AddressId,
                         principalTable: "Addresses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Restrict
+                    );
                     table.ForeignKey(
                         name: "FK_ProductionOrders_ConfiguredProducts_ConfiguredProductId",
                         column: x => x.ConfiguredProductId,
                         principalTable: "ConfiguredProducts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+                        onDelete: ReferentialAction.Restrict
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductionOrders_AddressId",
                 table: "ProductionOrders",
-                column: "AddressId");
+                column: "AddressId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductionOrders_ConfiguredProductId",
                 table: "ProductionOrders",
-                column: "ConfiguredProductId");
+                column: "ConfiguredProductId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ProductionOrders");
+            migrationBuilder.DropTable(name: "ProductionOrders");
 
-            migrationBuilder.DropTable(
-                name: "Addresses");
+            migrationBuilder.DropTable(name: "Addresses");
         }
     }
 }

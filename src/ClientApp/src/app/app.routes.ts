@@ -40,15 +40,13 @@ export const routes: Routes = [
   },
   {
     path: 'orders',
-    children: [
-      { path: 'create/:id', component: OrderCreateComponent },
-    ],
+    children: [{ path: 'create/:id', component: OrderCreateComponent }],
   },
   {
     path: 'production',
     children: [
       { path: 'assembly', component: AssemblyComponent },
-      { path: 'assembly/:id', component: AssemblyComponent }
+      { path: 'assembly/:id', component: AssemblyComponent },
     ],
   },
   {

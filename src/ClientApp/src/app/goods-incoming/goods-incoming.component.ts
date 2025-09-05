@@ -28,11 +28,10 @@ import { GoodsIncomingService } from './goods-incoming.service';
     CardModule,
     MessageModule,
     InputGroupModule,
-    InputGroupAddonModule
+    InputGroupAddonModule,
   ],
 })
 export class GoodsIncomingComponent {
-
   sanitizer = inject(DomSanitizer);
 
   newKatalogEintrag: KatalogEintrag = {} as KatalogEintrag;
@@ -77,11 +76,11 @@ export class GoodsIncomingComponent {
       this.newKatalogEintrag.name = this.parentRohteil.name;
       this.newKatalogEintrag.kategorie = this.parentRohteil.kategorie;
       this.newKatalogEintrag.referencedType = this.parentRohteil;
-      this.newKatalogEintrag.remoteRepositoryUrl =
-        this.parentRohteil.remoteRepositoryUrl;
+      this.newKatalogEintrag.remoteRepositoryUrl = this.parentRohteil.remoteRepositoryUrl;
       this.newKatalogEintrag.supplier = this.parentRohteil.supplier;
 
-      this.importImageUrl = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64, ' + res.image) || '';
+      this.importImageUrl =
+        this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64, ' + res.image) || '';
 
       this.loaded = true;
     } finally {
@@ -95,12 +94,8 @@ export class GoodsIncomingComponent {
     try {
       this.loading = true;
 
-      await this.goodsIncomingService.createRohteilInstanz(
-        this.newKatalogEintrag
-      );
-      this.notificationService.showMessageAlways(
-        'Wareneingang erfolgreich gebucht'
-      );
+      await this.goodsIncomingService.createRohteilInstanz(this.newKatalogEintrag);
+      this.notificationService.showMessageAlways('Wareneingang erfolgreich gebucht');
       this.newKatalogEintrag = {} as KatalogEintrag;
       this.parentRohteil = undefined;
       this.loaded = false;
@@ -119,7 +114,6 @@ export class GoodsIncomingComponent {
     const randomRohteil = await this.goodsIncomingService.getRandomRohteil();
 
     if (randomRohteil && randomRohteil.id != '') {
-
       // Set the box text to the random Rohteil's global asset ID
       this.boxText = randomRohteil.id;
 
@@ -135,9 +129,7 @@ export class GoodsIncomingComponent {
       }, 2000);
     } else {
       this.resetDelivery();
-      this.notificationService.showMessageAlways(
-        'Kein zufälliges Teil beim Liefereanten gefunden'
-      );
+      this.notificationService.showMessageAlways('Kein zufälliges Teil beim Liefereanten gefunden');
     }
     this.loading = false;
   }

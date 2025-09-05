@@ -15,8 +15,6 @@ export class DiscoveryService {
     const params = new HttpParams()
       .set('registryUrl', encodeURIComponent(`${registryUrl}`))
       .set('assetId', assetId);
-    return lastValueFrom(
-      this.http.get<string[]>(`${this.baseUrl}api/proxy/discovery`, { params })
-    );
+    return lastValueFrom(this.http.get<string[]>(`${this.baseUrl}api/proxy/discovery`, { params }));
   }
 }

@@ -14,19 +14,22 @@ namespace AasDemoapp.Migrations
                 name: "KatalogEintragId",
                 table: "KatalogEintraege",
                 type: "INTEGER",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_KatalogEintraege_KatalogEintragId",
                 table: "KatalogEintraege",
-                column: "KatalogEintragId");
+                column: "KatalogEintragId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_KatalogEintraege_KatalogEintraege_KatalogEintragId",
                 table: "KatalogEintraege",
                 column: "KatalogEintragId",
                 principalTable: "KatalogEintraege",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
 
         /// <inheritdoc />
@@ -34,15 +37,15 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_KatalogEintraege_KatalogEintraege_KatalogEintragId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
             migrationBuilder.DropIndex(
                 name: "IX_KatalogEintraege_KatalogEintragId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
-            migrationBuilder.DropColumn(
-                name: "KatalogEintragId",
-                table: "KatalogEintraege");
+            migrationBuilder.DropColumn(name: "KatalogEintragId", table: "KatalogEintraege");
         }
     }
 }

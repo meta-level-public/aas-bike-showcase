@@ -1,17 +1,6 @@
-import {
-  ISubmodelElement,
-  Property,
-  Range,
-} from '@aas-core-works/aas-core3.0-typescript/types';
+import { ISubmodelElement, Property, Range } from '@aas-core-works/aas-core3.0-typescript/types';
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -30,14 +19,7 @@ import { AssemblyService } from './assembly.service';
   selector: 'app-assembly',
   templateUrl: './assembly.component.html',
   styleUrl: './assembly.component.css',
-  imports: [
-    CommonModule,
-    FormsModule,
-    InputTextModule,
-    ButtonModule,
-    SelectModule,
-    DialogModule,
-  ],
+  imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, SelectModule, DialogModule],
 })
 export class AssemblyComponent implements OnInit, OnDestroy {
   private router = inject(Router);
@@ -74,8 +56,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
   });
 
   assemblySubmodel = computed(() => {
-    const id =
-      this.selectedItem()?.bestandteile[this.currentAssemblyStep()]?.id;
+    const id = this.selectedItem()?.bestandteile[this.currentAssemblyStep()]?.id;
     if (id == null) {
       return null;
     } else {
@@ -92,8 +73,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     const elements = submodel.submodelElements ?? [];
     return elements.some(
       (sme: any) =>
-        typeof sme?.idShort === 'string' &&
-        sme.idShort.toLowerCase() === 'required_tool'
+        typeof sme?.idShort === 'string' && sme.idShort.toLowerCase() === 'required_tool'
     );
   });
 
@@ -105,8 +85,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     const elements = submodel.submodelElements ?? [];
     const requiredTool = elements.find(
       (sme: any) =>
-        typeof sme?.idShort === 'string' &&
-        sme.idShort.toLowerCase() === 'required_tool'
+        typeof sme?.idShort === 'string' && sme.idShort.toLowerCase() === 'required_tool'
     );
     if (requiredTool instanceof Property) {
       return requiredTool.value;
@@ -123,10 +102,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
   });
 
   assemblyComplete = computed(() => {
-    return (
-      this.currentAssemblyStep() >= this.bestandteileLength() - 1 &&
-      this.allPartsValid()
-    );
+    return this.currentAssemblyStep() >= this.bestandteileLength() - 1 && this.allPartsValid();
   });
 
   constructor(
@@ -147,12 +123,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
   async loadData() {
     // Lade verfügbare ProductionOrders
-    const productionOrders =
-      await this.productionOrderService.getAllProductionOrders();
+    const productionOrders = await this.productionOrderService.getAllProductionOrders();
     // Filtere nur Orders, die noch nicht abgeschlossen sind
-    const pendingOrders = productionOrders.filter(
-      (order) => !order.produktionAbgeschlossen
-    );
+    const pendingOrders = productionOrders.filter((order) => !order.produktionAbgeschlossen);
     this.productionOrders.set(pendingOrders);
 
     // Lade alle verfügbaren Produkte (für Fallback)
@@ -207,9 +180,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
         this.selectedItem.set(correspondingProduct);
         this.initializeAssembly();
       } else {
-        console.warn(
-          `ConfiguredProduct with ID ${selectedOrder.configuredProductId} not found`
-        );
+        console.warn(`ConfiguredProduct with ID ${selectedOrder.configuredProductId} not found`);
         this.notificationService.showMessageAlways(
           `Produktkonfiguration für Auftrag nicht gefunden.`
         );
@@ -246,8 +217,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
           for (let i = 0; i < bestandteil.amount; i++) {
             newTeileStatus.push({
               guid: guid(),
-              typeGlobalAssetId:
-                bestandteil.katalogEintrag?.globalAssetId ?? '',
+              typeGlobalAssetId: bestandteil.katalogEintrag?.globalAssetId ?? '',
               instanceGlobalAssetId: '',
               instanceAasId: bestandteil.katalogEintrag?.aasId ?? '',
               statusOk: false,
@@ -264,30 +234,21 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     if (event.target.value == '') return;
     try {
       this.loading.set(true);
-      const katalogEintrag = await this.service.getRohteilInstanz(
-        event.target.value
-      );
+      const katalogEintrag = await this.service.getRohteilInstanz(event.target.value);
       if (katalogEintrag == null) {
-        this.notificationService.showMessageAlways(
-          'Rohteil Instanz nicht gefunden'
-        );
+        this.notificationService.showMessageAlways('Rohteil Instanz nicht gefunden');
       } else {
         console.log(this.teileStatus());
         const currentTeileStatus = this.teileStatus();
         const teileStatusItem = currentTeileStatus.find(
           (teileStatus) =>
-            teileStatus.typeGlobalAssetId ==
-              item.katalogEintrag?.globalAssetId && teileStatus.guid == guid
+            teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId &&
+            teileStatus.guid == guid
         );
         console.log(teileStatusItem);
         if (teileStatusItem == null) return;
-        if (
-          katalogEintrag.referencedType?.globalAssetId !=
-          item.katalogEintrag?.globalAssetId
-        ) {
-          this.notificationService.showMessageAlways(
-            'Rohteil hat den falschen Typ!'
-          );
+        if (katalogEintrag.referencedType?.globalAssetId != item.katalogEintrag?.globalAssetId) {
+          this.notificationService.showMessageAlways('Rohteil hat den falschen Typ!');
         } else {
           // Update the specific item in the array
           this.teileStatus.update((statuses) =>
@@ -311,17 +272,13 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
   getParts(item: ProductPart) {
     return this.teileStatus().filter(
-      (teileStatus) =>
-        teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId
+      (teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId
     );
   }
 
   isTeilOk(item: ProductPart) {
     return this.teileStatus()
-      .filter(
-        (teileStatus) =>
-          teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId
-      )
+      .filter((teileStatus) => teileStatus.typeGlobalAssetId == item.katalogEintrag?.globalAssetId)
       .every((teileStatus) => teileStatus.statusOk);
   }
 
@@ -374,8 +331,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       .map((teileStatus) => {
         const typePart = selectedItem?.bestandteile?.find(
           (bestandteil) =>
-            bestandteil.katalogEintrag?.globalAssetId ==
-            teileStatus.typeGlobalAssetId
+            bestandteil.katalogEintrag?.globalAssetId == teileStatus.typeGlobalAssetId
         );
         if (typePart == null) return null;
         return {
@@ -397,16 +353,12 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
       // Markiere ProductionOrder als abgeschlossen, wenn eine ausgewählt ist
       if (selectedOrder?.id) {
-        await this.productionOrderService.markProductionCompleted(
-          selectedOrder.id
-        );
+        await this.productionOrderService.markProductionCompleted(selectedOrder.id);
         this.notificationService.showMessageAlways(
           'Produkt erfolgreich erstellt und Produktionsauftrag als abgeschlossen markiert'
         );
       } else {
-        this.notificationService.showMessageAlways(
-          'Produkt erfolgreich erstellt'
-        );
+        this.notificationService.showMessageAlways('Produkt erfolgreich erstellt');
       }
 
       this.router.navigate(['/production/assembly']);
@@ -431,22 +383,14 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     const requiredToolAasId = await this.requiredToolAasId();
 
     if (!requiredToolAasId) {
-      this.notificationService.showMessageAlways(
-        'Fehler: RequiredTool AAS ID nicht gefunden'
-      );
+      this.notificationService.showMessageAlways('Fehler: RequiredTool AAS ID nicht gefunden');
       return;
     }
     if (requiredTightenForce == null || requiredTightenForce === '') {
-      this.notificationService.showMessageAlways(
-        'Fehler: required_tighten_force nicht gefunden'
-      );
+      this.notificationService.showMessageAlways('Fehler: required_tighten_force nicht gefunden');
       return;
     }
-    await this.service.initializeTool(
-      requiredToolAasId,
-      'requiredTorque',
-      requiredTightenForce
-    );
+    await this.service.initializeTool(requiredToolAasId, 'requiredTorque', requiredTightenForce);
 
     this.toolInitialized.set(true);
   }
@@ -501,9 +445,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       const toolData = await this.service.getToolData(aasId);
       if (!toolData) return;
       let vCurr = 0;
-      const elCurrentTorque = toolData.submodelElements?.find(
-        (e) => e.idShort === 'currentTorque'
-      );
+      const elCurrentTorque = toolData.submodelElements?.find((e) => e.idShort === 'currentTorque');
       if (elCurrentTorque instanceof Property) {
         vCurr = +(elCurrentTorque.value ?? '0');
       }
@@ -537,17 +479,13 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
     const aasId = await this.requiredToolAasId();
     if (aasId == null || aasId == '') {
-      this.notificationService.showMessageAlways(
-        'Fehler: AAS ID nicht gefunden'
-      );
+      this.notificationService.showMessageAlways('Fehler: AAS ID nicht gefunden');
       return;
     }
 
     const toolData = await this.service.getToolData(aasId);
     if (!toolData) {
-      this.notificationService.showMessageAlways(
-        'Fehler: Werkzeugdaten nicht gefunden'
-      );
+      this.notificationService.showMessageAlways('Fehler: Werkzeugdaten nicht gefunden');
       return;
     }
 
@@ -562,22 +500,18 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
     const allowedTightenForceElement = await this.allowedTightenForceElement();
     if (allowedTightenForceElement instanceof Range) {
-      const allowedTightenForceMin =
-        +(allowedTightenForceElement.min ?? '') + currentTightenForce;
-      const allowedTightenForceMax =
-        +(allowedTightenForceElement.max ?? '') + currentTightenForce;
+      const allowedTightenForceMin = +(allowedTightenForceElement.min ?? '') + currentTightenForce;
+      const allowedTightenForceMax = +(allowedTightenForceElement.max ?? '') + currentTightenForce;
 
-        console.log(allowedTightenForceMin);
-        console.log(allowedTightenForceMax);
-        console.log(currentTightenForce);
+      console.log(allowedTightenForceMin);
+      console.log(allowedTightenForceMax);
+      console.log(currentTightenForce);
 
       if (
         currentTightenForce < allowedTightenForceMin ||
         currentTightenForce > allowedTightenForceMax
       ) {
-        this.notificationService.showMessageAlways(
-          'Fehler: Ungültiges Drehmoment'
-        );
+        this.notificationService.showMessageAlways('Fehler: Ungültiges Drehmoment');
         this.toolResultOk.set(false);
       } else {
         this.notificationService.showMessageAlways('Drehmoment ist gültig');

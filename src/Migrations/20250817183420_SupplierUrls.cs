@@ -13,93 +13,88 @@ namespace AasDemoapp.Migrations
             migrationBuilder.RenameColumn(
                 name: "RemoteRepositoryUrl",
                 table: "Suppliers",
-                newName: "RemoteAasRepositoryUrl");
+                newName: "RemoteAasRepositoryUrl"
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "RemoteAasRegistryUrl",
                 table: "Suppliers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "RemoteSmRepositoryUrl",
                 table: "Suppliers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "RemoteCdRepositoryUrl",
                 table: "Suppliers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "RemoteDiscoveryUrl",
                 table: "Suppliers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "RemoteSmRegistryUrl",
                 table: "Suppliers",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "RemoteAasRegistryUrl",
                 table: "ImportedShells",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "RemoteSmRegistryUrl",
                 table: "ImportedShells",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "RemoteAasRegistryUrl",
-                table: "Suppliers");
+            migrationBuilder.DropColumn(name: "RemoteAasRegistryUrl", table: "Suppliers");
 
-            migrationBuilder.DropColumn(
-                name: "RemoteAasRepositoryUrl",
-                table: "Suppliers");
+            migrationBuilder.DropColumn(name: "RemoteAasRepositoryUrl", table: "Suppliers");
 
-            migrationBuilder.DropColumn(
-                name: "RemoteCdRepositoryUrl",
-                table: "Suppliers");
+            migrationBuilder.DropColumn(name: "RemoteCdRepositoryUrl", table: "Suppliers");
 
-            migrationBuilder.DropColumn(
-                name: "RemoteDiscoveryUrl",
-                table: "Suppliers");
+            migrationBuilder.DropColumn(name: "RemoteDiscoveryUrl", table: "Suppliers");
 
-            migrationBuilder.DropColumn(
-                name: "RemoteSmRegistryUrl",
-                table: "Suppliers");
+            migrationBuilder.DropColumn(name: "RemoteSmRegistryUrl", table: "Suppliers");
 
-            migrationBuilder.DropColumn(
-                name: "RemoteAasRegistryUrl",
-                table: "ImportedShells");
+            migrationBuilder.DropColumn(name: "RemoteAasRegistryUrl", table: "ImportedShells");
 
-            migrationBuilder.DropColumn(
-                name: "RemoteSmRegistryUrl",
-                table: "ImportedShells");
+            migrationBuilder.DropColumn(name: "RemoteSmRegistryUrl", table: "ImportedShells");
 
             migrationBuilder.RenameColumn(
                 name: "RemoteAasRepositoryUrl",
                 table: "Suppliers",
-                newName: "RemoteRepositoryUrl");
+                newName: "RemoteRepositoryUrl"
+            );
         }
     }
 }

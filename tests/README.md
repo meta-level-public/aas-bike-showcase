@@ -24,6 +24,7 @@ tests/
 ```
 
 Die Test-Verzeichnisstruktur spiegelt die Struktur des Hauptprojekts wider:
+
 - `src/AasHandling/SubmodelCreators/` → `tests/AasHandling/SubmodelCreators/`
 - `src/AasHandling/SubmodelElementCreators/` → `tests/AasHandling/SubmodelElementCreators/`
 
@@ -36,18 +37,21 @@ Die Test-Verzeichnisstruktur spiegelt die Struktur des Hauptprojekts wider:
 ## Ausführen der Tests
 
 ### Alle Tests ausführen
+
 ```bash
 cd tests
 dotnet test
 ```
 
 ### Tests mit detaillierter Ausgabe ausführen
+
 ```bash
 cd tests
 dotnet test --verbosity normal
 ```
 
 ### Tests mit Coverage-Report ausführen
+
 ```bash
 cd tests
 dotnet test --collect:"XPlat Code Coverage"
@@ -118,7 +122,7 @@ Tests für die `NameplateCreator` Klasse:
 - Die Tests verwenden die originalen JSON-Dateien aus dem Hauptprojekt
 - **Gesamt: 38 Tests** laufen erfolgreich und decken die wichtigsten Funktionen ab:
   - **TcfCollectionCreator**: 8 Tests
-  - **HandoverDocumentationCreator**: 12 Tests  
+  - **HandoverDocumentationCreator**: 12 Tests
   - **HierarchicalStructuresCreator**: 8 Tests
   - **NameplateCreator**: 10 Tests
 - Das Test-Projekt verwendet das gleiche .NET Framework wie das Hauptprojekt (net9.0)

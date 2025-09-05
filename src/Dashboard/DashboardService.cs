@@ -9,7 +9,6 @@ namespace AasDemoapp.Dashboard
 {
     public class DashboardService
     {
-
         private readonly AasDemoappContext _context;
 
         public DashboardService(AasDemoappContext aasDemoappContext)

@@ -4,6 +4,6 @@ namespace AasDemoapp.Database.Model
     {
         INSTOCK,
         OUTOFSTOCK,
-        LOWSTOCK
+        LOWSTOCK,
     }
 }

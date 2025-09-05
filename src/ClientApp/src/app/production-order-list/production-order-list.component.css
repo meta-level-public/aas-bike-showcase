@@ -16,9 +16,15 @@
   gap: 1rem;
 }
 
-.col-12 { grid-column: span 12; }
-.col-6 { grid-column: span 6; }
-.col-4 { grid-column: span 4; }
+.col-12 {
+  grid-column: span 12;
+}
+.col-6 {
+  grid-column: span 6;
+}
+.col-4 {
+  grid-column: span 4;
+}
 
 /* Statistics cards always side by side on medium+ screens */
 .statistics-grid {
@@ -29,8 +35,12 @@
 }
 
 @media (max-width: 768px) {
-  .col-12.md\\:col-6 { grid-column: span 12; }
-  .col-12.md\\:col-4 { grid-column: span 12; }
+  .col-12.md\\:col-6 {
+    grid-column: span 12;
+  }
+  .col-12.md\\:col-4 {
+    grid-column: span 12;
+  }
 
   .statistics-grid {
     grid-template-columns: 1fr;

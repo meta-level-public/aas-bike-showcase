@@ -12,6 +12,5 @@ namespace AasDemoapp.Database.Model
         public DateTime UpdateFoundTimestamp { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
-
     }
 }

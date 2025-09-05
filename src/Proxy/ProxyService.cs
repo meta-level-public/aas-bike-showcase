@@ -14,13 +14,22 @@ namespace AasDemoapp.Proxy
 {
     public class ProxyService
     {
-        public async Task<string[]> Discover(string registryUrl, SecuritySetting securitySetting, string assetId)
+        public async Task<string[]> Discover(
+            string registryUrl,
+            SecuritySetting securitySetting,
+            string assetId
+        )
         {
             using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             var specificAssetId = new SpecificAssetId("globalAssetId", assetId);
-            var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore, ContractResolver = new CamelCasePropertyNamesContractResolver() };
-            var jsonString = JsonConvert.SerializeObject(specificAssetId, Formatting.Indented, settings).ToBase64UrlEncoded(Encoding.UTF8);
-
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            };
+            var jsonString = JsonConvert
+                .SerializeObject(specificAssetId, Formatting.Indented, settings)
+                .ToBase64UrlEncoded(Encoding.UTF8);
 
             var url = registryUrl + $"/lookup/shells?assetIds={jsonString}";
             using HttpResponseMessage response = await client.GetAsync(url);
@@ -59,7 +68,11 @@ namespace AasDemoapp.Proxy
             }
         }
 
-        public async Task<bool> Delete(string registryUrl, SecuritySetting securitySetting, string aasId)
+        public async Task<bool> Delete(
+            string registryUrl,
+            SecuritySetting securitySetting,
+            string aasId
+        )
         {
             using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             var url = registryUrl + $"/shells/{aasId.ToBase64()}";

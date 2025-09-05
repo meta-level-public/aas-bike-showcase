@@ -1,4 +1,3 @@
-
 // Konfigurator Request DTOs
 export interface CreateConfiguredProduct {
   name: string;

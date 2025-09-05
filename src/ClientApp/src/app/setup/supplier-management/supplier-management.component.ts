@@ -25,7 +25,7 @@ import { AasEndpointsConfigurationComponent } from '../shared/aas-endpoints-conf
     ButtonModule,
     DialogModule,
     InputTextModule,
-  AasEndpointsConfigurationComponent,
+    AasEndpointsConfigurationComponent,
   ],
 })
 export class SupplierManagementComponent {
@@ -60,8 +60,8 @@ export class SupplierManagementComponent {
       securitySetting: {
         certificate: '',
         certificatePassword: '',
-        headerParameters: []
-      }
+        headerParameters: [],
+      },
     } as Supplier);
     this.addSupplierDialogVisible.set(true);
   }
@@ -71,8 +71,8 @@ export class SupplierManagementComponent {
     this.supplierToEdit.set({
       ...supplier,
       securitySetting: {
-        ...supplier.securitySetting
-      }
+        ...supplier.securitySetting,
+      },
     });
     this.editSupplierDialogVisible.set(true);
   }
@@ -114,81 +114,81 @@ export class SupplierManagementComponent {
 
   // Helper methods for two-way binding in template
   updateSupplierName(name: string) {
-    this.newSupplier.update(s => s ? {...s, name} : s);
+    this.newSupplier.update((s) => (s ? { ...s, name } : s));
   }
 
   updateSupplierLogo(logo: string) {
-    this.newSupplier.update(s => s ? {...s, logo} : s);
+    this.newSupplier.update((s) => (s ? { ...s, logo } : s));
   }
 
   updateSupplierAasRepositoryUrl(remoteAasRepositoryUrl: string) {
-    this.newSupplier.update(s => s ? {...s, remoteAasRepositoryUrl} : s);
+    this.newSupplier.update((s) => (s ? { ...s, remoteAasRepositoryUrl } : s));
   }
 
   updateSupplierSmRepositoryUrl(remoteSmRepositoryUrl: string) {
-    this.newSupplier.update(s => s ? {...s, remoteSmRepositoryUrl} : s);
+    this.newSupplier.update((s) => (s ? { ...s, remoteSmRepositoryUrl } : s));
   }
 
   updateSupplierAasRegistryUrl(remoteAasRegistryUrl: string) {
-    this.newSupplier.update(s => s ? {...s, remoteAasRegistryUrl} : s);
+    this.newSupplier.update((s) => (s ? { ...s, remoteAasRegistryUrl } : s));
   }
 
   updateSupplierSmRegistryUrl(remoteSmRegistryUrl: string) {
-    this.newSupplier.update(s => s ? {...s, remoteSmRegistryUrl} : s);
+    this.newSupplier.update((s) => (s ? { ...s, remoteSmRegistryUrl } : s));
   }
 
   updateSupplierDiscoveryUrl(remoteDiscoveryUrl: string) {
-    this.newSupplier.update(s => s ? {...s, remoteDiscoveryUrl} : s);
+    this.newSupplier.update((s) => (s ? { ...s, remoteDiscoveryUrl } : s));
   }
 
   updateSupplierCdRepositoryUrl(remoteCdRepositoryUrl: string) {
-    this.newSupplier.update(s => s ? {...s, remoteCdRepositoryUrl} : s);
+    this.newSupplier.update((s) => (s ? { ...s, remoteCdRepositoryUrl } : s));
   }
 
   // Helper methods for editing supplier
   updateEditSupplierName(name: string) {
-    this.supplierToEdit.update(s => s ? {...s, name} : s);
+    this.supplierToEdit.update((s) => (s ? { ...s, name } : s));
   }
 
   updateEditSupplierLogo(logo: string) {
-    this.supplierToEdit.update(s => s ? {...s, logo} : s);
+    this.supplierToEdit.update((s) => (s ? { ...s, logo } : s));
   }
 
   updateEditSupplierAasRepositoryUrl(remoteAasRepositoryUrl: string) {
-    this.supplierToEdit.update(s => s ? {...s, remoteAasRepositoryUrl} : s);
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteAasRepositoryUrl } : s));
   }
 
   updateEditSupplierSmRepositoryUrl(remoteSmRepositoryUrl: string) {
-    this.supplierToEdit.update(s => s ? {...s, remoteSmRepositoryUrl} : s);
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteSmRepositoryUrl } : s));
   }
 
   updateEditSupplierAasRegistryUrl(remoteAasRegistryUrl: string) {
-    this.supplierToEdit.update(s => s ? {...s, remoteAasRegistryUrl} : s);
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteAasRegistryUrl } : s));
   }
 
   updateEditSupplierSmRegistryUrl(remoteSmRegistryUrl: string) {
-    this.supplierToEdit.update(s => s ? {...s, remoteSmRegistryUrl} : s);
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteSmRegistryUrl } : s));
   }
 
   updateEditSupplierDiscoveryUrl(remoteDiscoveryUrl: string) {
-    this.supplierToEdit.update(s => s ? {...s, remoteDiscoveryUrl} : s);
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteDiscoveryUrl } : s));
   }
 
   updateEditSupplierCdRepositoryUrl(remoteCdRepositoryUrl: string) {
-    this.supplierToEdit.update(s => s ? {...s, remoteCdRepositoryUrl} : s);
+    this.supplierToEdit.update((s) => (s ? { ...s, remoteCdRepositoryUrl } : s));
   }
 
   // Security configuration for suppliers
   onSupplierSecurityHeadersChange(headerParameters: HeaderParameter[]) {
     // Update the security setting on the supplier object
-    this.newSupplier.update(supplier => {
+    this.newSupplier.update((supplier) => {
       if (supplier && supplier.securitySetting) {
         return {
           ...supplier,
           securitySetting: {
             ...supplier.securitySetting,
-            headerParameters: headerParameters
-          }
+            headerParameters: headerParameters,
+          },
         };
       }
       return supplier;
@@ -197,14 +197,14 @@ export class SupplierManagementComponent {
   }
 
   onSupplierCertificateChange(certificate: string) {
-    this.newSupplier.update(supplier => {
+    this.newSupplier.update((supplier) => {
       if (supplier && supplier.securitySetting) {
         return {
           ...supplier,
           securitySetting: {
             ...supplier.securitySetting,
-            certificate: certificate
-          }
+            certificate: certificate,
+          },
         };
       }
       return supplier;
@@ -213,14 +213,14 @@ export class SupplierManagementComponent {
   }
 
   onSupplierCertificatePasswordChange(certificatePassword: string) {
-    this.newSupplier.update(supplier => {
+    this.newSupplier.update((supplier) => {
       if (supplier && supplier.securitySetting) {
         return {
           ...supplier,
           securitySetting: {
             ...supplier.securitySetting,
-            certificatePassword: certificatePassword
-          }
+            certificatePassword: certificatePassword,
+          },
         };
       }
       return supplier;
@@ -230,14 +230,14 @@ export class SupplierManagementComponent {
 
   // Security configuration for editing suppliers
   onEditSupplierSecurityHeadersChange(headerParameters: HeaderParameter[]) {
-    this.supplierToEdit.update(supplier => {
+    this.supplierToEdit.update((supplier) => {
       if (supplier && supplier.securitySetting) {
         return {
           ...supplier,
           securitySetting: {
             ...supplier.securitySetting,
-            headerParameters: headerParameters
-          }
+            headerParameters: headerParameters,
+          },
         };
       }
       return supplier;
@@ -246,14 +246,14 @@ export class SupplierManagementComponent {
   }
 
   onEditSupplierCertificateChange(certificate: string) {
-    this.supplierToEdit.update(supplier => {
+    this.supplierToEdit.update((supplier) => {
       if (supplier && supplier.securitySetting) {
         return {
           ...supplier,
           securitySetting: {
             ...supplier.securitySetting,
-            certificate: certificate
-          }
+            certificate: certificate,
+          },
         };
       }
       return supplier;
@@ -262,14 +262,14 @@ export class SupplierManagementComponent {
   }
 
   onEditSupplierCertificatePasswordChange(certificatePassword: string) {
-    this.supplierToEdit.update(supplier => {
+    this.supplierToEdit.update((supplier) => {
       if (supplier && supplier.securitySetting) {
         return {
           ...supplier,
           securitySetting: {
             ...supplier.securitySetting,
-            certificatePassword: certificatePassword
-          }
+            certificatePassword: certificatePassword,
+          },
         };
       }
       return supplier;

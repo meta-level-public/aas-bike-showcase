@@ -12,31 +12,36 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_KatalogEintraege_KatalogEintraege_KatalogEintragId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
             migrationBuilder.RenameColumn(
                 name: "KatalogEintragId",
                 table: "KatalogEintraege",
-                newName: "ReferencedTypeId");
+                newName: "ReferencedTypeId"
+            );
 
             migrationBuilder.RenameIndex(
                 name: "IX_KatalogEintraege_KatalogEintragId",
                 table: "KatalogEintraege",
-                newName: "IX_KatalogEintraege_ReferencedTypeId");
+                newName: "IX_KatalogEintraege_ReferencedTypeId"
+            );
 
             migrationBuilder.AddColumn<int>(
                 name: "Amount",
                 table: "KatalogEintraege",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_KatalogEintraege_KatalogEintraege_ReferencedTypeId",
                 table: "KatalogEintraege",
                 column: "ReferencedTypeId",
                 principalTable: "KatalogEintraege",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
 
         /// <inheritdoc />
@@ -44,28 +49,30 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_KatalogEintraege_KatalogEintraege_ReferencedTypeId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
-            migrationBuilder.DropColumn(
-                name: "Amount",
-                table: "KatalogEintraege");
+            migrationBuilder.DropColumn(name: "Amount", table: "KatalogEintraege");
 
             migrationBuilder.RenameColumn(
                 name: "ReferencedTypeId",
                 table: "KatalogEintraege",
-                newName: "KatalogEintragId");
+                newName: "KatalogEintragId"
+            );
 
             migrationBuilder.RenameIndex(
                 name: "IX_KatalogEintraege_ReferencedTypeId",
                 table: "KatalogEintraege",
-                newName: "IX_KatalogEintraege_KatalogEintragId");
+                newName: "IX_KatalogEintraege_KatalogEintragId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_KatalogEintraege_KatalogEintraege_KatalogEintragId",
                 table: "KatalogEintraege",
                 column: "KatalogEintragId",
                 principalTable: "KatalogEintraege",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
     }
 }

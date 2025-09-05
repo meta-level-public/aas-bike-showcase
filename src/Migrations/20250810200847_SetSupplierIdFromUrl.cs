@@ -14,12 +14,14 @@ namespace AasDemoapp.Migrations
                 name: "SupplierId",
                 table: "KatalogEintraege",
                 type: "INTEGER",
-                nullable: true);
+                nullable: true
+            );
 
             // Setze die SupplierId basierend auf der RemoteRepositoryUrl
             // Aktualisiere KatalogEintraege mit der entsprechenden SupplierId von Suppliers
             // die die gleiche RemoteRepositoryUrl haben
-            migrationBuilder.Sql(@"
+            migrationBuilder.Sql(
+                @"
                 UPDATE KatalogEintraege 
                 SET SupplierId = (
                     SELECT s.Id 
@@ -32,19 +34,22 @@ namespace AasDemoapp.Migrations
                     FROM Suppliers s 
                     WHERE s.RemoteRepositoryUrl = KatalogEintraege.RemoteRepositoryUrl
                 );
-            ");
+            "
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_KatalogEintraege_SupplierId",
                 table: "KatalogEintraege",
-                column: "SupplierId");
+                column: "SupplierId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_KatalogEintraege_Suppliers_SupplierId",
                 table: "KatalogEintraege",
                 column: "SupplierId",
                 principalTable: "Suppliers",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
 
         /// <inheritdoc />
@@ -52,17 +57,17 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_KatalogEintraege_Suppliers_SupplierId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
             migrationBuilder.DropIndex(
                 name: "IX_KatalogEintraege_SupplierId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
             // Entferne die SupplierId Spalte - die SQL-Updates werden automatisch rückgängig gemacht
             // da die gesamte Spalte gelöscht wird
-            migrationBuilder.DropColumn(
-                name: "SupplierId",
-                table: "KatalogEintraege");
+            migrationBuilder.DropColumn(name: "SupplierId", table: "KatalogEintraege");
         }
     }
 }

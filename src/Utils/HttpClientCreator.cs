@@ -12,7 +12,11 @@ public class HttpClientCreator
     public static HttpClient CreateHttpClient(SecuritySetting setting)
     {
         var client = new HttpClient();
-        if (setting.Certificate != null && setting.Certificate.Length > 0 && !string.IsNullOrWhiteSpace(setting.CertificatePassword))
+        if (
+            setting.Certificate != null
+            && setting.Certificate.Length > 0
+            && !string.IsNullOrWhiteSpace(setting.CertificatePassword)
+        )
         {
             var certificate = X509CertificateLoader.LoadPkcs12(
                 Convert.FromBase64String(setting.Certificate),
@@ -28,10 +32,12 @@ public class HttpClientCreator
         }
         if (setting.HeaderParameters.Any())
         {
-            setting.HeaderParameters.ToList().ForEach(header =>
-            {
-                client.DefaultRequestHeaders.Add(header.Name, header.Value);
-            });
+            setting
+                .HeaderParameters.ToList()
+                .ForEach(header =>
+                {
+                    client.DefaultRequestHeaders.Add(header.Name, header.Value);
+                });
         }
         // TODO: falls man bearer token weiterleiten will, muss dieses hierher übergeben werden.
         // aktuell einfach auskommentiert

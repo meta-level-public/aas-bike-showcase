@@ -20,7 +20,15 @@ import { CatalogImportService } from './catalog-import.service';
   selector: 'app-catalog-import',
   templateUrl: './catalog-import.component.html',
   styleUrl: './catalog-import.component.css',
-  imports: [CommonModule, FormsModule, TableModule, InputTextModule, ButtonModule, PopoverModule, NgxJsonViewerModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    InputTextModule,
+    ButtonModule,
+    PopoverModule,
+    NgxJsonViewerModule,
+  ],
 })
 export class CatalogImportComponent implements OnInit {
   kategorieOptions: Kategorie[] = [];
@@ -65,8 +73,7 @@ export class CatalogImportComponent implements OnInit {
 
   apply(shell: AssetAdministrationShell) {
     this.newKatalogEintrag.aasId = shell.id;
-    this.newKatalogEintrag.globalAssetId =
-      shell.assetInformation?.globalAssetId ?? '';
+    this.newKatalogEintrag.globalAssetId = shell.assetInformation?.globalAssetId ?? '';
     this.newKatalogEintrag.name = shell.idShort ?? shell.id;
   }
 
@@ -78,7 +85,9 @@ export class CatalogImportComponent implements OnInit {
       this.newKatalogEintrag.price = Number(
         String(this.newKatalogEintrag.price as any).replace(',', '.')
       );
-      this.newKatalogEintrag.supplier = this.suppliers.find(s => s.remoteAasRepositoryUrl === this.currentRepositoryUrl) ?? {} as Supplier;
+      this.newKatalogEintrag.supplier =
+        this.suppliers.find((s) => s.remoteAasRepositoryUrl === this.currentRepositoryUrl) ??
+        ({} as Supplier);
       await this.catalogService.save(this.newKatalogEintrag);
       this.notificationService.showMessageAlways('Eintrag erfolgreich gespeichert');
       this.newKatalogEintrag = {} as KatalogEintrag;

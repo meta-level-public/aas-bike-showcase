@@ -12,24 +12,28 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductParts_KatalogEintraege_BestandteilId",
-                table: "ProductParts");
+                table: "ProductParts"
+            );
 
             migrationBuilder.RenameColumn(
                 name: "BestandteilId",
                 table: "ProductParts",
-                newName: "KatalogEintragId");
+                newName: "KatalogEintragId"
+            );
 
             migrationBuilder.RenameIndex(
                 name: "IX_ProductParts_BestandteilId",
                 table: "ProductParts",
-                newName: "IX_ProductParts_KatalogEintragId");
+                newName: "IX_ProductParts_KatalogEintragId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductParts_KatalogEintraege_KatalogEintragId",
                 table: "ProductParts",
                 column: "KatalogEintragId",
                 principalTable: "KatalogEintraege",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
 
         /// <inheritdoc />
@@ -37,24 +41,28 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductParts_KatalogEintraege_KatalogEintragId",
-                table: "ProductParts");
+                table: "ProductParts"
+            );
 
             migrationBuilder.RenameColumn(
                 name: "KatalogEintragId",
                 table: "ProductParts",
-                newName: "BestandteilId");
+                newName: "BestandteilId"
+            );
 
             migrationBuilder.RenameIndex(
                 name: "IX_ProductParts_KatalogEintragId",
                 table: "ProductParts",
-                newName: "IX_ProductParts_BestandteilId");
+                newName: "IX_ProductParts_BestandteilId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductParts_KatalogEintraege_BestandteilId",
                 table: "ProductParts",
                 column: "BestandteilId",
                 principalTable: "KatalogEintraege",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
     }
 }

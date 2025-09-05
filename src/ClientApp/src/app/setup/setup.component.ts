@@ -22,7 +22,7 @@ import { ToolsRepositoryComponent } from './tools-repository/tools-repository.co
     AccordionModule,
     ErpConfigurationComponent,
     AasInfrastructureComponent,
-  ToolsRepositoryComponent,
+    ToolsRepositoryComponent,
     SupplierManagementComponent,
     CompanyAddressComponent,
   ],

@@ -1,12 +1,13 @@
 using Newtonsoft.Json;
 
 namespace AasDemoapp.Database;
+
 public static class DBJsonConverter
 {
-
     public static string? Serialize(object? v)
     {
-        if (v == null) return null;
+        if (v == null)
+            return null;
 
         return JsonConvert.SerializeObject(v);
     }

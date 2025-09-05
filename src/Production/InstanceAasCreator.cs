@@ -15,41 +15,92 @@ namespace AasDemoapp.Production;
 
 public class InstanceAasCreator
 {
-    public static async Task<AssetAdministrationShell> CreateBikeInstanceAas(ProducedProduct producedProduct, ImportService importService, SettingService settingsService)
+    public static async Task<AssetAdministrationShell> CreateBikeInstanceAas(
+        ProducedProduct producedProduct,
+        ImportService importService,
+        SettingService settingsService
+    )
     {
-        var assetInformation = new AssetInformation(AssetKind.Instance, producedProduct.GlobalAssetId, null, producedProduct.GlobalAssetId);
+        var assetInformation = new AssetInformation(
+            AssetKind.Instance,
+            producedProduct.GlobalAssetId,
+            null,
+            producedProduct.GlobalAssetId
+        );
         assetInformation.AssetType = producedProduct.ConfiguredProduct.GlobalAssetId; // Set the asset type to the configured product's global asset ID
-        var aas = new AssetAdministrationShell(producedProduct.AasId, assetInformation, null, null, producedProduct.ConfiguredProduct.Name);
+        var aas = new AssetAdministrationShell(
+            producedProduct.AasId,
+            assetInformation,
+            null,
+            null,
+            producedProduct.ConfiguredProduct.Name
+        );
 
         var nameplate = CreateNameplateSubmodel();
-        aas.Submodels = [new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, nameplate.Id)])];
+        aas.Submodels =
+        [
+            new Reference(
+                ReferenceTypes.ModelReference,
+                [new Key(KeyTypes.Submodel, nameplate.Id)]
+            ),
+        ];
 
         var handoverdoc = CreateHandoverDocumentation();
-        aas.Submodels.Add(new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, handoverdoc.Id)]));
+        aas.Submodels.Add(
+            new Reference(
+                ReferenceTypes.ModelReference,
+                [new Key(KeyTypes.Submodel, handoverdoc.Id)]
+            )
+        );
 
         var hierarchicalStructures = CreateHierarchicalStructuresSubmodel(producedProduct);
-        aas.Submodels.Add(new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, hierarchicalStructures.Id)]));
+        aas.Submodels.Add(
+            new Reference(
+                ReferenceTypes.ModelReference,
+                [new Key(KeyTypes.Submodel, hierarchicalStructures.Id)]
+            )
+        );
 
         var productCarbonFootprint = CreateProductCarbonFootprintSubmodel(producedProduct);
-        aas.Submodels.Add(new Reference(ReferenceTypes.ModelReference,  [new Key(KeyTypes.Submodel, productCarbonFootprint.Id)]));
+        aas.Submodels.Add(
+            new Reference(
+                ReferenceTypes.ModelReference,
+                [new Key(KeyTypes.Submodel, productCarbonFootprint.Id)]
+            )
+        );
 
-        await SaveAasToRepositories(aas, [nameplate, handoverdoc, hierarchicalStructures, productCarbonFootprint], importService, settingsService);
+        await SaveAasToRepositories(
+            aas,
+            [nameplate, handoverdoc, hierarchicalStructures, productCarbonFootprint],
+            importService,
+            settingsService
+        );
 
         return aas;
     }
 
-    private static async Task SaveAasToRepositories(AssetAdministrationShell aas, List<ISubmodel> submodels, ImportService importService, SettingService settingsService)
+    private static async Task SaveAasToRepositories(
+        AssetAdministrationShell aas,
+        List<ISubmodel> submodels,
+        ImportService importService,
+        SettingService settingsService
+    )
     {
-        var securitySetting = settingsService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
-        var aasRepositoryUrl = settingsService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
-        var submodelRepositoryUrl = settingsService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
+        var securitySetting = settingsService.GetSecuritySetting(
+            SettingTypes.InfrastructureSecurity
+        );
+        var aasRepositoryUrl =
+            settingsService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
+        var submodelRepositoryUrl =
+            settingsService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
         var aasRegistryUrl = settingsService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
-        var submodelRegistryUrl = settingsService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
+        var submodelRegistryUrl =
+            settingsService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
 
         var env = new AasCore.Aas3_0.Environment
         {
             AssetAdministrationShells = [aas],
-            Submodels = submodels
+            Submodels = submodels,
         };
         var plainJson = AasCore.Aas3_0.Jsonization.Serialize.ToJsonObject(env).ToJsonString();
 
@@ -59,19 +110,22 @@ public class InstanceAasCreator
                 AasRepositoryUrl = aasRepositoryUrl,
                 SubmodelRepositoryUrl = submodelRepositoryUrl,
                 AasRegistryUrl = aasRegistryUrl,
-                SubmodelRegistryUrl = submodelRegistryUrl
+                SubmodelRegistryUrl = submodelRegistryUrl,
             },
             securitySetting,
-
             plainJson,
             [],
-            default);
+            default
+        );
     }
 
     private static Submodel CreateHandoverDocumentation()
     {
         var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
-        handoverdoc.Description = [new LangStringTextType("de", "Handover documentation for the configured product")];
+        handoverdoc.Description =
+        [
+            new LangStringTextType("de", "Handover documentation for the configured product"),
+        ];
 
         return handoverdoc;
     }
@@ -89,28 +143,73 @@ public class InstanceAasCreator
         var hierarchicalStructures = HierarchicalStructuresCreator.CreateFromJson();
         // entryNode ist das konfigurierte Produkt
         var entryNode = new Entity(EntityType.SelfManagedEntity);
-        entryNode.SemanticId = new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0")]);
+        entryNode.SemanticId = new Reference(
+            ReferenceTypes.ExternalReference,
+            [
+                new Key(
+                    KeyTypes.GlobalReference,
+                    "https://admin-shell.io/idta/HierarchicalStructures/EntryNode/1/0"
+                ),
+            ]
+        );
         entryNode.IdShort = producedProduct.ConfiguredProduct.Name.Replace(" ", "_");
         entryNode.GlobalAssetId = producedProduct.GlobalAssetId;
         entryNode.Statements = [];
-        var first = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, hierarchicalStructures.Id), new Key(KeyTypes.Entity, entryNode.IdShort)]);
+        var first = new Reference(
+            ReferenceTypes.ModelReference,
+            [
+                new Key(KeyTypes.Submodel, hierarchicalStructures.Id),
+                new Key(KeyTypes.Entity, entryNode.IdShort),
+            ]
+        );
         // die elemente einfügen, die in der Konfiguration des Produkts enthalten sind
         foreach (var part in producedProduct.Bestandteile)
         {
             var partNode = new Entity(EntityType.SelfManagedEntity);
             partNode.IdShort = part.Name.Replace(" ", "_");
-            partNode.SemanticId = new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0")]);
+            partNode.SemanticId = new Reference(
+                ReferenceTypes.ExternalReference,
+                [
+                    new Key(
+                        KeyTypes.GlobalReference,
+                        "https://admin-shell.io/idta/HierarchicalStructures/Node/1/0"
+                    ),
+                ]
+            );
             partNode.Statements = [];
             partNode.GlobalAssetId = part.KatalogEintrag.GlobalAssetId;
 
-            var second = new Reference(ReferenceTypes.ModelReference, [new Key(KeyTypes.Submodel, hierarchicalStructures.Id), new Key(KeyTypes.Entity, entryNode.IdShort), new Key(KeyTypes.Entity, partNode.IdShort)]);
+            var second = new Reference(
+                ReferenceTypes.ModelReference,
+                [
+                    new Key(KeyTypes.Submodel, hierarchicalStructures.Id),
+                    new Key(KeyTypes.Entity, entryNode.IdShort),
+                    new Key(KeyTypes.Entity, partNode.IdShort),
+                ]
+            );
 
             var hasPartRelation = new RelationshipElement(first, second);
-            hasPartRelation.SemanticId = new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0")]);
+            hasPartRelation.SemanticId = new Reference(
+                ReferenceTypes.ExternalReference,
+                [
+                    new Key(
+                        KeyTypes.GlobalReference,
+                        "https://admin-shell.io/idta/HierarchicalStructures/HasPart/1/0"
+                    ),
+                ]
+            );
             hasPartRelation.IdShort = "HasPart";
 
             var bulkCount = new Property(DataTypeDefXsd.Integer);
-            bulkCount.SemanticId = new Reference(ReferenceTypes.ExternalReference, [new Key(KeyTypes.GlobalReference, "https://admin-shell.io/idta/HierarchicalStructures/BulkCount/1/0")]);
+            bulkCount.SemanticId = new Reference(
+                ReferenceTypes.ExternalReference,
+                [
+                    new Key(
+                        KeyTypes.GlobalReference,
+                        "https://admin-shell.io/idta/HierarchicalStructures/BulkCount/1/0"
+                    ),
+                ]
+            );
             bulkCount.IdShort = "BulkCount";
             bulkCount.Value = part.Amount.ToString();
 
@@ -127,10 +226,13 @@ public class InstanceAasCreator
     private static Submodel CreateProductCarbonFootprintSubmodel(ProducedProduct producedProduct)
     {
         var pcf = PCFCreator.CreateFromJson();
-        var  productFootprints = (SubmodelElementList)pcf.SubmodelElements.Find(submodel => submodel.IdShort == "ProductCarbonFootprints");
+        var productFootprints = (SubmodelElementList)
+            pcf.SubmodelElements.Find(submodel => submodel.IdShort == "ProductCarbonFootprints");
         //Property pcfValue = new Property(DataTypeDefXsd.Double, idShort: "PcfCO2eq", value: producedProduct.PCFValue.ToString());
-        SubmodelElementCollection pcfComponent = (SubmodelElementCollection)productFootprints.Value.First();
-        Property pcfElem =  (Property)pcfComponent.Value.Find(property => property.IdShort == "PcfCO2eq");
+        SubmodelElementCollection pcfComponent = (SubmodelElementCollection)
+            productFootprints.Value.First();
+        Property pcfElem = (Property)
+            pcfComponent.Value.Find(property => property.IdShort == "PcfCO2eq");
         pcfElem.Value = producedProduct.PCFValue.ToString();
         // todo: anything else to add here?
         return pcf;

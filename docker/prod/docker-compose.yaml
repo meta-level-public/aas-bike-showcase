@@ -1,0 +1,187 @@
+services:
+  traefik:
+    image: traefik:v2.11
+    container_name: traefik_demoapp
+    restart: unless-stopped
+    command:
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.file.filename=/etc/traefik/traefik-dynamic.yaml'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.letsencrypt.acme.tlschallenge=true'
+      - '--certificatesresolvers.letsencrypt.acme.email=sirilein@googlemail.com'
+      - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - 'traefik-letsencrypt:/letsencrypt'
+      - ./traefik-auth:/etc/traefik/traefik-auth:ro
+      - ./traefik-auth/traefik-dynamic.yaml:/etc/traefik/traefik-dynamic.yaml:ro
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower_demoapp
+    restart: unless-stopped
+    command: --interval 600 --cleanup
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+
+  ######################## APPLICATIONS ########################
+
+  aas-demoapp:
+    image: ghcr.io/meta-level-public/aasdemoapp:preview
+    container_name: aas-demoapp
+    restart: unless-stopped
+    volumes:
+      - ../aasdemoapp-data:/AasDemoapp
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-demoapp.rule=Host(`app.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-demoapp.entrypoints=web,websecure'
+      - 'traefik.http.routers.aas-demoapp.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-demoapp.middlewares=redirect-to-https@file'
+
+  aas-env:
+    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    container_name: aas-env
+    environment:
+      - SERVER_PORT=8081
+    volumes:
+      - ./aas:/application/aas
+      - ./basyx/aas-env.properties:/application/application.properties
+    restart: always
+    depends_on:
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      mosquitto:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-env.rule=Host(`aas-env.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-env.entrypoints=websecure'
+      - 'traefik.http.routers.aas-env.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-env.middlewares=redirect-to-https@file'
+
+  aas-registry:
+    image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+    container_name: aas-registry
+    ports:
+      - '8082:8080'
+    environment:
+      - SERVER_PORT=8080
+    volumes:
+      - ./basyx/aas-registry.yml:/workspace/config/application.yml
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-registry.rule=Host(`aas-registry.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-registry.entrypoints=websecure'
+      - 'traefik.http.routers.aas-registry.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-registry.middlewares=redirect-to-https@file'
+
+  sm-registry:
+    image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
+    container_name: sm-registry
+    environment:
+      - SERVER_PORT=8080
+    volumes:
+      - ./basyx/sm-registry.yml:/workspace/config/application.yml
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.sm-registry.rule=Host(`sm-registry.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.sm-registry.entrypoints=websecure'
+      - 'traefik.http.routers.sm-registry.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.sm-registry.middlewares=redirect-to-https@file'
+
+  mongo:
+    image: mongo:5.0.10
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+    restart: always
+    healthcheck:
+      test: mongo
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  aas-discovery:
+    image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    container_name: aas-discovery
+    environment:
+      - SERVER_PORT=8081
+    volumes:
+      - ./basyx/aas-discovery.properties:/application/application.properties
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-discovery.rule=Host(`aas-discovery.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-discovery.entrypoints=websecure'
+      - 'traefik.http.routers.aas-discovery.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-discovery.middlewares=redirect-to-https@file'
+
+  mosquitto:
+    image: eclipse-mosquitto:2.0.15
+    container_name: mosquitto
+    ports:
+      - '1883:1883'
+    volumes:
+      - ./mosquitto:/mosquitto
+    restart: always
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mosquitto_sub -p 1883 -t 'topic' -C 1 -E -i probe -W 3
+      interval: 5s
+      timeout: 10s
+      start_period: 1s
+      retries: 3
+
+  aas-web-ui:
+    image: eclipsebasyx/aas-gui:SNAPSHOT
+    container_name: aas-ui
+    environment:
+      AAS_REGISTRY_PATH: https://aas-registry.aas-bike.showcasehub.de/shell-descriptors
+      SUBMODEL_REGISTRY_PATH: https://sm-registry.aas-bike.showcasehub.de/submodel-descriptors
+      AAS_REPO_PATH: https://aas-env.aas-bike.showcasehub.de/shells
+      SUBMODEL_REPO_PATH: https://aas-env.aas-bike.showcasehub.de/submodels
+      CD_REPO_PATH: https://aas-env.aas-bike.showcasehub.de/concept-descriptions
+      AAS_DISCOVERY_PATH: https://aas-discovery.aas-bike.showcasehub.de/lookup/shells
+      PRIMARY_COLOR: '#76B82A'
+      LOGO_PATH: OI4_Signet_color_RGB.png
+    restart: always
+    depends_on:
+      aas-env:
+        condition: service_healthy
+    volumes:
+      - ./logo:/usr/src/app/dist/Logo
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-ui.rule=Host(`aas-ui.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-ui.entrypoints=web,websecure'
+      - 'traefik.http.routers.aas-ui.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-ui.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.aas-ui.loadbalancer.server.port=3000'
+
+volumes:
+  traefik-letsencrypt:
+    driver: local

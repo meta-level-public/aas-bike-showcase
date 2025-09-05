@@ -42,14 +42,20 @@ export class ToolsRepositoryComponent implements OnInit, OnChanges {
 
   private loadFromSettings() {
     const current = this.settings();
-    this.aasRepositoryUrl.set(current.find(s => s.name === 'ToolsAASRepositoryUrl')?.value || '');
-    this.aasRegistryUrl.set(current.find(s => s.name === 'ToolsAASRegistryUrl')?.value || '');
-    this.submodelRepositoryUrl.set(current.find(s => s.name === 'ToolsSubmodelRepositoryUrl')?.value || '');
-    this.submodelRegistryUrl.set(current.find(s => s.name === 'ToolsSubmodelRegistryUrl')?.value || '');
-    this.discoveryUrl.set(current.find(s => s.name === 'ToolsDiscoveryUrl')?.value || '');
-    this.conceptDescriptionUrl.set(current.find(s => s.name === 'ToolsConceptDescriptionUrl')?.value || '');
+    this.aasRepositoryUrl.set(current.find((s) => s.name === 'ToolsAASRepositoryUrl')?.value || '');
+    this.aasRegistryUrl.set(current.find((s) => s.name === 'ToolsAASRegistryUrl')?.value || '');
+    this.submodelRepositoryUrl.set(
+      current.find((s) => s.name === 'ToolsSubmodelRepositoryUrl')?.value || ''
+    );
+    this.submodelRegistryUrl.set(
+      current.find((s) => s.name === 'ToolsSubmodelRegistryUrl')?.value || ''
+    );
+    this.discoveryUrl.set(current.find((s) => s.name === 'ToolsDiscoveryUrl')?.value || '');
+    this.conceptDescriptionUrl.set(
+      current.find((s) => s.name === 'ToolsConceptDescriptionUrl')?.value || ''
+    );
 
-    const security = current.find(s => s.name === 'ToolsRepositorySecurity')?.value || '';
+    const security = current.find((s) => s.name === 'ToolsRepositorySecurity')?.value || '';
     if (security) {
       try {
         const parsed = JSON.parse(security) as SecuritySetting;
@@ -66,11 +72,20 @@ export class ToolsRepositoryComponent implements OnInit, OnChanges {
     const toSave: Setting[] = [
       { name: 'ToolsAASRepositoryUrl', value: this.aasRepositoryUrl() },
       { name: 'ToolsAASRegistryUrl', value: this.aasRegistryUrl() },
-      { name: 'ToolsSubmodelRepositoryUrl', value: this.submodelRepositoryUrl() },
+      {
+        name: 'ToolsSubmodelRepositoryUrl',
+        value: this.submodelRepositoryUrl(),
+      },
       { name: 'ToolsSubmodelRegistryUrl', value: this.submodelRegistryUrl() },
       { name: 'ToolsDiscoveryUrl', value: this.discoveryUrl() },
-      { name: 'ToolsConceptDescriptionUrl', value: this.conceptDescriptionUrl() },
-      { name: 'ToolsRepositorySecurity', value: JSON.stringify(this.getSecuritySetting()) },
+      {
+        name: 'ToolsConceptDescriptionUrl',
+        value: this.conceptDescriptionUrl(),
+      },
+      {
+        name: 'ToolsRepositorySecurity',
+        value: JSON.stringify(this.getSecuritySetting()),
+      },
     ];
 
     for (const s of toSave) {

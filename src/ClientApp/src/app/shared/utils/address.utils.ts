@@ -14,10 +14,14 @@ export function formatAddressString(address: Address): string {
 }
 
 export function hasValidCoordinates(address: Address): boolean {
-  return address.lat !== undefined &&
-         address.long !== undefined &&
-         !isNaN(address.lat) &&
-         !isNaN(address.long) &&
-         address.lat >= -90 && address.lat <= 90 &&
-         address.long >= -180 && address.long <= 180;
+  return (
+    address.lat !== undefined &&
+    address.long !== undefined &&
+    !isNaN(address.lat) &&
+    !isNaN(address.long) &&
+    address.lat >= -90 &&
+    address.lat <= 90 &&
+    address.long >= -180 &&
+    address.long <= 180
+  );
 }

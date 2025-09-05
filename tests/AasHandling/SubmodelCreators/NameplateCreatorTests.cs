@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using Xunit;
 using AasCore.Aas3_0;
 using AasDemoapp.AasHandling.SubmodelCreators;
+using Xunit;
 
 namespace AasDemoapp.Tests.AasHandling.SubmodelCreators;
 
@@ -64,10 +64,10 @@ public class NameplateCreatorTests
         // Assert
         Assert.NotNull(result.SemanticId);
         Assert.IsType<Reference>(result.SemanticId);
-        
+
         var reference = (Reference)result.SemanticId;
         Assert.NotEmpty(reference.Keys);
-        
+
         var key = reference.Keys.First();
         Assert.Equal(KeyTypes.GlobalReference, key.Type);
         Assert.Equal("https://admin-shell.io/idta/nameplate/3/0/Nameplate", key.Value);
@@ -115,14 +115,18 @@ public class NameplateCreatorTests
 
         // Assert
         // Suche nach einem typischen Nameplate-Element
-        var manufacturerElement = result.SubmodelElements?.FirstOrDefault(e => 
-            e.IdShort?.Contains("Manufacturer") == true || 
-            e.IdShort?.Contains("ManufacturerName") == true);
-        
+        var manufacturerElement = result.SubmodelElements?.FirstOrDefault(e =>
+            e.IdShort?.Contains("Manufacturer") == true
+            || e.IdShort?.Contains("ManufacturerName") == true
+        );
+
         // Falls kein spezifisches Element gefunden wird, überprüfe zumindest, dass Elemente vorhanden sind
         if (manufacturerElement == null)
         {
-            Assert.True(result.SubmodelElements?.Count > 0, "Submodel sollte mindestens ein Element enthalten");
+            Assert.True(
+                result.SubmodelElements?.Count > 0,
+                "Submodel sollte mindestens ein Element enthalten"
+            );
         }
         else
         {
@@ -134,7 +138,12 @@ public class NameplateCreatorTests
     public void CreateFromJson_WhenFileNotExists_ShouldThrowException()
     {
         // Arrange - Datei temporär verschieben
-        var originalPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AasHandling", "SubmodelCreators", "nameplate.json");
+        var originalPath = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "AasHandling",
+            "SubmodelCreators",
+            "nameplate.json"
+        );
         var tempPath = originalPath + ".temp";
 
         try
