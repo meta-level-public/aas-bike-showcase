@@ -41,7 +41,7 @@ jobs:
   build_image:
     name: Build Docker image
     runs-on: ubuntu-latest
-    # needs: test
+    needs: test
     steps:
       - uses: actions/checkout@v4
       - name: Set Docker image tag
@@ -57,12 +57,21 @@ jobs:
         shell: pwsh
         working-directory: ${{ github.workspace }}
 
-      # Steps for GitHub Container Registry (ghcr.io):
-      # - name: Login to GitHub Container Registry
-      #   run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Login to GitHub Container Registry
+        run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      # - name: Tag Docker image for GHCR
-      #   run: docker tag aasdemoapp:latest ghcr.io/${{ github.repository_owner }}/aasdemoapp:latest
+      - name: Tag Docker image for GHCR
+        run: |
+          if [ "${{ steps.set_tag.outputs.tag }}" = "aasdemoapp:latest" ]; then
+            docker tag aasdemoapp:latest ghcr.io/${{ github.repository_owner }}/aasdemoapp:latest
+          else
+            docker tag aasdemoapp:preview ghcr.io/${{ github.repository_owner }}/aasdemoapp:preview
+          fi
 
-      # - name: Push Docker image to GHCR
-      #   run: docker push ghcr.io/${{ github.repository_owner }}/aasdemoapp:latest
+      - name: Push Docker image to GHCR
+        run: |
+          if [ "${{ steps.set_tag.outputs.tag }}" = "aasdemoapp:latest" ]; then
+            docker push ghcr.io/${{ github.repository_owner }}/aasdemoapp:latest
+          else
+            docker push ghcr.io/${{ github.repository_owner }}/aasdemoapp:preview
+          fi
