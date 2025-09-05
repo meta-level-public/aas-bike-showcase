@@ -53,8 +53,8 @@ jobs:
             echo "tag=aasdemoapp:preview" >> $GITHUB_OUTPUT
           fi
       - name: Build Docker image using PowerShell script
-        shell: pwsh
         run: pwsh -File build/build.ps1 -Configuration Release -Target final -Tag ${{ steps.set_tag.outputs.tag }}
+        shell: pwsh
         working-directory: ${{ github.workspace }}
 
       # Steps for GitHub Container Registry (ghcr.io):
