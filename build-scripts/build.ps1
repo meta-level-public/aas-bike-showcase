@@ -17,7 +17,7 @@ Push-Location $repoRoot
 try {
     Write-Host "==> Docker build started (Configuration: $Configuration, Target: $Target, Tag: $Tag)" -ForegroundColor Cyan
 
-    $dockerfile = Join-Path 'build' 'Dockerfile'
+    $dockerfile = Join-Path 'build-scripts' 'Dockerfile'
     if (-not (Test-Path $dockerfile)) {
         throw "Dockerfile not found: $dockerfile"
     }
