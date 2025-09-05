@@ -15,7 +15,15 @@ import { ConfigurationListService } from '../configuration-list.service';
   selector: 'app-configuration-item',
   templateUrl: './configuration-item.component.html',
   styleUrl: './configuration-item.component.css',
-  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, PopoverModule, TagModule, TooltipModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    RatingModule,
+    ButtonModule,
+    PopoverModule,
+    TagModule,
+    TooltipModule,
+  ],
 })
 export class ConfigurationItemComponent {
   @Input() item: ConfiguredProduct | undefined;
@@ -26,7 +34,7 @@ export class ConfigurationItemComponent {
 
   constructor(
     private service: ConfigurationListService,
-    private router: Router
+    private router: Router,
   ) {}
 
   deleteItem() {
@@ -65,6 +73,11 @@ export class ConfigurationItemComponent {
   }
 
   getTotalPrice(): number {
-    return this.item?.bestandteile?.reduce((sum, teil) => sum + (teil.price * teil.amount), 0) || 0;
+    return (
+      this.item?.bestandteile?.reduce(
+        (sum, teil) => sum + teil.price * teil.amount,
+        0,
+      ) || 0
+    );
   }
 }

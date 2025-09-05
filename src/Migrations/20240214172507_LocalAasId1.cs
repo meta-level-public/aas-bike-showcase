@@ -15,15 +15,14 @@ namespace AasDemoapp.Migrations
                 table: "KatalogEintraege",
                 type: "TEXT",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: ""
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "LocalAasId",
-                table: "KatalogEintraege");
+            migrationBuilder.DropColumn(name: "LocalAasId", table: "KatalogEintraege");
         }
     }
 }

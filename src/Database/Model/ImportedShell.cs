@@ -14,6 +14,5 @@ namespace AasDemoapp.Database.Model
         public string AasId { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
-
     }
 }

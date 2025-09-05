@@ -9,21 +9,21 @@ import { ConfiguredProduct } from '../model/configured-product';
 export class ConfigurationListService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string
+    @Inject('BASE_URL') private baseUrl: string,
   ) {}
 
   async getAllFertigteil() {
     return lastValueFrom(
       this.http.get<ConfiguredProduct[]>(
-        `${this.baseUrl}api/Konfigurator/getAll`
-      )
+        `${this.baseUrl}api/Konfigurator/getAll`,
+      ),
     );
   }
 
   async deleteItem(id: number) {
     const params = new HttpParams().set('id', id);
     return lastValueFrom(
-      this.http.delete(`${this.baseUrl}api/Konfigurator/delete`, { params })
+      this.http.delete(`${this.baseUrl}api/Konfigurator/delete`, { params }),
     );
   }
 }

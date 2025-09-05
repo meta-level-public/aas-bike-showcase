@@ -5,7 +5,9 @@
       <i class="pi pi-download"></i>
       Katalog Import
     </h1>
-    <p class="catalog-import-subtitle">Teile aus externen Katalogen importieren</p>
+    <p class="catalog-import-subtitle">
+      Teile aus externen Katalogen importieren
+    </p>
   </div>
 
   <!-- Main Content -->
@@ -105,23 +107,27 @@
         </h4>
         <div class="suppliers-grid">
           @for (item of suppliers; track $index) {
-          <div
-            class="supplier-card"
-            [ngClass]="{'selected': item.remoteAasRepositoryUrl === currentRepositoryUrl}"
-            (click)="loadRegistry(item.remoteAasRepositoryUrl)"
-          >
-            <img
-              [src]="'/assets/logos/' + item.logo"
-              [alt]="item.name"
-              class="supplier-logo"
-            />
-            <span class="supplier-name">{{ item.name }}</span>
-          </div>
+            <div
+              class="supplier-card"
+              [ngClass]="{
+                selected: item.remoteAasRepositoryUrl === currentRepositoryUrl,
+              }"
+              (click)="loadRegistry(item.remoteAasRepositoryUrl)"
+            >
+              <img
+                [src]="'/assets/logos/' + item.logo"
+                [alt]="item.name"
+                class="supplier-logo"
+              />
+              <span class="supplier-name">{{ item.name }}</span>
+            </div>
           } @empty {
-          <div class="empty-state">
-            <i class="pi pi-info-circle"></i>
-            <p>Keine Lieferanten erfasst. Bitte zuerst im Grundsetup einrichten</p>
-          </div>
+            <div class="empty-state">
+              <i class="pi pi-info-circle"></i>
+              <p>
+                Keine Lieferanten erfasst. Bitte zuerst im Grundsetup einrichten
+              </p>
+            </div>
           }
         </div>
       </div>
@@ -151,32 +157,32 @@
           </ng-template>
           <ng-template pTemplate="body" let-shell>
             @if (shell != null) {
-            <tr>
-              <td>{{ shell.idShort }}</td>
-              <td>{{ shell.id }}</td>
-              <td>
-                <p-button
-                  size="small"
-                  label="Übernehmen"
-                  (click)="apply(shell)"
-                  severity="info"
-                ></p-button>
-              </td>
-              <td>
-                <p-popover #op>
-                  <ngx-json-viewer
-                    [json]="shell"
-                    [expanded]="false"
-                  ></ngx-json-viewer>
-                </p-popover>
-                <p-button
-                  (click)="op.toggle($event)"
-                  icon="pi pi-eye"
-                  size="small"
-                  severity="secondary"
-                ></p-button>
-              </td>
-            </tr>
+              <tr>
+                <td>{{ shell.idShort }}</td>
+                <td>{{ shell.id }}</td>
+                <td>
+                  <p-button
+                    size="small"
+                    label="Übernehmen"
+                    (click)="apply(shell)"
+                    severity="info"
+                  ></p-button>
+                </td>
+                <td>
+                  <p-popover #op>
+                    <ngx-json-viewer
+                      [json]="shell"
+                      [expanded]="false"
+                    ></ngx-json-viewer>
+                  </p-popover>
+                  <p-button
+                    (click)="op.toggle($event)"
+                    icon="pi pi-eye"
+                    size="small"
+                    severity="secondary"
+                  ></p-button>
+                </td>
+              </tr>
             }
           </ng-template>
         </p-table>

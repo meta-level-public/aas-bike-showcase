@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -12,10 +18,19 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ConfigurationListService } from '../configuration-list/configuration-list.service';
 import { Address } from '../model/address';
 import { ConfiguredProduct } from '../model/configured-product';
-import { CreateProductionOrder, ProductionOrderResponse } from '../model/production-order';
+import {
+  CreateProductionOrder,
+  ProductionOrderResponse,
+} from '../model/production-order';
 import { ProductionOrderListService } from '../production-order-list/production-order-list.service';
-import { LeafletMapComponent, MapLocation } from '../shared/components/leaflet-map/leaflet-map.component';
-import { formatAddressString, hasValidCoordinates } from '../shared/utils/address.utils';
+import {
+  LeafletMapComponent,
+  MapLocation,
+} from '../shared/components/leaflet-map/leaflet-map.component';
+import {
+  formatAddressString,
+  hasValidCoordinates,
+} from '../shared/utils/address.utils';
 
 @Component({
   selector: 'app-order-create',
@@ -31,9 +46,9 @@ import { formatAddressString, hasValidCoordinates } from '../shared/utils/addres
     InputNumberModule,
     ToastModule,
     ToggleButtonModule,
-    LeafletMapComponent
+    LeafletMapComponent,
   ],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class OrderCreateComponent implements OnInit, OnDestroy {
   product: ConfiguredProduct | null = null;
@@ -56,7 +71,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     private configurationService: ConfigurationListService,
     private messageService: MessageService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {
     this.orderForm = this.fb.group({
       anzahl: [1, [Validators.required, Validators.min(1)]],
@@ -68,7 +83,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
       ort: [''],
       land: ['Deutschland'],
       lat: [undefined],
-      long: [undefined]
+      long: [undefined],
     });
   }
 
@@ -82,7 +97,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     // Produkt-ID aus Route-Parameter abrufen
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       const id = params['id'];
       if (id) {
         this.productId = +id;
@@ -91,7 +106,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'error',
           summary: 'Fehler',
-          detail: 'Keine Produkt-ID angegeben'
+          detail: 'Keine Produkt-ID angegeben',
         });
         this.router.navigate(['/config/list']);
       }
@@ -104,13 +119,15 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     try {
       this.loading = true;
       const products = await this.configurationService.getAllFertigteil();
-      this.product = products.find((p: ConfiguredProduct) => p.id === this.productId) || null;
+      this.product =
+        products.find((p: ConfiguredProduct) => p.id === this.productId) ||
+        null;
 
       if (!this.product) {
         this.messageService.add({
           severity: 'error',
           summary: 'Fehler',
-          detail: 'Produkt nicht gefunden'
+          detail: 'Produkt nicht gefunden',
         });
         this.router.navigate(['/config/list']);
       }
@@ -119,7 +136,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'error',
         summary: 'Fehler',
-        detail: 'Fehler beim Laden des Produkts'
+        detail: 'Fehler beim Laden des Produkts',
       });
     } finally {
       this.loading = false;
@@ -138,20 +155,26 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         const formValue = this.orderForm.value;
 
         // Nur Adresse hinzufügen wenn mindestens ein Adressfeld ausgefüllt ist
-        const hasAddressInfo = formValue.name || formValue.vorname || formValue.strasse ||
-                              formValue.plz || formValue.ort;
+        const hasAddressInfo =
+          formValue.name ||
+          formValue.vorname ||
+          formValue.strasse ||
+          formValue.plz ||
+          formValue.ort;
 
         const createOrderDto: CreateProductionOrder = {
           configuredProductId: this.product.id,
           anzahl: formValue.anzahl,
-          address: hasAddressInfo ? {
-            name: formValue.name,
-            vorname: formValue.vorname,
-            strasse: formValue.strasse,
-            plz: formValue.plz,
-            ort: formValue.ort,
-            land: formValue.land
-          } : undefined
+          address: hasAddressInfo
+            ? {
+                name: formValue.name,
+                vorname: formValue.vorname,
+                strasse: formValue.strasse,
+                plz: formValue.plz,
+                ort: formValue.ort,
+                land: formValue.land,
+              }
+            : undefined,
         };
 
         const response = await this.createProductionOrder(createOrderDto);
@@ -160,7 +183,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'success',
             summary: 'Erfolgreich',
-            detail: 'Bestellung wurde erfolgreich erstellt!'
+            detail: 'Bestellung wurde erfolgreich erstellt!',
           });
 
           // Nach erfolgreicher Erstellung zur Bestellliste navigieren
@@ -171,7 +194,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
           this.messageService.add({
             severity: 'error',
             summary: 'Fehler',
-            detail: response.message || 'Fehler beim Erstellen der Bestellung'
+            detail: response.message || 'Fehler beim Erstellen der Bestellung',
           });
         }
       } catch (error) {
@@ -179,7 +202,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'error',
           summary: 'Fehler',
-          detail: 'Unerwarteter Fehler beim Erstellen der Bestellung'
+          detail: 'Unerwarteter Fehler beim Erstellen der Bestellung',
         });
       } finally {
         this.loading = false;
@@ -187,15 +210,18 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async createProductionOrder(createDto: CreateProductionOrder): Promise<ProductionOrderResponse> {
+  private async createProductionOrder(
+    createDto: CreateProductionOrder,
+  ): Promise<ProductionOrderResponse> {
     try {
-      const response = await this.productionOrderService.createProductionOrder(createDto);
+      const response =
+        await this.productionOrderService.createProductionOrder(createDto);
       return response;
     } catch (error) {
       return {
         success: false,
         message: 'Fehler beim Erstellen der Bestellung',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -212,7 +238,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     // Formular mit Koordinaten aktualisieren
     this.orderForm.patchValue({
       lat: location.lat,
-      long: location.lng
+      long: location.lng,
     });
 
     // Direktes Reverse Geocoding für bessere Adressdaten
@@ -231,7 +257,9 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     this.isGeocodingLoading = true;
 
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+      );
       const data = await response.json();
 
       if (data && data.address) {
@@ -240,10 +268,15 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         this.orderForm.patchValue({
           strasse: this.buildStreetAddress(address),
           plz: address.postcode || '',
-          ort: address.city || address.town || address.village || address.municipality || '',
+          ort:
+            address.city ||
+            address.town ||
+            address.village ||
+            address.municipality ||
+            '',
           land: address.country || 'Deutschland',
           lat: lat,
-          long: lng
+          long: lng,
         });
 
         // Aktualisiere auch die currentAddress für die Karte
@@ -253,7 +286,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'success',
           summary: 'Adresse gefunden',
-          detail: 'Die Adressdaten wurden automatisch ausgefüllt.'
+          detail: 'Die Adressdaten wurden automatisch ausgefüllt.',
         });
       }
     } catch (error) {
@@ -261,14 +294,16 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
       this.messageService.add({
         severity: 'warn',
         summary: 'Adresse',
-        detail: 'Adresse konnte nicht automatisch ermittelt werden.'
+        detail: 'Adresse konnte nicht automatisch ermittelt werden.',
       });
     } finally {
       this.isGeocodingLoading = false;
     }
-  }  private buildStreetAddress(address: any): string {
+  }
+  private buildStreetAddress(address: any): string {
     // Verschiedene mögliche Straßen-Felder kombinieren
-    const streetName = address.road || address.street || address.pedestrian || '';
+    const streetName =
+      address.road || address.street || address.pedestrian || '';
     const houseNumber = address.house_number || '';
 
     if (streetName && houseNumber) {
@@ -303,7 +338,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
       ort: formValue.ort || '',
       land: formValue.land || '',
       lat: formValue.lat,
-      long: formValue.long
+      long: formValue.long,
     };
 
     const addressString = formatAddressString(addr);
@@ -322,7 +357,9 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
 
     try {
       const encodedAddress = encodeURIComponent(addressString);
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`);
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`,
+      );
 
       if (!response.ok) {
         throw new Error('Geocoding request failed');
@@ -338,7 +375,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         // Update form with coordinates
         this.orderForm.patchValue({
           lat: lat,
-          long: lng
+          long: lng,
         });
 
         // Update map location
@@ -346,13 +383,13 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
           lat: lat,
           lng: lng,
           address: addressString,
-          title: 'Lieferadresse'
+          title: 'Lieferadresse',
         };
 
         this.messageService.add({
           severity: 'success',
           summary: 'Koordinaten gefunden',
-          detail: `Koordinaten automatisch für "${addressString}" ermittelt`
+          detail: `Koordinaten automatisch für "${addressString}" ermittelt`,
         });
       }
     } catch (error) {
@@ -366,7 +403,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
   clearCoordinates() {
     this.orderForm.patchValue({
       lat: undefined,
-      long: undefined
+      long: undefined,
     });
     this.mapLocation = undefined;
   }
@@ -379,13 +416,17 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
   // Helper methods for template
   getMapLocation(): MapLocation | undefined {
     const formValue = this.orderForm.value;
-    if (formValue.lat !== undefined && formValue.long !== undefined &&
-        !isNaN(formValue.lat) && !isNaN(formValue.long)) {
+    if (
+      formValue.lat !== undefined &&
+      formValue.long !== undefined &&
+      !isNaN(formValue.lat) &&
+      !isNaN(formValue.long)
+    ) {
       return {
         lat: formValue.lat,
         lng: formValue.long,
         address: this.getFormattedAddress(),
-        title: 'Lieferadresse'
+        title: 'Lieferadresse',
       };
     }
     return undefined;
@@ -401,20 +442,29 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
       ort: formValue.ort || '',
       land: formValue.land || '',
       lat: formValue.lat,
-      long: formValue.long
+      long: formValue.long,
     };
     return formatAddressString(addr);
   }
 
   hasCoordinates(): boolean {
     const formValue = this.orderForm.value;
-    return formValue.lat !== undefined && formValue.long !== undefined &&
-           !isNaN(formValue.lat) && !isNaN(formValue.long);
+    return (
+      formValue.lat !== undefined &&
+      formValue.long !== undefined &&
+      !isNaN(formValue.lat) &&
+      !isNaN(formValue.long)
+    );
   }
 
   hasAddressData(): boolean {
     const formValue = this.orderForm.value;
-    return !!(formValue.strasse || formValue.plz || formValue.ort || formValue.land);
+    return !!(
+      formValue.strasse ||
+      formValue.plz ||
+      formValue.ort ||
+      formValue.land
+    );
   }
 
   // Method to handle address field changes and trigger geocoding
@@ -424,13 +474,14 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
 
   async searchAddress() {
     const formValue = this.orderForm.value;
-    const addressString = `${formValue.strasse}, ${formValue.plz} ${formValue.ort}, ${formValue.land}`.trim();
+    const addressString =
+      `${formValue.strasse}, ${formValue.plz} ${formValue.ort}, ${formValue.land}`.trim();
 
     if (!addressString || addressString === ', , Deutschland') {
       this.messageService.add({
         severity: 'warn',
         summary: 'Warnung',
-        detail: 'Bitte geben Sie eine Adresse ein, um sie zu suchen.'
+        detail: 'Bitte geben Sie eine Adresse ein, um sie zu suchen.',
       });
       return;
     }

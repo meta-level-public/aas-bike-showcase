@@ -1,4 +1,4 @@
-import { SecuritySetting } from "./security-setting";
+import { SecuritySetting } from './security-setting';
 
 export interface Supplier {
   id?: number;

@@ -10,7 +10,7 @@ import { Subscription, filter } from 'rxjs';
   selector: 'app-nav-menu',
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.scss'],
-  imports: [CommonModule, FormsModule, MenubarModule]
+  imports: [CommonModule, FormsModule, MenubarModule],
 })
 export class NavMenuComponent implements OnInit, OnDestroy {
   items: MenuItem[] = [];
@@ -36,7 +36,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           if (this.router.url === '/') {
             this.items[0].styleClass = 'activeItem';
           }
-        })
+        }),
     );
 
     this.items = [
@@ -159,7 +159,7 @@ export class NavMenuComponent implements OnInit, OnDestroy {
               console.log(element);
               element?.classList.toggle('my-app-dark');
               console.log('Darkmode umgeschaltet');
-            }
+            },
           },
           {
             label: 'Grundsetup',

@@ -1,5 +1,3 @@
-using AasDemoapp.Database.Model;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +5,11 @@ using System.Linq.Expressions;
 using System.Reflection.Emit;
 using System.Threading;
 using System.Threading.Tasks;
+using AasDemoapp.Database.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace AasDemoapp.Database
 {
-
     public class AasDemoappContext : DbContext
     {
         public DbSet<ImportedShell> ImportedShells { get; set; }
@@ -40,7 +39,8 @@ namespace AasDemoapp.Database
             DbPath = Path.Join(directory, "AasDemoapp.db");
         }
 
-        public AasDemoappContext(DbContextOptions<AasDemoappContext> options) : base(options)
+        public AasDemoappContext(DbContextOptions<AasDemoappContext> options)
+            : base(options)
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
@@ -55,13 +55,14 @@ namespace AasDemoapp.Database
 
         // The following configures EF to create a Sqlite database file in the
         // special "local" folder for your platform.
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite($"Data Source={DbPath}");
+        protected override void OnConfiguring(DbContextOptionsBuilder options) =>
+            options.UseSqlite($"Data Source={DbPath}");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // ConfiguredProduct -> ProducedProducts (1:N)
-            modelBuilder.Entity<ConfiguredProduct>()
+            modelBuilder
+                .Entity<ConfiguredProduct>()
                 .HasMany(e => e.ProducedProducts)
                 .WithOne(e => e.ConfiguredProduct)
                 .HasForeignKey(e => e.ConfiguredProductId)
@@ -69,7 +70,8 @@ namespace AasDemoapp.Database
                 .IsRequired(true);
 
             // ConfiguredProduct -> ProductParts/Bestandteile (1:N)
-            modelBuilder.Entity<ConfiguredProduct>()
+            modelBuilder
+                .Entity<ConfiguredProduct>()
                 .HasMany(e => e.Bestandteile)
                 .WithOne(e => e.ConfiguredProduct)
                 .HasForeignKey(e => e.ConfiguredProductId)
@@ -77,7 +79,8 @@ namespace AasDemoapp.Database
                 .IsRequired(false);
 
             // ProducedProduct -> ProductParts/Bestandteile (1:N)
-            modelBuilder.Entity<ProducedProduct>()
+            modelBuilder
+                .Entity<ProducedProduct>()
                 .HasMany(e => e.Bestandteile)
                 .WithOne(e => e.ProducedProduct)
                 .HasForeignKey(e => e.ProducedProductId)
@@ -85,7 +88,8 @@ namespace AasDemoapp.Database
                 .IsRequired(false);
 
             // ProductPart -> KatalogEintrag (N:1)
-            modelBuilder.Entity<ProductPart>()
+            modelBuilder
+                .Entity<ProductPart>()
                 .HasOne(e => e.KatalogEintrag)
                 .WithMany()
                 .HasForeignKey(e => e.KatalogEintragId)
@@ -93,7 +97,8 @@ namespace AasDemoapp.Database
                 .IsRequired(true);
 
             // KatalogEintrag -> ReferencedType (Self-Reference)
-            modelBuilder.Entity<KatalogEintrag>()
+            modelBuilder
+                .Entity<KatalogEintrag>()
                 .HasOne(e => e.ReferencedType)
                 .WithMany()
                 .HasForeignKey(e => e.ReferencedTypeId)
@@ -101,49 +106,59 @@ namespace AasDemoapp.Database
                 .IsRequired(false);
 
             // KatalogEintrag -> ConfiguredProducts (N:M via ProductParts)
-            modelBuilder.Entity<KatalogEintrag>()
+            modelBuilder
+                .Entity<KatalogEintrag>()
                 .HasMany(e => e.ConfiguredProducts)
                 .WithMany()
                 .UsingEntity<ProductPart>(
-                    j => j.HasOne(pp => pp.ConfiguredProduct)
-                        .WithMany(cp => cp.Bestandteile)
-                        .HasForeignKey(pp => pp.ConfiguredProductId)
-                        .OnDelete(DeleteBehavior.Cascade),
-                    j => j.HasOne(pp => pp.KatalogEintrag)
-                        .WithMany()
-                        .HasForeignKey(pp => pp.KatalogEintragId)
-                        .OnDelete(DeleteBehavior.Restrict)
+                    j =>
+                        j.HasOne(pp => pp.ConfiguredProduct)
+                            .WithMany(cp => cp.Bestandteile)
+                            .HasForeignKey(pp => pp.ConfiguredProductId)
+                            .OnDelete(DeleteBehavior.Cascade),
+                    j =>
+                        j.HasOne(pp => pp.KatalogEintrag)
+                            .WithMany()
+                            .HasForeignKey(pp => pp.KatalogEintragId)
+                            .OnDelete(DeleteBehavior.Restrict)
                 );
 
             // UpdateableShell -> KatalogEintrag (1:1)
-            modelBuilder.Entity<UpdateableShell>()
+            modelBuilder
+                .Entity<UpdateableShell>()
                 .HasOne(e => e.KatalogEintrag)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired(true);
 
             // KatalogEintrag -> Supplier (N:1)
-            modelBuilder.Entity<KatalogEintrag>()
+            modelBuilder
+                .Entity<KatalogEintrag>()
                 .HasOne(e => e.Supplier)
                 .WithMany()
                 .HasForeignKey(e => e.SupplierId)
                 .OnDelete(DeleteBehavior.Restrict) // Verhindert Löschen von Supplier wenn KatalogEintrag existiert
                 .IsRequired(false);
 
-            modelBuilder.Entity<Supplier>()
+            modelBuilder
+                .Entity<Supplier>()
                 .Property(e => e.SecuritySetting)
                 .HasConversion(
                     v => DBJsonConverter.Serialize(v),
-                    v => DBJsonConverter.Deserialize<SecuritySetting>(v));
+                    v => DBJsonConverter.Deserialize<SecuritySetting>(v)
+                );
 
-            modelBuilder.Entity<ToolRepo>()
+            modelBuilder
+                .Entity<ToolRepo>()
                 .Property(e => e.SecuritySetting)
                 .HasConversion(
                     v => DBJsonConverter.Serialize(v),
-                    v => DBJsonConverter.Deserialize<SecuritySetting>(v));
+                    v => DBJsonConverter.Deserialize<SecuritySetting>(v)
+                );
 
             // ProductionOrder -> ConfiguredProduct (N:1)
-            modelBuilder.Entity<ProductionOrder>()
+            modelBuilder
+                .Entity<ProductionOrder>()
                 .HasOne(e => e.ConfiguredProduct)
                 .WithMany()
                 .HasForeignKey(e => e.ConfiguredProductId)
@@ -151,7 +166,8 @@ namespace AasDemoapp.Database
                 .IsRequired(true);
 
             // ProductionOrder -> Address (N:1)
-            modelBuilder.Entity<ProductionOrder>()
+            modelBuilder
+                .Entity<ProductionOrder>()
                 .HasOne(e => e.Address)
                 .WithMany()
                 .HasForeignKey(e => e.AddressId)
@@ -166,13 +182,13 @@ namespace AasDemoapp.Database
                     var parameter = Expression.Parameter(entityType.ClrType, "e");
                     var body = Expression.Equal(
                         Expression.Property(parameter, nameof(ISoftDelete.IsDeleted)),
-                        Expression.Constant(false));
+                        Expression.Constant(false)
+                    );
                     var lambda = Expression.Lambda(body, parameter);
 
                     modelBuilder.Entity(entityType.ClrType).HasQueryFilter(lambda);
                 }
             }
-
         }
 
         public override int SaveChanges()
@@ -181,7 +197,9 @@ namespace AasDemoapp.Database
             return base.SaveChanges();
         }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(
+            CancellationToken cancellationToken = default
+        )
         {
             HandleSoftDelete();
             return await base.SaveChangesAsync(cancellationToken);
@@ -189,7 +207,8 @@ namespace AasDemoapp.Database
 
         private void HandleSoftDelete()
         {
-            var deletedEntries = ChangeTracker.Entries()
+            var deletedEntries = ChangeTracker
+                .Entries()
                 .Where(e => e.State == EntityState.Deleted)
                 .ToList();
 
@@ -210,7 +229,8 @@ namespace AasDemoapp.Database
         /// </summary>
         /// <typeparam name="T">Der Entitätstyp</typeparam>
         /// <returns>IQueryable mit allen Entitäten (auch gelöschte)</returns>
-        public IQueryable<T> SetIgnoreQueryFilters<T>() where T : class
+        public IQueryable<T> SetIgnoreQueryFilters<T>()
+            where T : class
         {
             return Set<T>().IgnoreQueryFilters();
         }
@@ -220,7 +240,8 @@ namespace AasDemoapp.Database
         /// </summary>
         /// <typeparam name="T">Der Entitätstyp</typeparam>
         /// <param name="entity">Die zu löschende Entität</param>
-        public void HardDelete<T>(T entity) where T : class
+        public void HardDelete<T>(T entity)
+            where T : class
         {
             if (entity is ISoftDelete softDeleteEntity)
             {

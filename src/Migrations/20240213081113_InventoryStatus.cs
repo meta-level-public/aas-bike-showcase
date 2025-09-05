@@ -15,15 +15,14 @@ namespace AasDemoapp.Migrations
                 table: "KatalogEintraege",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "InventoryStatus",
-                table: "KatalogEintraege");
+            migrationBuilder.DropColumn(name: "InventoryStatus", table: "KatalogEintraege");
         }
     }
 }

@@ -15,9 +15,17 @@ export class NotificationService {
     severity: 'success' | 'info' | 'warn' | 'error' = 'info',
     permanent: boolean = true,
     life: number = 5000,
-    additionalInfo: string | null = null
+    additionalInfo: string | null = null,
   ) {
-    this.showMessage(message, title, severity, permanent, life, additionalInfo, true);
+    this.showMessage(
+      message,
+      title,
+      severity,
+      permanent,
+      life,
+      additionalInfo,
+      true,
+    );
   }
 
   showMessage(
@@ -27,10 +35,14 @@ export class NotificationService {
     permanent: boolean = true,
     life: number = 5000,
     additionalInfo: string | null = null,
-    force: boolean = false
+    force: boolean = false,
   ): void {
     let resultMessage = '';
-    if (additionalInfo != null && additionalInfo !== '' && additionalInfo !== 'None') {
+    if (
+      additionalInfo != null &&
+      additionalInfo !== '' &&
+      additionalInfo !== 'None'
+    ) {
       resultMessage += '\nInfo: ' + additionalInfo + '\n';
     }
     if (Array.isArray(message)) {
@@ -59,7 +71,9 @@ export class NotificationService {
   }
 
   removeMessage(message: string, title: string) {
-    this.messages = this.messages.filter((m) => m.message !== message && m.title === title);
+    this.messages = this.messages.filter(
+      (m) => m.message !== message && m.title === title,
+    );
   }
   removeMessages() {
     this.messages = [];
@@ -67,7 +81,10 @@ export class NotificationService {
 
   private addMessage(message: string, title: string, force = false) {
     const errorMessage: ErrorMessage = { message, title };
-    if (!this.messages.some((m) => m.message === message && m.title === title) || force) {
+    if (
+      !this.messages.some((m) => m.message === message && m.title === title) ||
+      force
+    ) {
       this.messages.push(errorMessage);
       return true;
     }

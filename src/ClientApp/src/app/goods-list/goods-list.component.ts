@@ -11,7 +11,13 @@ import { GoodsListService } from './goods-list.service';
   selector: 'app-goods-list',
   templateUrl: './goods-list.component.html',
   styleUrl: './goods-list.component.css',
-  imports: [CommonModule, FormsModule, DataViewModule, SelectModule, GoodsItemComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DataViewModule,
+    SelectModule,
+    GoodsItemComponent,
+  ],
 })
 export class GoodsListComponent implements OnInit {
   items: KatalogEintrag[] = [];
@@ -41,7 +47,7 @@ export class GoodsListComponent implements OnInit {
       this.currentGroupItems = this.items;
     } else {
       this.currentGroupItems = this.items.filter(
-        (item) => item.kategorie === this.selectedCategory
+        (item) => item.kategorie === this.selectedCategory,
       );
     }
   }

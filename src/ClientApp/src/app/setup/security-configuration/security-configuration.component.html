@@ -1,21 +1,29 @@
-<p-fieldset [legend]="legend()" class="w-12" [collapsed]="true" [toggleable]="true">
-    <div class="flex flex-column gap-2">
+<p-fieldset
+  [legend]="legend()"
+  class="w-12"
+  [collapsed]="true"
+  [toggleable]="true"
+>
+  <div class="flex flex-column gap-2">
     <div class="flex flex-row align-items-end">
       <p-button
-      label="Header-Parameter hinzufügen"
-      class="w-full"
-      (click)="addHeaderRow()"
-      icon="pi pi-plus"
+        label="Header-Parameter hinzufügen"
+        class="w-full"
+        (click)="addHeaderRow()"
+        icon="pi pi-plus"
       ></p-button>
     </div>
     <p-message
-    >Wenn Ihre Infrastruktur eine Authentifizierung erfordert, können Sie hier
-    Header Parameter angeben, die für den Zugriff notwendig sind</p-message
+      >Wenn Ihre Infrastruktur eine Authentifizierung erfordert, können Sie hier
+      Header Parameter angeben, die für den Zugriff notwendig sind</p-message
     >
-    </div>
+  </div>
 
-    @for (headerParam of localHeaderParameters(); track $index; let indx =
-    $index) {
+  @for (
+    headerParam of localHeaderParameters();
+    track $index;
+    let indx = $index
+  ) {
     <div class="flex flex-row gap-2 align-items-end">
       <div class="field w-5">
         <label for="headerName{{ indx }}"> Name </label>
@@ -53,7 +61,8 @@
         ></p-button>
       </div>
     </div>
-    } @if (showCertificate()) {
+  }
+  @if (showCertificate()) {
     <div class="flex flex-column mt-5">
       <p-message severity="info"
         >Wenn Ihre Infrastruktur eine Zertifikatsdatei erfordert, können Sie
@@ -73,9 +82,9 @@
         >
           <ng-template pTemplate="content" let-files>
             @if (localCertificate() != null && localCertificate().length > 0) {
-            <em> Zertifikat wurde angegeben. </em>
+              <em> Zertifikat wurde angegeben. </em>
             } @else {
-            <em> Wählen Sie eine Datei aus oder ziehen Sie sie hierher </em>
+              <em> Wählen Sie eine Datei aus oder ziehen Sie sie hierher </em>
             }
           </ng-template>
         </p-fileUpload>
@@ -95,5 +104,5 @@
         />
       </div>
     </div>
-    }
+  }
 </p-fieldset>

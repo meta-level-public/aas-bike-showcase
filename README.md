@@ -134,9 +134,9 @@ Parameter:
 
 - `-Configuration`: `Debug` oder `Release` (Default: `Release`)
 - `-Target`: `build` | `publish` | `final` (Default: `final`)
-	- `build`: kompiliert (Zwischen-Stage)
-	- `publish`: veröffentlicht Dateien (Publish-Stage)
-	- `final`: erstellt das lauffähige Runtime-Image (Default)
+  - `build`: kompiliert (Zwischen-Stage)
+  - `publish`: veröffentlicht Dateien (Publish-Stage)
+  - `final`: erstellt das lauffähige Runtime-Image (Default)
 - `-Tag`: Docker Image Tag (Default: `aas-bike-showcase:local`)
 
 ### Option B: Direkt per Docker

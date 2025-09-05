@@ -8,13 +8,19 @@ namespace AasDemoapp.AasHandling
 {
     public class PropertyValueChanger
     {
-        public static void SetPropertyValueByPath(string propertyPath, string value, Submodel submodel)
+        public static void SetPropertyValueByPath(
+            string propertyPath,
+            string value,
+            Submodel submodel
+        )
         {
             // Hier die Logik implementieren, um den Wert des angegebenen Properties im Submodel zu setzen
             var property = GetSubmodelElementByPath(propertyPath, submodel);
             if (property == null)
             {
-                Console.WriteLine($"Property with path '{propertyPath}' not found in the submodel.");
+                Console.WriteLine(
+                    $"Property with path '{propertyPath}' not found in the submodel."
+                );
             }
 
             if (property is Property prop)
@@ -36,7 +42,10 @@ namespace AasDemoapp.AasHandling
             }
         }
 
-        private static ISubmodelElement? GetSubmodelElementByPath(string propertyPath, Submodel submodel)
+        private static ISubmodelElement? GetSubmodelElementByPath(
+            string propertyPath,
+            Submodel submodel
+        )
         {
             if (string.IsNullOrEmpty(propertyPath))
                 return null;
@@ -45,7 +54,11 @@ namespace AasDemoapp.AasHandling
             return FindElementRecursive(pathSegments, 0, submodel.SubmodelElements);
         }
 
-        private static ISubmodelElement? FindElementRecursive(string[] pathSegments, int currentIndex, List<ISubmodelElement>? elements)
+        private static ISubmodelElement? FindElementRecursive(
+            string[] pathSegments,
+            int currentIndex,
+            List<ISubmodelElement>? elements
+        )
         {
             if (currentIndex >= pathSegments.Length || elements == null)
                 return null;
@@ -56,10 +69,14 @@ namespace AasDemoapp.AasHandling
             if (currentSegment.StartsWith("[") && currentSegment.EndsWith("]"))
             {
                 var indexString = currentSegment.Substring(1, currentSegment.Length - 2);
-                if (int.TryParse(indexString, out int index) && index >= 0 && index < elements.Count)
+                if (
+                    int.TryParse(indexString, out int index)
+                    && index >= 0
+                    && index < elements.Count
+                )
                 {
                     var element = elements[index];
-                    
+
                     // Wenn wir am Ende des Pfades sind, geben wir das Element zurück
                     if (currentIndex == pathSegments.Length - 1)
                         return element;
@@ -76,7 +93,7 @@ namespace AasDemoapp.AasHandling
 
             // Normale Suche nach Element mit passender idShort
             var foundElement = elements.FirstOrDefault(e => e.IdShort == currentSegment);
-            
+
             if (foundElement == null)
                 return null;
 
@@ -103,7 +120,7 @@ namespace AasDemoapp.AasHandling
                 SubmodelElementList list => list.Value,
                 Entity entity => entity.Statements,
                 // Weitere Container-Typen können hier hinzugefügt werden
-                _ => null
+                _ => null,
             };
         }
     }

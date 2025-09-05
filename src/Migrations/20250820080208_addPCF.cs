@@ -15,15 +15,14 @@ namespace AasDemoapp.Migrations
                 table: "ProducedProducts",
                 type: "REAL",
                 nullable: false,
-                defaultValue: 0.0);
+                defaultValue: 0.0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "PCFValue",
-                table: "ProducedProducts");
+            migrationBuilder.DropColumn(name: "PCFValue", table: "ProducedProducts");
         }
     }
 }

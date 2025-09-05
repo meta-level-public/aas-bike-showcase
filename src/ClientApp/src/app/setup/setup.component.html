@@ -5,31 +5,36 @@
       <app-erp-configuration
         [selectedErp]="selectedErp()"
         (erpSelected)="onErpSelected($event)"
-        (settingsSaved)="onErpSettingsSaved()">
+        (settingsSaved)="onErpSettingsSaved()"
+      >
       </app-erp-configuration>
 
       <!-- AAS Infrastructure Bereich -->
       <app-aas-infrastructure
         [settings]="settings()"
-        (settingsUpdated)="onAasSettingsUpdated()">
+        (settingsUpdated)="onAasSettingsUpdated()"
+      >
       </app-aas-infrastructure>
 
       <!-- Werkzeuge-Repository Bereich -->
       <app-tools-repository
         [settings]="settings()"
-        (settingsUpdated)="onToolsRepositoryUpdated()">
+        (settingsUpdated)="onToolsRepositoryUpdated()"
+      >
       </app-tools-repository>
 
       <!-- Lieferanten Bereich -->
       <app-supplier-management
         [suppliers]="suppliers()"
-        (suppliersUpdated)="onSuppliersUpdated()">
+        (suppliersUpdated)="onSuppliersUpdated()"
+      >
       </app-supplier-management>
 
       <!-- Firmenadresse Bereich -->
       <app-company-address
         [settings]="settings()"
-        (settingsUpdated)="onCompanyAddressUpdated()">
+        (settingsUpdated)="onCompanyAddressUpdated()"
+      >
       </app-company-address>
     </p-accordion>
   </div>

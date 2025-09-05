@@ -22,7 +22,7 @@ import { ToolsRepositoryComponent } from './tools-repository/tools-repository.co
     AccordionModule,
     ErpConfigurationComponent,
     AasInfrastructureComponent,
-  ToolsRepositoryComponent,
+    ToolsRepositoryComponent,
     SupplierManagementComponent,
     CompanyAddressComponent,
   ],
@@ -40,7 +40,7 @@ export class SetupComponent implements OnInit {
   constructor(
     private setupService: SetupService,
     private cdRef: ChangeDetectorRef,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
   ) {}
 
   async ngOnInit() {

@@ -19,7 +19,12 @@ namespace AasDemoapp.Konfigurator
         private readonly SettingService _settingsService;
         private readonly ILogger<KonfiguratorService> _logger;
 
-        public KonfiguratorService(AasDemoappContext aasDemoappContext, ImportService importService, SettingService settingsService, ILogger<KonfiguratorService> logger)
+        public KonfiguratorService(
+            AasDemoappContext aasDemoappContext,
+            ImportService importService,
+            SettingService settingsService,
+            ILogger<KonfiguratorService> logger
+        )
         {
             _context = aasDemoappContext;
             _importService = importService;
@@ -29,22 +34,32 @@ namespace AasDemoapp.Konfigurator
 
         public List<ConfiguredProduct> GetAll()
         {
-            return _context.ConfiguredProducts.Include(p => p.Bestandteile).ThenInclude(x => x.KatalogEintrag).ToList();
+            return _context
+                .ConfiguredProducts.Include(p => p.Bestandteile)
+                .ThenInclude(x => x.KatalogEintrag)
+                .ToList();
         }
 
         public ConfiguredProduct CreateProduct(ConfiguredProduct configuredProduct)
         {
-            _context.KatalogEintraege.AttachRange(configuredProduct.Bestandteile.Select(b => b.KatalogEintrag).ToList());
+            _context.KatalogEintraege.AttachRange(
+                configuredProduct.Bestandteile.Select(b => b.KatalogEintrag).ToList()
+            );
             _context.ConfiguredProducts.Add(configuredProduct);
 
             _context.SaveChanges();
             return configuredProduct;
         }
 
-        public async Task<ConfiguredProduct> CreateProductFromDto(CreateConfiguredProductDto createDto)
+        public async Task<ConfiguredProduct> CreateProductFromDto(
+            CreateConfiguredProductDto createDto
+        )
         {
             var aasId = IdGenerationUtil.GenerateId(IdType.Aas, "https://oi4-nextbike.de");
-            var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, "https://oi4-nextbike.de");
+            var globalAssetId = IdGenerationUtil.GenerateId(
+                IdType.Asset,
+                "https://oi4-nextbike.de"
+            );
 
             var configuredProduct = new ConfiguredProduct
             {
@@ -52,7 +67,7 @@ namespace AasDemoapp.Konfigurator
                 Price = createDto.Price,
                 AasId = aasId,
                 GlobalAssetId = globalAssetId,
-                Bestandteile = new List<ProductPart>()
+                Bestandteile = new List<ProductPart>(),
             };
 
             // Bestandteile hinzufügen
@@ -60,10 +75,14 @@ namespace AasDemoapp.Konfigurator
             {
                 foreach (var partDto in createDto.Bestandteile)
                 {
-                    var katalogEintrag = _context.KatalogEintraege.FirstOrDefault(k => k.Id == partDto.KatalogEintragId);
+                    var katalogEintrag = _context.KatalogEintraege.FirstOrDefault(k =>
+                        k.Id == partDto.KatalogEintragId
+                    );
                     if (katalogEintrag == null)
                     {
-                        throw new InvalidOperationException($"KatalogEintrag with ID {partDto.KatalogEintragId} not found");
+                        throw new InvalidOperationException(
+                            $"KatalogEintrag with ID {partDto.KatalogEintragId} not found"
+                        );
                     }
 
                     var productPart = new ProductPart
@@ -73,7 +92,7 @@ namespace AasDemoapp.Konfigurator
                         Name = partDto.Name,
                         Price = partDto.Price,
                         Amount = partDto.Amount,
-                        UsageDate = partDto.UsageDate
+                        UsageDate = partDto.UsageDate,
                     };
                     configuredProduct.Bestandteile.Add(productPart);
                 }
@@ -82,17 +101,20 @@ namespace AasDemoapp.Konfigurator
             _context.ConfiguredProducts.Add(configuredProduct);
             _context.SaveChanges();
             // Reload with includes for complete data
-            var product = await _context.ConfiguredProducts
-                .AsNoTracking()
+            var product = await _context
+                .ConfiguredProducts.AsNoTracking()
                 .Include(p => p.Bestandteile)
                 .ThenInclude(x => x.KatalogEintrag)
                 .FirstAsync(p => p.Id == configuredProduct.Id);
 
             try
             {
-
                 // Create TypeAAS for Bike
-                await InstanceAasCreator.CreateBikeTypeAas(product, _importService, _settingsService);
+                await InstanceAasCreator.CreateBikeTypeAas(
+                    product,
+                    _importService,
+                    _settingsService
+                );
             }
             catch (Exception ex)
             {

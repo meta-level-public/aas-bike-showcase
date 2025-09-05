@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, effect, input, output, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+  effect,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import * as L from 'leaflet';
 
 export interface MapLocation {
@@ -13,10 +23,11 @@ export interface MapLocation {
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
   styleUrl: './leaflet-map.component.css',
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 export class LeafletMapComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('mapContainer', { static: true })
+  mapContainer!: ElementRef<HTMLDivElement>;
 
   // Input signals
   location = input<MapLocation>();
@@ -46,15 +57,21 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       const addr = this.address();
 
       // Check if location has actually changed
-      if (loc && loc.lat !== null && loc.lat !== undefined &&
-          loc.lng !== null && loc.lng !== undefined &&
-          !isNaN(loc.lat) && !isNaN(loc.lng)) {
-
+      if (
+        loc &&
+        loc.lat !== null &&
+        loc.lat !== undefined &&
+        loc.lng !== null &&
+        loc.lng !== undefined &&
+        !isNaN(loc.lat) &&
+        !isNaN(loc.lng)
+      ) {
         // Only update if coordinates have actually changed
-        if (!this.lastLocation ||
-            this.lastLocation.lat !== loc.lat ||
-            this.lastLocation.lng !== loc.lng) {
-
+        if (
+          !this.lastLocation ||
+          this.lastLocation.lat !== loc.lat ||
+          this.lastLocation.lng !== loc.lng
+        ) {
           this.lastLocation = { lat: loc.lat, lng: loc.lng };
           this.lastAddress = null; // Clear last address since we have coordinates
           this.updateMapWithCoordinates(loc);
@@ -104,22 +121,19 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
     // Initialize map with default view
     const defaultLocation: MapLocation = {
       lat: 52.520008,
-      lng: 13.404954
+      lng: 13.404954,
     };
 
     this.map = L.map(this.mapContainer.nativeElement, {
       preferCanvas: true,
-      zoomControl: true
-    }).setView(
-      [defaultLocation.lat, defaultLocation.lng],
-      this.zoom()
-    );
+      zoomControl: true,
+    }).setView([defaultLocation.lat, defaultLocation.lng], this.zoom());
 
     // Add tile layer with better options
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '© OpenStreetMap contributors',
-      crossOrigin: true
+      crossOrigin: true,
     }).addTo(this.map);
 
     // Force map to invalidate size multiple times to ensure proper rendering
@@ -196,7 +210,7 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
           this.handleMapClick(e.latlng.lat, e.latlng.lng);
         }, 50);
       };
-      
+
       // Add the handler to the map
       this.map.on('click', this.clickHandler);
       console.log('Click handler registered on map'); // Debug-Log
@@ -204,13 +218,22 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       // Change cursor to indicate clickable map - try multiple approaches
       if (this.mapContainer?.nativeElement) {
         this.mapContainer.nativeElement.style.cursor = 'crosshair !important';
-        this.mapContainer.nativeElement.style.setProperty('cursor', 'crosshair', 'important');
-        
+        this.mapContainer.nativeElement.style.setProperty(
+          'cursor',
+          'crosshair',
+          'important',
+        );
+
         // Also try to set cursor on the map div itself
-        const mapDiv = this.mapContainer.nativeElement.querySelector('.leaflet-container');
+        const mapDiv =
+          this.mapContainer.nativeElement.querySelector('.leaflet-container');
         if (mapDiv) {
           (mapDiv as HTMLElement).style.cursor = 'crosshair !important';
-          (mapDiv as HTMLElement).style.setProperty('cursor', 'crosshair', 'important');
+          (mapDiv as HTMLElement).style.setProperty(
+            'cursor',
+            'crosshair',
+            'important',
+          );
         }
       }
     } else {
@@ -218,8 +241,9 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       if (this.mapContainer?.nativeElement) {
         this.mapContainer.nativeElement.style.cursor = '';
         this.mapContainer.nativeElement.style.removeProperty('cursor');
-        
-        const mapDiv = this.mapContainer.nativeElement.querySelector('.leaflet-container');
+
+        const mapDiv =
+          this.mapContainer.nativeElement.querySelector('.leaflet-container');
         if (mapDiv) {
           (mapDiv as HTMLElement).style.cursor = '';
           (mapDiv as HTMLElement).style.removeProperty('cursor');
@@ -237,9 +261,14 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    if (location.lat === null || location.lat === undefined ||
-        location.lng === null || location.lng === undefined ||
-        isNaN(location.lat) || isNaN(location.lng)) {
+    if (
+      location.lat === null ||
+      location.lat === undefined ||
+      location.lng === null ||
+      location.lng === undefined ||
+      isNaN(location.lat) ||
+      isNaN(location.lng)
+    ) {
       return;
     }
 
@@ -253,21 +282,26 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
 
     // Create custom marker icon (fix for default marker icon issue)
     const customIcon = L.icon({
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      iconUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+      iconRetinaUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+      shadowUrl:
+        'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
       iconSize: [25, 41],
       iconAnchor: [12, 41],
       popupAnchor: [1, -34],
-      shadowSize: [41, 41]
+      shadowSize: [41, 41],
     });
 
     // Add new marker
-    this.marker = L.marker([location.lat, location.lng], { icon: customIcon })
-      .addTo(this.map);
+    this.marker = L.marker([location.lat, location.lng], {
+      icon: customIcon,
+    }).addTo(this.map);
 
     // Add popup if address or title is provided
-    const popupContent = location.title || location.address || `${location.lat}, ${location.lng}`;
+    const popupContent =
+      location.title || location.address || `${location.lat}, ${location.lng}`;
     this.marker.bindPopup(popupContent);
 
     // Center map on location
@@ -287,7 +321,9 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
     try {
       // Use Nominatim for geocoding (OpenStreetMap's geocoding service)
       const encodedAddress = encodeURIComponent(address);
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`);
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`,
+      );
 
       if (!response.ok) {
         throw new Error('Geocoding request failed');
@@ -301,7 +337,7 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
           lat: parseFloat(result.lat),
           lng: parseFloat(result.lon),
           address: address,
-          title: result.display_name
+          title: result.display_name,
         };
 
         this.updateMapWithCoordinates(location);
@@ -358,7 +394,7 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
     const tempLocation: MapLocation = {
       lat: Number(lat),
       lng: Number(lng),
-      title: 'Ausgewählte Position'
+      title: 'Ausgewählte Position',
     };
 
     this.updateMapWithCoordinates(tempLocation);
@@ -372,7 +408,7 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
         lat: Number(lat),
         lng: Number(lng),
         address,
-        title: address || 'Ausgewählte Position'
+        title: address || 'Ausgewählte Position',
       };
 
       // Update marker with address info
@@ -380,7 +416,6 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
 
       // Emit the event
       this.locationClicked.emit(locationWithAddress);
-
     } catch (error) {
       console.error('Reverse geocoding error:', error);
       // Still emit the location even if reverse geocoding fails
@@ -391,9 +426,14 @@ export class LeafletMapComponent implements AfterViewInit, OnDestroy {
   }
 
   // Reverse geocoding function
-  private async reverseGeocode(lat: number, lng: number): Promise<string | undefined> {
+  private async reverseGeocode(
+    lat: number,
+    lng: number,
+  ): Promise<string | undefined> {
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+      );
 
       if (!response.ok) {
         throw new Error('Reverse geocoding request failed');

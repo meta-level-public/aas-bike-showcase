@@ -1,0 +1,5 @@
+http:
+  middlewares:
+    auth-demoapp:
+      basicAuth:
+        usersFile: "/etc/traefik/traefik-auth/.htpasswd"

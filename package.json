@@ -1,5 +1,19 @@
 {
-  "dependencies": {
-    "@primeuix/themes": "^1.2.3"
+  "name": "backend-formatting",
+  "private": true,
+  "scripts": {
+    "postinstall": "dotnet tool install -g csharpier",
+    "prepare": "husky",
+    "format": "prettier --write . && dotnet tool restore && dotnet csharpier format .",
+    "format:check": "prettier --check . && dotnet tool restore && dotnet csharpier check ."
+  },
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.9",
+    "prettier": "^3.3.3"
+  },
+  "lint-staged": {
+    "*.{json,md,yml,yaml}": "prettier --write",
+    "*.cs": "dotnet csharpier format"
   }
 }

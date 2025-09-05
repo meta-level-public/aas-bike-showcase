@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, OnChanges, OnDestroy, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { MessageService } from 'primeng/api';
@@ -8,8 +16,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { Address } from '../../model/address';
-import { LeafletMapComponent, MapLocation } from '../../shared/components/leaflet-map/leaflet-map.component';
-import { formatAddressString, hasValidCoordinates } from '../../shared/utils/address.utils';
+import {
+  LeafletMapComponent,
+  MapLocation,
+} from '../../shared/components/leaflet-map/leaflet-map.component';
+import {
+  formatAddressString,
+  hasValidCoordinates,
+} from '../../shared/utils/address.utils';
 import { Setting } from '../setting';
 import { SetupService } from '../setup.service';
 
@@ -27,7 +41,7 @@ import { SetupService } from '../setup.service';
     ToggleButtonModule,
     LeafletMapComponent,
   ],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
   // Input signals
@@ -45,7 +59,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
     ort: '',
     land: '',
     lat: undefined,
-    long: undefined
+    long: undefined,
   });
 
   // Loading state for geocoding
@@ -59,7 +73,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private setupService: SetupService,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) {}
 
   ngOnInit() {
@@ -80,7 +94,9 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
 
   loadCompanyAddress() {
     const currentSettings = this.settings();
-    const addressSetting = currentSettings.find(s => s.name === 'CompanyAddress');
+    const addressSetting = currentSettings.find(
+      (s) => s.name === 'CompanyAddress',
+    );
 
     if (addressSetting?.value) {
       try {
@@ -104,7 +120,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
       ort: '',
       land: '',
       lat: undefined,
-      long: undefined
+      long: undefined,
     });
   }
 
@@ -115,7 +131,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
 
       const setting: Setting = {
         name: 'CompanyAddress',
-        value: addressJson
+        value: addressJson,
       };
 
       await this.setupService.saveSetting(setting);
@@ -123,7 +139,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
       this.messageService.add({
         severity: 'success',
         summary: 'Erfolg',
-        detail: 'Firmenadresse erfolgreich gespeichert'
+        detail: 'Firmenadresse erfolgreich gespeichert',
       });
 
       this.settingsUpdated.emit();
@@ -132,7 +148,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
       this.messageService.add({
         severity: 'error',
         summary: 'Fehler',
-        detail: 'Fehler beim Speichern der Firmenadresse'
+        detail: 'Fehler beim Speichern der Firmenadresse',
       });
     }
   }
@@ -141,7 +157,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
     const currentAddress = this.address();
     const updatedAddress = {
       ...currentAddress,
-      [field]: value
+      [field]: value,
     };
 
     this.address.set(updatedAddress);
@@ -183,7 +199,9 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
 
     try {
       const encodedAddress = encodeURIComponent(addressString);
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`);
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`,
+      );
 
       if (!response.ok) {
         throw new Error('Geocoding request failed');
@@ -201,13 +219,13 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
         this.address.set({
           ...currentAddress,
           lat: lat,
-          long: lng
+          long: lng,
         });
 
         this.messageService.add({
           severity: 'success',
           summary: 'Koordinaten gefunden',
-          detail: `Koordinaten automatisch für "${addressString}" ermittelt`
+          detail: `Koordinaten automatisch für "${addressString}" ermittelt`,
         });
       }
     } catch (error) {
@@ -224,7 +242,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
     this.address.set({
       ...currentAddress,
       lat: undefined,
-      long: undefined
+      long: undefined,
     });
   }
 
@@ -241,7 +259,7 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
         lat: addr.lat!,
         lng: addr.long!,
         address: formatAddressString(addr),
-        title: addr.name || 'Firmenadresse'
+        title: addr.name || 'Firmenadresse',
       };
     }
     return undefined;
@@ -267,15 +285,17 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
     let updatedAddress = {
       ...currentAddress,
       lat: mapLocation.lat,
-      long: mapLocation.lng
+      long: mapLocation.lng,
     };
 
     // Try to parse and set address components from reverse geocoding
     if (mapLocation.address) {
-      const parsedAddress = this.parseAddressFromReverseGeocode(mapLocation.address);
+      const parsedAddress = this.parseAddressFromReverseGeocode(
+        mapLocation.address,
+      );
       updatedAddress = {
         ...updatedAddress,
-        ...parsedAddress
+        ...parsedAddress,
       };
     }
 
@@ -285,20 +305,22 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
     this.messageService.add({
       severity: 'success',
       summary: 'Position ausgewählt',
-      detail: mapLocation.address ?
-        `Adresse und Koordinaten von Karte übernommen` :
-        `Koordinaten von Karte übernommen: ${mapLocation.lat.toFixed(6)}, ${mapLocation.lng.toFixed(6)}`
+      detail: mapLocation.address
+        ? `Adresse und Koordinaten von Karte übernommen`
+        : `Koordinaten von Karte übernommen: ${mapLocation.lat.toFixed(6)}, ${mapLocation.lng.toFixed(6)}`,
     });
   }
 
   // Parse address components from reverse geocoding result
-  private parseAddressFromReverseGeocode(fullAddress: string): Partial<Address> {
+  private parseAddressFromReverseGeocode(
+    fullAddress: string,
+  ): Partial<Address> {
     // Enhanced parser for better address component extraction
     const result: Partial<Address> = {};
 
     try {
       // Split by comma and try to extract components
-      const parts = fullAddress.split(',').map(part => part.trim());
+      const parts = fullAddress.split(',').map((part) => part.trim());
 
       console.log('Parsing address parts:', parts); // Debug log
 
@@ -327,7 +349,11 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
           // Look for street name (text without numbers, longer than 2 chars)
           for (let i = 0; i < Math.min(3, parts.length); i++) {
             const part = parts[i];
-            if (/[a-zA-ZäöüÄÖÜß]/.test(part) && !/\d/.test(part) && part.length > 2) {
+            if (
+              /[a-zA-ZäöüÄÖÜß]/.test(part) &&
+              !/\d/.test(part) &&
+              part.length > 2
+            ) {
               foundStreetPart = part;
               break;
             }
@@ -336,7 +362,8 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
           // Look for house number (mostly numbers, could have letters like "12a")
           for (let i = 0; i < Math.min(3, parts.length); i++) {
             const part = parts[i];
-            if (/^\d+[a-zA-Z]?$/.test(part.trim())) { // Pattern like "123" or "123a"
+            if (/^\d+[a-zA-Z]?$/.test(part.trim())) {
+              // Pattern like "123" or "123a"
               foundNumberPart = part.trim();
               break;
             }
@@ -370,7 +397,11 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
               const currentIndex = parts.indexOf(part);
               if (currentIndex + 1 < parts.length) {
                 const nextPart = parts[currentIndex + 1].trim();
-                if (nextPart && nextPart.length > 1 && !/\d{5}/.test(nextPart)) {
+                if (
+                  nextPart &&
+                  nextPart.length > 1 &&
+                  !/\d{5}/.test(nextPart)
+                ) {
                   result.ort = nextPart;
                 }
               }
@@ -386,10 +417,15 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         // Alternative: look for common country names
-        for (const part of parts.slice(-2)) { // Check last 2 parts
+        for (const part of parts.slice(-2)) {
+          // Check last 2 parts
           const lowerPart = part.toLowerCase();
-          if (lowerPart.includes('deutschland') || lowerPart.includes('germany') ||
-              lowerPart === 'de' || lowerPart === 'deutschland') {
+          if (
+            lowerPart.includes('deutschland') ||
+            lowerPart.includes('germany') ||
+            lowerPart === 'de' ||
+            lowerPart === 'deutschland'
+          ) {
             result.land = part;
             break;
           }
@@ -397,7 +433,6 @@ export class CompanyAddressComponent implements OnInit, OnChanges, OnDestroy {
       }
 
       console.log('Parsed address result:', result); // Debug log
-
     } catch (error) {
       console.error('Error parsing address:', error);
     }

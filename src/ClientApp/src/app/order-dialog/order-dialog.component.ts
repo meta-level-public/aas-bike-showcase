@@ -1,6 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -8,7 +19,10 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { ConfiguredProduct } from '../model/configured-product';
-import { CreateProductionOrder, ProductionOrderResponse } from '../model/production-order';
+import {
+  CreateProductionOrder,
+  ProductionOrderResponse,
+} from '../model/production-order';
 import { ProductionOrderListService } from '../production-order-list/production-order-list.service';
 
 @Component({
@@ -22,9 +36,9 @@ import { ProductionOrderListService } from '../production-order-list/production-
     ButtonModule,
     InputTextModule,
     InputNumberModule,
-    ToastModule
+    ToastModule,
   ],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class OrderDialogComponent implements OnChanges {
   @Input() visible: boolean = false;
@@ -38,7 +52,7 @@ export class OrderDialogComponent implements OnChanges {
   constructor(
     private fb: FormBuilder,
     private productionOrderService: ProductionOrderListService,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) {
     this.orderForm = this.fb.group({
       anzahl: [1, [Validators.required, Validators.min(1)]],
@@ -48,14 +62,14 @@ export class OrderDialogComponent implements OnChanges {
       strasse: [''],
       plz: [''],
       ort: [''],
-      land: ['Deutschland']
+      land: ['Deutschland'],
     });
   }
 
   ngOnChanges() {
     if (this.visible && this.product) {
       this.orderForm.patchValue({
-        anzahl: 1
+        anzahl: 1,
       });
     }
   }
@@ -65,7 +79,7 @@ export class OrderDialogComponent implements OnChanges {
     this.visibleChange.emit(false);
     this.orderForm.reset({
       anzahl: 1,
-      land: 'Deutschland'
+      land: 'Deutschland',
     });
   }
 
@@ -77,20 +91,26 @@ export class OrderDialogComponent implements OnChanges {
         const formValue = this.orderForm.value;
 
         // Nur Adresse hinzufügen wenn mindestens ein Adressfeld ausgefüllt ist
-        const hasAddressInfo = formValue.name || formValue.vorname || formValue.strasse ||
-                              formValue.plz || formValue.ort;
+        const hasAddressInfo =
+          formValue.name ||
+          formValue.vorname ||
+          formValue.strasse ||
+          formValue.plz ||
+          formValue.ort;
 
         const createOrderDto: CreateProductionOrder = {
           configuredProductId: this.product.id,
           anzahl: formValue.anzahl,
-          address: hasAddressInfo ? {
-            name: formValue.name,
-            vorname: formValue.vorname,
-            strasse: formValue.strasse,
-            plz: formValue.plz,
-            ort: formValue.ort,
-            land: formValue.land
-          } : undefined
+          address: hasAddressInfo
+            ? {
+                name: formValue.name,
+                vorname: formValue.vorname,
+                strasse: formValue.strasse,
+                plz: formValue.plz,
+                ort: formValue.ort,
+                land: formValue.land,
+              }
+            : undefined,
         };
 
         const response = await this.createProductionOrder(createOrderDto);
@@ -99,7 +119,7 @@ export class OrderDialogComponent implements OnChanges {
           this.messageService.add({
             severity: 'success',
             summary: 'Erfolgreich',
-            detail: 'Bestellung wurde erfolgreich erstellt!'
+            detail: 'Bestellung wurde erfolgreich erstellt!',
           });
           this.orderCreated.emit();
           this.hideDialog();
@@ -107,7 +127,7 @@ export class OrderDialogComponent implements OnChanges {
           this.messageService.add({
             severity: 'error',
             summary: 'Fehler',
-            detail: response.message || 'Fehler beim Erstellen der Bestellung'
+            detail: response.message || 'Fehler beim Erstellen der Bestellung',
           });
         }
       } catch (error) {
@@ -115,7 +135,7 @@ export class OrderDialogComponent implements OnChanges {
         this.messageService.add({
           severity: 'error',
           summary: 'Fehler',
-          detail: 'Unerwarteter Fehler beim Erstellen der Bestellung'
+          detail: 'Unerwarteter Fehler beim Erstellen der Bestellung',
         });
       } finally {
         this.loading = false;
@@ -123,15 +143,18 @@ export class OrderDialogComponent implements OnChanges {
     }
   }
 
-  private async createProductionOrder(createDto: CreateProductionOrder): Promise<ProductionOrderResponse> {
+  private async createProductionOrder(
+    createDto: CreateProductionOrder,
+  ): Promise<ProductionOrderResponse> {
     try {
-      const response = await this.productionOrderService.createProductionOrder(createDto);
+      const response =
+        await this.productionOrderService.createProductionOrder(createDto);
       return response;
     } catch (error) {
       return {
         success: false,
         message: 'Fehler beim Erstellen der Bestellung',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

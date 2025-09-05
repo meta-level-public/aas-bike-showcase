@@ -12,7 +12,8 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_KatalogEintraege_Suppliers_SupplierId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
             migrationBuilder.AlterColumn<long>(
                 name: "SupplierId",
@@ -22,7 +23,8 @@ namespace AasDemoapp.Migrations
                 defaultValue: 0L,
                 oldClrType: typeof(long),
                 oldType: "INTEGER",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_KatalogEintraege_Suppliers_SupplierId",
@@ -30,7 +32,8 @@ namespace AasDemoapp.Migrations
                 column: "SupplierId",
                 principalTable: "Suppliers",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.Restrict
+            );
         }
 
         /// <inheritdoc />
@@ -38,7 +41,8 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_KatalogEintraege_Suppliers_SupplierId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
             migrationBuilder.AlterColumn<long>(
                 name: "SupplierId",
@@ -46,14 +50,16 @@ namespace AasDemoapp.Migrations
                 type: "INTEGER",
                 nullable: true,
                 oldClrType: typeof(long),
-                oldType: "INTEGER");
+                oldType: "INTEGER"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_KatalogEintraege_Suppliers_SupplierId",
                 table: "KatalogEintraege",
                 column: "SupplierId",
                 principalTable: "Suppliers",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
     }
 }

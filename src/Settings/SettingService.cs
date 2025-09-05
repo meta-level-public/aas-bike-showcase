@@ -47,13 +47,14 @@ namespace AasDemoapp.Settings
         public SecuritySetting GetSecuritySetting(string name)
         {
             var setting = _context.Settings.FirstOrDefault(s => s.Name == name);
-            if (setting == null) return new SecuritySetting();
+            if (setting == null)
+                return new SecuritySetting();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-            var securitySetting = JsonSerializer.Deserialize<SecuritySetting>(setting.Value, options);
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var securitySetting = JsonSerializer.Deserialize<SecuritySetting>(
+                setting.Value,
+                options
+            );
             return securitySetting ?? new SecuritySetting();
         }
     }

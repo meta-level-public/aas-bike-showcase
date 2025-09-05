@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using Xunit;
 using AasCore.Aas3_0;
 using AasDemoapp.AasHandling.SubmodelCreators;
+using Xunit;
 
 namespace AasDemoapp.Tests.AasHandling.SubmodelCreators;
 
@@ -42,7 +42,7 @@ public class HandoverDocumentationCreatorTests
         // Assert
         Assert.NotNull(result.Description);
         Assert.NotEmpty(result.Description);
-        
+
         var englishDescription = result.Description.FirstOrDefault(d => d.Language == "en");
         Assert.NotNull(englishDescription);
         Assert.Contains("handover of documentation", englishDescription.Text);
@@ -99,7 +99,9 @@ public class HandoverDocumentationCreatorTests
         var result = HandoverDocumentationCreator.CreateFromJson();
 
         // Assert
-        var numberOfDocuments = result.SubmodelElements?.FirstOrDefault(e => e.IdShort == "numberOfDocuments");
+        var numberOfDocuments = result.SubmodelElements?.FirstOrDefault(e =>
+            e.IdShort == "numberOfDocuments"
+        );
         Assert.NotNull(numberOfDocuments);
         Assert.Equal("PARAMETER", numberOfDocuments.Category);
     }
@@ -109,13 +111,13 @@ public class HandoverDocumentationCreatorTests
     {
         // Arrange
         var validJson = """
-        {
-            "idShort": "TestSubmodel",
-            "id": "https://example.com/test",
-            "kind": "Instance",
-            "submodelElements": []
-        }
-        """;
+            {
+                "idShort": "TestSubmodel",
+                "id": "https://example.com/test",
+                "kind": "Instance",
+                "submodelElements": []
+            }
+            """;
 
         // Act
         var result = HandoverDocumentationCreator.ConvertJsonToSubmodel(validJson);
@@ -133,8 +135,9 @@ public class HandoverDocumentationCreatorTests
         var invalidJson = "invalid json";
 
         // Act & Assert
-        Assert.ThrowsAny<Exception>(() => 
-            HandoverDocumentationCreator.ConvertJsonToSubmodel(invalidJson));
+        Assert.ThrowsAny<Exception>(() =>
+            HandoverDocumentationCreator.ConvertJsonToSubmodel(invalidJson)
+        );
     }
 
     [Fact]
@@ -144,15 +147,21 @@ public class HandoverDocumentationCreatorTests
         string? nullJson = null;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => 
-            HandoverDocumentationCreator.ConvertJsonToSubmodel(nullJson!));
+        Assert.Throws<ArgumentNullException>(() =>
+            HandoverDocumentationCreator.ConvertJsonToSubmodel(nullJson!)
+        );
     }
 
     [Fact]
     public void CreateFromJson_WhenFileNotExists_ShouldThrowException()
     {
         // Arrange - Datei temporär verschieben
-        var originalPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AasHandling", "SubmodelCreators", "handoverdoc.json");
+        var originalPath = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "AasHandling",
+            "SubmodelCreators",
+            "handoverdoc.json"
+        );
         var tempPath = originalPath + ".temp";
 
         try
@@ -163,7 +172,9 @@ public class HandoverDocumentationCreatorTests
             }
 
             // Act & Assert
-            Assert.Throws<FileNotFoundException>(() => HandoverDocumentationCreator.CreateFromJson());
+            Assert.Throws<FileNotFoundException>(() =>
+                HandoverDocumentationCreator.CreateFromJson()
+            );
         }
         finally
         {

@@ -13,14 +13,14 @@ import { ProducedProductRequest } from '../model/produced-product-request';
 export class AssemblyService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string
+    @Inject('BASE_URL') private baseUrl: string,
   ) {}
 
   async getAllFertigteil() {
     return lastValueFrom(
       this.http.get<ConfiguredProduct[]>(
-        `${this.baseUrl}api/Konfigurator/getAll`
-      )
+        `${this.baseUrl}api/Konfigurator/getAll`,
+      ),
     );
   }
   async getRohteilInstanz(globalAssetId: string) {
@@ -28,8 +28,8 @@ export class AssemblyService {
     return lastValueFrom(
       this.http.get<KatalogEintrag>(
         `${this.baseUrl}api/Katalog/GetRohteilInstanz`,
-        { params }
-      )
+        { params },
+      ),
     );
   }
 
@@ -37,8 +37,8 @@ export class AssemblyService {
     return lastValueFrom(
       this.http.post<ProducedProduct>(
         `${this.baseUrl}api/production/createProduct`,
-        newProduct
-      )
+        newProduct,
+      ),
     );
   }
 
@@ -47,7 +47,7 @@ export class AssemblyService {
     return lastValueFrom(
       this.http.get<boolean>(`${this.baseUrl}api/production/isToolRequired`, {
         params,
-      })
+      }),
     );
   }
 
@@ -58,8 +58,8 @@ export class AssemblyService {
       const smString = await lastValueFrom(
         this.http.get<string>(
           `${this.baseUrl}api/production/getassemblypropertiessubmodel`,
-          { params, responseType: 'text' as 'json' }
-        )
+          { params, responseType: 'text' as 'json' },
+        ),
       );
 
       if (!smString) return null;
@@ -78,15 +78,15 @@ export class AssemblyService {
   async initializeTool(
     aasId: string,
     propertyIdShortPath: string,
-    propertyValue: string
+    propertyValue: string,
   ) {
     const toolData = { aasId, propertyIdShortPath, propertyValue };
 
     return lastValueFrom(
       this.http.post<boolean>(
         `${this.baseUrl}api/production/initializeTool`,
-        toolData
-      )
+        toolData,
+      ),
     );
   }
 
@@ -95,8 +95,8 @@ export class AssemblyService {
     const smString = await lastValueFrom(
       this.http.get<string>(`${this.baseUrl}api/production/getToolData`, {
         params,
-        responseType: 'text' as 'json'
-      })
+        responseType: 'text' as 'json',
+      }),
     );
 
     if (!smString) return null;

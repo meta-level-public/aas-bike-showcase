@@ -10,16 +10,16 @@ import { AssetAdministrationShell } from '@aas-core-works/aas-core3.0-typescript
 export class RepositoryService {
   constructor(
     private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string
+    @Inject('BASE_URL') private baseUrl: string,
   ) {}
 
   async loadShells(registryUrl: string) {
     const params = new HttpParams().set(
       'registryUrl',
-      encodeURIComponent(`${registryUrl}`)
+      encodeURIComponent(`${registryUrl}`),
     );
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/proxy/shells`, { params })
+      this.http.get<any>(`${this.baseUrl}api/proxy/shells`, { params }),
     );
 
     if (result.result != null) {
@@ -56,7 +56,7 @@ export class RepositoryService {
       .set('registryUrl', encodeURIComponent(`${registryUrl}`))
       .set('aasId', encodeURIComponent(`${aasId}`));
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/proxy/shell`, { params })
+      this.http.get<any>(`${this.baseUrl}api/proxy/shell`, { params }),
     );
 
     const instanceOrErrorPlain =
@@ -73,14 +73,14 @@ export class RepositoryService {
   async import(
     localRegistryUrl: string,
     remoteRegistryUrl: string,
-    id: string
+    id: string,
   ) {
     const params = new HttpParams()
       .set('localRegistryUrl', encodeURIComponent(`${localRegistryUrl}`))
       .set('remoteRegistryUrl', encodeURIComponent(`${remoteRegistryUrl}`))
       .set('id', encodeURIComponent(id));
     const result = await lastValueFrom(
-      this.http.get<any>(`${this.baseUrl}api/proxy/import`, { params })
+      this.http.get<any>(`${this.baseUrl}api/proxy/import`, { params }),
     );
 
     return true;

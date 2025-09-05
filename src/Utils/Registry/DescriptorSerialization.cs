@@ -14,18 +14,23 @@ namespace AasDemoapp.Utils.Registry
         {
             DefaultContractResolver contractResolver = new DefaultContractResolver
             {
-                NamingStrategy = new CamelCaseNamingStrategy()
+                NamingStrategy = new CamelCaseNamingStrategy(),
             };
             var serializerSettings = new JsonSerializerSettings
             {
                 ContractResolver = contractResolver,
                 Formatting = Formatting.Indented,
                 Converters = [new StringEnumConverter()],
-                NullValueHandling = NullValueHandling.Ignore
+                NullValueHandling = NullValueHandling.Ignore,
             };
 
-            return JsonConvert.DeserializeObject<AssetAdministrationShellDescriptor>(json, serializerSettings)
-                ?? throw new JsonException("Failed to deserialize AssetAdministrationShellDescriptor");
+            return JsonConvert.DeserializeObject<AssetAdministrationShellDescriptor>(
+                    json,
+                    serializerSettings
+                )
+                ?? throw new JsonException(
+                    "Failed to deserialize AssetAdministrationShellDescriptor"
+                );
         }
     }
 }

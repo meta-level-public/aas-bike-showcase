@@ -13,7 +13,13 @@ import { CatalogListService } from '../catalog-list.service';
   selector: 'app-catalog-item',
   templateUrl: './catalog-item.component.html',
   styleUrl: './catalog-item.component.css',
-  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, TooltipModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    RatingModule,
+    ButtonModule,
+    TooltipModule,
+  ],
 })
 export class CatalogItemComponent {
   @Input() item: KatalogEintrag | undefined;
@@ -62,7 +68,10 @@ export class CatalogItemComponent {
       try {
         await navigator.clipboard.writeText(this.item.globalAssetId);
         // Optional: Feedback für den Benutzer (Toast notification könnte hier hinzugefügt werden)
-        console.log('GlobalAssetId copied to clipboard:', this.item.globalAssetId);
+        console.log(
+          'GlobalAssetId copied to clipboard:',
+          this.item.globalAssetId,
+        );
       } catch (err) {
         console.error('Failed to copy GlobalAssetId to clipboard:', err);
         // Fallback für ältere Browser
@@ -84,7 +93,10 @@ export class CatalogItemComponent {
       document.execCommand('copy');
       console.log('GlobalAssetId copied to clipboard (fallback):', text);
     } catch (err) {
-      console.error('Fallback: Failed to copy GlobalAssetId to clipboard:', err);
+      console.error(
+        'Fallback: Failed to copy GlobalAssetId to clipboard:',
+        err,
+      );
     }
     document.body.removeChild(textArea);
   }

@@ -21,7 +21,12 @@ namespace AasDemoapp.Utils.Shells
             _logger = serviceProvider.GetService<ILogger<ShellDeleter>>();
         }
 
-        public static async Task DeleteShell(AasUrls aasUrls, SecuritySetting securitySetting, EditorDescriptor editorDescriptor, CancellationToken cancellationToken)
+        public static async Task DeleteShell(
+            AasUrls aasUrls,
+            SecuritySetting securitySetting,
+            EditorDescriptor editorDescriptor,
+            CancellationToken cancellationToken
+        )
         {
             using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
@@ -40,7 +45,10 @@ namespace AasDemoapp.Utils.Shells
                     response = await client.DeleteAsync(url, cancellationToken);
                     if (!response.IsSuccessStatusCode)
                     {
-                        _logger?.LogError("Error deleting Submodel: {StatusCode}", response.StatusCode);
+                        _logger?.LogError(
+                            "Error deleting Submodel: {StatusCode}",
+                            response.StatusCode
+                        );
                     }
                 }
                 catch (Exception e)
@@ -52,7 +60,12 @@ namespace AasDemoapp.Utils.Shells
             // jetzt noch aus der Discovery entfernen
             try
             {
-                await DiscoveryUpdater.RemoveFromDiscovery(aasUrls.DiscoveryUrl, editorDescriptor.AasDescriptorEntry.OldId, cancellationToken, client);
+                await DiscoveryUpdater.RemoveFromDiscovery(
+                    aasUrls.DiscoveryUrl,
+                    editorDescriptor.AasDescriptorEntry.OldId,
+                    cancellationToken,
+                    client
+                );
             }
             catch (Exception e)
             {
@@ -62,16 +75,30 @@ namespace AasDemoapp.Utils.Shells
             // und registry aufräumen
             try
             {
-                await RegistryUpdater.RemoveFromAasRegistryAsync(aasUrls.AasRegistryUrl, editorDescriptor.AasDescriptorEntry.OldId, cancellationToken, client);
+                await RegistryUpdater.RemoveFromAasRegistryAsync(
+                    aasUrls.AasRegistryUrl,
+                    editorDescriptor.AasDescriptorEntry.OldId,
+                    cancellationToken,
+                    client
+                );
                 editorDescriptor.SubmodelDescriptorEntries.ForEach(async submodelDescriptorEntry =>
                 {
                     try
                     {
-                        await RegistryUpdater.RemoveFromSmRegistryAsync(aasUrls.SubmodelRegistryUrl, submodelDescriptorEntry.OldId, cancellationToken, client);
+                        await RegistryUpdater.RemoveFromSmRegistryAsync(
+                            aasUrls.SubmodelRegistryUrl,
+                            submodelDescriptorEntry.OldId,
+                            cancellationToken,
+                            client
+                        );
                     }
                     catch (Exception e)
                     {
-                        _logger?.LogError(e, "Error removing from Submodel Registry: {Message}", e.Message);
+                        _logger?.LogError(
+                            e,
+                            "Error removing from Submodel Registry: {Message}",
+                            e.Message
+                        );
                     }
                 });
             }

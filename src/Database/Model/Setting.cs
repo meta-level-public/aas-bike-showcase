@@ -12,12 +12,13 @@ namespace AasDemoapp.Database.Model
         public string Value { get; set; } = string.Empty;
     }
 
-    public class SecuritySetting {
+    public class SecuritySetting
+    {
         public string? Certificate { get; set; }
         public string? CertificatePassword { get; set; }
         public List<HeaderParameter> HeaderParameters { get; set; } = new List<HeaderParameter>();
-
     }
+
     public class HeaderParameter
     {
         public string Name { get; set; } = string.Empty;

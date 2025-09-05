@@ -11,6 +11,5 @@ namespace AasDemoapp.Database.Model
         public long? Id { get; set; }
         public long ConfiguredProductId { get; set; }
         public List<BestandteilRequest> BestandteilRequests { get; set; } = [];
-
     }
 }

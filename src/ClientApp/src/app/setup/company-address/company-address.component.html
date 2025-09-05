@@ -5,7 +5,8 @@
       <div class="col-12">
         <h5>Firmenadresse konfigurieren</h5>
         <p class="text-color-secondary">
-          Konfigurieren Sie hier die Adresse Ihres Unternehmens. Diese wird als Setting "CompanyAddress" gespeichert.
+          Konfigurieren Sie hier die Adresse Ihres Unternehmens. Diese wird als
+          Setting "CompanyAddress" gespeichert.
         </p>
       </div>
     </div>
@@ -87,7 +88,10 @@
             <label for="latitude">
               Breitengrad (Lat)
               @if (isGeocodingLoading()) {
-                <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem;"></i>
+                <i
+                  class="pi pi-spin pi-spinner ml-2"
+                  style="font-size: 0.8rem"
+                ></i>
               }
             </label>
             <input
@@ -96,7 +100,14 @@
               pInputText
               class="w-full"
               [value]="address().lat || ''"
-              (input)="updateAddress('lat', $any($event.target).value ? +$any($event.target).value : undefined)"
+              (input)="
+                updateAddress(
+                  'lat',
+                  $any($event.target).value
+                    ? +$any($event.target).value
+                    : undefined
+                )
+              "
               placeholder="z.B. 52.520008"
               step="any"
             />
@@ -110,7 +121,14 @@
               pInputText
               class="w-full"
               [value]="address().long || ''"
-              (input)="updateAddress('long', $any($event.target).value ? +$any($event.target).value : undefined)"
+              (input)="
+                updateAddress(
+                  'long',
+                  $any($event.target).value
+                    ? +$any($event.target).value
+                    : undefined
+                )
+              "
               placeholder="z.B. 13.404954"
               step="any"
             />
@@ -177,7 +195,7 @@
                 [offLabel]="'Klick-Modus: Aus'"
                 [onIcon]="'pi pi-map-marker'"
                 [offIcon]="'pi pi-map'"
-                [style]="{'min-width': '160px'}"
+                [style]="{ 'min-width': '160px' }"
                 severity="secondary"
               />
               @if (mapClickMode()) {

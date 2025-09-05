@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, OnChanges, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  input,
+  OnChanges,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
@@ -20,7 +27,7 @@ import { AasEndpointsConfigurationComponent } from '../shared/aas-endpoints-conf
     AccordionModule,
     ButtonModule,
     InputTextModule,
-  AasEndpointsConfigurationComponent,
+    AasEndpointsConfigurationComponent,
   ],
 })
 export class AasInfrastructureComponent implements OnInit, OnChanges {
@@ -57,26 +64,30 @@ export class AasInfrastructureComponent implements OnInit, OnChanges {
     const currentSettings = this.settings();
 
     this.aasRepositoryUrl.set(
-      currentSettings.find((s) => s.name === 'AASRepositoryUrl')?.value || ''
+      currentSettings.find((s) => s.name === 'AASRepositoryUrl')?.value || '',
     );
     this.aasRegistryUrl.set(
-      currentSettings.find((s) => s.name === 'AASRegistryUrl')?.value || ''
+      currentSettings.find((s) => s.name === 'AASRegistryUrl')?.value || '',
     );
     this.submodelRepositoryUrl.set(
-      currentSettings.find((s) => s.name === 'SubmodelRepositoryUrl')?.value || ''
+      currentSettings.find((s) => s.name === 'SubmodelRepositoryUrl')?.value ||
+        '',
     );
     this.submodelRegistryUrl.set(
-      currentSettings.find((s) => s.name === 'SubmodelRegistryUrl')?.value || ''
+      currentSettings.find((s) => s.name === 'SubmodelRegistryUrl')?.value ||
+        '',
     );
     this.discoveryUrl.set(
-      currentSettings.find((s) => s.name === 'DiscoveryUrl')?.value || ''
+      currentSettings.find((s) => s.name === 'DiscoveryUrl')?.value || '',
     );
     this.conceptDescriptionUrl.set(
-      currentSettings.find((s) => s.name === 'ConceptDescriptionUrl')?.value || ''
+      currentSettings.find((s) => s.name === 'ConceptDescriptionUrl')?.value ||
+        '',
     );
 
     const security =
-      currentSettings.find((s) => s.name === 'InfrastructureSecurity')?.value || '';
+      currentSettings.find((s) => s.name === 'InfrastructureSecurity')?.value ||
+      '';
     if (security) {
       const parsedSecurity = JSON.parse(security) as SecuritySetting;
       this.certificate.set(parsedSecurity.certificate || '');
@@ -93,7 +104,10 @@ export class AasInfrastructureComponent implements OnInit, OnChanges {
       { name: 'SubmodelRegistryUrl', value: this.submodelRegistryUrl() },
       { name: 'DiscoveryUrl', value: this.discoveryUrl() },
       { name: 'ConceptDescriptionUrl', value: this.conceptDescriptionUrl() },
-      { name: 'InfrastructureSecurity', value: JSON.stringify(this.getSecuritySetting()) },
+      {
+        name: 'InfrastructureSecurity',
+        value: JSON.stringify(this.getSecuritySetting()),
+      },
     ];
 
     for (const setting of urlSettings) {

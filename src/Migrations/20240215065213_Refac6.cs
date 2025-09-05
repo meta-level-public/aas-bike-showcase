@@ -12,11 +12,13 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductParts_ConfiguredProducts_ConfiguredProductId",
-                table: "ProductParts");
+                table: "ProductParts"
+            );
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductParts_ProducedProducts_ProducedProductId",
-                table: "ProductParts");
+                table: "ProductParts"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "GlobalAssetId",
@@ -24,7 +26,8 @@ namespace AasDemoapp.Migrations
                 type: "TEXT",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "AasId",
@@ -32,7 +35,8 @@ namespace AasDemoapp.Migrations
                 type: "TEXT",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductParts_ConfiguredProducts_ConfiguredProductId",
@@ -40,7 +44,8 @@ namespace AasDemoapp.Migrations
                 column: "ConfiguredProductId",
                 principalTable: "ConfiguredProducts",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductParts_ProducedProducts_ProducedProductId",
@@ -48,7 +53,8 @@ namespace AasDemoapp.Migrations
                 column: "ProducedProductId",
                 principalTable: "ProducedProducts",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
 
         /// <inheritdoc />
@@ -56,11 +62,13 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductParts_ConfiguredProducts_ConfiguredProductId",
-                table: "ProductParts");
+                table: "ProductParts"
+            );
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ProductParts_ProducedProducts_ProducedProductId",
-                table: "ProductParts");
+                table: "ProductParts"
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "GlobalAssetId",
@@ -70,7 +78,8 @@ namespace AasDemoapp.Migrations
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "AasId",
@@ -80,21 +89,24 @@ namespace AasDemoapp.Migrations
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductParts_ConfiguredProducts_ConfiguredProductId",
                 table: "ProductParts",
                 column: "ConfiguredProductId",
                 principalTable: "ConfiguredProducts",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductParts_ProducedProducts_ProducedProductId",
                 table: "ProductParts",
                 column: "ProducedProductId",
                 principalTable: "ProducedProducts",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
     }
 }

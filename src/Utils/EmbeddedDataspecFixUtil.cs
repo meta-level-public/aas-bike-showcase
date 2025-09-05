@@ -4,6 +4,9 @@ public class EmbeddedDataspecFixUtil
 {
     public static string FixEmbeddedDataspec(string dataspec)
     {
-        return dataspec.Replace("\"embeddedDataSpecifications\":[{}]", "\"embeddedDataSpecifications\":[]");
+        return dataspec.Replace(
+            "\"embeddedDataSpecifications\":[{}]",
+            "\"embeddedDataSpecifications\":[]"
+        );
     }
 }

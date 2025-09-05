@@ -1,4 +1,4 @@
-<p-accordion-panel value="0" >
+<p-accordion-panel value="0">
   <p-accordion-header>ERP System Konfiguration</p-accordion-header>
   <p-accordion-content>
     <div class="flex flex-column gap-4 p-4">
@@ -27,12 +27,12 @@
 
       <div class="flex flex-column gap-2">
         @if (selectedErp()) {
-          @if (selectedErp()?.label == 'Meta SimplestErp') {
+          @if (selectedErp()?.label == "Meta SimplestErp") {
             <div class="flex flex-column gap-2">
               Beim Eigenen ERP-System ist keine Konfiguration notwendig.
             </div>
           }
-          @if (selectedErp()?.label != 'Meta SimplestErp') {
+          @if (selectedErp()?.label != "Meta SimplestErp") {
             <div class="flex flex-column gap-2">
               <label>Mapping</label>
               <p>
@@ -49,8 +49,7 @@
                   Hersteller aus Digital Nameplate ==> Hersteller des Teils
                 </li>
                 <li>
-                  Produktbeschreibung aus dem Digital Nameplate ==>
-                  Beschreibung
+                  Produktbeschreibung aus dem Digital Nameplate ==> Beschreibung
                 </li>
                 <li>
                   Produktbezeichnung aus dem Digital Nameplate ==> Bezeichnung

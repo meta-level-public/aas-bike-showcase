@@ -32,14 +32,18 @@ namespace AasDemoapp.Database.Model
             {
                 switch (Amount)
                 {
-                    case 0: return InventoryStatus.OUTOFSTOCK;
-                    case < 10: return InventoryStatus.LOWSTOCK;
-                    case >= 10: return InventoryStatus.INSTOCK;
+                    case 0:
+                        return InventoryStatus.OUTOFSTOCK;
+                    case < 10:
+                        return InventoryStatus.LOWSTOCK;
+                    case >= 10:
+                        return InventoryStatus.INSTOCK;
                 }
             }
         }
 
         public int Amount { get; set; } = 0;
+
         [NotMapped]
         public int AmountToUse { get; set; } = 0;
         public KatalogEintrag? ReferencedType { get; set; }
@@ -48,12 +52,11 @@ namespace AasDemoapp.Database.Model
 
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
-
     }
 
     public enum KatalogEintragTyp
     {
         RohteilTyp,
-        RohteilInstanz
+        RohteilInstanz,
     }
 }

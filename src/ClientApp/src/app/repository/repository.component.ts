@@ -13,10 +13,17 @@ import { RepositoryService } from './repository.service';
 @Component({
   selector: 'app-fetch-data',
   templateUrl: './repository.component.html',
-  imports: [CommonModule, FormsModule, TableModule, PopoverModule, NgxJsonViewerModule, ButtonModule, InputTextModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    TableModule,
+    PopoverModule,
+    NgxJsonViewerModule,
+    ButtonModule,
+    InputTextModule,
+  ],
 })
-export class RepositoryComponent extends UrlBase{
-
+export class RepositoryComponent extends UrlBase {
   shells: (AssetAdministrationShell | null)[] = [];
   isLocal = false;
   aasId = '';
@@ -27,12 +34,13 @@ export class RepositoryComponent extends UrlBase{
 
   async loadLocalRegistry() {
     if (this.aasId === '') {
-    this.shells = await this.repositoryService.loadShells(
-      this.localRegistryUrl
-    );
+      this.shells = await this.repositoryService.loadShells(
+        this.localRegistryUrl,
+      );
     } else {
       this.shells = await this.repositoryService.loadShell(
-        this.localRegistryUrl, this.aasId
+        this.localRegistryUrl,
+        this.aasId,
       );
     }
     this.isLocal = true;
@@ -41,21 +49,22 @@ export class RepositoryComponent extends UrlBase{
   async loadRemoteRegistry() {
     if (this.aasId === '') {
       this.shells = await this.repositoryService.loadShells(
-        this.remoteRegistryUrl
+        this.remoteRegistryUrl,
       );
-      } else {
-        this.shells = await this.repositoryService.loadShell(
-          this.remoteRegistryUrl, this.aasId
-        );
-      }
-      this.isLocal = false;
+    } else {
+      this.shells = await this.repositoryService.loadShell(
+        this.remoteRegistryUrl,
+        this.aasId,
+      );
+    }
+    this.isLocal = false;
   }
 
   import(aasId: string) {
     this.repositoryService.import(
       this.localRegistryUrl,
       this.remoteRegistryUrl,
-      aasId
+      aasId,
     );
   }
 }

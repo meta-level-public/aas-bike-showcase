@@ -11,7 +11,11 @@
 }
 
 .bestandteile-header {
-  background: linear-gradient(90deg, var(--primary-50) 0%, var(--surface-0) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--primary-50) 0%,
+    var(--surface-0) 100%
+  );
 }
 
 .bestandteile-summary {

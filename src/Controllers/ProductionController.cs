@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
+using AasCore.Aas3_0;
+using AasDemoapp.AasHandling.SubmodelCreators;
 using AasDemoapp.Dashboard;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Database.Model.DTOs;
 using AasDemoapp.Katalog;
 using AasDemoapp.Production;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using AasCore.Aas3_0;
-using AasDemoapp.AasHandling.SubmodelCreators;
 
 namespace AasDemoapp.Controllers
 {
@@ -28,7 +28,9 @@ namespace AasDemoapp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductionResponseDto>> CreateProduct(ProducedProductRequestDto requestDto)
+        public async Task<ActionResult<ProductionResponseDto>> CreateProduct(
+            ProducedProductRequestDto requestDto
+        )
         {
             try
             {
@@ -41,21 +43,25 @@ namespace AasDemoapp.Controllers
                 // Entity Model zu DTO konvertieren
                 var responseDto = _mapper.Map<ProducedProductDto>(producedProduct);
 
-                return Ok(new ProductionResponseDto
-                {
-                    Success = true,
-                    Message = "Product created successfully",
-                    ProducedProduct = responseDto
-                });
+                return Ok(
+                    new ProductionResponseDto
+                    {
+                        Success = true,
+                        Message = "Product created successfully",
+                        ProducedProduct = responseDto,
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return BadRequest(new ProductionResponseDto
-                {
-                    Success = false,
-                    Message = "Failed to create product",
-                    Error = ex.Message
-                });
+                return BadRequest(
+                    new ProductionResponseDto
+                    {
+                        Success = false,
+                        Message = "Failed to create product",
+                        Error = ex.Message,
+                    }
+                );
             }
         }
 
@@ -65,6 +71,7 @@ namespace AasDemoapp.Controllers
             var smString = await _productionService.GetAssemblyPropertiesSubmodel(partId);
             return Ok(smString);
         }
+
         [HttpGet]
         public async Task<ActionResult<string>> GetToolData(string aasId)
         {
@@ -82,7 +89,11 @@ namespace AasDemoapp.Controllers
         [HttpPost]
         public async Task<ActionResult<bool>> InitializeTool(ToolData toolData)
         {
-            var result = await _productionService.SetRequiredToolProperty(toolData.AasId, toolData.PropertyIdShortPath, toolData.PropertyValue);
+            var result = await _productionService.SetRequiredToolProperty(
+                toolData.AasId,
+                toolData.PropertyIdShortPath,
+                toolData.PropertyValue
+            );
             return Ok(result);
         }
 
@@ -100,24 +111,28 @@ namespace AasDemoapp.Controllers
                     Description = submodel.Description?.FirstOrDefault()?.Text,
                     Version = submodel.Administration?.Version,
                     Revision = submodel.Administration?.Revision,
-                    ElementCount = submodel.SubmodelElements?.Count ?? 0
+                    ElementCount = submodel.SubmodelElements?.Count ?? 0,
                 };
 
-                return Ok(new HandoverDocumentationDto
-                {
-                    Success = true,
-                    Message = "HandoverDocumentation submodel created successfully",
-                    Submodel = submodelDto
-                });
+                return Ok(
+                    new HandoverDocumentationDto
+                    {
+                        Success = true,
+                        Message = "HandoverDocumentation submodel created successfully",
+                        Submodel = submodelDto,
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return BadRequest(new HandoverDocumentationDto
-                {
-                    Success = false,
-                    Message = "Failed to create HandoverDocumentation submodel",
-                    Error = ex.Message
-                });
+                return BadRequest(
+                    new HandoverDocumentationDto
+                    {
+                        Success = false,
+                        Message = "Failed to create HandoverDocumentation submodel",
+                        Error = ex.Message,
+                    }
+                );
             }
         }
     }

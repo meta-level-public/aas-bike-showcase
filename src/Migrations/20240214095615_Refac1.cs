@@ -12,15 +12,15 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_ConfiguredProducts_KatalogEintraege_KatalogEintragTypId",
-                table: "ConfiguredProducts");
+                table: "ConfiguredProducts"
+            );
 
             migrationBuilder.DropIndex(
                 name: "IX_ConfiguredProducts_KatalogEintragTypId",
-                table: "ConfiguredProducts");
+                table: "ConfiguredProducts"
+            );
 
-            migrationBuilder.DropColumn(
-                name: "KatalogEintragTypId",
-                table: "ConfiguredProducts");
+            migrationBuilder.DropColumn(name: "KatalogEintragTypId", table: "ConfiguredProducts");
         }
 
         /// <inheritdoc />
@@ -31,12 +31,14 @@ namespace AasDemoapp.Migrations
                 table: "ConfiguredProducts",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0L);
+                defaultValue: 0L
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConfiguredProducts_KatalogEintragTypId",
                 table: "ConfiguredProducts",
-                column: "KatalogEintragTypId");
+                column: "KatalogEintragTypId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ConfiguredProducts_KatalogEintraege_KatalogEintragTypId",
@@ -44,7 +46,8 @@ namespace AasDemoapp.Migrations
                 column: "KatalogEintragTypId",
                 principalTable: "KatalogEintraege",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Cascade
+            );
         }
     }
 }

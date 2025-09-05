@@ -69,28 +69,28 @@ export class ProductionOrderListComponent implements OnInit {
       return [...orders];
     } else {
       return orders.filter(
-        (order) => this.getOrderStatus(order) === filter.value
+        (order) => this.getOrderStatus(order) === filter.value,
       );
     }
   });
 
   pendingProductionCount = computed(
-    () => this.allOrders().filter((o) => !o.produktionAbgeschlossen).length
+    () => this.allOrders().filter((o) => !o.produktionAbgeschlossen).length,
   );
 
   readyForShippingCount = computed(
     () =>
       this.allOrders().filter((o) => o.produktionAbgeschlossen && !o.versandt)
-        .length
+        .length,
   );
 
   completedCount = computed(
-    () => this.allOrders().filter((o) => o.versandt).length
+    () => this.allOrders().filter((o) => o.versandt).length,
   );
 
   constructor(
     private service: ProductionOrderListService,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
@@ -139,7 +139,7 @@ export class ProductionOrderListComponent implements OnInit {
   }
 
   getStatusSeverity(
-    order: ProductionOrder
+    order: ProductionOrder,
   ): 'success' | 'info' | 'warn' | 'danger' {
     const status = this.getOrderStatus(order);
     switch (status) {
@@ -172,7 +172,7 @@ export class ProductionOrderListComponent implements OnInit {
         await this.loadData(); // Reload data
       } else {
         this.showError(
-          response.message || 'Fehler beim Markieren des Versands'
+          response.message || 'Fehler beim Markieren des Versands',
         );
       }
     } catch (error) {
@@ -198,13 +198,13 @@ export class ProductionOrderListComponent implements OnInit {
     const parts = [];
     if (order.address.name || order.address.vorname) {
       parts.push(
-        `${order.address.vorname || ''} ${order.address.name || ''}`.trim()
+        `${order.address.vorname || ''} ${order.address.name || ''}`.trim(),
       );
     }
     if (order.address.strasse) parts.push(order.address.strasse);
     if (order.address.plz || order.address.ort) {
       parts.push(
-        `${order.address.plz || ''} ${order.address.ort || ''}`.trim()
+        `${order.address.plz || ''} ${order.address.ort || ''}`.trim(),
       );
     }
     if (order.address.land) parts.push(order.address.land);

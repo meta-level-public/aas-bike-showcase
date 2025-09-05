@@ -6,7 +6,13 @@
 </body>
 
 <p-toast [baseZIndex]="11000" position="top-center"></p-toast>
-<p-toast styleClass="vws-big-toast" position="center" key="errorDlg" (onClose)="onConfirm()" [baseZIndex]="11000">
+<p-toast
+  styleClass="vws-big-toast"
+  position="center"
+  key="errorDlg"
+  (onClose)="onConfirm()"
+  [baseZIndex]="11000"
+>
   <ng-template let-message pTemplate="message">
     <div class="flex flex-column max-h-screen overflow-auto" style="flex: 1">
       <div class="overflow-auto">
@@ -21,7 +27,13 @@
         </div>
       </div>
       <div class="col-offset-3 col-6">
-        <button type="button" class="w-full" pButton (click)="onConfirm()" label="Ok"></button>
+        <button
+          type="button"
+          class="w-full"
+          pButton
+          (click)="onConfirm()"
+          label="Ok"
+        ></button>
       </div>
     </div>
   </ng-template>

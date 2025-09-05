@@ -1,10 +1,5 @@
-
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  OnInit
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -22,8 +17,16 @@ import { ConfigurationCreateService } from './configuration-create.service';
   selector: 'app-configuration-create',
   templateUrl: './configuration-create.component.html',
   styleUrl: './configuration-create.component.css',
-  imports: [CommonModule, FormsModule, PickListModule, InputTextModule, ButtonModule, ConfirmDialogModule, ToastModule],
-  providers: [ConfirmationService, MessageService]
+  imports: [
+    CommonModule,
+    FormsModule,
+    PickListModule,
+    InputTextModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    ToastModule,
+  ],
+  providers: [ConfirmationService, MessageService],
 })
 export class ConfigurationCreateComponent implements OnInit {
   rohteile: KatalogEintrag[] = [];
@@ -37,7 +40,7 @@ export class ConfigurationCreateComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     private notificationService: NotificationService,
     private confirmationService: ConfirmationService,
-    private router: Router
+    private router: Router,
   ) {}
 
   async ngOnInit() {
@@ -49,7 +52,7 @@ export class ConfigurationCreateComponent implements OnInit {
   // Neuen Rohteil zur Konfiguration hinzufügen
   addToConfiguration(rohteil: KatalogEintrag) {
     // Prüfen ob Teil bereits in der Konfiguration ist
-    const existingTeil = this.bestandteile.find(b => b.id === rohteil.id);
+    const existingTeil = this.bestandteile.find((b) => b.id === rohteil.id);
 
     if (existingTeil) {
       // Wenn bereits vorhanden, Anzahl erhöhen
@@ -66,7 +69,7 @@ export class ConfigurationCreateComponent implements OnInit {
 
   // Teil aus Konfiguration entfernen
   removeFromConfiguration(teil: KatalogEintrag) {
-    const index = this.bestandteile.findIndex(b => b.id === teil.id);
+    const index = this.bestandteile.findIndex((b) => b.id === teil.id);
     if (index > -1) {
       this.bestandteile.splice(index, 1);
       this.calculatePrice();
@@ -131,21 +134,24 @@ export class ConfigurationCreateComponent implements OnInit {
 
       // Zeige Bestätigungsdialog für Bestellung
       this.confirmationService.confirm({
-        message: 'Ihre Konfiguration wurde erfolgreich erstellt! Möchten Sie das konfigurierte Produkt nun bestellen?',
+        message:
+          'Ihre Konfiguration wurde erfolgreich erstellt! Möchten Sie das konfigurierte Produkt nun bestellen?',
         header: 'Bestellung erstellen',
         icon: 'pi pi-shopping-cart',
         accept: () => {
           // Navigiere zur Order-Erstellungsseite
           if (createdProduct && createdProduct.configuredProduct?.id) {
-            this.router.navigate(['/orders/create', createdProduct.configuredProduct.id]);
+            this.router.navigate([
+              '/orders/create',
+              createdProduct.configuredProduct.id,
+            ]);
           }
         },
         reject: () => {
           // Reset the form after declining
           this.resetForm();
-        }
+        },
       });
-
     } finally {
       this.loading = false;
     }
@@ -157,23 +163,24 @@ export class ConfigurationCreateComponent implements OnInit {
     this.calculatePrice();
   }
 
-    calculatePrice() {
-      let price = 0;
-      this.bestandteile.forEach((bestandteil) => {
-        const amount = bestandteil.amountToUse || 1;
-        price += bestandteil.price * amount;
-      });
+  calculatePrice() {
+    let price = 0;
+    this.bestandteile.forEach((bestandteil) => {
+      const amount = bestandteil.amountToUse || 1;
+      price += bestandteil.price * amount;
+    });
 
-      this.newProduct.price = Math.round(price * 1.3 * 100) / 100; // bisschen was draufschlagen ;)
-      console.log('Bestandteile:', this.bestandteile);
-      console.log('Gesamtpreis:', this.newProduct.price);
+    this.newProduct.price = Math.round(price * 1.3 * 100) / 100; // bisschen was draufschlagen ;)
+    console.log('Bestandteile:', this.bestandteile);
+    console.log('Gesamtpreis:', this.newProduct.price);
   }
 
   valid() {
-    return (this.newProduct.name != null &&
+    return (
+      this.newProduct.name != null &&
       this.newProduct.name.length > 0 &&
       this.bestandteile.length > 0 &&
-      this.bestandteile.every(b => (b.amountToUse || 1) > 0)
+      this.bestandteile.every((b) => (b.amountToUse || 1) > 0)
     );
   }
 }

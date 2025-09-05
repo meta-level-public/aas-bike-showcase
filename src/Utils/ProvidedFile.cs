@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace AasDemoapp.Utils;
+
 public class ProvidedFile
 {
     public Stream Stream { get; set; } = null!;
@@ -17,5 +18,5 @@ public enum ProvidedFileType
 {
     Added,
     Deleted,
-    Thumbnail
+    Thumbnail,
 }

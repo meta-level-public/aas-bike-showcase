@@ -38,8 +38,8 @@ namespace AasDemoapp.Dpp
 
         internal async Task<string> GetShell(long idProducedProduct)
         {
-            var product = _context.ProducedProducts
-                .Include(p => p.ConfiguredProduct)
+            var product = _context
+                .ProducedProducts.Include(p => p.ConfiguredProduct)
                 .FirstOrDefault(p => p.Id == idProducedProduct);
 
             if (product == null)
@@ -47,23 +47,32 @@ namespace AasDemoapp.Dpp
                 throw new ArgumentException("Invalid product ID");
             }
 
-            var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
-            var aasRepositoryUrl = _settingService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
-            var submodelRepositoryUrl = _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
-            var aasRegistryUrl = _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
-            var submodelRegistryUrl = _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
-
+            var securitySetting = _settingService.GetSecuritySetting(
+                SettingTypes.InfrastructureSecurity
+            );
+            var aasRepositoryUrl =
+                _settingService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
+            var submodelRepositoryUrl =
+                _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
+            var aasRegistryUrl =
+                _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
+            var submodelRegistryUrl =
+                _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
 
             var aasUrls = new AasUrls
             {
                 AasRepositoryUrl = aasRepositoryUrl,
                 SubmodelRepositoryUrl = submodelRepositoryUrl,
                 AasRegistryUrl = aasRegistryUrl,
-                SubmodelRegistryUrl = submodelRegistryUrl
+                SubmodelRegistryUrl = submodelRegistryUrl,
             };
 
-
-            var res = await ShellLoader.LoadShellOnly(aasUrls, securitySetting, product.AasId, CancellationToken.None);
+            var res = await ShellLoader.LoadShellOnly(
+                aasUrls,
+                securitySetting,
+                product.AasId,
+                CancellationToken.None
+            );
             if (res != null)
             {
                 return AasCore.Aas3_0.Jsonization.Serialize.ToJsonObject(res).ToJsonString();
@@ -75,6 +84,5 @@ namespace AasDemoapp.Dpp
         }
 
         // TODO: hier eine Methode GetPCFSubmodel(string globalAssetID)?
-
     }
 }

@@ -1,0 +1,13 @@
+bin/
+obj/
+**/bin/
+**/obj/
+**/node_modules/
+**/artifacts/
+**/coverage/
+**/*.min.js
+**/*.generated.*
+
+**/specification.json
+
+**/*.csproj

@@ -13,7 +13,10 @@ namespace AasDemoapp.Services.ProductionOrder
         private readonly AasDemoappContext _context;
         private readonly ILogger<ProductionOrderService> _logger;
 
-        public ProductionOrderService(AasDemoappContext context, ILogger<ProductionOrderService> logger)
+        public ProductionOrderService(
+            AasDemoappContext context,
+            ILogger<ProductionOrderService> logger
+        )
         {
             _context = context;
             _logger = logger;
@@ -21,8 +24,8 @@ namespace AasDemoapp.Services.ProductionOrder
 
         public async Task<List<Database.Model.ProductionOrder>> GetAllAsync()
         {
-            return await _context.ProductionOrders
-                .Include(po => po.ConfiguredProduct)
+            return await _context
+                .ProductionOrders.Include(po => po.ConfiguredProduct)
                 .Include(po => po.Address)
                 .OrderByDescending(po => po.CreatedAt)
                 .ToListAsync();
@@ -30,18 +33,20 @@ namespace AasDemoapp.Services.ProductionOrder
 
         public async Task<Database.Model.ProductionOrder?> GetByIdAsync(long id)
         {
-            return await _context.ProductionOrders
-                .Include(po => po.ConfiguredProduct)
+            return await _context
+                .ProductionOrders.Include(po => po.ConfiguredProduct)
                 .Include(po => po.Address)
                 .FirstOrDefaultAsync(po => po.Id == id);
         }
 
-        public async Task<Database.Model.ProductionOrder> CreateAsync(Database.Model.ProductionOrder productionOrder)
+        public async Task<Database.Model.ProductionOrder> CreateAsync(
+            Database.Model.ProductionOrder productionOrder
+        )
         {
             productionOrder.CreatedAt = DateTime.Now;
             _context.ProductionOrders.Add(productionOrder);
             await _context.SaveChangesAsync();
-            
+
             return (await GetByIdAsync(productionOrder.Id!.Value))!;
         }
 
@@ -56,7 +61,7 @@ namespace AasDemoapp.Services.ProductionOrder
             productionOrder.ProduktionAbgeschlossen = true;
             productionOrder.FertigstellungsDatum = DateTime.Now;
             productionOrder.UpdatedAt = DateTime.Now;
-            
+
             await _context.SaveChangesAsync();
             return productionOrder;
         }
@@ -77,7 +82,7 @@ namespace AasDemoapp.Services.ProductionOrder
             productionOrder.Versandt = true;
             productionOrder.VersandDatum = DateTime.Now;
             productionOrder.UpdatedAt = DateTime.Now;
-            
+
             await _context.SaveChangesAsync();
             return productionOrder;
         }

@@ -1,12 +1,12 @@
+using System.Net;
 using System.Text;
 using System.Text.Json.Nodes;
 using AasCore.Aas3_0;
+using AasDemoapp.Database.Model;
+using AasDemoapp.Utils.ConceptDescriptions;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Net;
-using AasDemoapp.Utils.ConceptDescriptions;
-using AasDemoapp.Database.Model;
-using Microsoft.Extensions.Logging;
 
 namespace AasDemoapp.Utils.Shells;
 
@@ -33,8 +33,12 @@ public class EditorDescriptorEntry
 
 public static class ShellLoader
 {
-
-    public static async Task<LoadShellResult> LoadAsync(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<LoadShellResult> LoadAsync(
+        AasUrls aasUrls,
+        SecuritySetting securitySetting,
+        string aasIdentifier,
+        CancellationToken cancellationToken
+    )
     {
         var result = new LoadShellResult();
 
@@ -49,14 +53,19 @@ public static class ShellLoader
         }
         catch (Exception)
         {
-            aasUrl = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+            aasUrl =
+                aasUrls.AasRepositoryUrl.AppendSlash()
+                + "shells/"
+                + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
         }
 
         HttpResponseMessage response = await client.GetAsync(aasUrl, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Request to {aasUrl} failed with status code {response.StatusCode}");
+            throw new Exception(
+                $"Request to {aasUrl} failed with status code {response.StatusCode}"
+            );
         }
 
         result.EditorDescriptor.AasDescriptorEntry.OldId = aasIdentifier;
@@ -69,26 +78,32 @@ public static class ShellLoader
 
         if (res != null)
         {
-
             var jsonNode = JsonNode.Parse(res.ToString());
-            if (jsonNode == null) throw new Exception("Could not parse JSON");
+            if (jsonNode == null)
+                throw new Exception("Could not parse JSON");
             var aas = Jsonization.Deserialize.AssetAdministrationShellFrom(jsonNode);
 
             result.EditorDescriptor.AasDescriptorEntry.IdShort = aas.IdShort ?? string.Empty;
 
-            var environment = new AasCore.Aas3_0.Environment
-            {
-                AssetAdministrationShells = [aas]
-            };
+            var environment = new AasCore.Aas3_0.Environment { AssetAdministrationShells = [aas] };
 
             // submodels ladem
             environment.Submodels = [];
             foreach (var smRef in aas.Submodels ?? [])
             {
                 // submodelUrl aus SM-Registry laden
-                var submodelUrl = await GetSmUrl(aasUrls, securitySetting, aasIdentifier, smRef.Keys[0].Value, cancellationToken);
+                var submodelUrl = await GetSmUrl(
+                    aasUrls,
+                    securitySetting,
+                    aasIdentifier,
+                    smRef.Keys[0].Value,
+                    cancellationToken
+                );
                 // var submodelUrl = aasInfrastructureSettings.SubmodelRepositoryUrl.AppendSlash() + "submodels/" + smRef.Keys[0].Value.ToBase64UrlEncoded(Encoding.UTF8);
-                HttpResponseMessage submodelResponse = await client.GetAsync(submodelUrl, cancellationToken);
+                HttpResponseMessage submodelResponse = await client.GetAsync(
+                    submodelUrl,
+                    cancellationToken
+                );
 
                 var smDescriptorEntry = new EditorDescriptorEntry();
                 smDescriptorEntry.Endpoint = submodelUrl;
@@ -98,14 +113,20 @@ public static class ShellLoader
                 {
                     //throw new Exception($"Request to {submodelUrl} failed with status code {submodelResponse.StatusCode}");
                     // nicht gefunden... Schade
-                    Console.WriteLine($"Request to {submodelUrl} failed with status code {submodelResponse.StatusCode}");
+                    Console.WriteLine(
+                        $"Request to {submodelUrl} failed with status code {submodelResponse.StatusCode}"
+                    );
                 }
                 else
                 {
                     var smResponseContent = await submodelResponse.Content.ReadAsStringAsync();
-                    smResponseContent = EmbeddedDataspecFixUtil.FixEmbeddedDataspec(smResponseContent);
+                    smResponseContent = EmbeddedDataspecFixUtil.FixEmbeddedDataspec(
+                        smResponseContent
+                    );
 
-                    JObject? submodelRes = JsonConvert.DeserializeObject<JObject>(smResponseContent);
+                    JObject? submodelRes = JsonConvert.DeserializeObject<JObject>(
+                        smResponseContent
+                    );
 
                     if (submodelRes != null)
                     {
@@ -114,7 +135,9 @@ public static class ShellLoader
                         {
                             try
                             {
-                                var submodel = Jsonization.Deserialize.SubmodelFrom(submodelJsonNode);
+                                var submodel = Jsonization.Deserialize.SubmodelFrom(
+                                    submodelJsonNode
+                                );
                                 environment.Submodels.Add(submodel);
                                 smDescriptorEntry.OldId = submodel.Id;
                                 smDescriptorEntry.NewId = submodel.Id;
@@ -135,23 +158,32 @@ public static class ShellLoader
 
             if (aasUrls.ConceptDescriptionRepositoryUrl != null)
             {
-                conceptDescriptionMetadata = CDsFromAasResolver.GetAllConceptDescriptions(environment, aasUrls.ConceptDescriptionRepositoryUrl.AppendSlash());
+                conceptDescriptionMetadata = CDsFromAasResolver.GetAllConceptDescriptions(
+                    environment,
+                    aasUrls.ConceptDescriptionRepositoryUrl.AppendSlash()
+                );
                 try
                 {
-
                     conceptDescriptionMetadata.ForEach(cdDescriptor =>
                     {
-                        var cd = CdLoader.GetCdFromDescriptor(cdDescriptor, aasUrls.ConceptDescriptionRepositoryUrl.AppendSlash(), client);
+                        var cd = CdLoader.GetCdFromDescriptor(
+                            cdDescriptor,
+                            aasUrls.ConceptDescriptionRepositoryUrl.AppendSlash(),
+                            client
+                        );
                         if (cd != null)
                         {
-                            if (environment.ConceptDescriptions == null) environment.ConceptDescriptions = [];
+                            if (environment.ConceptDescriptions == null)
+                                environment.ConceptDescriptions = [];
                             if (!environment.ConceptDescriptions.Any(c => cd.Id == c.Id))
                             {
                                 environment.ConceptDescriptions.Add(cd);
                             }
                         }
                     });
-                    environment.ConceptDescriptions = environment.ConceptDescriptions?.OrderBy(cd => cd.IdShort).ToList();
+                    environment.ConceptDescriptions = environment
+                        .ConceptDescriptions?.OrderBy(cd => cd.IdShort)
+                        .ToList();
                 }
                 catch (Exception e)
                 {
@@ -165,7 +197,12 @@ public static class ShellLoader
         return result;
     }
 
-    public static async Task<AssetAdministrationShell?> LoadShellOnly(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<AssetAdministrationShell?> LoadShellOnly(
+        AasUrls aasUrls,
+        SecuritySetting securitySetting,
+        string aasIdentifier,
+        CancellationToken cancellationToken
+    )
     {
         using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
@@ -177,9 +214,11 @@ public static class ShellLoader
         }
         catch (Exception)
         {
-            url = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+            url =
+                aasUrls.AasRepositoryUrl.AppendSlash()
+                + "shells/"
+                + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
         }
-
 
         HttpResponseMessage response = await client.GetAsync(url, cancellationToken);
 
@@ -194,9 +233,9 @@ public static class ShellLoader
 
         if (res != null)
         {
-
             var jsonNode = JsonNode.Parse(res.ToString());
-            if (jsonNode == null) throw new Exception("Could not parse JSON");
+            if (jsonNode == null)
+                throw new Exception("Could not parse JSON");
             var aas = Jsonization.Deserialize.AssetAdministrationShellFrom(jsonNode);
 
             return aas;
@@ -204,7 +243,12 @@ public static class ShellLoader
         return null;
     }
 
-    public static async Task<AssetInformation?> LoadAssetInformationOnly(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<AssetInformation?> LoadAssetInformationOnly(
+        AasUrls aasUrls,
+        SecuritySetting securitySetting,
+        string aasIdentifier,
+        CancellationToken cancellationToken
+    )
     {
         using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
@@ -212,14 +256,20 @@ public static class ShellLoader
         var url = string.Empty;
         try
         {
-            url = await GetAasUrl(aasUrls, securitySetting, aasIdentifier, cancellationToken) + '/' + "asset-information";
+            url =
+                await GetAasUrl(aasUrls, securitySetting, aasIdentifier, cancellationToken)
+                + '/'
+                + "asset-information";
         }
         catch (Exception)
         {
-            url = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8) + '/' + "asset-information";
-            
+            url =
+                aasUrls.AasRepositoryUrl.AppendSlash()
+                + "shells/"
+                + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8)
+                + '/'
+                + "asset-information";
         }
-
 
         HttpResponseMessage response = await client.GetAsync(url, cancellationToken);
 
@@ -235,7 +285,8 @@ public static class ShellLoader
         if (res != null)
         {
             var jsonNode = JsonNode.Parse(res.ToString());
-            if (jsonNode == null) throw new Exception("Could not parse JSON");
+            if (jsonNode == null)
+                throw new Exception("Could not parse JSON");
             var aas = Jsonization.Deserialize.AssetInformationFrom(jsonNode);
 
             return aas;
@@ -243,11 +294,19 @@ public static class ShellLoader
         return null;
     }
 
-    public static async Task<bool> CheckIfExists(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<bool> CheckIfExists(
+        AasUrls aasUrls,
+        SecuritySetting securitySetting,
+        string aasIdentifier,
+        CancellationToken cancellationToken
+    )
     {
         using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
-        var url = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+        var url =
+            aasUrls.AasRepositoryUrl.AppendSlash()
+            + "shells/"
+            + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
 
         HttpResponseMessage response = await client.GetAsync(url, cancellationToken);
         if (response.StatusCode == HttpStatusCode.NotFound)
@@ -260,16 +319,23 @@ public static class ShellLoader
         }
 
         throw new Exception($"Request to {url} failed with status code {response.StatusCode}");
-
     }
 
-    public static async Task<string> GetAasUrl(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, CancellationToken cancellationToken)
+    public static async Task<string> GetAasUrl(
+        AasUrls aasUrls,
+        SecuritySetting securitySetting,
+        string aasIdentifier,
+        CancellationToken cancellationToken
+    )
     {
         var result = string.Empty;
 
         if (!string.IsNullOrWhiteSpace(aasUrls.AasRegistryUrl))
         {
-            var url = aasUrls.AasRegistryUrl.AppendSlash() + "shell-descriptors/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+            var url =
+                aasUrls.AasRegistryUrl.AppendSlash()
+                + "shell-descriptors/"
+                + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
 
             using var client = HttpClientCreator.CreateHttpClient(securitySetting);
 
@@ -283,48 +349,70 @@ public static class ShellLoader
                 if (res != null)
                 {
                     var endpoints = res.Value<JArray>("endpoints") ?? [];
-                    endpoints.ToList().ForEach(endpoint =>
-                    {
-                        var protocolInfo = endpoint.Value<JObject>("protocolInformation") ?? new JObject();
+                    endpoints
+                        .ToList()
+                        .ForEach(endpoint =>
+                        {
+                            var protocolInfo =
+                                endpoint.Value<JObject>("protocolInformation") ?? new JObject();
 
-                        result = protocolInfo.Value<string>("href") ?? string.Empty;
-                    });
+                            result = protocolInfo.Value<string>("href") ?? string.Empty;
+                        });
                 }
             }
             else
             {
                 // prüfen, ob es überhaupt eine registry gibt. Falls nicht, direkt aufs repo gehen
-                var urlReg = aasUrls.SubmodelRegistryUrl.AppendSlash() + "shell-descriptors?limit=1";
+                var urlReg =
+                    aasUrls.SubmodelRegistryUrl.AppendSlash() + "shell-descriptors?limit=1";
 
                 HttpResponseMessage responseReg = await client.GetAsync(url, cancellationToken);
                 var responseBodyReg = await responseReg.Content.ReadAsStringAsync();
-                if (responseReg.StatusCode == HttpStatusCode.NotFound || responseBodyReg.StartsWith("<"))
+                if (
+                    responseReg.StatusCode == HttpStatusCode.NotFound
+                    || responseBodyReg.StartsWith("<")
+                )
                 {
-                    result = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+                    result =
+                        aasUrls.AasRepositoryUrl.AppendSlash()
+                        + "shells/"
+                        + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
                 }
                 else
                 {
-                    throw new Exception($"Request to {urlReg} failed with status code {responseReg.StatusCode}");
+                    throw new Exception(
+                        $"Request to {urlReg} failed with status code {responseReg.StatusCode}"
+                    );
                 }
             }
         }
         else
         {
-            result = aasUrls.AasRepositoryUrl.AppendSlash() + "shells/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+            result =
+                aasUrls.AasRepositoryUrl.AppendSlash()
+                + "shells/"
+                + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
         }
 
         return result;
     }
 
-
-    public static async Task<string> GetSmUrl(AasUrls aasUrls, SecuritySetting securitySetting, string aasIdentifier, string smIdentifier, CancellationToken cancellationToken)
+    public static async Task<string> GetSmUrl(
+        AasUrls aasUrls,
+        SecuritySetting securitySetting,
+        string aasIdentifier,
+        string smIdentifier,
+        CancellationToken cancellationToken
+    )
     {
         var result = string.Empty;
         using var client = HttpClientCreator.CreateHttpClient(securitySetting);
         if (!string.IsNullOrWhiteSpace(aasUrls.AasRegistryUrl))
         {
-            var url = aasUrls.AasRegistryUrl.AppendSlash() + "shell-descriptors/" + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
-
+            var url =
+                aasUrls.AasRegistryUrl.AppendSlash()
+                + "shell-descriptors/"
+                + aasIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
 
             HttpResponseMessage response = await client.GetAsync(url, cancellationToken);
 
@@ -342,11 +430,15 @@ public static class ShellLoader
                         if (smId == smIdentifier)
                         {
                             var endpoints = smDescriptor.Value<JArray>("endpoints") ?? [];
-                            endpoints.ToList().ForEach(endpoint =>
-                            {
-                                var protocolInfo = endpoint.Value<JObject>("protocolInformation") ?? new JObject();
-                                result = protocolInfo.Value<string>("href") ?? string.Empty;
-                            });
+                            endpoints
+                                .ToList()
+                                .ForEach(endpoint =>
+                                {
+                                    var protocolInfo =
+                                        endpoint.Value<JObject>("protocolInformation")
+                                        ?? new JObject();
+                                    result = protocolInfo.Value<string>("href") ?? string.Empty;
+                                });
                         }
                     }
                 }
@@ -355,10 +447,12 @@ public static class ShellLoader
 
         if (string.IsNullOrWhiteSpace(result))
         {
-
             if (!string.IsNullOrWhiteSpace(aasUrls.SubmodelRegistryUrl))
             {
-                var url = aasUrls.SubmodelRegistryUrl.AppendSlash() + "submodel-descriptors/" + smIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+                var url =
+                    aasUrls.SubmodelRegistryUrl.AppendSlash()
+                    + "submodel-descriptors/"
+                    + smIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
 
                 HttpResponseMessage response = await client.GetAsync(url, cancellationToken);
 
@@ -368,36 +462,50 @@ public static class ShellLoader
                     JObject? res = JsonConvert.DeserializeObject<JObject>(responseBody);
                     if (res != null)
                     {
-
                         var endpoints = res.Value<JArray>("endpoints") ?? [];
-                        endpoints.ToList().ForEach(endpoint =>
-                        {
-                            var protocolInfo = endpoint.Value<JObject>("protocolInformation") ?? new JObject();
+                        endpoints
+                            .ToList()
+                            .ForEach(endpoint =>
+                            {
+                                var protocolInfo =
+                                    endpoint.Value<JObject>("protocolInformation") ?? new JObject();
 
-                            result = protocolInfo.Value<string>("href") ?? string.Empty;
-                        });
+                                result = protocolInfo.Value<string>("href") ?? string.Empty;
+                            });
                     }
                 }
                 else
                 {
                     // prüfen, ob es überhaupt eine registry gibt. Falls nicht, direkt aufs repo gehen
-                    var urlReg = aasUrls.SubmodelRegistryUrl.AppendSlash() + "submodel-descriptors?limit=1";
+                    var urlReg =
+                        aasUrls.SubmodelRegistryUrl.AppendSlash() + "submodel-descriptors?limit=1";
 
                     HttpResponseMessage responseReg = await client.GetAsync(url, cancellationToken);
                     var responseBodyReg = await responseReg.Content.ReadAsStringAsync();
-                    if (responseReg.StatusCode == HttpStatusCode.NotFound || responseBodyReg.StartsWith("<"))
+                    if (
+                        responseReg.StatusCode == HttpStatusCode.NotFound
+                        || responseBodyReg.StartsWith("<")
+                    )
                     {
-                        result = aasUrls.SubmodelRepositoryUrl.AppendSlash() + "submodels/" + smIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+                        result =
+                            aasUrls.SubmodelRepositoryUrl.AppendSlash()
+                            + "submodels/"
+                            + smIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
                     }
                     else
                     {
-                        throw new Exception($"Request to {urlReg} failed with status code {responseReg.StatusCode}");
+                        throw new Exception(
+                            $"Request to {urlReg} failed with status code {responseReg.StatusCode}"
+                        );
                     }
                 }
             }
             else
             {
-                result = aasUrls.SubmodelRepositoryUrl.AppendSlash() + "submodels/" + smIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
+                result =
+                    aasUrls.SubmodelRepositoryUrl.AppendSlash()
+                    + "submodels/"
+                    + smIdentifier.ToBase64UrlEncoded(Encoding.UTF8);
             }
         }
         // replace double slashes in url, but not in protocol

@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, OnChanges, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  input,
+  OnChanges,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { FieldsetModule } from 'primeng/fieldset';
@@ -82,7 +89,7 @@ export class SecurityConfigurationComponent implements OnInit, OnChanges {
       reader.onload = () => {
         const arrayBuffer = reader.result as ArrayBuffer;
         const binaryString = String.fromCharCode(
-          ...new Uint8Array(arrayBuffer)
+          ...new Uint8Array(arrayBuffer),
         );
         const text = window.btoa(binaryString);
         this.localCertificate.set(text);
