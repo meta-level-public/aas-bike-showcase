@@ -18,5 +18,51 @@ services:
     restart: unless-stopped
     ports:
       - 8081:8081
-#    volumes:
-# - ../dockerfiles/aas-server/config:/usr/share/config
+  #    volumes:
+  # - ../dockerfiles/aas-server/config:/usr/share/config
+
+  aas-runtime:
+    image: twinedgeimages.azurecr.io/aas-runtime:latest
+    # networks:
+    #   - internal
+    ports:
+      - '7021:8080'
+    restart: unless-stopped
+    # extra_hosts:
+    #   aas-designer-aas-env: ${AAS_ENVIRONMENT_IP}
+    env_file:
+      - .env
+    environment:
+      aas.runtime.load.aasxpath: 'file:/data/aas.aasx'
+      aas.runtime.settings.path: 'file:/data/config.json'
+      spring.datasource.url: 'jdbc:h2:file:/data/db'
+      twinedge.externalurl: '${TWINEDGE_EXTERNAL_URL}'
+      twinedge.registry.aasRegistryPath: '${AAS_REGISTRY_PATH}'
+      twinedge.registry.smRegistryPath: '${SM_REGISTRY_PATH}'
+      twinedge.registry.aasDiscoveryPath: '${AAS_DISCOVERY_PATH}'
+      twinedge.events.mqtt.enabled: false
+    volumes:
+      - ./data:/data
+      - ./data_db:/data/db
+
+  aas-runtime-web:
+    image: twinedgeimages.azurecr.io/aas-runtime-web:latest
+    # networks:
+    # - internal
+    ports:
+      - '7022:3000'
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  screw-simulator:
+    image: twinedgeimages.azurecr.io/screwingsimulation:latest
+    hostname: screw-simulator
+    # networks:
+    #   - internal
+    ports:
+      - '7020:8080'
+      - '0.0.0.0:4840:4840'
+    restart: unless-stopped
+    env_file:
+      - .env

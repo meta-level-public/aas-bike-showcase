@@ -182,6 +182,78 @@ services:
       - 'traefik.http.routers.aas-ui.middlewares=redirect-to-https@file'
       - 'traefik.http.services.aas-ui.loadbalancer.server.port=3000'
 
+  ######################## END APPLICATIONS ########################
+
+  ######################### MMC Parts ##############################
+
+  aas-runtime:
+    image: twinedgeimages.azurecr.io/aas-runtime:latest
+    # networks:
+    #   - internal
+    # ports:
+    #   - '8080'
+    restart: unless-stopped
+    # extra_hosts:
+    #   aas-designer-aas-env: ${AAS_ENVIRONMENT_IP}
+    env_file:
+      - .env
+    environment:
+      aas.runtime.load.aasxpath: 'file:/data/aas.aasx'
+      aas.runtime.settings.path: 'file:/data/config.json'
+      spring.datasource.url: 'jdbc:h2:file:/data/db'
+      twinedge.externalurl: '${TWINEDGE_EXTERNAL_URL}'
+      twinedge.registry.aasRegistryPath: '${AAS_REGISTRY_PATH}'
+      twinedge.registry.smRegistryPath: '${SM_REGISTRY_PATH}'
+      twinedge.registry.aasDiscoveryPath: '${AAS_DISCOVERY_PATH}'
+      twinedge.events.mqtt.enabled: false
+    volumes:
+      - ./data:/data
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mmc-aas-runtime.rule=Host(`mmc-aas-runtime.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.mmc-aas-runtime.entrypoints=web,websecure'
+      - 'traefik.http.routers.mmc-aas-runtime.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.mmc-aas-runtime.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.mmc-aas-runtime.loadbalancer.server.port=8080'
+
+  aas-runtime-web:
+    image: twinedgeimages.azurecr.io/aas-runtime-web:latest
+    # networks:
+    #   - internal
+    # ports:
+    #   - '3000'
+    restart: unless-stopped
+    env_file:
+      - .env
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mmc-aas-runtime-web.rule=Host(`mmc-aas-runtime-web.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.mmc-aas-runtime-web.entrypoints=web,websecure'
+      - 'traefik.http.routers.mmc-aas-runtime-web.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.mmc-aas-runtime-web.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.mmc-aas-runtime-web.loadbalancer.server.port=3000'
+
+  screw-simulator:
+    image: twinedgeimages.azurecr.io/screwingsimulation:latest
+    hostname: screw-simulator
+    # networks:
+    #   - internal
+    # ports:
+    #   - '7020:8080'
+    #   - '0.0.0.0:4840:4840'
+    restart: unless-stopped
+    env_file:
+      - .env
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.mmc-simulator.rule=Host(`mmc-simulator.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.mmc-simulator.entrypoints=web,websecure'
+      - 'traefik.http.routers.mmc-simulator.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.mmc-simulator.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.mmc-simulator.loadbalancer.server.port=8080'
+
+##################################################################
+
 volumes:
   traefik-letsencrypt:
     driver: local
