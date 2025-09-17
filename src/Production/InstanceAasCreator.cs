@@ -225,16 +225,34 @@ public class InstanceAasCreator
 
     private static Submodel CreateProductCarbonFootprintSubmodel(ProducedProduct producedProduct)
     {
-        var pcf = PCFCreator.CreateFromJson();
+        var pcf = PCFCreator.CreateFromJsonPrefilled();
         var productFootprints = (SubmodelElementList)
             pcf.SubmodelElements.Find(submodel => submodel.IdShort == "ProductCarbonFootprints");
-        //Property pcfValue = new Property(DataTypeDefXsd.Double, idShort: "PcfCO2eq", value: producedProduct.PCFValue.ToString());
+        // add pcf value, publication date and address for phases A1 - A3
         SubmodelElementCollection pcfComponent = (SubmodelElementCollection)
             productFootprints.Value.First();
+        CompletePCFData(pcfComponent, producedProduct.PCFValue.ToString());
+        
+        // add pcf value, publication date and address for phase A4, if applicable (else ignore)
+        try
+        {
+            SubmodelElementCollection pcfComponentTransport = (SubmodelElementCollection)
+                productFootprints.Value[1];
+            CompletePCFData(pcfComponentTransport, (producedProduct.PCFValue * 0.2).ToString()); // todo: improve calculation of trnasport pcf (currently, it's 20% of overall PCF)
+        }
+        catch (IndexOutOfRangeException){} // transport pcf not applilcable (yet)
+        return pcf;
+    }
+
+    private static SubmodelElementCollection CompletePCFData(SubmodelElementCollection pcfComponent, String pcfValue)
+    {
         Property pcfElem = (Property)
             pcfComponent.Value.Find(property => property.IdShort == "PcfCO2eq");
-        pcfElem.Value = producedProduct.PCFValue.ToString();
-        // todo: anything else to add here?
-        return pcf;
+        pcfElem.Value = pcfValue;
+        Property publicationDate = (Property)
+            pcfComponent.Value.Find(property => property.IdShort == "PublicationDate");
+        publicationDate.Value = DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        //todo: add GoodsHandoverAddress
+        return pcfComponent;
     }
 }

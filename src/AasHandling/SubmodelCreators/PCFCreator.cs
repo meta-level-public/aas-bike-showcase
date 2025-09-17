@@ -20,6 +20,21 @@ public class PCFCreator
         return ConvertJsonToSubmodel(jsonString);
     }
 
+    public static Submodel CreateFromJsonPrefilled()
+    {
+        // JSON-Datei lesen
+        var jsonPath = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "AasHandling",
+            "SubmodelCreators",
+            "pcf_prefilled.json"
+        );
+        var jsonString = System.IO.File.ReadAllText(jsonPath);
+
+        // JSON zu AAS Core Submodel konvertieren
+        return ConvertJsonToSubmodel(jsonString);
+    }
+
     public static Submodel ConvertJsonToSubmodel(string jsonString)
     {
         var jsonNode = JsonNode.Parse(jsonString);
