@@ -232,7 +232,7 @@ public class InstanceAasCreator
         SubmodelElementCollection pcfComponent = (SubmodelElementCollection)
             productFootprints.Value.First();
         CompletePCFData(pcfComponent, producedProduct.PCFValue.ToString());
-        
+
         // add pcf value, publication date and address for phase A4, if applicable (else ignore)
         try
         {
@@ -240,11 +240,14 @@ public class InstanceAasCreator
                 productFootprints.Value[1];
             CompletePCFData(pcfComponentTransport, (producedProduct.PCFValue * 0.2).ToString()); // todo: improve calculation of trnasport pcf (currently, it's 20% of overall PCF)
         }
-        catch (IndexOutOfRangeException){} // transport pcf not applilcable (yet)
+        catch (IndexOutOfRangeException) { } // transport pcf not applilcable (yet)
         return pcf;
     }
 
-    private static SubmodelElementCollection CompletePCFData(SubmodelElementCollection pcfComponent, String pcfValue)
+    private static SubmodelElementCollection CompletePCFData(
+        SubmodelElementCollection pcfComponent,
+        String pcfValue
+    )
     {
         Property pcfElem = (Property)
             pcfComponent.Value.Find(property => property.IdShort == "PcfCO2eq");
