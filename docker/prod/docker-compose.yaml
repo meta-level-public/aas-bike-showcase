@@ -45,9 +45,14 @@ services:
       - 'traefik.http.routers.aas-demoapp.tls.certresolver=letsencrypt'
       - 'traefik.http.routers.aas-demoapp.middlewares=redirect-to-https@file'
 
+  ######################## END APPLICATIONS ########################
+
+  ######################## BASYX SERVICES ########################
   aas-env:
-    image: eclipsebasyx/aas-environment:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-environment:2.0.0-milestone-04
     container_name: aas-env
+    mem_limit: 384m
+    memswap_limit: 1g
     environment:
       - SERVER_PORT=8081
     volumes:
@@ -71,10 +76,10 @@ services:
       - 'traefik.http.routers.aas-env.middlewares=redirect-to-https@file'
 
   aas-registry:
-    image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-milestone-04
     container_name: aas-registry
-    ports:
-      - '8082:8080'
+    mem_limit: 384m
+    memswap_limit: 1g
     environment:
       - SERVER_PORT=8080
     volumes:
@@ -91,8 +96,10 @@ services:
       - 'traefik.http.routers.aas-registry.middlewares=redirect-to-https@file'
 
   sm-registry:
-    image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-SNAPSHOT
+    image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-milestone-04
     container_name: sm-registry
+    mem_limit: 384m
+    memswap_limit: 1g
     environment:
       - SERVER_PORT=8080
     volumes:
@@ -111,6 +118,8 @@ services:
   mongo:
     image: mongo:5.0.10
     container_name: mongo
+    mem_limit: 256m
+    memswap_limit: 1g
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongoAdmin
       MONGO_INITDB_ROOT_PASSWORD: mongoPassword
@@ -122,8 +131,10 @@ services:
       retries: 5
 
   aas-discovery:
-    image: eclipsebasyx/aas-discovery:2.0.0-SNAPSHOT
+    image: eclipsebasyx/aas-discovery:2.0.0-milestone-04
     container_name: aas-discovery
+    mem_limit: 128m
+    memswap_limit: 1g
     environment:
       - SERVER_PORT=8081
     volumes:
@@ -142,8 +153,10 @@ services:
   mosquitto:
     image: eclipse-mosquitto:2.0.15
     container_name: mosquitto
-    ports:
-      - '1883:1883'
+    mem_limit: 128m
+    memswap_limit: 1g
+    # ports:
+    #   - '1883:1883'
     volumes:
       - ./mosquitto:/mosquitto
     restart: always
@@ -155,6 +168,131 @@ services:
       timeout: 10s
       start_period: 1s
       retries: 3
+
+  ######################### BASYX SERVICES SUPPLIER #########################
+
+  aas-env-suppl:
+    image: eclipsebasyx/aas-environment:2.0.0-milestone-04
+    container_name: aas-env-suppl
+    mem_limit: 384m
+    memswap_limit: 1g
+    environment:
+      - SERVER_PORT=8081
+    volumes:
+      - ./aas-suppl:/application/aas
+      - ./basyx-suppl/aas-env.properties:/application/application.properties
+    restart: 'no'
+    depends_on:
+      aas-registry-suppl:
+        condition: service_healthy
+      sm-registry-suppl:
+        condition: service_healthy
+      mongo-suppl:
+        condition: service_healthy
+      mosquitto-suppl:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-env-suppl.rule=Host(`aas-env-suppl.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-env-suppl.entrypoints=websecure'
+      - 'traefik.http.routers.aas-env-suppl.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-env-suppl.middlewares=redirect-to-https@file'
+
+  aas-registry-suppl:
+    image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-milestone-04
+    container_name: aas-registry-suppl
+    mem_limit: 384m
+    memswap_limit: 1g
+    environment:
+      - SERVER_PORT=8080
+    volumes:
+      - ./basyx-suppl/aas-registry.yml:/workspace/config/application.yml
+    restart: 'no'
+    depends_on:
+      mongo-suppl:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-registry-suppl.rule=Host(`aas-registry-suppl.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-registry-suppl.entrypoints=websecure'
+      - 'traefik.http.routers.aas-registry-suppl.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-registry-suppl.middlewares=redirect-to-https@file'
+
+  sm-registry-suppl:
+    image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-milestone-04
+    container_name: sm-registry-suppl
+    mem_limit: 384m
+    memswap_limit: 1g
+    environment:
+      - SERVER_PORT=8080
+    volumes:
+      - ./basyx-suppl/sm-registry.yml:/workspace/config/application.yml
+    restart: 'no'
+    depends_on:
+      mongo-suppl:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.sm-registry-suppl.rule=Host(`sm-registry-suppl.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.sm-registry-suppl.entrypoints=websecure'
+      - 'traefik.http.routers.sm-registry-suppl.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.sm-registry-suppl.middlewares=redirect-to-https@file'
+
+  mongo-suppl:
+    image: mongo:5.0.10
+    container_name: mongo-suppl
+    mem_limit: 256m
+    memswap_limit: 1g
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+    restart: 'no'
+    healthcheck:
+      test: mongo
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  aas-discovery-suppl:
+    image: eclipsebasyx/aas-discovery:2.0.0-milestone-04
+    container_name: aas-discovery-suppl
+    mem_limit: 128m
+    memswap_limit: 1g
+    environment:
+      - SERVER_PORT=8081
+    volumes:
+      - ./basyx-suppl/aas-discovery.properties:/application/application.properties
+    restart: 'no'
+    depends_on:
+      mongo:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-discovery-suppl.rule=Host(`aas-discovery-suppl.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-discovery-suppl.entrypoints=websecure'
+      - 'traefik.http.routers.aas-discovery-suppl.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-discovery-suppl.middlewares=redirect-to-https@file'
+
+  mosquitto-suppl:
+    image: eclipse-mosquitto:2.0.15
+    container_name: mosquitto-suppl
+    mem_limit: 128m
+    memswap_limit: 1g
+    # ports:
+    #   - '1883:1883'
+    volumes:
+      - ./mosquitto-suppl:/mosquitto
+    restart: 'no'
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mosquitto_sub -p 1883 -t 'topic' -C 1 -E -i probe -W 3
+      interval: 5s
+      timeout: 10s
+      start_period: 1s
+      retries: 3
+
+  ############################# WEB UI #############################
 
   aas-web-ui:
     image: eclipsebasyx/aas-gui:SNAPSHOT
@@ -182,12 +320,12 @@ services:
       - 'traefik.http.routers.aas-ui.middlewares=redirect-to-https@file'
       - 'traefik.http.services.aas-ui.loadbalancer.server.port=3000'
 
-  ######################## END APPLICATIONS ########################
-
   ######################### MMC Parts ##############################
 
   aas-runtime:
     image: twinedgeimages.azurecr.io/aas-runtime:latest
+    mem_limit: 256m
+    memswap_limit: 1g
     # networks:
     #   - internal
     # ports:
@@ -218,6 +356,8 @@ services:
 
   aas-runtime-web:
     image: twinedgeimages.azurecr.io/aas-runtime-web:latest
+    mem_limit: 256m
+    memswap_limit: 1g
     # networks:
     #   - internal
     # ports:
