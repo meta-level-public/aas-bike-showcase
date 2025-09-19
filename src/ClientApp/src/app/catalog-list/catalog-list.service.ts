@@ -20,17 +20,12 @@ export class CatalogListService {
 
   async deleteItem(id: number) {
     const params = new HttpParams().set('id', id);
-    return lastValueFrom(
-      this.http.delete(`${this.baseUrl}api/Katalog/delete`, { params })
-    );
+    return lastValueFrom(this.http.delete(`${this.baseUrl}api/Katalog/delete`, { params }));
   }
 
   save(newKatalogEintrag: KatalogEintrag) {
     return lastValueFrom(
-      this.http.post<KatalogEintrag>(
-        `${this.baseUrl}api/katalog/import`,
-        newKatalogEintrag
-      )
+      this.http.post<KatalogEintrag>(`${this.baseUrl}api/katalog/import`, newKatalogEintrag)
     );
   }
 }

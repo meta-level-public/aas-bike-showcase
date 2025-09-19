@@ -14,7 +14,8 @@ namespace AasDemoapp.Migrations
                 name: "ToolRepos",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                    Id = table
+                        .Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Logo = table.Column<string>(type: "TEXT", nullable: false),
@@ -24,19 +25,19 @@ namespace AasDemoapp.Migrations
                     RemoteSmRegistryUrl = table.Column<string>(type: "TEXT", nullable: false),
                     RemoteDiscoveryUrl = table.Column<string>(type: "TEXT", nullable: false),
                     RemoteCdRepositoryUrl = table.Column<string>(type: "TEXT", nullable: false),
-                    SecuritySetting = table.Column<string>(type: "TEXT", nullable: false)
+                    SecuritySetting = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ToolRepos", x => x.Id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ToolRepos");
+            migrationBuilder.DropTable(name: "ToolRepos");
         }
     }
 }

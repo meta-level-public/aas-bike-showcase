@@ -15,18 +15,20 @@ namespace AasDemoapp.Migrations
                 name: "ProducedProductId",
                 table: "KatalogEintraege",
                 type: "INTEGER",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.CreateTable(
                 name: "ProducedProducts",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                    Id = table
+                        .Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     ConfiguredProductId = table.Column<long>(type: "INTEGER", nullable: false),
                     AasId = table.Column<string>(type: "TEXT", nullable: false),
                     GlobalAssetId = table.Column<string>(type: "TEXT", nullable: false),
-                    ProductionDate = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    ProductionDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -35,25 +37,30 @@ namespace AasDemoapp.Migrations
                         name: "FK_ProducedProducts_ConfiguredProducts_ConfiguredProductId",
                         column: x => x.ConfiguredProductId,
                         principalTable: "ConfiguredProducts",
-                        principalColumn: "Id");
-                });
+                        principalColumn: "Id"
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_KatalogEintraege_ProducedProductId",
                 table: "KatalogEintraege",
-                column: "ProducedProductId");
+                column: "ProducedProductId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProducedProducts_ConfiguredProductId",
                 table: "ProducedProducts",
-                column: "ConfiguredProductId");
+                column: "ConfiguredProductId"
+            );
 
             migrationBuilder.AddForeignKey(
                 name: "FK_KatalogEintraege_ProducedProducts_ProducedProductId",
                 table: "KatalogEintraege",
                 column: "ProducedProductId",
                 principalTable: "ProducedProducts",
-                principalColumn: "Id");
+                principalColumn: "Id"
+            );
         }
 
         /// <inheritdoc />
@@ -61,18 +68,17 @@ namespace AasDemoapp.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_KatalogEintraege_ProducedProducts_ProducedProductId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
-            migrationBuilder.DropTable(
-                name: "ProducedProducts");
+            migrationBuilder.DropTable(name: "ProducedProducts");
 
             migrationBuilder.DropIndex(
                 name: "IX_KatalogEintraege_ProducedProductId",
-                table: "KatalogEintraege");
+                table: "KatalogEintraege"
+            );
 
-            migrationBuilder.DropColumn(
-                name: "ProducedProductId",
-                table: "KatalogEintraege");
+            migrationBuilder.DropColumn(name: "ProducedProductId", table: "KatalogEintraege");
         }
     }
 }

@@ -14,89 +14,85 @@
     ></p-button>
   </div>
   @if (showEndpoints()) {
-  <div class="col-12 md:col-6">
-    <label for="aasRepositoryUrl" class="block text-900 font-medium mb-2"
-      >AAS Repository URL</label
-    >
-    <input
-      id="aasRepositoryUrl"
-      type="text"
-      pInputText
-      class="w-full mb-3"
-      [ngModel]="aasRepositoryUrl()"
-      (ngModelChange)="aasRepositoryUrlChange.emit($event)"
-    />
-  </div>
+    <div class="col-12 md:col-6">
+      <label for="aasRepositoryUrl" class="block text-900 font-medium mb-2"
+        >AAS Repository URL</label
+      >
+      <input
+        id="aasRepositoryUrl"
+        type="text"
+        pInputText
+        class="w-full mb-3"
+        [ngModel]="aasRepositoryUrl()"
+        (ngModelChange)="aasRepositoryUrlChange.emit($event)"
+      />
+    </div>
 
-  <div class="col-12 md:col-6">
-    <label for="aasRegistryUrl" class="block text-900 font-medium mb-2"
-      >AAS Registry URL</label
-    >
-    <input
-      id="aasRegistryUrl"
-      type="text"
-      pInputText
-      class="w-full mb-3"
-      [ngModel]="aasRegistryUrl()"
-      (ngModelChange)="aasRegistryUrlChange.emit($event)"
-    />
-  </div>
+    <div class="col-12 md:col-6">
+      <label for="aasRegistryUrl" class="block text-900 font-medium mb-2">AAS Registry URL</label>
+      <input
+        id="aasRegistryUrl"
+        type="text"
+        pInputText
+        class="w-full mb-3"
+        [ngModel]="aasRegistryUrl()"
+        (ngModelChange)="aasRegistryUrlChange.emit($event)"
+      />
+    </div>
 
-  <div class="col-12 md:col-6">
-    <label for="submodelRepositoryUrl" class="block text-900 font-medium mb-2"
-      >Submodel Repository URL</label
-    >
-    <input
-      id="submodelRepositoryUrl"
-      type="text"
-      pInputText
-      class="w-full mb-3"
-      [ngModel]="submodelRepositoryUrl()"
-      (ngModelChange)="submodelRepositoryUrlChange.emit($event)"
-    />
-  </div>
+    <div class="col-12 md:col-6">
+      <label for="submodelRepositoryUrl" class="block text-900 font-medium mb-2"
+        >Submodel Repository URL</label
+      >
+      <input
+        id="submodelRepositoryUrl"
+        type="text"
+        pInputText
+        class="w-full mb-3"
+        [ngModel]="submodelRepositoryUrl()"
+        (ngModelChange)="submodelRepositoryUrlChange.emit($event)"
+      />
+    </div>
 
-  <div class="col-12 md:col-6">
-    <label for="submodelRegistryUrl" class="block text-900 font-medium mb-2"
-      >Submodel Registry URL</label
-    >
-    <input
-      id="submodelRegistryUrl"
-      type="text"
-      pInputText
-      class="w-full mb-3"
-      [ngModel]="submodelRegistryUrl()"
-      (ngModelChange)="submodelRegistryUrlChange.emit($event)"
-    />
-  </div>
+    <div class="col-12 md:col-6">
+      <label for="submodelRegistryUrl" class="block text-900 font-medium mb-2"
+        >Submodel Registry URL</label
+      >
+      <input
+        id="submodelRegistryUrl"
+        type="text"
+        pInputText
+        class="w-full mb-3"
+        [ngModel]="submodelRegistryUrl()"
+        (ngModelChange)="submodelRegistryUrlChange.emit($event)"
+      />
+    </div>
 
-  <div class="col-12 md:col-6">
-    <label for="discoveryUrl" class="block text-900 font-medium mb-2"
-      >Discovery URL</label
-    >
-    <input
-      id="discoveryUrl"
-      type="text"
-      pInputText
-      class="w-full mb-3"
-      [ngModel]="discoveryUrl()"
-      (ngModelChange)="discoveryUrlChange.emit($event)"
-    />
-  </div>
+    <div class="col-12 md:col-6">
+      <label for="discoveryUrl" class="block text-900 font-medium mb-2">Discovery URL</label>
+      <input
+        id="discoveryUrl"
+        type="text"
+        pInputText
+        class="w-full mb-3"
+        [ngModel]="discoveryUrl()"
+        (ngModelChange)="discoveryUrlChange.emit($event)"
+      />
+    </div>
 
-  <div class="col-12 md:col-6">
-    <label for="conceptDescriptionUrl" class="block text-900 font-medium mb-2"
-      >Concept Description URL</label
-    >
-    <input
-      id="conceptDescriptionUrl"
-      type="text"
-      pInputText
-      class="w-full mb-3"
-      [ngModel]="conceptDescriptionUrl()"
-      (ngModelChange)="conceptDescriptionUrlChange.emit($event)"
-    />
-  </div>
+    <div class="col-12 md:col-6">
+      <label for="conceptDescriptionUrl" class="block text-900 font-medium mb-2"
+        >Concept Description URL</label
+      >
+      <input
+        id="conceptDescriptionUrl"
+        type="text"
+        pInputText
+        class="w-full mb-3"
+        [ngModel]="conceptDescriptionUrl()"
+        (ngModelChange)="conceptDescriptionUrlChange.emit($event)"
+      />
+    </div>
   }
 
   <app-security-configuration

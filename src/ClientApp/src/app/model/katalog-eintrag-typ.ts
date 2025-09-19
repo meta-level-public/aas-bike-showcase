@@ -1,4 +1,4 @@
 export enum KatalogEintragTyp {
   RohteilTyp = 0,
-  RohteilInstanz = 1
+  RohteilInstanz = 1,
 }

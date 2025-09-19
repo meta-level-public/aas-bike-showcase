@@ -35,44 +35,56 @@ namespace AasDemoapp.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Fehler beim Abrufen der Lieferanten", details = ex.Message });
+                return StatusCode(
+                    500,
+                    new { error = "Fehler beim Abrufen der Lieferanten", details = ex.Message }
+                );
             }
         }
 
         [HttpPost]
-        public async Task<ActionResult<SupplierResponseDto>> Add(CreateSupplierDto createSupplierDto)
+        public async Task<ActionResult<SupplierResponseDto>> Add(
+            CreateSupplierDto createSupplierDto
+        )
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(createSupplierDto.Name))
                 {
-                    return BadRequest(new SupplierResponseDto
-                    {
-                        Success = false,
-                        Message = "Name ist erforderlich",
-                        Error = "Validation failed"
-                    });
+                    return BadRequest(
+                        new SupplierResponseDto
+                        {
+                            Success = false,
+                            Message = "Name ist erforderlich",
+                            Error = "Validation failed",
+                        }
+                    );
                 }
 
                 var supplier = _mapper.Map<Supplier>(createSupplierDto);
                 var addedSupplier = await _supplierService.AddAsync(supplier);
                 var supplierDto = _mapper.Map<SupplierDto>(addedSupplier);
 
-                return Ok(new SupplierResponseDto
-                {
-                    Success = true,
-                    Message = "Lieferant erfolgreich hinzugefügt",
-                    Supplier = supplierDto
-                });
+                return Ok(
+                    new SupplierResponseDto
+                    {
+                        Success = true,
+                        Message = "Lieferant erfolgreich hinzugefügt",
+                        Supplier = supplierDto,
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new SupplierResponseDto
-                {
-                    Success = false,
-                    Message = "Fehler beim Hinzufügen des Lieferanten",
-                    Error = ex.Message
-                });
+                return StatusCode(
+                    500,
+                    new SupplierResponseDto
+                    {
+                        Success = false,
+                        Message = "Fehler beim Hinzufügen des Lieferanten",
+                        Error = ex.Message,
+                    }
+                );
             }
         }
 
@@ -92,23 +104,30 @@ namespace AasDemoapp.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Fehler beim Abrufen des Lieferanten", details = ex.Message });
+                return StatusCode(
+                    500,
+                    new { error = "Fehler beim Abrufen des Lieferanten", details = ex.Message }
+                );
             }
         }
 
         [HttpPut]
-        public async Task<ActionResult<SupplierResponseDto>> Update(UpdateSupplierDto updateSupplierDto)
+        public async Task<ActionResult<SupplierResponseDto>> Update(
+            UpdateSupplierDto updateSupplierDto
+        )
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(updateSupplierDto.Name))
                 {
-                    return BadRequest(new SupplierResponseDto
-                    {
-                        Success = false,
-                        Message = "Name ist erforderlich",
-                        Error = "Validation failed"
-                    });
+                    return BadRequest(
+                        new SupplierResponseDto
+                        {
+                            Success = false,
+                            Message = "Name ist erforderlich",
+                            Error = "Validation failed",
+                        }
+                    );
                 }
 
                 var supplier = _mapper.Map<Supplier>(updateSupplierDto);
@@ -116,31 +135,38 @@ namespace AasDemoapp.Controllers
 
                 if (updatedSupplier == null)
                 {
-                    return NotFound(new SupplierResponseDto
-                    {
-                        Success = false,
-                        Message = $"Lieferant mit ID {updateSupplierDto.Id} nicht gefunden",
-                        Error = "Not found"
-                    });
+                    return NotFound(
+                        new SupplierResponseDto
+                        {
+                            Success = false,
+                            Message = $"Lieferant mit ID {updateSupplierDto.Id} nicht gefunden",
+                            Error = "Not found",
+                        }
+                    );
                 }
 
                 var supplierDto = _mapper.Map<SupplierDto>(updatedSupplier);
 
-                return Ok(new SupplierResponseDto
-                {
-                    Success = true,
-                    Message = "Lieferant erfolgreich aktualisiert",
-                    Supplier = supplierDto
-                });
+                return Ok(
+                    new SupplierResponseDto
+                    {
+                        Success = true,
+                        Message = "Lieferant erfolgreich aktualisiert",
+                        Supplier = supplierDto,
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new SupplierResponseDto
-                {
-                    Success = false,
-                    Message = "Fehler beim Aktualisieren des Lieferanten",
-                    Error = ex.Message
-                });
+                return StatusCode(
+                    500,
+                    new SupplierResponseDto
+                    {
+                        Success = false,
+                        Message = "Fehler beim Aktualisieren des Lieferanten",
+                        Error = ex.Message,
+                    }
+                );
             }
         }
 
@@ -153,28 +179,35 @@ namespace AasDemoapp.Controllers
 
                 if (!success)
                 {
-                    return NotFound(new SupplierResponseDto
-                    {
-                        Success = false,
-                        Message = $"Lieferant mit ID {id} nicht gefunden",
-                        Error = "Not found"
-                    });
+                    return NotFound(
+                        new SupplierResponseDto
+                        {
+                            Success = false,
+                            Message = $"Lieferant mit ID {id} nicht gefunden",
+                            Error = "Not found",
+                        }
+                    );
                 }
 
-                return Ok(new SupplierResponseDto
-                {
-                    Success = true,
-                    Message = "Lieferant erfolgreich gelöscht"
-                });
+                return Ok(
+                    new SupplierResponseDto
+                    {
+                        Success = true,
+                        Message = "Lieferant erfolgreich gelöscht",
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new SupplierResponseDto
-                {
-                    Success = false,
-                    Message = "Fehler beim Löschen des Lieferanten",
-                    Error = ex.Message
-                });
+                return StatusCode(
+                    500,
+                    new SupplierResponseDto
+                    {
+                        Success = false,
+                        Message = "Fehler beim Löschen des Lieferanten",
+                        Error = ex.Message,
+                    }
+                );
             }
         }
     }

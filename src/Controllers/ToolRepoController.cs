@@ -33,7 +33,14 @@ namespace AasDemoapp.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Fehler beim Abrufen der Tool Repositories", details = ex.Message });
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        error = "Fehler beim Abrufen der Tool Repositories",
+                        details = ex.Message,
+                    }
+                );
             }
         }
 
@@ -44,33 +51,40 @@ namespace AasDemoapp.Controllers
             {
                 if (string.IsNullOrWhiteSpace(createDto.Name))
                 {
-                    return BadRequest(new ToolRepoResponseDto
-                    {
-                        Success = false,
-                        Message = "Name ist erforderlich",
-                        Error = "Validation failed"
-                    });
+                    return BadRequest(
+                        new ToolRepoResponseDto
+                        {
+                            Success = false,
+                            Message = "Name ist erforderlich",
+                            Error = "Validation failed",
+                        }
+                    );
                 }
 
                 var entity = _mapper.Map<ToolRepo>(createDto);
                 var added = await _service.AddAsync(entity);
                 var dto = _mapper.Map<ToolRepoDto>(added);
 
-                return Ok(new ToolRepoResponseDto
-                {
-                    Success = true,
-                    Message = "Tool Repository erfolgreich hinzugefügt",
-                    ToolRepo = dto
-                });
+                return Ok(
+                    new ToolRepoResponseDto
+                    {
+                        Success = true,
+                        Message = "Tool Repository erfolgreich hinzugefügt",
+                        ToolRepo = dto,
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new ToolRepoResponseDto
-                {
-                    Success = false,
-                    Message = "Fehler beim Hinzufügen des Tool Repository",
-                    Error = ex.Message
-                });
+                return StatusCode(
+                    500,
+                    new ToolRepoResponseDto
+                    {
+                        Success = false,
+                        Message = "Fehler beim Hinzufügen des Tool Repository",
+                        Error = ex.Message,
+                    }
+                );
             }
         }
 
@@ -90,7 +104,10 @@ namespace AasDemoapp.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "Fehler beim Abrufen des Tool Repository", details = ex.Message });
+                return StatusCode(
+                    500,
+                    new { error = "Fehler beim Abrufen des Tool Repository", details = ex.Message }
+                );
             }
         }
 
@@ -101,12 +118,14 @@ namespace AasDemoapp.Controllers
             {
                 if (string.IsNullOrWhiteSpace(updateDto.Name))
                 {
-                    return BadRequest(new ToolRepoResponseDto
-                    {
-                        Success = false,
-                        Message = "Name ist erforderlich",
-                        Error = "Validation failed"
-                    });
+                    return BadRequest(
+                        new ToolRepoResponseDto
+                        {
+                            Success = false,
+                            Message = "Name ist erforderlich",
+                            Error = "Validation failed",
+                        }
+                    );
                 }
 
                 var entity = _mapper.Map<ToolRepo>(updateDto);
@@ -114,31 +133,38 @@ namespace AasDemoapp.Controllers
 
                 if (updated == null)
                 {
-                    return NotFound(new ToolRepoResponseDto
-                    {
-                        Success = false,
-                        Message = $"Tool Repository mit ID {updateDto.Id} nicht gefunden",
-                        Error = "Not found"
-                    });
+                    return NotFound(
+                        new ToolRepoResponseDto
+                        {
+                            Success = false,
+                            Message = $"Tool Repository mit ID {updateDto.Id} nicht gefunden",
+                            Error = "Not found",
+                        }
+                    );
                 }
 
                 var dto = _mapper.Map<ToolRepoDto>(updated);
 
-                return Ok(new ToolRepoResponseDto
-                {
-                    Success = true,
-                    Message = "Tool Repository erfolgreich aktualisiert",
-                    ToolRepo = dto
-                });
+                return Ok(
+                    new ToolRepoResponseDto
+                    {
+                        Success = true,
+                        Message = "Tool Repository erfolgreich aktualisiert",
+                        ToolRepo = dto,
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new ToolRepoResponseDto
-                {
-                    Success = false,
-                    Message = "Fehler beim Aktualisieren des Tool Repository",
-                    Error = ex.Message
-                });
+                return StatusCode(
+                    500,
+                    new ToolRepoResponseDto
+                    {
+                        Success = false,
+                        Message = "Fehler beim Aktualisieren des Tool Repository",
+                        Error = ex.Message,
+                    }
+                );
             }
         }
 
@@ -151,28 +177,35 @@ namespace AasDemoapp.Controllers
 
                 if (!success)
                 {
-                    return NotFound(new ToolRepoResponseDto
-                    {
-                        Success = false,
-                        Message = $"Tool Repository mit ID {id} nicht gefunden",
-                        Error = "Not found"
-                    });
+                    return NotFound(
+                        new ToolRepoResponseDto
+                        {
+                            Success = false,
+                            Message = $"Tool Repository mit ID {id} nicht gefunden",
+                            Error = "Not found",
+                        }
+                    );
                 }
 
-                return Ok(new ToolRepoResponseDto
-                {
-                    Success = true,
-                    Message = "Tool Repository erfolgreich gelöscht"
-                });
+                return Ok(
+                    new ToolRepoResponseDto
+                    {
+                        Success = true,
+                        Message = "Tool Repository erfolgreich gelöscht",
+                    }
+                );
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new ToolRepoResponseDto
-                {
-                    Success = false,
-                    Message = "Fehler beim Löschen des Tool Repository",
-                    Error = ex.Message
-                });
+                return StatusCode(
+                    500,
+                    new ToolRepoResponseDto
+                    {
+                        Success = false,
+                        Message = "Fehler beim Löschen des Tool Repository",
+                        Error = ex.Message,
+                    }
+                );
             }
         }
     }

@@ -14,16 +14,12 @@ export class ConfigurationListService {
 
   async getAllFertigteil() {
     return lastValueFrom(
-      this.http.get<ConfiguredProduct[]>(
-        `${this.baseUrl}api/Konfigurator/getAll`
-      )
+      this.http.get<ConfiguredProduct[]>(`${this.baseUrl}api/Konfigurator/getAll`)
     );
   }
 
   async deleteItem(id: number) {
     const params = new HttpParams().set('id', id);
-    return lastValueFrom(
-      this.http.delete(`${this.baseUrl}api/Konfigurator/delete`, { params })
-    );
+    return lastValueFrom(this.http.delete(`${this.baseUrl}api/Konfigurator/delete`, { params }));
   }
 }

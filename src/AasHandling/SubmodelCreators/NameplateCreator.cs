@@ -12,7 +12,12 @@ public class NameplateCreator
     public static Submodel CreateFromJson()
     {
         // JSON-Datei lesen
-        var jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AasHandling", "SubmodelCreators", "nameplate.json");
+        var jsonPath = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "AasHandling",
+            "SubmodelCreators",
+            "nameplate.json"
+        );
         var jsonString = System.IO.File.ReadAllText(jsonPath);
 
         // JSON zu AAS Core Submodel konvertieren
@@ -22,7 +27,8 @@ public class NameplateCreator
     private static Submodel ConvertJsonToSubmodel(string jsonString)
     {
         var jsonNode = JsonNode.Parse(jsonString);
-        if (jsonNode == null) throw new Exception("Could not parse JSON");
+        if (jsonNode == null)
+            throw new Exception("Could not parse JSON");
 
         var submodel = Jsonization.Deserialize.SubmodelFrom(jsonNode);
         submodel.Kind = ModellingKind.Instance;
@@ -30,5 +36,4 @@ public class NameplateCreator
 
         return submodel;
     }
-
 }

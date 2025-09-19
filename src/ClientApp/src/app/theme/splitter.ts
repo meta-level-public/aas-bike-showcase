@@ -1,36 +1,36 @@
 import type { SplitterDesignTokens } from '@primeuix/themes/types/splitter';
 
- export default {
-    root: {
-        background: "{content.background}",
-        borderColor: "{content.border.color}",
-        color: "{content.color}",
-        transitionDuration: "{transition.duration}"
+export default {
+  root: {
+    background: '{content.background}',
+    borderColor: '{content.border.color}',
+    color: '{content.color}',
+    transitionDuration: '{transition.duration}',
+  },
+  gutter: {
+    background: '{content.border.color}',
+  },
+  handle: {
+    size: '24px',
+    borderRadius: '{content.border.radius}',
+    focusRing: {
+      width: '{focus.ring.width}',
+      style: '{focus.ring.style}',
+      color: '{focus.ring.color}',
+      offset: '{focus.ring.offset}',
+      shadow: '{focus.ring.shadow}',
     },
-    gutter: {
-        background: "{content.border.color}"
+  },
+  colorScheme: {
+    light: {
+      handle: {
+        background: '{surface.400}',
+      },
     },
-    handle: {
-        size: "24px",
-        borderRadius: "{content.border.radius}",
-        focusRing: {
-            width: "{focus.ring.width}",
-            style: "{focus.ring.style}",
-            color: "{focus.ring.color}",
-            offset: "{focus.ring.offset}",
-            shadow: "{focus.ring.shadow}"
-        }
+    dark: {
+      handle: {
+        background: '{surface.600}',
+      },
     },
-    colorScheme: {
-        light: {
-            handle: {
-                background: "{surface.400}"
-            }
-        },
-        dark: {
-            handle: {
-                background: "{surface.600}"
-            }
-        }
-    }
+  },
 } satisfies SplitterDesignTokens;

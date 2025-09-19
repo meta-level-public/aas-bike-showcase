@@ -22,9 +22,9 @@ import { ProductionOrderListService } from '../production-order-list/production-
     ButtonModule,
     InputTextModule,
     InputNumberModule,
-    ToastModule
+    ToastModule,
   ],
-  providers: [MessageService]
+  providers: [MessageService],
 })
 export class OrderDialogComponent implements OnChanges {
   @Input() visible: boolean = false;
@@ -48,14 +48,14 @@ export class OrderDialogComponent implements OnChanges {
       strasse: [''],
       plz: [''],
       ort: [''],
-      land: ['Deutschland']
+      land: ['Deutschland'],
     });
   }
 
   ngOnChanges() {
     if (this.visible && this.product) {
       this.orderForm.patchValue({
-        anzahl: 1
+        anzahl: 1,
       });
     }
   }
@@ -65,7 +65,7 @@ export class OrderDialogComponent implements OnChanges {
     this.visibleChange.emit(false);
     this.orderForm.reset({
       anzahl: 1,
-      land: 'Deutschland'
+      land: 'Deutschland',
     });
   }
 
@@ -77,20 +77,26 @@ export class OrderDialogComponent implements OnChanges {
         const formValue = this.orderForm.value;
 
         // Nur Adresse hinzufügen wenn mindestens ein Adressfeld ausgefüllt ist
-        const hasAddressInfo = formValue.name || formValue.vorname || formValue.strasse ||
-                              formValue.plz || formValue.ort;
+        const hasAddressInfo =
+          formValue.name ||
+          formValue.vorname ||
+          formValue.strasse ||
+          formValue.plz ||
+          formValue.ort;
 
         const createOrderDto: CreateProductionOrder = {
           configuredProductId: this.product.id,
           anzahl: formValue.anzahl,
-          address: hasAddressInfo ? {
-            name: formValue.name,
-            vorname: formValue.vorname,
-            strasse: formValue.strasse,
-            plz: formValue.plz,
-            ort: formValue.ort,
-            land: formValue.land
-          } : undefined
+          address: hasAddressInfo
+            ? {
+                name: formValue.name,
+                vorname: formValue.vorname,
+                strasse: formValue.strasse,
+                plz: formValue.plz,
+                ort: formValue.ort,
+                land: formValue.land,
+              }
+            : undefined,
         };
 
         const response = await this.createProductionOrder(createOrderDto);
@@ -99,7 +105,7 @@ export class OrderDialogComponent implements OnChanges {
           this.messageService.add({
             severity: 'success',
             summary: 'Erfolgreich',
-            detail: 'Bestellung wurde erfolgreich erstellt!'
+            detail: 'Bestellung wurde erfolgreich erstellt!',
           });
           this.orderCreated.emit();
           this.hideDialog();
@@ -107,7 +113,7 @@ export class OrderDialogComponent implements OnChanges {
           this.messageService.add({
             severity: 'error',
             summary: 'Fehler',
-            detail: response.message || 'Fehler beim Erstellen der Bestellung'
+            detail: response.message || 'Fehler beim Erstellen der Bestellung',
           });
         }
       } catch (error) {
@@ -115,7 +121,7 @@ export class OrderDialogComponent implements OnChanges {
         this.messageService.add({
           severity: 'error',
           summary: 'Fehler',
-          detail: 'Unerwarteter Fehler beim Erstellen der Bestellung'
+          detail: 'Unerwarteter Fehler beim Erstellen der Bestellung',
         });
       } finally {
         this.loading = false;
@@ -123,7 +129,9 @@ export class OrderDialogComponent implements OnChanges {
     }
   }
 
-  private async createProductionOrder(createDto: CreateProductionOrder): Promise<ProductionOrderResponse> {
+  private async createProductionOrder(
+    createDto: CreateProductionOrder
+  ): Promise<ProductionOrderResponse> {
     try {
       const response = await this.productionOrderService.createProductionOrder(createDto);
       return response;
@@ -131,7 +139,7 @@ export class OrderDialogComponent implements OnChanges {
       return {
         success: false,
         message: 'Fehler beim Erstellen der Bestellung',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

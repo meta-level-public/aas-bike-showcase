@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using Xunit;
 using AasCore.Aas3_0;
 using AasDemoapp.AasHandling.SubmodelCreators;
+using Xunit;
 
 namespace AasDemoapp.Tests.AasHandling.SubmodelCreators;
 
@@ -92,7 +92,12 @@ public class HierarchicalStructuresCreatorTests
     public void CreateFromJson_WhenFileNotExists_ShouldThrowException()
     {
         // Arrange - Datei temporär verschieben
-        var originalPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AasHandling", "SubmodelCreators", "hierarchicalStructures.json");
+        var originalPath = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory,
+            "AasHandling",
+            "SubmodelCreators",
+            "hierarchicalStructures.json"
+        );
         var tempPath = originalPath + ".temp";
 
         try
@@ -103,7 +108,9 @@ public class HierarchicalStructuresCreatorTests
             }
 
             // Act & Assert
-            Assert.Throws<FileNotFoundException>(() => HierarchicalStructuresCreator.CreateFromJson());
+            Assert.Throws<FileNotFoundException>(() =>
+                HierarchicalStructuresCreator.CreateFromJson()
+            );
         }
         finally
         {

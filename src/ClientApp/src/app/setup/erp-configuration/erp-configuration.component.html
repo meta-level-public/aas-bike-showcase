@@ -1,4 +1,4 @@
-<p-accordion-panel value="0" >
+<p-accordion-panel value="0">
   <p-accordion-header>ERP System Konfiguration</p-accordion-header>
   <p-accordion-content>
     <div class="flex flex-column gap-4 p-4">
@@ -11,14 +11,8 @@
           optionLabel="label"
         >
           <ng-template let-item pTemplate>
-            <div
-              class="flex flex-column h-3rem justify-content-end gap-2 mt-2 align-items-center"
-            >
-              <img
-                src="assets/logos/{{ item.logo }}"
-                width="32"
-                style="vertical-align: middle"
-              />
+            <div class="flex flex-column h-3rem justify-content-end gap-2 mt-2 align-items-center">
+              <img src="assets/logos/{{ item.logo }}" width="32" style="vertical-align: middle" />
               <span>{{ item.label }}</span>
             </div>
           </ng-template>
@@ -36,25 +30,15 @@
             <div class="flex flex-column gap-2">
               <label>Mapping</label>
               <p>
-                Hier wird jetzt ein Mapping für Felder des ERP-Systems zu
-                Feldern aus der AAS/Speziellen Teilmodellen vorgenommen.
+                Hier wird jetzt ein Mapping für Felder des ERP-Systems zu Feldern aus der
+                AAS/Speziellen Teilmodellen vorgenommen.
               </p>
               <p>Beispiele:</p>
               <ul>
-                <li>
-                  Produktfamilie aus dem Digital Nameplate ==> Kategorie des
-                  Teils
-                </li>
-                <li>
-                  Hersteller aus Digital Nameplate ==> Hersteller des Teils
-                </li>
-                <li>
-                  Produktbeschreibung aus dem Digital Nameplate ==>
-                  Beschreibung
-                </li>
-                <li>
-                  Produktbezeichnung aus dem Digital Nameplate ==> Bezeichnung
-                </li>
+                <li>Produktfamilie aus dem Digital Nameplate ==> Kategorie des Teils</li>
+                <li>Hersteller aus Digital Nameplate ==> Hersteller des Teils</li>
+                <li>Produktbeschreibung aus dem Digital Nameplate ==> Beschreibung</li>
+                <li>Produktbezeichnung aus dem Digital Nameplate ==> Bezeichnung</li>
                 <li>Globale Asset ID ==> Eindeutige Kennung</li>
                 <li>...</li>
               </ul>

@@ -1,7 +1,7 @@
-import { Kategorie } from "../catalog-list/kategorie";
-import { InventoryStatus } from "./inventory-status";
-import { KatalogEintragTyp } from "./katalog-eintrag-typ";
-import { Supplier } from "./supplier";
+import { Kategorie } from '../catalog-list/kategorie';
+import { InventoryStatus } from './inventory-status';
+import { KatalogEintragTyp } from './katalog-eintrag-typ';
+import { Supplier } from './supplier';
 
 export interface KatalogEintrag {
   id?: number;

@@ -36,7 +36,9 @@ namespace AasDemoapp.Suppliers
 
         public async Task<Database.Model.Supplier?> UpdateAsync(Database.Model.Supplier supplier)
         {
-            var existingSupplier = await _context.Suppliers.FirstOrDefaultAsync(s => s.Id == supplier.Id);
+            var existingSupplier = await _context.Suppliers.FirstOrDefaultAsync(s =>
+                s.Id == supplier.Id
+            );
             if (existingSupplier == null)
             {
                 return null;

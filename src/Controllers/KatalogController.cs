@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Database.Model.DTOs;
 using AasDemoapp.Katalog;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AasDemoapp.Controllers
@@ -26,14 +26,18 @@ namespace AasDemoapp.Controllers
         [HttpGet]
         public async Task<List<KatalogEintragDto>> GetAllRohteil()
         {
-            var katalogEintraege = await Task.FromResult(_katalogService.GetAll(KatalogEintragTyp.RohteilTyp));
+            var katalogEintraege = await Task.FromResult(
+                _katalogService.GetAll(KatalogEintragTyp.RohteilTyp)
+            );
             return _mapper.Map<List<KatalogEintragDto>>(katalogEintraege);
         }
 
         [HttpGet]
         public async Task<List<KatalogEintragDto>> GetAllRohteilInstanz()
         {
-            var katalogEintraege = await Task.FromResult(_katalogService.GetAll(KatalogEintragTyp.RohteilInstanz));
+            var katalogEintraege = await Task.FromResult(
+                _katalogService.GetAll(KatalogEintragTyp.RohteilInstanz)
+            );
             return _mapper.Map<List<KatalogEintragDto>>(katalogEintraege);
         }
 
@@ -64,15 +68,19 @@ namespace AasDemoapp.Controllers
                 var random = new Random();
                 var triedIndices = new HashSet<int>();
                 const int maxAttempts = 20;
-                
-                for (int attempt = 0; attempt < maxAttempts && triedIndices.Count < eintraege.Count; attempt++)
+
+                for (
+                    int attempt = 0;
+                    attempt < maxAttempts && triedIndices.Count < eintraege.Count;
+                    attempt++
+                )
                 {
                     int randomIndex;
                     do
                     {
                         randomIndex = random.Next(eintraege.Count);
                     } while (triedIndices.Contains(randomIndex));
-                    
+
                     triedIndices.Add(randomIndex);
                     var typId = eintraege[randomIndex].GlobalAssetId;
                     var supplier = eintraege[randomIndex].Supplier;
@@ -84,13 +92,10 @@ namespace AasDemoapp.Controllers
 
                     if (!string.IsNullOrEmpty(instanzId))
                     {
-                        return new RndResult()
-                        {
-                            id = instanzId
-                        };
+                        return new RndResult() { id = instanzId };
                     }
                 }
-                
+
                 // Wenn nach 10 Versuchen keine Instanz gefunden wurde
                 return new RndResult { id = string.Empty };
             }

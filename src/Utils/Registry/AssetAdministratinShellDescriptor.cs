@@ -23,7 +23,8 @@ public class ProtocolInformationSecurityAttribute
 public enum ProtocolInformationSecurityAttributeType
 {
     NONE,
-    RFC_TLSA, W3C_DID
+    RFC_TLSA,
+    W3C_DID,
 }
 
 public class Endpoint
@@ -61,15 +62,18 @@ public class AssetAdministrationShellDescriptor
 
 public class MyAdministrativeInformation
 {
-
     public MyAdministrativeInformation(IAdministrativeInformation? administration)
     {
-        if (administration == null) return;
-        EmbeddedDataSpecifications = administration.EmbeddedDataSpecifications?.Cast<EmbeddedDataSpecification>().ToList();
+        if (administration == null)
+            return;
+        EmbeddedDataSpecifications = administration
+            .EmbeddedDataSpecifications?.Cast<EmbeddedDataSpecification>()
+            .ToList();
         if (administration.Creator != null)
         {
             var refObj = new MyReference(administration.Creator);
-            if (refObj != null) Creator = refObj;
+            if (refObj != null)
+                Creator = refObj;
         }
 
         Revision = administration.Revision;
@@ -88,7 +92,8 @@ public class MySpecificAssetId
 {
     public MySpecificAssetId(ISpecificAssetId specificAssetId)
     {
-        if (specificAssetId == null) return;
+        if (specificAssetId == null)
+            return;
         SemanticId = new MyReference(specificAssetId.SemanticId);
         Name = specificAssetId.Name;
         Value = specificAssetId.Value;
@@ -106,7 +111,8 @@ public class MyReference
 {
     public MyReference(IReference? externalSubjectId)
     {
-        if (externalSubjectId == null || externalSubjectId.Keys == null) return;
+        if (externalSubjectId == null || externalSubjectId.Keys == null)
+            return;
         Type = externalSubjectId.Type;
         ReferredSemanticId = (MyReference?)externalSubjectId.ReferredSemanticId;
         Keys = externalSubjectId.Keys?.Cast<Key>().ToList();

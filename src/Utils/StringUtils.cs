@@ -12,8 +12,8 @@ namespace AasDemoapp.Utils
             if (string.IsNullOrEmpty(input))
                 return input;
 
-            return input.Substring(0, 1).ToUpper(CultureInfo.CurrentCulture) +
-                input.Substring(1, input.Length - 1);
+            return input.Substring(0, 1).ToUpper(CultureInfo.CurrentCulture)
+                + input.Substring(1, input.Length - 1);
         }
 
         public static string SanitizeFilename(this string input)
@@ -45,7 +45,11 @@ namespace AasDemoapp.Utils
             return Base64UrlTextEncoder.Encode(encoding.GetBytes(text));
         }
 
-        public static bool TryParseBase64(this string text, Encoding encoding, out string decodedText)
+        public static bool TryParseBase64(
+            this string text,
+            Encoding encoding,
+            out string decodedText
+        )
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -66,7 +70,11 @@ namespace AasDemoapp.Utils
             }
         }
 
-        public static bool TryParseBase64Urlencoded(this string text, Encoding encoding, out string decodedText)
+        public static bool TryParseBase64Urlencoded(
+            this string text,
+            Encoding encoding,
+            out string decodedText
+        )
         {
             try
             {

@@ -4,8 +4,8 @@
   [modal]="true"
   [closable]="true"
   [style]="{ width: '600px' }"
-  header="Neue Bestellung erstellen">
-
+  header="Neue Bestellung erstellen"
+>
   <div class="flex flex-column gap-4 p-4">
     <!-- Produkt Info -->
     @if (product) {
@@ -14,7 +14,9 @@
           <i class="pi pi-cog text-primary text-2xl"></i>
           <div class="flex-1">
             <h3 class="text-primary m-0 mb-1">{{ product.name }}</h3>
-            <p class="text-600 m-0 text-sm">Preis pro Stück: <strong>${{ product.price }}</strong></p>
+            <p class="text-600 m-0 text-sm">
+              Preis pro Stück: <strong>${{ product.price }}</strong>
+            </p>
             @if (product.bestandteile && product.bestandteile.length > 0) {
               <p class="text-600 m-0 text-sm">{{ product.bestandteile.length }} Bestandteile</p>
             }
@@ -25,7 +27,6 @@
 
     <!-- Bestellformular -->
     <form [formGroup]="orderForm" class="flex flex-column gap-4">
-
       <!-- Anzahl -->
       <div class="field">
         <label for="anzahl" class="font-semibold block mb-2">
@@ -40,16 +41,21 @@
           [showButtons]="true"
           buttonLayout="horizontal"
           incrementButtonIcon="pi pi-plus"
-          decrementButtonIcon="pi pi-minus">
+          decrementButtonIcon="pi pi-minus"
+        >
         </p-inputNumber>
         @if (orderForm.get('anzahl')?.invalid && orderForm.get('anzahl')?.touched) {
-          <small class="p-error block mt-1">Anzahl ist erforderlich und muss mindestens 1 sein.</small>
+          <small class="p-error block mt-1"
+            >Anzahl ist erforderlich und muss mindestens 1 sein.</small
+          >
         }
       </div>
 
       <!-- Gesamtpreis -->
       <div class="field">
-        <div class="bg-surface-100 border-round p-3 flex justify-content-between align-items-center">
+        <div
+          class="bg-surface-100 border-round p-3 flex justify-content-between align-items-center"
+        >
           <span class="font-semibold text-900">
             <i class="pi pi-calculator mr-2"></i>Gesamtpreis:
           </span>
@@ -59,9 +65,7 @@
 
       <!-- Lieferadresse (Optional) -->
       <div class="field">
-        <h4 class="text-900 mb-3">
-          <i class="pi pi-map-marker mr-2"></i>Lieferadresse (Optional)
-        </h4>
+        <h4 class="text-900 mb-3"><i class="pi pi-map-marker mr-2"></i>Lieferadresse (Optional)</h4>
 
         <div class="grid">
           <div class="col-12 md:col-6">
@@ -71,7 +75,8 @@
               id="vorname"
               formControlName="vorname"
               class="w-full"
-              placeholder="Max">
+              placeholder="Max"
+            />
           </div>
 
           <div class="col-12 md:col-6">
@@ -81,7 +86,8 @@
               id="name"
               formControlName="name"
               class="w-full"
-              placeholder="Mustermann">
+              placeholder="Mustermann"
+            />
           </div>
 
           <div class="col-12">
@@ -91,17 +97,13 @@
               id="strasse"
               formControlName="strasse"
               class="w-full"
-              placeholder="Musterstraße 123">
+              placeholder="Musterstraße 123"
+            />
           </div>
 
           <div class="col-12 md:col-4">
             <label for="plz" class="block mb-2">PLZ</label>
-            <input
-              pInputText
-              id="plz"
-              formControlName="plz"
-              class="w-full"
-              placeholder="12345">
+            <input pInputText id="plz" formControlName="plz" class="w-full" placeholder="12345" />
           </div>
 
           <div class="col-12 md:col-5">
@@ -111,16 +113,13 @@
               id="ort"
               formControlName="ort"
               class="w-full"
-              placeholder="Musterstadt">
+              placeholder="Musterstadt"
+            />
           </div>
 
           <div class="col-12 md:col-3">
             <label for="land" class="block mb-2">Land</label>
-            <input
-              pInputText
-              id="land"
-              formControlName="land"
-              class="w-full">
+            <input pInputText id="land" formControlName="land" class="w-full" />
           </div>
         </div>
       </div>
@@ -134,8 +133,8 @@
       icon="pi pi-times"
       class="p-button-text p-button-secondary"
       (click)="hideDialog()"
-      [disabled]="loading">
-    </button>
+      [disabled]="loading"
+    ></button>
 
     <button
       pButton
@@ -144,10 +143,9 @@
       class="p-button-primary"
       (click)="createOrder()"
       [loading]="loading"
-      [disabled]="orderForm.invalid">
-    </button>
+      [disabled]="orderForm.invalid"
+    ></button>
   </div>
-
 </p-dialog>
 
 <p-toast></p-toast>

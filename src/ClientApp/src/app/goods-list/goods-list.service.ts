@@ -29,8 +29,6 @@ export class GoodsListService {
 
   async deleteItem(id: number) {
     const params = new HttpParams().set('id', id);
-    return lastValueFrom(
-      this.http.delete(`${this.baseUrl}api/Katalog/delete`, { params })
-    );
+    return lastValueFrom(this.http.delete(`${this.baseUrl}api/Katalog/delete`, { params }));
   }
 }

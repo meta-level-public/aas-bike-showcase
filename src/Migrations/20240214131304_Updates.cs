@@ -15,10 +15,11 @@ namespace AasDemoapp.Migrations
                 name: "UpdateableShells",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                    Id = table
+                        .Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     KatalogEintragId = table.Column<long>(type: "INTEGER", nullable: false),
-                    UpdateFoundTimestamp = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    UpdateFoundTimestamp = table.Column<DateTime>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -28,20 +29,22 @@ namespace AasDemoapp.Migrations
                         column: x => x.KatalogEintragId,
                         principalTable: "KatalogEintraege",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+                        onDelete: ReferentialAction.Cascade
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_UpdateableShells_KatalogEintragId",
                 table: "UpdateableShells",
-                column: "KatalogEintragId");
+                column: "KatalogEintragId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "UpdateableShells");
+            migrationBuilder.DropTable(name: "UpdateableShells");
         }
     }
 }

@@ -5,15 +5,14 @@
       label="Zurück zur Konfigurationsliste"
       icon="pi pi-arrow-left"
       class="p-button-text"
-      (click)="cancel()">
-    </button>
+      (click)="cancel()"
+    ></button>
   </div>
 
   <div class="grid">
     <div class="col-12">
       <p-card header="Neue Bestellung erstellen">
         <div class="flex flex-column gap-4">
-
           <!-- Produkt Info -->
           @if (product) {
             <div class="bg-primary-50 border-round p-4">
@@ -21,7 +20,9 @@
                 <i class="pi pi-cog text-primary text-3xl"></i>
                 <div class="flex-1">
                   <h2 class="text-primary m-0 mb-2">{{ product.name }}</h2>
-                  <p class="text-600 m-0 text-lg">Preis pro Stück: <strong>${{ product.price }}</strong></p>
+                  <p class="text-600 m-0 text-lg">
+                    Preis pro Stück: <strong>${{ product.price }}</strong>
+                  </p>
                   @if (product.bestandteile && product.bestandteile.length > 0) {
                     <p class="text-600 m-0">{{ product.bestandteile.length }} Bestandteile</p>
                   }
@@ -39,7 +40,6 @@
           <!-- Bestellformular -->
           @if (product) {
             <form [formGroup]="orderForm" class="flex flex-column gap-4">
-
               <!-- Anzahl -->
               <div class="field">
                 <label for="anzahl" class="font-semibold block mb-2 text-lg">
@@ -55,20 +55,27 @@
                   buttonLayout="horizontal"
                   incrementButtonIcon="pi pi-plus"
                   decrementButtonIcon="pi pi-minus"
-                  size="large">
+                  size="large"
+                >
                 </p-inputNumber>
                 @if (orderForm.get('anzahl')?.invalid && orderForm.get('anzahl')?.touched) {
-                  <small class="p-error block mt-1">Anzahl ist erforderlich und muss mindestens 1 sein.</small>
+                  <small class="p-error block mt-1"
+                    >Anzahl ist erforderlich und muss mindestens 1 sein.</small
+                  >
                 }
               </div>
 
               <!-- Gesamtpreis -->
               <div class="field">
-                <div class="bg-surface-100 border-round p-4 flex justify-content-between align-items-center">
+                <div
+                  class="bg-surface-100 border-round p-4 flex justify-content-between align-items-center"
+                >
                   <span class="font-semibold text-900 text-lg">
                     <i class="pi pi-calculator mr-2"></i>Gesamtpreis:
                   </span>
-                  <span class="text-primary font-bold text-2xl">${{ getTotalPrice().toFixed(2) }}</span>
+                  <span class="text-primary font-bold text-2xl"
+                    >${{ getTotalPrice().toFixed(2) }}</span
+                  >
                 </div>
               </div>
 
@@ -89,7 +96,8 @@
                           id="vorname"
                           formControlName="vorname"
                           class="w-full"
-                          placeholder="Max">
+                          placeholder="Max"
+                        />
                       </div>
 
                       <div class="col-12 md:col-6">
@@ -99,7 +107,8 @@
                           id="name"
                           formControlName="name"
                           class="w-full"
-                          placeholder="Mustermann">
+                          placeholder="Mustermann"
+                        />
                       </div>
                     </div>
                   </div>
@@ -117,15 +126,16 @@
                             formControlName="strasse"
                             class="flex-1"
                             placeholder="Musterstraße 123"
-                            (input)="onAddressFieldChange()">
+                            (input)="onAddressFieldChange()"
+                          />
                           <button
                             pButton
                             type="button"
                             label="Suchen"
                             icon="pi pi-search"
                             class="p-button-outlined"
-                            (click)="searchAddress()">
-                          </button>
+                            (click)="searchAddress()"
+                          ></button>
                         </div>
                       </div>
 
@@ -137,7 +147,8 @@
                           formControlName="plz"
                           class="w-full"
                           placeholder="12345"
-                          (input)="onAddressFieldChange()">
+                          (input)="onAddressFieldChange()"
+                        />
                       </div>
 
                       <div class="col-12 md:col-5">
@@ -148,7 +159,8 @@
                           formControlName="ort"
                           class="w-full"
                           placeholder="Musterstadt"
-                          (input)="onAddressFieldChange()">
+                          (input)="onAddressFieldChange()"
+                        />
                       </div>
 
                       <div class="col-12 md:col-3">
@@ -158,7 +170,8 @@
                           id="land"
                           formControlName="land"
                           class="w-full"
-                          (input)="onAddressFieldChange()">
+                          (input)="onAddressFieldChange()"
+                        />
                       </div>
                     </div>
                   </div>
@@ -171,7 +184,7 @@
                         <label for="latitude" class="block mb-2">
                           Breitengrad (Lat)
                           @if (isGeocodingLoading) {
-                            <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem;"></i>
+                            <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem"></i>
                           }
                         </label>
                         <input
@@ -181,7 +194,8 @@
                           formControlName="lat"
                           class="w-full"
                           placeholder="z.B. 52.520008"
-                          step="any">
+                          step="any"
+                        />
                       </div>
 
                       <div class="col-12 md:col-6">
@@ -193,7 +207,8 @@
                           formControlName="long"
                           class="w-full"
                           placeholder="z.B. 13.404954"
-                          step="any">
+                          step="any"
+                        />
                       </div>
 
                       <!-- Geocoding Controls -->
@@ -208,8 +223,8 @@
                             class="p-button-outlined p-button-secondary"
                             (click)="geocodeAddress()"
                             [loading]="isGeocodingLoading"
-                            [disabled]="!hasAddressData()">
-                          </button>
+                            [disabled]="!hasAddressData()"
+                          ></button>
                           @if (hasCoordinates()) {
                             <button
                               pButton
@@ -218,8 +233,8 @@
                               icon="pi pi-times"
                               size="small"
                               class="p-button-outlined p-button-danger"
-                              (click)="clearCoordinates()">
-                            </button>
+                              (click)="clearCoordinates()"
+                            ></button>
                           }
                           @if (isGeocodingLoading) {
                             <small class="text-600">
@@ -236,9 +251,7 @@
                     <div class="col-12">
                       <div class="bg-surface-50 border-round p-3 mb-3">
                         <div class="flex justify-content-between align-items-center mb-3">
-                          <h4 class="text-900 m-0">
-                            <i class="pi pi-map mr-2"></i>Kartenansicht
-                          </h4>
+                          <h4 class="text-900 m-0"><i class="pi pi-map mr-2"></i>Kartenansicht</h4>
                           <div class="flex align-items-center gap-2">
                             <!-- Alternative: Normaler Button statt Toggle Button -->
                             <button
@@ -247,8 +260,8 @@
                               [icon]="mapClickMode ? 'pi pi-map-marker' : 'pi pi-map'"
                               [severity]="mapClickMode ? 'success' : 'secondary'"
                               (click)="toggleMapClickMode()"
-                              class="p-button-sm">
-                            </button>
+                              class="p-button-sm"
+                            ></button>
 
                             @if (mapClickMode) {
                               <small class="text-600">
@@ -256,7 +269,8 @@
                               </small>
                             }
                             <small class="text-500 ml-2">
-                              Status: {{mapClickMode ? 'Aktiviert' : 'Deaktiviert'}}
+                              Status:
+                              {{ mapClickMode ? 'Aktiviert' : 'Deaktiviert' }}
                             </small>
                           </div>
                         </div>
@@ -267,7 +281,8 @@
                           [height]="'400px'"
                           [zoom]="15"
                           [enableClickToSet]="mapClickMode"
-                          (locationClicked)="onMapLocationClicked($event)">
+                          (locationClicked)="onMapLocationClicked($event)"
+                        >
                         </app-leaflet-map>
                       </div>
                     </div>
@@ -283,8 +298,8 @@
                   icon="pi pi-times"
                   class="p-button-text p-button-secondary"
                   (click)="cancel()"
-                  [disabled]="loading">
-                </button>
+                  [disabled]="loading"
+                ></button>
 
                 <button
                   pButton
@@ -293,10 +308,9 @@
                   class="p-button-primary"
                   (click)="createOrder()"
                   [loading]="loading"
-                  [disabled]="orderForm.invalid">
-                </button>
+                  [disabled]="orderForm.invalid"
+                ></button>
               </div>
-
             </form>
           }
         </div>

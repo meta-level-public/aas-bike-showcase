@@ -1,15 +1,15 @@
-﻿using System.Web;
-using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json.Nodes;
+using System.Web;
 using AasCore.Aas3_0;
-using AasDemoapp.Utils;
-using IO.Swagger.Model;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using AasDemoapp.Import;
-using System.Text.Json.Nodes;
 using AasDemoapp.Proxy;
 using AasDemoapp.Settings;
+using AasDemoapp.Utils;
+using IO.Swagger.Model;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace AasDemoapp.Controllers;
 
@@ -21,7 +21,11 @@ public class ProxyController : ControllerBase
     private readonly ProxyService _proxyService;
     private readonly SettingService _settingService;
 
-    public ProxyController(ImportService importService, ProxyService proxyService, SettingService settingService)
+    public ProxyController(
+        ImportService importService,
+        ProxyService proxyService,
+        SettingService settingService
+    )
     {
         _importService = importService;
         _proxyService = proxyService;
@@ -32,7 +36,9 @@ public class ProxyController : ControllerBase
     public async Task<object> Shells(string registryUrl)
     {
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
-        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+        var securitySetting = _settingService.GetSecuritySetting(
+            SettingTypes.InfrastructureSecurity
+        );
 
         using var client = HttpClientCreator.CreateHttpClient(securitySetting);
         using HttpResponseMessage response = await client.GetAsync(decodedUrl + "/shells");
@@ -46,10 +52,14 @@ public class ProxyController : ControllerBase
     public async Task<object> Registry(string registryUrl)
     {
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
-        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+        var securitySetting = _settingService.GetSecuritySetting(
+            SettingTypes.InfrastructureSecurity
+        );
 
         using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-        using HttpResponseMessage response = await client.GetAsync(decodedUrl + "/shell-descriptors");
+        using HttpResponseMessage response = await client.GetAsync(
+            decodedUrl + "/shell-descriptors"
+        );
         response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -61,10 +71,14 @@ public class ProxyController : ControllerBase
     {
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
         var decodedId = HttpUtility.UrlDecode(aasId) ?? string.Empty;
-        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+        var securitySetting = _settingService.GetSecuritySetting(
+            SettingTypes.InfrastructureSecurity
+        );
 
         using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-        using HttpResponseMessage response = await client.GetAsync(decodedUrl  + $"/shells/{decodedId?.ToBase64()}");
+        using HttpResponseMessage response = await client.GetAsync(
+            decodedUrl + $"/shells/{decodedId?.ToBase64()}"
+        );
         response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();
 
@@ -80,11 +94,12 @@ public class ProxyController : ControllerBase
         }
 
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
-        var securitySetting = _settingService.GetSecuritySetting(SettingTypes.InfrastructureSecurity);
+        var securitySetting = _settingService.GetSecuritySetting(
+            SettingTypes.InfrastructureSecurity
+        );
         var res = await _proxyService.Discover(decodedUrl, securitySetting, assetId);
         return res;
     }
-
 
     [HttpGet]
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -103,10 +118,6 @@ public class ProxyController : ControllerBase
 
         // await _importService.ImportFromRepository(decodedLocalUrl, decodedRemoteUrl, securitySetting, decodedId);
 
-
         // return await Task.FromResult(true);
     }
-
-
-
 }

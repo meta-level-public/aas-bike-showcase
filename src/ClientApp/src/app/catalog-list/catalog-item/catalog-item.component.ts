@@ -13,7 +13,7 @@ import { CatalogListService } from '../catalog-list.service';
   selector: 'app-catalog-item',
   templateUrl: './catalog-item.component.html',
   styleUrl: './catalog-item.component.css',
-  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, TooltipModule]
+  imports: [CommonModule, FormsModule, RatingModule, ButtonModule, TooltipModule],
 })
 export class CatalogItemComponent {
   @Input() item: KatalogEintrag | undefined;

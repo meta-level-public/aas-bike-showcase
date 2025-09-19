@@ -14,9 +14,16 @@ import { DppService } from './dpp.service';
   selector: 'app-dpp',
   templateUrl: './dpp.component.html',
   styleUrl: './dpp.component.css',
-  imports: [CommonModule, FormsModule, PopoverModule, DataViewModule, NgxJsonViewerModule, ButtonModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    PopoverModule,
+    DataViewModule,
+    NgxJsonViewerModule,
+    ButtonModule,
+  ],
 })
-export class DppComponent  extends UrlBase implements OnInit {
+export class DppComponent extends UrlBase implements OnInit {
   shell: AssetAdministrationShell | null = null;
   productList: ProducedProduct[] = [];
   loading: boolean = false;

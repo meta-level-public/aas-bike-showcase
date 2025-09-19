@@ -6,7 +6,7 @@
       [(ngModel)]="selectedCategory"
       (onChange)="setCurrentGroupItems()"
       styleClass="w-full"
-      >
+    >
     </p-select>
 
     <p-dataView #dv [value]="currentGroupItems" class="w-full">
@@ -25,9 +25,7 @@
       </ng-template>
     </p-dataView>
     @if (!currentGroupItems) {
-      <p>
-        Keine Elemente erfasst. Bitte zuerst Elemente in den Katalog importieren
-      </p>
+      <p>Keine Elemente erfasst. Bitte zuerst Elemente in den Katalog importieren</p>
     }
   </div>
 </div>

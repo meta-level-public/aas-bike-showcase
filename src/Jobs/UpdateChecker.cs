@@ -1,4 +1,3 @@
-
 using System.Text.Json.Nodes;
 using AasCore.Aas3_0;
 using AasDemoapp.Database;
@@ -20,7 +19,11 @@ namespace AasDemoapp.Jobs
         private readonly SettingService? _settingsService;
         private Timer? _timer = null;
 
-        public UpdateChecker(ILogger<UpdateChecker> logger, IServiceProvider provider, IServiceScopeFactory scopeFactory)
+        public UpdateChecker(
+            ILogger<UpdateChecker> logger,
+            IServiceProvider provider,
+            IServiceScopeFactory scopeFactory
+        )
         {
             _logger = logger;
             _provider = provider;
@@ -35,8 +38,7 @@ namespace AasDemoapp.Jobs
         {
             _logger.LogInformation("StatisticCalculator running.");
 
-            _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromMinutes(1));
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
         }
@@ -50,67 +52,102 @@ namespace AasDemoapp.Jobs
                 var now = DateTime.Today;
                 var discovery = _settingsService?.GetSetting(SettingTypes.DiscoveryUrl);
                 var aasRepo = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
-                var securitySetting = _settingsService?.GetSecuritySetting(SettingTypes.InfrastructureSecurity) ?? new SecuritySetting();
-                
-                var allShellIds = _proxyService?.Discover(discovery?.Value ?? "", securitySetting, string.Empty);
+                var securitySetting =
+                    _settingsService?.GetSecuritySetting(SettingTypes.InfrastructureSecurity)
+                    ?? new SecuritySetting();
 
-                _context?.KatalogEintraege.Where(k => k.RemoteRepositoryUrl != null).ToList().ForEach(async eintrag =>
-                {
-                    try
+                var allShellIds = _proxyService?.Discover(
+                    discovery?.Value ?? "",
+                    securitySetting,
+                    string.Empty
+                );
+
+                _context
+                    ?.KatalogEintraege.Where(k => k.RemoteRepositoryUrl != null)
+                    .ToList()
+                    .ForEach(async eintrag =>
                     {
-
-                        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-                        using HttpResponseMessage remoteResponse = await client.GetAsync(eintrag.RemoteRepositoryUrl + $"/shells/{eintrag.AasId.ToBase64()}");
-                        remoteResponse.EnsureSuccessStatusCode();
-                        string remoteResponseBody = await remoteResponse.Content.ReadAsStringAsync();
-                        var remoteJsonNode = JsonNode.Parse(remoteResponseBody);
-                        if (remoteJsonNode == null)
+                        try
                         {
-                            _logger.LogWarning("Failed to parse remote response JSON for shell {ShellId}", eintrag.AasId);
-                            return;
-                        }
-                        var remoteShell = Jsonization.Deserialize.AssetAdministrationShellFrom(remoteJsonNode);
-
-                        using HttpResponseMessage localResponse = await client.GetAsync($"{aasRepo?.Value ?? ""}/shells/{eintrag.LocalAasId.ToBase64()}");
-                        localResponse.EnsureSuccessStatusCode();
-                        string localResponseBody = await localResponse.Content.ReadAsStringAsync();
-                        var localJsonNode = JsonNode.Parse(localResponseBody);
-                        if (localJsonNode == null)
-                        {
-                            _logger.LogWarning("Failed to parse local response JSON for shell {ShellId}", eintrag.LocalAasId);
-                            return;
-                        }
-                        var localShell = Jsonization.Deserialize.AssetAdministrationShellFrom(localJsonNode);
-
-                        Console.WriteLine(localShell.Administration?.Version);
-                        Console.WriteLine(remoteShell.Administration?.Version);
-                        Console.WriteLine(localShell.Administration?.Revision);
-                        Console.WriteLine(remoteShell.Administration?.Revision);
-
-                        if (localShell.Administration != null && remoteShell.Administration != null && (localShell.Administration.Version != remoteShell.Administration.Version
-                                                                                                        || remoteShell.Administration.Revision != localShell.Administration.Revision))
-                        {
-                            // es giibt was zu aktualisieren
-                            if (!_context.UpdateableShells.Any(s => s.KatalogEintrag.Id == eintrag.Id))
+                            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
+                            using HttpResponseMessage remoteResponse = await client.GetAsync(
+                                eintrag.RemoteRepositoryUrl + $"/shells/{eintrag.AasId.ToBase64()}"
+                            );
+                            remoteResponse.EnsureSuccessStatusCode();
+                            string remoteResponseBody =
+                                await remoteResponse.Content.ReadAsStringAsync();
+                            var remoteJsonNode = JsonNode.Parse(remoteResponseBody);
+                            if (remoteJsonNode == null)
                             {
-                                var upddateEintrag = new UpdateableShell()
+                                _logger.LogWarning(
+                                    "Failed to parse remote response JSON for shell {ShellId}",
+                                    eintrag.AasId
+                                );
+                                return;
+                            }
+                            var remoteShell = Jsonization.Deserialize.AssetAdministrationShellFrom(
+                                remoteJsonNode
+                            );
+
+                            using HttpResponseMessage localResponse = await client.GetAsync(
+                                $"{aasRepo?.Value ?? ""}/shells/{eintrag.LocalAasId.ToBase64()}"
+                            );
+                            localResponse.EnsureSuccessStatusCode();
+                            string localResponseBody =
+                                await localResponse.Content.ReadAsStringAsync();
+                            var localJsonNode = JsonNode.Parse(localResponseBody);
+                            if (localJsonNode == null)
+                            {
+                                _logger.LogWarning(
+                                    "Failed to parse local response JSON for shell {ShellId}",
+                                    eintrag.LocalAasId
+                                );
+                                return;
+                            }
+                            var localShell = Jsonization.Deserialize.AssetAdministrationShellFrom(
+                                localJsonNode
+                            );
+
+                            Console.WriteLine(localShell.Administration?.Version);
+                            Console.WriteLine(remoteShell.Administration?.Version);
+                            Console.WriteLine(localShell.Administration?.Revision);
+                            Console.WriteLine(remoteShell.Administration?.Revision);
+
+                            if (
+                                localShell.Administration != null
+                                && remoteShell.Administration != null
+                                && (
+                                    localShell.Administration.Version
+                                        != remoteShell.Administration.Version
+                                    || remoteShell.Administration.Revision
+                                        != localShell.Administration.Revision
+                                )
+                            )
+                            {
+                                // es giibt was zu aktualisieren
+                                if (
+                                    !_context.UpdateableShells.Any(s =>
+                                        s.KatalogEintrag.Id == eintrag.Id
+                                    )
+                                )
                                 {
-                                    KatalogEintrag = eintrag,
-                                    UpdateFoundTimestamp = DateTime.Now
-                                };
-                                _context.Add(upddateEintrag);
-                                _context.SaveChanges();
+                                    var upddateEintrag = new UpdateableShell()
+                                    {
+                                        KatalogEintrag = eintrag,
+                                        UpdateFoundTimestamp = DateTime.Now,
+                                    };
+                                    _context.Add(upddateEintrag);
+                                    _context.SaveChanges();
+                                }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Fehler bei Updatecheck");
-                        Console.WriteLine(ex);
-                    }
-                });
-                _logger.LogInformation(
-                    "UpdateChecker is working. Count: {Count}", count);
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Fehler bei Updatecheck");
+                            Console.WriteLine(ex);
+                        }
+                    });
+                _logger.LogInformation("UpdateChecker is working. Count: {Count}", count);
             }
             catch
             {

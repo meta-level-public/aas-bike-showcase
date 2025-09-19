@@ -1,77 +1,73 @@
 @if (item) {
-<div class="col-12">
-  <div
-    class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
-    [ngClass]="{ 'border-top-1 surface-border': !first }"
-  >
-    <div class="w-12rem">
-      @if (imgUrl == '') {
-      <img
-        class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
-        height="100"
-        [src]="'data:image/jpeg;base64, ' + item.image"
-        [alt]="item.name"
-      />
-      } @if (imgUrl != '') {
-      <img
-        class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
-        height="100"
-        [src]="imgUrl"
-        [alt]="item.name"
-      />
-      }
-    </div>
+  <div class="col-12">
     <div
-      class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
+      class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
+      [ngClass]="{ 'border-top-1 surface-border': !first }"
     >
-      <div
-        class="flex flex-column align-items-center sm:align-items-start gap-3"
-      >
-        <div class="text-2xl font-bold text-900">{{ item.name }}</div>
-        @if (showRating) {
-        <p-rating [(ngModel)]="item.rating" [readonly]="true"></p-rating>
+      <div class="w-12rem">
+        @if (imgUrl == '') {
+          <img
+            class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
+            height="100"
+            [src]="'data:image/jpeg;base64, ' + item.image"
+            [alt]="item.name"
+          />
         }
-        <div class="flex align-items-center gap-3">
-          @if (showTag) {
-          <span class="flex align-items-center gap-2">
-            <i class="pi pi-tag"></i>
-            <span class="font-semibold">{{ item.kategorie }}</span>
-          </span>
-          }
-        </div>
-        @if (item.globalAssetId) {
-        <div class="flex align-items-center gap-2">
-          <i class="pi pi-id-card"></i>
-          <span class="text-sm text-600"
-            >GlobalAssetId: {{ item.globalAssetId }}</span
-          >
-          <button
-            pButton
-            icon="pi pi-copy"
-            class="p-button-text p-button-sm copy-button"
-            [pTooltip]="'GlobalAssetId kopieren'"
-            tooltipPosition="top"
-            (click)="copyGlobalAssetId()"
-            type="button"
-          ></button>
-        </div>
+        @if (imgUrl != '') {
+          <img
+            class="shadow-2 block xl:block mx-auto border-round scaleImageHeight"
+            height="100"
+            [src]="imgUrl"
+            [alt]="item.name"
+          />
         }
       </div>
       <div
-        class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
+        class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
       >
-        @if (showPrice) {
-        <span class="text-2xl font-semibold">{{ "$" + item.price }}</span>
-        } @if (showDelete) {
-        <button
-          pButton
-          icon="pi pi-trash"
-          class="md:align-self-end mb-2 p-button-rounded p-button-danger"
-          (click)="deleteItem()"
-        ></button>
-        }
+        <div class="flex flex-column align-items-center sm:align-items-start gap-3">
+          <div class="text-2xl font-bold text-900">{{ item.name }}</div>
+          @if (showRating) {
+            <p-rating [(ngModel)]="item.rating" [readonly]="true"></p-rating>
+          }
+          <div class="flex align-items-center gap-3">
+            @if (showTag) {
+              <span class="flex align-items-center gap-2">
+                <i class="pi pi-tag"></i>
+                <span class="font-semibold">{{ item.kategorie }}</span>
+              </span>
+            }
+          </div>
+          @if (item.globalAssetId) {
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-id-card"></i>
+              <span class="text-sm text-600">GlobalAssetId: {{ item.globalAssetId }}</span>
+              <button
+                pButton
+                icon="pi pi-copy"
+                class="p-button-text p-button-sm copy-button"
+                [pTooltip]="'GlobalAssetId kopieren'"
+                tooltipPosition="top"
+                (click)="copyGlobalAssetId()"
+                type="button"
+              ></button>
+            </div>
+          }
+        </div>
+        <div class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
+          @if (showPrice) {
+            <span class="text-2xl font-semibold">{{ '$' + item.price }}</span>
+          }
+          @if (showDelete) {
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="md:align-self-end mb-2 p-button-rounded p-button-danger"
+              (click)="deleteItem()"
+            ></button>
+          }
+        </div>
       </div>
     </div>
   </div>
-</div>
 }

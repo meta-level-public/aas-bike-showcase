@@ -21,7 +21,6 @@ namespace AasDemoapp.Controllers
             _settingService = settingService;
         }
 
-
         [HttpGet]
         public async Task<List<Setting>> GetAll()
         {

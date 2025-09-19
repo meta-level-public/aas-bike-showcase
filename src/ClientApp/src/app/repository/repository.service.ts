@@ -14,18 +14,14 @@ export class RepositoryService {
   ) {}
 
   async loadShells(registryUrl: string) {
-    const params = new HttpParams().set(
-      'registryUrl',
-      encodeURIComponent(`${registryUrl}`)
-    );
+    const params = new HttpParams().set('registryUrl', encodeURIComponent(`${registryUrl}`));
     const result = await lastValueFrom(
       this.http.get<any>(`${this.baseUrl}api/proxy/shells`, { params })
     );
 
     if (result.result != null) {
       let mappedDtos = result.result.map((dto: any) => {
-        const instanceOrErrorPlain =
-          aas.jsonization.assetAdministrationShellFromJsonable(dto);
+        const instanceOrErrorPlain = aas.jsonization.assetAdministrationShellFromJsonable(dto);
         if (instanceOrErrorPlain.value != null) {
           return instanceOrErrorPlain.value;
         } else {
@@ -37,8 +33,7 @@ export class RepositoryService {
       return mappedDtos.filter((dto: AssetAdministrationShell) => dto != null);
     } else {
       let mappedDtos = result.map((dto: any) => {
-        const instanceOrErrorPlain =
-          aas.jsonization.assetAdministrationShellFromJsonable(dto);
+        const instanceOrErrorPlain = aas.jsonization.assetAdministrationShellFromJsonable(dto);
         if (instanceOrErrorPlain.value != null) {
           return instanceOrErrorPlain.value;
         } else {
@@ -59,8 +54,7 @@ export class RepositoryService {
       this.http.get<any>(`${this.baseUrl}api/proxy/shell`, { params })
     );
 
-    const instanceOrErrorPlain =
-      aas.jsonization.assetAdministrationShellFromJsonable(result);
+    const instanceOrErrorPlain = aas.jsonization.assetAdministrationShellFromJsonable(result);
     if (instanceOrErrorPlain.value != null) {
       return [instanceOrErrorPlain.value];
     } else {
@@ -70,11 +64,7 @@ export class RepositoryService {
     return [];
   }
 
-  async import(
-    localRegistryUrl: string,
-    remoteRegistryUrl: string,
-    id: string
-  ) {
+  async import(localRegistryUrl: string, remoteRegistryUrl: string, id: string) {
     const params = new HttpParams()
       .set('localRegistryUrl', encodeURIComponent(`${localRegistryUrl}`))
       .set('remoteRegistryUrl', encodeURIComponent(`${remoteRegistryUrl}`))

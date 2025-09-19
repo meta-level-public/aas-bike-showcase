@@ -42,5 +42,5 @@ export interface ProductionOrderResponse {
 export enum ProductionOrderStatus {
   PENDING_PRODUCTION = 'PENDING_PRODUCTION',
   READY_FOR_SHIPPING = 'READY_FOR_SHIPPING',
-  COMPLETED = 'COMPLETED'
+  COMPLETED = 'COMPLETED',
 }

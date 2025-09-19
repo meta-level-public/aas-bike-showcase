@@ -1,7 +1,7 @@
 // @import "primeng/resources/themes/lara-light-teal/theme.css";
 // @import "primeng/resources/primeng.css";
-@import "primeicons/primeicons.css";
-@import "primeflex/primeflex.css";
+@import 'primeicons/primeicons.css';
+@import 'primeflex/primeflex.css';
 
 /* You can add global styles to this file, and also import other style files */
 
@@ -10,11 +10,10 @@ body {
   height: 100%;
   font-size: 14px;
   background-image: var(--p-background-image);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 }
-
-
 
 .scaleImageHeight {
   width: auto;
