@@ -58,7 +58,7 @@ services:
     volumes:
       - ./aas:/application/aas
       - ./basyx/aas-env.properties:/application/application.properties
-    restart: always
+    restart: unless-stopped
     depends_on:
       aas-registry:
         condition: service_healthy
@@ -84,7 +84,7 @@ services:
       - SERVER_PORT=8080
     volumes:
       - ./basyx/aas-registry.yml:/workspace/config/application.yml
-    restart: always
+    restart: unless-stopped
     depends_on:
       mongo:
         condition: service_healthy
@@ -104,7 +104,7 @@ services:
       - SERVER_PORT=8080
     volumes:
       - ./basyx/sm-registry.yml:/workspace/config/application.yml
-    restart: always
+    restart: unless-stopped
     depends_on:
       mongo:
         condition: service_healthy
@@ -123,7 +123,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongoAdmin
       MONGO_INITDB_ROOT_PASSWORD: mongoPassword
-    restart: always
+    restart: unless-stopped
     healthcheck:
       test: mongo
       interval: 10s
@@ -139,7 +139,7 @@ services:
       - SERVER_PORT=8081
     volumes:
       - ./basyx/aas-discovery.properties:/application/application.properties
-    restart: always
+    restart: unless-stopped
     depends_on:
       mongo:
         condition: service_healthy
@@ -159,7 +159,7 @@ services:
     #   - '1883:1883'
     volumes:
       - ./mosquitto:/mosquitto
-    restart: always
+    restart: unless-stopped
     healthcheck:
       test:
         - CMD-SHELL
@@ -181,7 +181,7 @@ services:
     volumes:
       - ./aas-suppl:/application/aas
       - ./basyx-suppl/aas-env.properties:/application/application.properties
-    restart: 'no'
+    restart: unless-stopped
     depends_on:
       aas-registry-suppl:
         condition: service_healthy
@@ -207,7 +207,7 @@ services:
       - SERVER_PORT=8080
     volumes:
       - ./basyx-suppl/aas-registry.yml:/workspace/config/application.yml
-    restart: 'no'
+    restart: unless-stopped
     depends_on:
       mongo-suppl:
         condition: service_healthy
@@ -227,7 +227,7 @@ services:
       - SERVER_PORT=8080
     volumes:
       - ./basyx-suppl/sm-registry.yml:/workspace/config/application.yml
-    restart: 'no'
+    restart: unless-stopped
     depends_on:
       mongo-suppl:
         condition: service_healthy
@@ -246,7 +246,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongoAdmin
       MONGO_INITDB_ROOT_PASSWORD: mongoPassword
-    restart: 'no'
+    restart: unless-stopped
     healthcheck:
       test: mongo
       interval: 10s
@@ -262,7 +262,7 @@ services:
       - SERVER_PORT=8081
     volumes:
       - ./basyx-suppl/aas-discovery.properties:/application/application.properties
-    restart: 'no'
+    restart: unless-stopped
     depends_on:
       mongo:
         condition: service_healthy
@@ -282,7 +282,7 @@ services:
     #   - '1883:1883'
     volumes:
       - ./mosquitto-suppl:/mosquitto
-    restart: 'no'
+    restart: unless-stopped
     healthcheck:
       test:
         - CMD-SHELL
@@ -306,7 +306,7 @@ services:
       AAS_DISCOVERY_PATH: https://aas-discovery.aas-bike.showcasehub.de/lookup/shells
       PRIMARY_COLOR: '#76B82A'
       LOGO_PATH: OI4_Signet_color_RGB.png
-    restart: always
+    restart: unless-stopped
     depends_on:
       aas-env:
         condition: service_healthy
