@@ -231,14 +231,18 @@ public class InstanceAasCreator
         // add pcf value, publication date and address for phases A1 - A3
         SubmodelElementCollection pcfComponent = (SubmodelElementCollection)
             productFootprints.Value.First();
-        CompletePCFData(pcfComponent, producedProduct.PCFValue.ToString());
+        CompletePCFData(pcfComponent, producedProduct.PCFValue.ToString(), producedProduct.Order);
 
         // add pcf value, publication date and address for phase A4, if applicable (else ignore)
         try
         {
             SubmodelElementCollection pcfComponentTransport = (SubmodelElementCollection)
                 productFootprints.Value[1];
-            CompletePCFData(pcfComponentTransport, (producedProduct.PCFValue * 0.2).ToString()); // todo: improve calculation of trnasport pcf (currently, it's 20% of overall PCF)
+            CompletePCFData(
+                pcfComponentTransport,
+                (producedProduct.PCFValue * 0.2).ToString(),
+                producedProduct.Order
+            ); // todo: improve calculation of trnasport pcf (currently, it's 20% of overall PCF)
         }
         catch (IndexOutOfRangeException) { } // transport pcf not applilcable (yet)
         return pcf;
@@ -246,16 +250,37 @@ public class InstanceAasCreator
 
     private static SubmodelElementCollection CompletePCFData(
         SubmodelElementCollection pcfComponent,
-        String pcfValue
+        String pcfValue,
+        ProductionOrder order
     )
     {
-        Property pcfElem = (Property)
-            pcfComponent.Value.Find(property => property.IdShort == "PcfCO2eq");
-        pcfElem.Value = pcfValue;
-        Property publicationDate = (Property)
-            pcfComponent.Value.Find(property => property.IdShort == "PublicationDate");
-        publicationDate.Value = DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        //todo: add GoodsHandoverAddress
+        var pcfElem = (Property?)
+            pcfComponent.Value?.Find(property => property.IdShort == "PcfCO2eq");
+        if (pcfElem != null)
+            pcfElem.Value = pcfValue;
+        var publicationDate = (Property?)
+            pcfComponent.Value?.Find(property => property.IdShort == "PublicationDate");
+        if (publicationDate != null)
+            publicationDate.Value = DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        var goodsHandoverAddress = (SubmodelElementCollection?)
+            pcfComponent.Value?.Find(smc => smc.IdShort == "GoodsHandoverAddress");
+
+        if (goodsHandoverAddress != null)
+        {
+            // Adresse setzen
+            var contactInfo = ContactInformationCreator.CreateFromJson(
+                (order.Address?.Name == null && order.Address?.Vorname == null)
+                    ? string.Empty
+                    : (order.Address?.Name ?? string.Empty)
+                        + " "
+                        + (order.Address?.Vorname ?? string.Empty),
+                order.Address?.Strasse ?? string.Empty,
+                order.Address?.Ort ?? string.Empty,
+                order.Address?.Plz ?? string.Empty,
+                order.Address?.Land ?? string.Empty
+            );
+            goodsHandoverAddress.Value = contactInfo.Value;
+        }
         return pcfComponent;
     }
 }

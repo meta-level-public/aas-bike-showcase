@@ -190,14 +190,16 @@
                 [disabled]="
                   !selectedItem()!.bestandteile[currentAssemblyStep()] ||
                   !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()]) ||
-                  ((isToolRequired() | async) && !toolResultOk())
+                  ((isToolRequired() | async) && !toolResultOk()) ||
+                  !hasNextStep()
                 "
                 severity="primary"
               ></button>
 
               @if (
                 (isToolRequired() | async) &&
-                isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])
+                isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()]) &&
+                !toolResultOk()
               ) {
                 <button
                   pButton

@@ -102,7 +102,11 @@ export class AssemblyComponent implements OnInit, OnDestroy {
   });
 
   assemblyComplete = computed(() => {
-    return this.currentAssemblyStep() >= this.bestandteileLength() - 1 && this.allPartsValid();
+    return (
+      this.currentAssemblyStep() >= this.bestandteileLength() - 1 &&
+      this.allPartsValid() &&
+      (!this.isToolRequired() || this.toolResultOk())
+    );
   });
 
   constructor(
@@ -314,7 +318,13 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     this.showToolDialog.set(false);
     // Beende Live-Abfrage
     this.stopTorquePolling();
-    if (nextStep) {
+    const currentStep = this.currentAssemblyStep();
+    let hasNextStep = false;
+    if (currentStep < this.bestandteileLength() - 1) {
+      hasNextStep = true;
+    }
+
+    if (nextStep && hasNextStep) {
       this.nextAssemblyStep();
     }
   }
@@ -374,6 +384,11 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  hasNextStep() {
+    const currentStep = this.currentAssemblyStep();
+    return currentStep < this.bestandteileLength() - 1;
   }
 
   toolInitialized = signal(false);
@@ -508,14 +523,15 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       console.log(currentTightenForce);
 
       if (
-        currentTightenForce < allowedTightenForceMin ||
+        currentTightenForce < allowedTightenForceMin &&
         currentTightenForce > allowedTightenForceMax
       ) {
         this.notificationService.showMessageAlways('Fehler: Ungültiges Drehmoment');
         this.toolResultOk.set(false);
       } else {
-        this.notificationService.showMessageAlways('Drehmoment ist gültig');
+        // this.notificationService.showMessageAlways('Drehmoment ist gültig');
         this.toolResultOk.set(true);
+        this.closeToolDialog(true);
       }
     }
   }

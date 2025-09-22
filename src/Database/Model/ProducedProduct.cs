@@ -18,6 +18,8 @@ namespace AasDemoapp.Database.Model
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
 
+        public ProductionOrder Order { get; set; } = null!;
+
         public double PCFValue { get; set; }
     }
 }

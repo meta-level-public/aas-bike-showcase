@@ -7,6 +7,7 @@ namespace AasDemoapp.Database.Model.DTOs
     {
         public long? Id { get; set; }
         public long ConfiguredProductId { get; set; }
+        public long ProductionOrderId { get; set; }
         public List<BestandteilRequestDto> BestandteilRequests { get; set; } = [];
     }
 

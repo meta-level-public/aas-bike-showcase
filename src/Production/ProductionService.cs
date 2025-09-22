@@ -160,6 +160,16 @@ namespace AasDemoapp.Production
 
             accumulatedPCF *= 1.2; // 20 % extra for mounting
 
+            var order = await _context.ProductionOrders.FirstOrDefaultAsync(c =>
+                c.Id == producedProductRequest.ProductionOrderId
+            );
+
+            if (order == null)
+            {
+                _logger.LogError("Order not found");
+                throw new Exception("Order not found");
+            }
+
             var producedProduct = new ProducedProduct()
             {
                 ConfiguredProductId = producedProductRequest.ConfiguredProductId,
@@ -167,12 +177,12 @@ namespace AasDemoapp.Production
                 AasId = aasId,
                 GlobalAssetId = globalAssetId,
                 PCFValue = accumulatedPCF,
+                Order = order,
             };
 
             var configuredProduct = await _context.ConfiguredProducts.FirstAsync(c =>
                 c.Id == producedProductRequest.ConfiguredProductId
             );
-            var order = _context.ProductionOrders.FirstAsync(c => c.Id == producedProduct.Id);
 
             producedProductRequest.BestandteilRequests.ForEach(
                 (bestandteil) =>
@@ -202,6 +212,8 @@ namespace AasDemoapp.Production
                 .Include(p => p.ConfiguredProduct)
                 .Include(p => p.Bestandteile)
                 .ThenInclude(b => b.KatalogEintrag)
+                .Include(p => p.Order)
+                .ThenInclude(o => o.Address)
                 .FirstAsync(p => p.Id == producedProduct.Id);
 
             try
