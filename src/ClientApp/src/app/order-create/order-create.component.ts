@@ -335,6 +335,10 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
 
     // Skip if user has manually set coordinates
     if (hasValidCoordinates(addr)) {
+      // felder nochmal befüllen!
+      formValue.lat = addr.lat;
+      formValue.long = addr.long;
+      this.orderForm.patchValue(formValue);
       return;
     }
 

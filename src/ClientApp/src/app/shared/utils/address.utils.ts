@@ -15,8 +15,8 @@ export function formatAddressString(address: Address): string {
 
 export function hasValidCoordinates(address: Address): boolean {
   return (
-    address.lat !== undefined &&
-    address.long !== undefined &&
+    address.long != null &&
+    address.lat != null &&
     !isNaN(address.lat) &&
     !isNaN(address.long) &&
     address.lat >= -90 &&
