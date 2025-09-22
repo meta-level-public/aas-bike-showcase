@@ -29,18 +29,19 @@ namespace AasDemoapp.Database
 
         public AasDemoappContext()
         {
-            var folder = Environment.SpecialFolder.LocalApplicationData;
-            var path = Environment.GetFolderPath(folder);
-            var directory = Path.Join(path, "AasDemoapp");
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-            DbPath = Path.Join(directory, "AasDemoapp.db");
+            DbPath = GetDefaultDbPath();
         }
 
         public AasDemoappContext(DbContextOptions<AasDemoappContext> options)
             : base(options)
+        {
+            // DbPath aus der Connection String extrahieren
+            var connectionString = Database.GetConnectionString();
+            DbPath = ExtractDbPathFromConnectionString(connectionString);
+            Console.WriteLine(DbPath);
+        }
+
+        private string GetDefaultDbPath()
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
@@ -49,14 +50,45 @@ namespace AasDemoapp.Database
             {
                 Directory.CreateDirectory(directory);
             }
-            DbPath = Path.Join(directory, "AasDemoapp.db");
-            Console.WriteLine(DbPath);
+            return Path.Join(directory, "AasDemoapp.db");
+        }
+
+        private string ExtractDbPathFromConnectionString(string? connectionString)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                return GetDefaultDbPath();
+            }
+
+            // Suche nach "Data Source=" in der Connection String
+            var dataSourceIndex = connectionString.IndexOf(
+                "Data Source=",
+                StringComparison.OrdinalIgnoreCase
+            );
+            if (dataSourceIndex >= 0)
+            {
+                var startIndex = dataSourceIndex + "Data Source=".Length;
+                var endIndex = connectionString.IndexOf(';', startIndex);
+                var dbPath =
+                    endIndex >= 0
+                        ? connectionString.Substring(startIndex, endIndex - startIndex)
+                        : connectionString.Substring(startIndex);
+                return dbPath.Trim();
+            }
+
+            return GetDefaultDbPath();
         }
 
         // The following configures EF to create a Sqlite database file in the
         // special "local" folder for your platform.
-        protected override void OnConfiguring(DbContextOptionsBuilder options) =>
-            options.UseSqlite($"Data Source={DbPath}");
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            // Nur konfigurieren wenn noch keine Connection String gesetzt wurde
+            if (!options.IsConfigured)
+            {
+                options.UseSqlite($"Data Source={DbPath}");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
