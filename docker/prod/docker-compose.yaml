@@ -33,11 +33,15 @@ services:
   ######################## APPLICATIONS ########################
 
   aas-demoapp:
-    image: ghcr.io/meta-level-public/aasdemoapp:preview
+    image: ghcr.io/meta-level-public/aasdemoapp:latest
     container_name: aas-demoapp
     restart: unless-stopped
+    environment:
+      - Database__DbPath=${DB_PATH:-AasDemoapp.db}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
     volumes:
       - ../aasdemoapp-data:/AasDemoapp
+      - ${DB_EXTERNAL_PATH:-./data/database}:/app/database
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.aas-demoapp.rule=Host(`app.aas-bike.showcasehub.de`)'
@@ -324,7 +328,7 @@ services:
 
   aas-runtime:
     image: twinedgeimages.azurecr.io/aas-runtime:latest
-    mem_limit: 256m
+    mem_limit: 512m
     memswap_limit: 1g
     # networks:
     #   - internal
