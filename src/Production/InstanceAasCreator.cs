@@ -61,7 +61,10 @@ public class InstanceAasCreator
             )
         );
 
-        var productCarbonFootprint = CreateProductCarbonFootprintSubmodel(producedProduct);
+        var productCarbonFootprint = CreateProductCarbonFootprintSubmodel(
+            producedProduct,
+            settingsService
+        );
         aas.Submodels.Add(
             new Reference(
                 ReferenceTypes.ModelReference,
@@ -223,7 +226,10 @@ public class InstanceAasCreator
         return hierarchicalStructures;
     }
 
-    private static Submodel CreateProductCarbonFootprintSubmodel(ProducedProduct producedProduct)
+    private static Submodel CreateProductCarbonFootprintSubmodel(
+        ProducedProduct producedProduct,
+        SettingService settingsService
+    )
     {
         var pcf = PCFCreator.CreateFromJsonPrefilled();
         var productFootprints = (SubmodelElementList)
@@ -231,7 +237,30 @@ public class InstanceAasCreator
         // add pcf value, publication date and address for phases A1 - A3
         SubmodelElementCollection pcfComponent = (SubmodelElementCollection)
             productFootprints.Value.First();
-        CompletePCFData(pcfComponent, producedProduct.PCFValue.ToString(), producedProduct.Order);
+        var currentAddressSetting =
+            settingsService.GetSetting(SettingTypes.CompanyAddress)?.Value ?? "";
+
+        Address? address = null;
+        if (!string.IsNullOrEmpty(currentAddressSetting))
+        {
+            try
+            {
+                var options = new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                address = System.Text.Json.JsonSerializer.Deserialize<Address>(
+                    currentAddressSetting,
+                    options
+                );
+            }
+            catch (Exception)
+            {
+                // if deserialization fails, we just leave the address as null
+            }
+        }
+
+        CompletePCFData(pcfComponent, producedProduct.PCFValue.ToString(), address);
 
         // add pcf value, publication date and address for phase A4, if applicable (else ignore)
         try
@@ -241,7 +270,7 @@ public class InstanceAasCreator
             CompletePCFData(
                 pcfComponentTransport,
                 (producedProduct.PCFValue * 0.2).ToString(),
-                producedProduct.Order
+                producedProduct.Order.Address
             ); // todo: improve calculation of trnasport pcf (currently, it's 20% of overall PCF)
         }
         catch (IndexOutOfRangeException) { } // transport pcf not applilcable (yet)
@@ -251,7 +280,7 @@ public class InstanceAasCreator
     private static SubmodelElementCollection CompletePCFData(
         SubmodelElementCollection pcfComponent,
         String pcfValue,
-        ProductionOrder order
+        Address? address
     )
     {
         var pcfElem = (Property?)
@@ -269,15 +298,13 @@ public class InstanceAasCreator
         {
             // Adresse setzen
             var contactInfo = ContactInformationCreator.CreateFromJson(
-                (order.Address?.Name == null && order.Address?.Vorname == null)
+                (address?.Name == null && address?.Vorname == null)
                     ? string.Empty
-                    : (order.Address?.Name ?? string.Empty)
-                        + " "
-                        + (order.Address?.Vorname ?? string.Empty),
-                order.Address?.Strasse ?? string.Empty,
-                order.Address?.Ort ?? string.Empty,
-                order.Address?.Plz ?? string.Empty,
-                order.Address?.Land ?? string.Empty
+                    : (address?.Name ?? string.Empty) + " " + (address?.Vorname ?? string.Empty),
+                address?.Strasse ?? string.Empty,
+                address?.Ort ?? string.Empty,
+                address?.Plz ?? string.Empty,
+                address?.Land ?? string.Empty
             );
             goodsHandoverAddress.Value = contactInfo.Value;
         }

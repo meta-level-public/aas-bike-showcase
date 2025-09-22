@@ -22,5 +22,7 @@ namespace AasDemoapp.Settings
         public const string ToolsDiscoveryUrl = "ToolsDiscoveryUrl";
         public const string ToolsConceptDescriptionUrl = "ToolsConceptDescriptionUrl";
         public const string ToolsRepositorySecurity = "ToolsRepositorySecurity";
+
+        public const string CompanyAddress = "CompanyAddress";
     }
 }
