@@ -46,12 +46,54 @@ builder
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-builder.Services.AddDbContext<AasDemoappContext>(options =>
-{
-    options.UseSqlite();
-    options.EnableDetailedErrors();
-    options.EnableSensitiveDataLogging();
-});
+builder.Services.AddDbContext<AasDemoappContext>(
+    (serviceProvider, options) =>
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        // Lese den DbPath aus der Konfiguration
+        var configDbPath = configuration.GetSection("Database:DbPath")?.Value;
+        string connectionString;
+
+        if (!string.IsNullOrEmpty(configDbPath))
+        {
+            // Wenn ein relativer Pfad angegeben ist, verwende das LocalApplicationData Verzeichnis
+            if (!Path.IsPathRooted(configDbPath))
+            {
+                var folder = Environment.SpecialFolder.LocalApplicationData;
+                var path = Environment.GetFolderPath(folder);
+                var directory = Path.Join(path, "AasDemoapp");
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                var fullDbPath = Path.Join(directory, configDbPath);
+                connectionString = $"Data Source={fullDbPath}";
+            }
+            else
+            {
+                connectionString = $"Data Source={configDbPath}";
+            }
+        }
+        else
+        {
+            // Fallback: Standard SpecialFolder Verhalten
+            var folder = Environment.SpecialFolder.LocalApplicationData;
+            var path = Environment.GetFolderPath(folder);
+            var directory = Path.Join(path, "AasDemoapp");
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+            var defaultDbPath = Path.Join(directory, "AasDemoapp.db");
+            connectionString = $"Data Source={defaultDbPath}";
+        }
+
+        options.UseSqlite(connectionString);
+        options.EnableDetailedErrors();
+        options.EnableSensitiveDataLogging();
+    }
+);
 
 //  builder.Services.AddScoped<AasDemoappContext>(provider => provider.GetService<AasDemoappContext>());
 
