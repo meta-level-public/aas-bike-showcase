@@ -103,9 +103,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
   assemblyComplete = computed(() => {
     return (
-      this.currentAssemblyStep() >= this.bestandteileLength() - 1 &&
-      this.allPartsValid() &&
-      (!this.isToolRequired() || this.toolResultOk())
+      this.currentAssemblyStep() >= this.bestandteileLength() - 1 && this.allPartsValid()
+      // &&
+      // (!this.isToolRequired() || this.toolResultOk())
     );
   });
 
