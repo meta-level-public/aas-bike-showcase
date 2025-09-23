@@ -36,16 +36,65 @@ public class ProxyController : ControllerBase
     public async Task<object> Shells(string registryUrl)
     {
         var decodedUrl = HttpUtility.UrlDecode(registryUrl);
+        Console.WriteLine($"[DEBUG] ProxyController.Shells - Original URL: {registryUrl}");
+        Console.WriteLine($"[DEBUG] ProxyController.Shells - Decoded URL: {decodedUrl}");
+        Console.WriteLine($"[DEBUG] ProxyController.Shells - Target URL: {decodedUrl}/shells");
+
         var securitySetting = _settingService.GetSecuritySetting(
             SettingTypes.InfrastructureSecurity
         );
 
-        using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-        using HttpResponseMessage response = await client.GetAsync(decodedUrl + "/shells");
-        response.EnsureSuccessStatusCode();
-        string responseBody = await response.Content.ReadAsStringAsync();
+        try
+        {
+            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
+            Console.WriteLine(
+                $"[DEBUG] ProxyController.Shells - Making HTTP request to: {decodedUrl}/shells"
+            );
+            using HttpResponseMessage response = await client.GetAsync(decodedUrl + "/shells");
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(
+                $"[DEBUG] ProxyController.Shells - Request successful, response length: {responseBody.Length}"
+            );
 
-        return await Task.FromResult(responseBody);
+            return await Task.FromResult(responseBody);
+        }
+        catch (HttpRequestException ex) when (ex.Message.Contains("SSL connection"))
+        {
+            Console.WriteLine($"[DEBUG] ProxyController.Shells - SSL error occurred: {ex.Message}");
+
+            // Try HTTP fallback if HTTPS fails
+            var httpUrl = decodedUrl.Replace("https://", "http://");
+            if (httpUrl != decodedUrl)
+            {
+                Console.WriteLine(
+                    $"[DEBUG] ProxyController.Shells - Trying HTTP fallback: {httpUrl}/shells"
+                );
+                try
+                {
+                    using var client = HttpClientCreator.CreateHttpClient(securitySetting);
+                    using HttpResponseMessage response = await client.GetAsync(httpUrl + "/shells");
+                    response.EnsureSuccessStatusCode();
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"[DEBUG] ProxyController.Shells - HTTP fallback successful");
+                    return await Task.FromResult(responseBody);
+                }
+                catch (Exception fallbackEx)
+                {
+                    Console.WriteLine(
+                        $"[DEBUG] ProxyController.Shells - HTTP fallback also failed: {fallbackEx.Message}"
+                    );
+                }
+            }
+
+            // Re-throw original exception if fallback doesn't work
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[DEBUG] ProxyController.Shells - Unexpected error: {ex.Message}");
+            throw;
+        }
     }
 
     [HttpGet]

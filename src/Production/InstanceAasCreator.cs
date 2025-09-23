@@ -8,6 +8,7 @@ using AasDemoapp.AasHandling.SubmodelCreators;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Import;
 using AasDemoapp.Settings;
+using AasDemoapp.Utils;
 using AasDemoapp.Utils.Shells;
 using Namotion.Reflection;
 
@@ -53,6 +54,16 @@ public class InstanceAasCreator
             )
         );
 
+        var weight = 5.4; // default gewicht in kg
+
+        var technicalData = CreateTechnicalData(weight);
+        aas.Submodels.Add(
+            new Reference(
+                ReferenceTypes.ModelReference,
+                [new Key(KeyTypes.Submodel, technicalData.Id)]
+            )
+        );
+
         var hierarchicalStructures = CreateHierarchicalStructuresSubmodel(producedProduct);
         aas.Submodels.Add(
             new Reference(
@@ -63,7 +74,8 @@ public class InstanceAasCreator
 
         var productCarbonFootprint = CreateProductCarbonFootprintSubmodel(
             producedProduct,
-            settingsService
+            settingsService,
+            weight
         );
         aas.Submodels.Add(
             new Reference(
@@ -74,7 +86,7 @@ public class InstanceAasCreator
 
         await SaveAasToRepositories(
             aas,
-            [nameplate, handoverdoc, hierarchicalStructures, productCarbonFootprint],
+            [nameplate, handoverdoc, technicalData, hierarchicalStructures, productCarbonFootprint],
             importService,
             settingsService
         );
@@ -139,6 +151,19 @@ public class InstanceAasCreator
         PropertyValueChanger.SetPropertyValueByPath("ManufacturerName", "OI4 Nextbike", nameplate);
 
         return nameplate;
+    }
+
+    private static Submodel CreateTechnicalData(double weight)
+    {
+        var technicalData = TechnicalDataCreator.CreateFromJson();
+
+        PropertyValueChanger.SetPropertyValueByPath(
+            "TechnicalPropertyAreas[0].Weight",
+            weight.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            technicalData
+        );
+
+        return technicalData;
     }
 
     private static Submodel CreateHierarchicalStructuresSubmodel(ProducedProduct producedProduct)
@@ -228,7 +253,8 @@ public class InstanceAasCreator
 
     private static Submodel CreateProductCarbonFootprintSubmodel(
         ProducedProduct producedProduct,
-        SettingService settingsService
+        SettingService settingsService,
+        double weight
     )
     {
         var pcf = PCFCreator.CreateFromJsonPrefilled();
@@ -239,7 +265,7 @@ public class InstanceAasCreator
         var currentAddressSetting =
             settingsService.GetSetting(SettingTypes.CompanyAddress)?.Value ?? "";
 
-        Address? address = null;
+        Address? addressCompany = null;
         if (!string.IsNullOrEmpty(currentAddressSetting))
         {
             try
@@ -248,7 +274,7 @@ public class InstanceAasCreator
                 {
                     PropertyNameCaseInsensitive = true,
                 };
-                address = System.Text.Json.JsonSerializer.Deserialize<Address>(
+                addressCompany = System.Text.Json.JsonSerializer.Deserialize<Address>(
                     currentAddressSetting,
                     options
                 );
@@ -268,27 +294,33 @@ public class InstanceAasCreator
                 var rand = new Random();
                 pcfValue = Math.Round(rand.NextDouble() * 5, 3);
             }
-            CompletePCFData(pcfComponent, pcfValue.ToString(), address);
+            CompletePCFData(pcfComponent, pcfValue.ToString(), addressCompany);
         }
 
         // add pcf value, publication date and address for phase A4, if applicable (else ignore)
         try
         {
+            // Transport PCF ist 120g pro Tonnenkilometer
+            // Distanz zwischen producedProduct.Order.Address und companyAddress berechnen
+            var transportDistance =
+                DistanceCalculator.CalculateDistanceKm(
+                    addressCompany,
+                    producedProduct.Order.Address
+                ) ?? 100; // Fallback auf 100km wenn keine Koordinaten verfügbar
+
             var pcfComponentTransport = (SubmodelElementCollection?)productFootprints?.Value?[1];
             if (pcfComponentTransport != null)
             {
-                var pcfValue = (producedProduct.PCFValue * 0.2);
-                if (pcfValue == 0)
-                {
-                    // zufälligen Wert zwischen 0 und 5 erzeugen mit 3 nachkommastellen
-                    var rand = new Random();
-                    pcfValue = Math.Round(rand.NextDouble() * 5, 3);
-                }
+                // Transport PCF Berechnung: 120g CO2 pro Tonnenkilometer
+                // Annahme: Fahrrad wiegt ca. 15kg = 0.015 Tonnen
+                var weightInTonnes = weight / 1000;
+                var transportPcfValue = transportDistance * weightInTonnes * 0.12; // 120g = 0.12kg CO2 pro Tonnenkilometer
+
                 CompletePCFData(
                     pcfComponentTransport,
-                    pcfValue.ToString(),
+                    transportPcfValue.ToString("F3"), // 3 Dezimalstellen
                     producedProduct.Order.Address
-                ); // todo: improve calculation of trnasport pcf (currently, it's 20% of overall PCF)
+                );
             }
         }
         catch (IndexOutOfRangeException) { } // transport pcf not applilcable (yet)

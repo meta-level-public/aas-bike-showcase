@@ -348,15 +348,21 @@ services:
       twinedge.registry.smRegistryPath: '${SM_REGISTRY_PATH}'
       twinedge.registry.aasDiscoveryPath: '${AAS_DISCOVERY_PATH}'
       twinedge.events.mqtt.enabled: false
+    depends_on:
+      aas-registry:
+        condition: service_healthy
+      sm-registry:
+        condition: service_healthy
     volumes:
       - ./data:/data
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.mmc-aas-runtime.rule=Host(`mmc-aas-runtime.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.mmc-aas-runtime.rule=Host(`mmc-twinedge.aas-bike.showcasehub.de`) && PathPrefix(`/aas`)' # nur api wege weiterleiten
       - 'traefik.http.routers.mmc-aas-runtime.entrypoints=web,websecure'
       - 'traefik.http.routers.mmc-aas-runtime.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.mmc-aas-runtime.middlewares=redirect-to-https@file'
+      - 'traefik.http.routers.mmc-aas-runtime.middlewares=redirect-to-https@file,strip-custom-aas'
       - 'traefik.http.services.mmc-aas-runtime.loadbalancer.server.port=8080'
+      - 'traefik.http.middlewares.strip-custom-aas.stripprefix.prefixes=/aas'
 
   aas-runtime-web:
     image: twinedgeimages.azurecr.io/aas-runtime-web:latest
@@ -371,7 +377,7 @@ services:
       - .env
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.mmc-aas-runtime-web.rule=Host(`mmc-aas-runtime-web.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.mmc-aas-runtime-web.rule=Host(`mmc-twinedge.aas-bike.showcasehub.de`) && PathPrefix(`/config`)'
       - 'traefik.http.routers.mmc-aas-runtime-web.entrypoints=web,websecure'
       - 'traefik.http.routers.mmc-aas-runtime-web.tls.certresolver=letsencrypt'
       - 'traefik.http.routers.mmc-aas-runtime-web.middlewares=redirect-to-https@file'

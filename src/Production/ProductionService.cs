@@ -247,7 +247,7 @@ namespace AasDemoapp.Production
             if (part == null)
                 return string.Empty;
 
-            var aasId = part.KatalogEintrag.AasId;
+            var aasId = part.KatalogEintrag.LocalAasId;
 
             var res = await GetRequiredToolSubmodel(aasId);
 
@@ -336,7 +336,7 @@ namespace AasDemoapp.Production
                 if (sm == null)
                     continue;
 
-                if (sm.IdShort == "RequiredTool") // TODO: ID des submodels finden -> hendrik fragen
+                if (sm.IdShort == "RequiredTool" || sm.IdShort == "ProductionOperations") // TODO: ID des submodels finden -> hendrik fragen
                 {
                     PropertyValueChanger.SetPropertyValueByPath(
                         propertyIdShortPath,

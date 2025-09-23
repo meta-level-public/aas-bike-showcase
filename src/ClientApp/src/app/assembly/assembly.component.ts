@@ -405,7 +405,8 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       this.notificationService.showMessageAlways('Fehler: required_tighten_force nicht gefunden');
       return;
     }
-    await this.service.initializeTool(requiredToolAasId, 'requiredTorque', requiredTightenForce);
+    await this.service.initializeTool(requiredToolAasId, 'TargetTorque', requiredTightenForce);
+    // await this.service.initializeTool(requiredToolAasId, 'requiredTorque', requiredTightenForce);
 
     this.toolInitialized.set(true);
   }
@@ -439,9 +440,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     this.stopTorquePolling();
     // Einmal sofort aktualisieren
     void this.updateToolDataOnce();
-    this.torqueIntervalId = setInterval(() => {
-      void this.updateToolDataOnce();
-    }, 1000);
+    // this.torqueIntervalId = setInterval(() => {
+    //   void this.updateToolDataOnce();
+    // }, 1000);
   }
 
   // Stoppt das Polling

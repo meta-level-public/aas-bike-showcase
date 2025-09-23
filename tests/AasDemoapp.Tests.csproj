@@ -26,6 +26,9 @@
     <Content Include="AasHandling/SubmodelCreators/handoverdoc.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="AasHandling/SubmodelCreators/technicalData.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="AasHandling/SubmodelCreators/contactInfo.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
