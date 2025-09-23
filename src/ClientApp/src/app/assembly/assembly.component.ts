@@ -306,7 +306,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
   // Öffnet den Schrauben-Dialog
   openToolDialog(): void {
     // hier muss jetzt das benötigte drehmoment an den schrauber übergeben werden
-
+    this.toolInitialized.set(false);
     this.showToolDialog.set(true);
     // Starte Live-Abfrage des aktuellen Drehmoments
     this.startTorquePolling();
@@ -440,9 +440,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     this.stopTorquePolling();
     // Einmal sofort aktualisieren
     void this.updateToolDataOnce();
-    // this.torqueIntervalId = setInterval(() => {
-    //   void this.updateToolDataOnce();
-    // }, 1000);
+    this.torqueIntervalId = setInterval(() => {
+      void this.updateToolDataOnce();
+    }, 1000);
   }
 
   // Stoppt das Polling

@@ -338,41 +338,46 @@ namespace AasDemoapp.Production
 
                 if (sm.IdShort == "RequiredTool" || sm.IdShort == "ProductionOperations") // TODO: ID des submodels finden -> hendrik fragen
                 {
-                    PropertyValueChanger.SetPropertyValueByPath(
-                        propertyIdShortPath,
-                        propertyValue,
-                        sm
-                    );
-                    var smUrl =
-                        submodelRepositoryUrl.AppendSlash()
-                        + "submodels/"
-                        + sm.Id.ToBase64UrlEncoded(Encoding.UTF8);
-                    var smJsonString = BasyxSerializer.Serialize(sm);
-                    var smResponse = await client.PutAsync(
-                        smUrl,
-                        new StringContent(smJsonString, Encoding.UTF8, "application/json"),
+                    var smUrl = await ShellLoader.GetSmUrl(
+                        aasUrls,
+                        securitySetting,
+                        aasId,
+                        sm.Id,
                         CancellationToken.None
                     );
-                    if (smResponse.StatusCode == HttpStatusCode.NotFound)
+                    var updateUrl =
+                        smUrl.AppendSlash()
+                        + "submodel-elements/"
+                        + propertyIdShortPath
+                        + "/$value";
+
+                    // PATCH Aufruf implementieren
+                    var jsonContent = new StringContent(
+                        $"\"{propertyValue}\"",
+                        Encoding.UTF8,
+                        "application/json"
+                    );
+
+                    var patchRequest = new HttpRequestMessage(HttpMethod.Patch, updateUrl)
                     {
-                        // POST dann ohne ID ...
-                        // für den AASX Server hängen wir noch die aasId an ...
-                        smUrl = submodelRepositoryUrl.AppendSlash() + "submodels";
-                        smResponse = await client.PostAsync(
-                            smUrl,
-                            new StringContent(smJsonString, Encoding.UTF8, "application/json"),
-                            CancellationToken.None
+                        Content = jsonContent,
+                    };
+
+                    var patchResponse = await client.SendAsync(patchRequest);
+
+                    if (patchResponse.IsSuccessStatusCode)
+                    {
+                        _logger.LogInformation(
+                            $"Successfully updated property {propertyIdShortPath} with value {propertyValue}"
                         );
-                        if (!smResponse.IsSuccessStatusCode)
-                        {
-                            // throw new Exception($"Request to {smUrl} failed with status code {smResponse.StatusCode}");
-                            Console.WriteLine("Error saving submodel: " + smResponse.StatusCode);
-                        }
+                        return true;
                     }
-                    else if (!smResponse.IsSuccessStatusCode)
+                    else
                     {
-                        // throw new Exception($"Request to {smUrl} failed with status code {smResponse.StatusCode}");
-                        Console.WriteLine("Error saving submodel: " + smResponse.StatusCode);
+                        _logger.LogError(
+                            $"Failed to update property {propertyIdShortPath}. Status: {patchResponse.StatusCode}"
+                        );
+                        return false;
                     }
                 }
             }
@@ -417,7 +422,7 @@ namespace AasDemoapp.Production
                 if (sm == null)
                     continue;
 
-                if (sm.IdShort == "RequiredTool") // TODO: ID des submodels finden -> hendrik fragen
+                if (sm.IdShort == "RequiredTool" || sm.IdShort == "ProductionOperations") // TODO: ID des submodels finden -> hendrik fragen
                 {
                     return Jsonization.Serialize.ToJsonObject(sm).ToString();
                 }

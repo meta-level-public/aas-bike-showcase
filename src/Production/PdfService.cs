@@ -14,11 +14,15 @@ namespace AasDemoapp.Production;
 public class PdfService
 {
     /// <summary>
-    /// Erzeugt ein PDF-Dokument mit aktuellem Datum, Firmenadresse und Fahrradbild
+    /// Erzeugt ein PDF-Dokument mit aktuellem Datum, Firmenadresse, Fahrradbild und Bestandteilen
     /// </summary>
     /// <param name="companyAddress">Die Firmenadresse</param>
+    /// <param name="producedProduct">Das produzierte Produkt mit Bestandteilen</param>
     /// <returns>PDF als Byte-Array</returns>
-    public static byte[] CreateHandoverPdf(Address? companyAddress = null)
+    public static byte[] CreateHandoverPdf(
+        Address? companyAddress = null,
+        ProducedProduct? producedProduct = null
+    )
     {
         using var stream = new MemoryStream();
         using var writer = new PdfWriter(stream);
@@ -191,6 +195,79 @@ public class PdfService
 
         table.AddCell(rightColumn);
         document.Add(table);
+
+        // Bestandteile-Tabelle hinzufügen
+        if (producedProduct?.Bestandteile != null && producedProduct.Bestandteile.Any())
+        {
+            var componentTitle = new Paragraph("Bestandteile:")
+                .SetFont(boldFont)
+                .SetFontSize(14)
+                .SetMarginTop(20)
+                .SetMarginBottom(10);
+            document.Add(componentTitle);
+
+            // Tabelle für Bestandteile erstellen
+            var componentTable = new Table(3)
+                .SetWidth(UnitValue.CreatePercentValue(100))
+                .SetMarginBottom(20);
+
+            // Header-Zeile
+            var headerName = new Cell()
+                .Add(new Paragraph("Name").SetFont(boldFont).SetFontSize(10))
+                .SetBackgroundColor(iText.Kernel.Colors.ColorConstants.LIGHT_GRAY)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetPadding(5);
+            componentTable.AddHeaderCell(headerName);
+
+            var headerGlobalAssetId = new Cell()
+                .Add(new Paragraph("Global Asset ID").SetFont(boldFont).SetFontSize(10))
+                .SetBackgroundColor(iText.Kernel.Colors.ColorConstants.LIGHT_GRAY)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetPadding(5);
+            componentTable.AddHeaderCell(headerGlobalAssetId);
+
+            var headerIdShort = new Cell()
+                .Add(new Paragraph("ID Short").SetFont(boldFont).SetFontSize(10))
+                .SetBackgroundColor(iText.Kernel.Colors.ColorConstants.LIGHT_GRAY)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetPadding(5);
+            componentTable.AddHeaderCell(headerIdShort);
+
+            // Datenzeilen für jeden Bestandteil
+            foreach (var bestandteil in producedProduct.Bestandteile.Where(b => !b.IsDeleted))
+            {
+                // Name
+                var nameCell = new Cell()
+                    .Add(new Paragraph(bestandteil.Name ?? "").SetFont(normalFont).SetFontSize(9))
+                    .SetPadding(5)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE);
+                componentTable.AddCell(nameCell);
+
+                // Global Asset ID
+                var globalAssetIdCell = new Cell()
+                    .Add(
+                        new Paragraph(bestandteil.KatalogEintrag?.GlobalAssetId ?? "")
+                            .SetFont(normalFont)
+                            .SetFontSize(8)
+                    )
+                    .SetPadding(5)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE);
+                componentTable.AddCell(globalAssetIdCell);
+
+                // ID Short (AasId)
+                var idShortCell = new Cell()
+                    .Add(
+                        new Paragraph(bestandteil.KatalogEintrag?.AasId ?? "")
+                            .SetFont(normalFont)
+                            .SetFontSize(8)
+                    )
+                    .SetPadding(5)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE);
+                componentTable.AddCell(idShortCell);
+            }
+
+            document.Add(componentTable);
+        }
 
         // Zusätzliche Informationen
         var additionalInfo = new Paragraph("Diese Dokumentation wurde automatisch generiert.")
