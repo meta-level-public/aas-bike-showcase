@@ -259,18 +259,37 @@ public class InstanceAasCreator
             }
         }
 
-        CompletePCFData(pcfComponent, producedProduct.PCFValue.ToString(), address);
+        if (pcfComponent != null)
+        {
+            var pcfValue = (producedProduct.PCFValue * 0.2);
+            if (pcfValue == 0)
+            {
+                // zufälligen Wert zwischen 0 und 5 erzeugen mit 3 nachkommastellen
+                var rand = new Random();
+                pcfValue = Math.Round(rand.NextDouble() * 5, 3);
+            }
+            CompletePCFData(pcfComponent, pcfValue.ToString(), address);
+        }
 
         // add pcf value, publication date and address for phase A4, if applicable (else ignore)
         try
         {
-            SubmodelElementCollection pcfComponentTransport = (SubmodelElementCollection)
-                productFootprints.Value[1];
-            CompletePCFData(
-                pcfComponentTransport,
-                (producedProduct.PCFValue * 0.2).ToString(),
-                producedProduct.Order.Address
-            ); // todo: improve calculation of trnasport pcf (currently, it's 20% of overall PCF)
+            var pcfComponentTransport = (SubmodelElementCollection?)productFootprints?.Value?[1];
+            if (pcfComponentTransport != null)
+            {
+                var pcfValue = (producedProduct.PCFValue * 0.2);
+                if (pcfValue == 0)
+                {
+                    // zufälligen Wert zwischen 0 und 5 erzeugen mit 3 nachkommastellen
+                    var rand = new Random();
+                    pcfValue = Math.Round(rand.NextDouble() * 5, 3);
+                }
+                CompletePCFData(
+                    pcfComponentTransport,
+                    pcfValue.ToString(),
+                    producedProduct.Order.Address
+                ); // todo: improve calculation of trnasport pcf (currently, it's 20% of overall PCF)
+            }
         }
         catch (IndexOutOfRangeException) { } // transport pcf not applilcable (yet)
         return pcf;
@@ -289,7 +308,8 @@ public class InstanceAasCreator
         var publicationDate = (Property?)
             pcfComponent.Value?.Find(property => property.IdShort == "PublicationDate");
         if (publicationDate != null)
-            publicationDate.Value = DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            // iso string schreiben
+            publicationDate.Value = DateTime.Now.ToString("O");
         var goodsHandoverAddress = (SubmodelElementCollection?)
             pcfComponent.Value?.Find(smc => smc.IdShort == "GoodsHandoverAddress");
 
