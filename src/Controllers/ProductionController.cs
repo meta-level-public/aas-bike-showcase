@@ -96,44 +96,5 @@ namespace AasDemoapp.Controllers
             );
             return Ok(result);
         }
-
-        [HttpGet]
-        public ActionResult<HandoverDocumentationDto> TestHandoverDocumentation()
-        {
-            try
-            {
-                var submodel = HandoverDocumentationCreator.CreateFromJson();
-
-                var submodelDto = new SubmodelSummaryDto
-                {
-                    Id = submodel.Id,
-                    IdShort = submodel.IdShort,
-                    Description = submodel.Description?.FirstOrDefault()?.Text,
-                    Version = submodel.Administration?.Version,
-                    Revision = submodel.Administration?.Revision,
-                    ElementCount = submodel.SubmodelElements?.Count ?? 0,
-                };
-
-                return Ok(
-                    new HandoverDocumentationDto
-                    {
-                        Success = true,
-                        Message = "HandoverDocumentation submodel created successfully",
-                        Submodel = submodelDto,
-                    }
-                );
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(
-                    new HandoverDocumentationDto
-                    {
-                        Success = false,
-                        Message = "Failed to create HandoverDocumentation submodel",
-                        Error = ex.Message,
-                    }
-                );
-            }
-        }
     }
 }

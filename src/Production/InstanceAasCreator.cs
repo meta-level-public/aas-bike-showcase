@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AasCore.Aas3_0;
@@ -13,6 +14,8 @@ using AasDemoapp.Utils.Shells;
 using Namotion.Reflection;
 
 namespace AasDemoapp.Production;
+
+public record HandoverDocumentationResult(Submodel Submodel, ProvidedFile? PdfFile);
 
 public class InstanceAasCreator
 {
@@ -37,6 +40,31 @@ public class InstanceAasCreator
             producedProduct.ConfiguredProduct.Name
         );
 
+        // Lade Firmenadresse aus den Einstellungen
+        var currentAddressSetting =
+            settingsService.GetSetting(SettingTypes.CompanyAddress)?.Value ?? "";
+
+        Address? companyAddress = null;
+        if (!string.IsNullOrEmpty(currentAddressSetting))
+        {
+            try
+            {
+                var options = new System.Text.Json.JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                companyAddress = System.Text.Json.JsonSerializer.Deserialize<Address>(
+                    currentAddressSetting,
+                    options
+                );
+            }
+            catch
+            {
+                // Falls die Deserialisierung fehlschlägt, verwende null
+                companyAddress = null;
+            }
+        }
+
         var nameplate = CreateNameplateSubmodel();
         aas.Submodels =
         [
@@ -46,11 +74,11 @@ public class InstanceAasCreator
             ),
         ];
 
-        var handoverdoc = CreateHandoverDocumentation();
+        var handoverResult = CreateHandoverDocumentation(companyAddress);
         aas.Submodels.Add(
             new Reference(
                 ReferenceTypes.ModelReference,
-                [new Key(KeyTypes.Submodel, handoverdoc.Id)]
+                [new Key(KeyTypes.Submodel, handoverResult.Submodel.Id)]
             )
         );
 
@@ -86,9 +114,16 @@ public class InstanceAasCreator
 
         await SaveAasToRepositories(
             aas,
-            [nameplate, handoverdoc, technicalData, hierarchicalStructures, productCarbonFootprint],
+            [
+                nameplate,
+                handoverResult.Submodel,
+                technicalData,
+                hierarchicalStructures,
+                productCarbonFootprint,
+            ],
             importService,
-            settingsService
+            settingsService,
+            handoverResult.PdfFile != null ? [handoverResult.PdfFile] : []
         );
 
         return aas;
@@ -98,7 +133,8 @@ public class InstanceAasCreator
         AssetAdministrationShell aas,
         List<ISubmodel> submodels,
         ImportService importService,
-        SettingService settingsService
+        SettingService settingsService,
+        List<ProvidedFile>? providedFiles = null
     )
     {
         var securitySetting = settingsService.GetSecuritySetting(
@@ -129,12 +165,14 @@ public class InstanceAasCreator
             },
             securitySetting,
             plainJson,
-            [],
+            providedFiles ?? [],
             default
         );
     }
 
-    private static Submodel CreateHandoverDocumentation()
+    private static HandoverDocumentationResult CreateHandoverDocumentation(
+        Address? companyAddress = null
+    )
     {
         var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
         handoverdoc.Description =
@@ -142,7 +180,85 @@ public class InstanceAasCreator
             new LangStringTextType("de", "Handover documentation for the configured product"),
         ];
 
-        return handoverdoc;
+        // Generiere PDF-Dokument
+        var pdfData = PdfService.CreateHandoverPdf(companyAddress);
+        var pdfFileName = $"handover_documentation_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+
+        // Erstelle ProvidedFile für das PDF
+        var pdfStream = new MemoryStream(pdfData);
+        var providedFile = new ProvidedFile
+        {
+            Stream = pdfStream,
+            Filename = pdfFileName,
+            Type = ProvidedFileType.Added,
+            ContentType = "application/pdf",
+        };
+
+        // Finde das erste Document Element im Submodel und aktualisiere es
+        if (handoverdoc.SubmodelElements != null)
+        {
+            var documentCollection = handoverdoc
+                .SubmodelElements.OfType<SubmodelElementCollection>()
+                .FirstOrDefault(smc => smc.IdShort?.StartsWith("Document__") == true);
+
+            if (documentCollection?.Value != null)
+            {
+                // das File befindet sich in der SMC mit der idShort DocumentVersion__*
+                var documentVersionCollection = documentCollection
+                    .Value.OfType<SubmodelElementCollection>()
+                    .FirstOrDefault(smc => smc.IdShort?.StartsWith("DocumentVersion__") == true);
+
+                if (documentVersionCollection?.Value != null)
+                {
+                    // Finde das erste DigitalFile Element in der DocumentVersion SMC
+                    var digitalFileElement = documentVersionCollection
+                        .Value.OfType<AasCore.Aas3_0.File>()
+                        .FirstOrDefault(f => f.IdShort?.StartsWith("DigitalFile__") == true);
+
+                    if (digitalFileElement != null)
+                    {
+                        // Aktualisiere das DigitalFile Element mit dem generierten PDF
+                        digitalFileElement.ContentType = "application/pdf";
+                        digitalFileElement.Value = pdfFileName; // Verwende den Dateinamen als Referenz
+                    }
+                    else
+                    {
+                        // Debug: Logge alle verfügbaren Elemente in DocumentVersion
+                        Console.WriteLine(
+                            $"DEBUG: DigitalFile nicht gefunden in DocumentVersion. Verfügbare Elemente:"
+                        );
+                        foreach (var element in documentVersionCollection.Value)
+                        {
+                            Console.WriteLine($"  - {element.GetType().Name}: {element.IdShort}");
+                        }
+                    }
+                }
+                else
+                {
+                    // Debug: Logge alle verfügbaren Elemente in Document
+                    Console.WriteLine(
+                        $"DEBUG: DocumentVersion nicht gefunden. Verfügbare Elemente in Document:"
+                    );
+                    foreach (var element in documentCollection.Value)
+                    {
+                        Console.WriteLine($"  - {element.GetType().Name}: {element.IdShort}");
+                    }
+                }
+            }
+            else
+            {
+                // Debug: Logge alle verfügbaren Top-Level Elemente
+                Console.WriteLine(
+                    $"DEBUG: Document nicht gefunden. Verfügbare Top-Level Elemente:"
+                );
+                foreach (var element in handoverdoc.SubmodelElements)
+                {
+                    Console.WriteLine($"  - {element.GetType().Name}: {element.IdShort}");
+                }
+            }
+        }
+
+        return new HandoverDocumentationResult(handoverdoc, providedFile);
     }
 
     private static Submodel CreateNameplateSubmodel()

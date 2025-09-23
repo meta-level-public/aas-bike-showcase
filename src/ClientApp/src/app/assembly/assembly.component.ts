@@ -461,7 +461,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       const toolData = await this.service.getToolData(aasId);
       if (!toolData) return;
       let vCurr = 0;
-      const elCurrentTorque = toolData.submodelElements?.find((e) => e.idShort === 'currentTorque');
+      const elCurrentTorque = toolData.submodelElements?.find(
+        (e) => e.idShort === 'LastMeasuredTorque'
+      );
       if (elCurrentTorque instanceof Property) {
         vCurr = +(elCurrentTorque.value ?? '0');
       }
@@ -507,7 +509,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
     let currentTightenForce = 0;
     const currentTightenForceElement = toolData?.submodelElements?.find(
-      (el) => el.idShort === 'currentTorque'
+      (el) => el.idShort === 'LastMeasuredTorque'
     );
     if (currentTightenForceElement instanceof Property) {
       currentTightenForce = +(currentTightenForceElement.value ?? '');
