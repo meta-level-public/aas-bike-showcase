@@ -232,11 +232,10 @@ public class InstanceAasCreator
     )
     {
         var pcf = PCFCreator.CreateFromJsonPrefilled();
-        var productFootprints = (SubmodelElementList)
-            pcf.SubmodelElements.Find(submodel => submodel.IdShort == "ProductCarbonFootprints");
+        var productFootprints = (SubmodelElementList?)
+            pcf.SubmodelElements?.Find(submodel => submodel.IdShort == "ProductCarbonFootprints");
         // add pcf value, publication date and address for phases A1 - A3
-        SubmodelElementCollection pcfComponent = (SubmodelElementCollection)
-            productFootprints.Value.First();
+        var pcfComponent = (SubmodelElementCollection?)productFootprints?.Value?.FirstOrDefault();
         var currentAddressSetting =
             settingsService.GetSetting(SettingTypes.CompanyAddress)?.Value ?? "";
 
