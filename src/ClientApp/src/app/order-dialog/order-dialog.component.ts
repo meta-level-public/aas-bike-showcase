@@ -95,9 +95,12 @@ export class OrderDialogComponent implements OnChanges {
                 plz: formValue.plz,
                 ort: formValue.ort,
                 land: formValue.land,
+                lat: formValue.lat,
+                long: formValue.long,
               }
             : undefined,
         };
+        console.log('Creating order with DTO:', createOrderDto);
 
         const response = await this.createProductionOrder(createOrderDto);
 

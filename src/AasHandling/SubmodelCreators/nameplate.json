@@ -46,7 +46,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "https://www.domain-abc.com/Model-Nr-1234/Serial-Nr-5678",
+      "value": "",
       "valueType": "xs:anyURI",
       "qualifiers": [
         {
@@ -92,7 +92,7 @@
       "value": [
         {
           "language": "de",
-          "text": "\"Muster AG\""
+          "text": ""
         }
       ],
       "qualifiers": [
@@ -139,7 +139,7 @@
       "value": [
         {
           "language": "en",
-          "text": "\"ABC-123\""
+          "text": ""
         }
       ],
       "qualifiers": [
@@ -251,7 +251,7 @@
       "value": [
         {
           "language": "en",
-          "text": "\"flow meter\""
+          "text": ""
         }
       ],
       "valueId": {
@@ -307,7 +307,7 @@
       "value": [
         {
           "language": "en",
-          "text": "\"Type ABC\""
+          "text": ""
         }
       ],
       "qualifiers": [
@@ -351,7 +351,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "FM-ABC-1234",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -394,7 +394,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "FMABC1234",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -437,7 +437,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "FM11-ABC22-123456",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -480,7 +480,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "12345678",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -523,7 +523,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "2022",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -566,7 +566,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "2022-01-01",
+      "value": "",
       "valueType": "xs:date",
       "qualifiers": [
         {
@@ -609,7 +609,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "1.0.0",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -652,7 +652,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "1.0.0",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -695,7 +695,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "1.0.0",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -738,7 +738,7 @@
           "type": "ExternalReference"
         }
       ],
-      "value": "DE",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -776,7 +776,7 @@
         ],
         "type": "ExternalReference"
       },
-      "value": "987654321",
+      "value": "",
       "valueType": "xs:string",
       "qualifiers": [
         {
@@ -957,7 +957,7 @@
                   "type": "ExternalReference"
                 }
               ],
-              "value": "0173-1#07-DAA603#004",
+              "value": "",
               "valueType": "xs:string",
               "qualifiers": [
                 {
@@ -1000,7 +1000,7 @@
                   "type": "ExternalReference"
                 }
               ],
-              "value": "KEMA99IECEX1105/128",
+              "value": "",
               "valueType": "xs:string",
               "qualifiers": [
                 {
@@ -1049,7 +1049,7 @@
                   "type": "ExternalReference"
                 }
               ],
-              "value": "2022-01-01",
+              "value": "",
               "valueType": "xs:date",
               "qualifiers": [
                 {
@@ -1098,7 +1098,7 @@
                   "type": "ExternalReference"
                 }
               ],
-              "value": "2022-01-01",
+              "value": "",
               "valueType": "xs:date",
               "qualifiers": [
                 {
@@ -1190,7 +1190,7 @@
                   "type": "ExternalReference"
                 }
               ],
-              "value": "0044",
+              "value": "",
               "valueType": "xs:string",
               "qualifiers": [
                 {
@@ -1304,7 +1304,7 @@
           "value": [
             {
               "language": "en",
-              "text": "\"sample\""
+              "text": ""
             }
           ],
           "qualifiers": [
@@ -1582,7 +1582,7 @@
                   "value": [
                     {
                       "language": "en",
-                      "text": "\"sample\""
+                      "text": ""
                     }
                   ],
                   "qualifiers": [

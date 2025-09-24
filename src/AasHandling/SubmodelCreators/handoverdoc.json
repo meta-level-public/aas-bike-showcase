@@ -2,15 +2,15 @@
   "idShort": "HandoverDocumentation",
   "description": [
     {
-      "language": "en",
-      "text": "The Submodel defines a set meta data for the handover of documentation from the manufacturer to the operator for industrial equipment."
+      "language": "de",
+      "text": "Handover documentation for the configured product"
     }
   ],
   "administration": {
     "version": "1",
     "revision": "2"
   },
-  "id": "https://meta-level.de/ids/sm/1065_4137_9256_8174",
+  "id": "https://oi4-nextbike.de/ids/sm/6332_1163_8703_9804",
   "kind": "Instance",
   "semanticId": {
     "type": "ModelReference",
@@ -55,7 +55,7 @@
       "modelType": "Property"
     },
     {
-      "idShort": "Document__00__",
+      "idShort": "Document",
       "description": [
         {
           "language": "en",
@@ -91,7 +91,7 @@
       "value": [
         {
           "category": "PARAMETER",
-          "idShort": "DocumentId__00__",
+          "idShort": "DocumentId",
           "description": [
             {
               "language": "en",
@@ -289,7 +289,7 @@
         },
         {
           "category": "PARAMETER",
-          "idShort": "DocumentClassification__00__",
+          "idShort": "DocumentClassification",
           "description": [
             {
               "language": "en",
@@ -374,6 +374,7 @@
                 }
               ],
               "valueType": "xs:string",
+              "value": "01-01",
               "modelType": "Property"
             },
             {
@@ -424,6 +425,16 @@
                   "type": "ExampleValue",
                   "valueType": "xs:string",
                   "value": "Operation@en"
+                }
+              ],
+              "value": [
+                {
+                  "language": "de",
+                  "text": "Identifikation"
+                },
+                {
+                  "language": "en",
+                  "text": "Identification"
                 }
               ],
               "modelType": "MultiLanguageProperty"
@@ -479,6 +490,7 @@
                 }
               ],
               "valueType": "xs:string",
+              "value": "VDI2770 Blatt 1:2020",
               "modelType": "Property"
             }
           ],
@@ -486,7 +498,7 @@
         },
         {
           "category": "PARAMETER",
-          "idShort": "DocumentVersion__00__",
+          "idShort": "DocumentVersion",
           "description": [
             {
               "language": "en",
@@ -522,7 +534,7 @@
           "value": [
             {
               "category": "PARAMETER",
-              "idShort": "Language__00__",
+              "idShort": "Language",
               "description": [
                 {
                   "language": "en",
@@ -1063,7 +1075,7 @@
             },
             {
               "category": "PARAMETER",
-              "idShort": "RefersTo__00__",
+              "idShort": "RefersTo",
               "description": [
                 {
                   "language": "en",
@@ -1115,7 +1127,7 @@
             },
             {
               "category": "PARAMETER",
-              "idShort": "BasedOn__00__",
+              "idShort": "BasedOn",
               "description": [
                 {
                   "language": "en",
@@ -1167,7 +1179,7 @@
             },
             {
               "category": "PARAMETER",
-              "idShort": "TranslationOf__00__",
+              "idShort": "TranslationOf",
               "description": [
                 {
                   "language": "en",
@@ -1218,7 +1230,7 @@
               "modelType": "ReferenceElement"
             },
             {
-              "idShort": "DigitalFile__00__",
+              "idShort": "DigitalFile",
               "description": [
                 {
                   "language": "en",
@@ -1281,12 +1293,13 @@
                   "value": "DigitalFile[\\d{2,3}]"
                 }
               ],
+              "value": "aHR0cHM6Ly9vaTQtbmV4dGJpa2UuZGUvaWRzL3NtLzYzMzJfMTE2M184NzAzXzk4MDQ-Document.DocumentVersion.DigitalFile-handover_documentation_20250924_065759.pdf",
               "contentType": "application/pdf",
               "modelType": "File"
             },
             {
               "category": "PARAMETER",
-              "idShort": "PreviewFile__00__",
+              "idShort": "PreviewFile",
               "description": [
                 {
                   "language": "en",
@@ -1357,7 +1370,7 @@
         },
         {
           "category": "PARAMETER",
-          "idShort": "DocumentedEntity__00__",
+          "idShort": "DocumentedEntity",
           "description": [
             {
               "language": "en",

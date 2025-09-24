@@ -65,7 +65,7 @@ public class InstanceAasCreator
             }
         }
 
-        var nameplate = CreateNameplateSubmodel();
+        var nameplate = CreateNameplateSubmodel(companyAddress, producedProduct);
         aas.Submodels =
         [
             new Reference(
@@ -74,7 +74,7 @@ public class InstanceAasCreator
             ),
         ];
 
-        var handoverResult = CreateHandoverDocumentation(companyAddress);
+        var handoverResult = CreateHandoverDocumentation(companyAddress, producedProduct);
         aas.Submodels.Add(
             new Reference(
                 ReferenceTypes.ModelReference,
@@ -171,7 +171,8 @@ public class InstanceAasCreator
     }
 
     private static HandoverDocumentationResult CreateHandoverDocumentation(
-        Address? companyAddress = null
+        Address? companyAddress = null,
+        ProducedProduct? producedProduct = null
     )
     {
         var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
@@ -180,8 +181,8 @@ public class InstanceAasCreator
             new LangStringTextType("de", "Handover documentation for the configured product"),
         ];
 
-        // Generiere PDF-Dokument
-        var pdfData = PdfService.CreateHandoverPdf(companyAddress);
+        // Generiere PDF-Dokument mit Bestandteilen
+        var pdfData = PdfService.CreateHandoverPdf(companyAddress, producedProduct);
         var pdfFileName = $"handover_documentation_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
 
         // Erstelle ProvidedFile für das PDF
@@ -199,21 +200,23 @@ public class InstanceAasCreator
         {
             var documentCollection = handoverdoc
                 .SubmodelElements.OfType<SubmodelElementCollection>()
-                .FirstOrDefault(smc => smc.IdShort?.StartsWith("Document__") == true);
+                .FirstOrDefault(smc => smc.IdShort?.StartsWith("Document") == true);
 
-            if (documentCollection?.Value != null)
+            if (documentCollection != null && documentCollection.Value != null)
             {
+                documentCollection.IdShort = "Uebergabedokumentation";
+
                 // das File befindet sich in der SMC mit der idShort DocumentVersion__*
                 var documentVersionCollection = documentCollection
                     .Value.OfType<SubmodelElementCollection>()
-                    .FirstOrDefault(smc => smc.IdShort?.StartsWith("DocumentVersion__") == true);
+                    .FirstOrDefault(smc => smc.IdShort?.StartsWith("DocumentVersion") == true);
 
                 if (documentVersionCollection?.Value != null)
                 {
                     // Finde das erste DigitalFile Element in der DocumentVersion SMC
                     var digitalFileElement = documentVersionCollection
                         .Value.OfType<AasCore.Aas3_0.File>()
-                        .FirstOrDefault(f => f.IdShort?.StartsWith("DigitalFile__") == true);
+                        .FirstOrDefault(f => f.IdShort?.StartsWith("DigitalFile") == true);
 
                     if (digitalFileElement != null)
                     {
@@ -261,10 +264,88 @@ public class InstanceAasCreator
         return new HandoverDocumentationResult(handoverdoc, providedFile);
     }
 
-    private static Submodel CreateNameplateSubmodel()
+    private static Submodel CreateNameplateSubmodel(
+        Address? companyAddress = null,
+        ProducedProduct? producedProduct = null
+    )
     {
         var nameplate = NameplateCreator.CreateFromJson();
-        PropertyValueChanger.SetPropertyValueByPath("ManufacturerName", "OI4 Nextbike", nameplate);
+        PropertyValueChanger.SetPropertyValueByPath(
+            "ManufacturerName",
+            companyAddress?.Name ?? string.Empty,
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "URIOfTheProduct",
+            "https://app.aas-bike.showcasehub.de/",
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "ManufacturerProductDesignation",
+            "Kundenkonfiguriertes Fahrrad",
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "ManufacturerProductRoot",
+            "Fahrrad",
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "ManufacturerProductType",
+            "NextBike",
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "SerialNumber",
+            "NB-" + producedProduct?.Id.ToString(),
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "SerialNumber",
+            "NB-Type-" + producedProduct?.ConfiguredProductId.ToString(),
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "YearOfConstruction",
+            DateTime.Now.Year.ToString(),
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "DateOfManufacture",
+            DateTime.Now.ToString("O"),
+            nameplate
+        );
+        PropertyValueChanger.SetPropertyValueByPath(
+            "CountryOfOrigin",
+            companyAddress?.Land ?? string.Empty,
+            nameplate
+        );
+
+        // adresse
+
+        var contactInfo = ContactInformationCreator.CreateFromJson(
+            (companyAddress?.Name == null && companyAddress?.Vorname == null)
+                ? string.Empty
+                : (companyAddress?.Name ?? string.Empty)
+                    + " "
+                    + (companyAddress?.Vorname ?? string.Empty),
+            companyAddress?.Strasse ?? string.Empty,
+            companyAddress?.Ort ?? string.Empty,
+            companyAddress?.Plz ?? string.Empty,
+            companyAddress?.Land ?? string.Empty
+        );
+
+        var contactInfoSmc = nameplate
+            .SubmodelElements?.OfType<SubmodelElementCollection>()
+            .FirstOrDefault(smc => smc.IdShort == "AddressInformation");
+        if (contactInfoSmc != null)
+        {
+            if (contactInfoSmc.Value == null)
+            {
+                contactInfoSmc.Value = [];
+            }
+            contactInfoSmc.Value = contactInfo.Value;
+        }
 
         return nameplate;
     }
@@ -273,11 +354,25 @@ public class InstanceAasCreator
     {
         var technicalData = TechnicalDataCreator.CreateFromJson();
 
-        PropertyValueChanger.SetPropertyValueByPath(
-            "TechnicalPropertyAreas[0].Weight",
-            weight.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            technicalData
+        var collectionTechnicalData = new SubmodelElementCollection();
+        collectionTechnicalData.Value = [];
+
+        var weightProp = new Property(DataTypeDefXsd.Double);
+        weightProp.IdShort = "Weight";
+        weightProp.Value = weight.ToString("F2"); // 2 Dezimalstellen
+
+        weightProp.SemanticId = new Reference(
+            ReferenceTypes.ExternalReference,
+            [new Key(KeyTypes.GlobalReference, "0173-1#02-AAJ633#004")]
         );
+
+        collectionTechnicalData.Value.Add(weightProp);
+
+        var parentSmc = technicalData
+            .SubmodelElements?.OfType<SubmodelElementList>()
+            .FirstOrDefault(smc => smc.IdShort == "TechnicalPropertyAreas");
+
+        parentSmc?.Value?.Add(collectionTechnicalData);
 
         return technicalData;
     }

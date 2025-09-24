@@ -8,11 +8,36 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
+using QRCoder;
 
 namespace AasDemoapp.Production;
 
 public class PdfService
 {
+    /// <summary>
+    /// Generiert einen QR-Code als PNG-Byte-Array
+    /// </summary>
+    /// <param name="text">Text für den QR-Code</param>
+    /// <param name="pixelsPerModule">Pixel pro Modul (Größe)</param>
+    /// <returns>PNG-Daten als Byte-Array oder null falls Fehler</returns>
+    public static byte[]? GenerateQrCodeBytes(string text, int pixelsPerModule = 10)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return null;
+
+        try
+        {
+            using var qrGenerator = new QRCodeGenerator();
+            var qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
+            using var qrCode = new PngByteQRCode(qrCodeData);
+            return qrCode.GetGraphic(pixelsPerModule);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     /// <summary>
     /// Erzeugt ein PDF-Dokument mit aktuellem Datum, Firmenadresse, Fahrradbild und Bestandteilen
     /// </summary>
@@ -41,26 +66,13 @@ public class PdfService
             .SetMarginBottom(20);
         document.Add(title);
 
-        // Layout mit Tabelle: Links Datum/Adresse, rechts Fahrradbild
-        var table = new Table(2).SetWidth(UnitValue.CreatePercentValue(100)).SetMarginBottom(30);
+        // Layout mit Tabelle: Links Hersteller, Mitte Kundenadresse, rechts Datum/Fahrradbild
+        var table = new Table(3).SetWidth(UnitValue.CreatePercentValue(100)).SetMarginBottom(30);
 
         // Linke Spalte: Datum und Adresse
         var leftColumn = new Cell()
             .SetBorder(iText.Layout.Borders.Border.NO_BORDER)
             .SetVerticalAlignment(VerticalAlignment.TOP);
-
-        // Aktuelles Datum
-        var dateTitle = new Paragraph("Datum:")
-            .SetFont(boldFont)
-            .SetFontSize(12)
-            .SetMarginBottom(5);
-        leftColumn.Add(dateTitle);
-
-        var currentDate = new Paragraph(DateTime.Now.ToString("dd.MM.yyyy"))
-            .SetFont(normalFont)
-            .SetFontSize(12)
-            .SetMarginBottom(15);
-        leftColumn.Add(currentDate);
 
         // Firmenadresse
         if (companyAddress != null)
@@ -75,6 +87,12 @@ public class PdfService
                 .SetFont(normalFont)
                 .SetFontSize(10)
                 .SetMarginBottom(15);
+
+            if (
+                !string.IsNullOrEmpty(companyAddress.Name)
+                || !string.IsNullOrEmpty(companyAddress.Vorname)
+            )
+                addressText.Add(companyAddress.Name + " " + companyAddress.Vorname + "\n");
 
             if (!string.IsNullOrEmpty(companyAddress.Strasse))
                 addressText.Add(companyAddress.Strasse + "\n");
@@ -93,52 +111,92 @@ public class PdfService
 
         table.AddCell(leftColumn);
 
+        // Mittlere Spalte: Kundenadresse
+        var middleColumn = new Cell()
+            .SetBorder(iText.Layout.Borders.Border.NO_BORDER)
+            .SetVerticalAlignment(VerticalAlignment.TOP);
+
+        // Kundenadresse hinzufügen
+        var orderAddress = producedProduct?.Order?.Address;
+        if (orderAddress != null)
+        {
+            var customerAddressTitle = new Paragraph("Kunde:")
+                .SetFont(boldFont)
+                .SetFontSize(12)
+                .SetMarginBottom(5);
+            middleColumn.Add(customerAddressTitle);
+
+            var customerAddressText = new Paragraph()
+                .SetFont(normalFont)
+                .SetFontSize(10)
+                .SetMarginBottom(15);
+
+            if (
+                !string.IsNullOrEmpty(orderAddress.Name)
+                || !string.IsNullOrEmpty(orderAddress.Vorname)
+            )
+                customerAddressText.Add(
+                    $"{orderAddress.Vorname} {orderAddress.Name}".Trim() + "\n"
+                );
+
+            if (!string.IsNullOrEmpty(orderAddress.Strasse))
+                customerAddressText.Add(orderAddress.Strasse + "\n");
+
+            if (!string.IsNullOrEmpty(orderAddress.Plz) || !string.IsNullOrEmpty(orderAddress.Ort))
+                customerAddressText.Add($"{orderAddress.Plz} {orderAddress.Ort}".Trim() + "\n");
+
+            if (!string.IsNullOrEmpty(orderAddress.Land))
+                customerAddressText.Add(orderAddress.Land);
+
+            middleColumn.Add(customerAddressText);
+        }
+
+        table.AddCell(middleColumn);
+
         // Rechte Spalte: Fahrradbild
         var rightColumn = new Cell()
             .SetBorder(iText.Layout.Borders.Border.NO_BORDER)
             .SetVerticalAlignment(VerticalAlignment.TOP)
             .SetTextAlignment(TextAlignment.CENTER);
 
+        // Aktuelles Datum
+        var dateTitle = new Paragraph("Datum:")
+            .SetFont(boldFont)
+            .SetFontSize(12)
+            .SetMarginBottom(5);
+        leftColumn.Add(dateTitle);
+
+        var currentDate = new Paragraph(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"))
+            .SetFont(normalFont)
+            .SetFontSize(12)
+            .SetMarginBottom(15);
+        leftColumn.Add(currentDate);
+
         // Fahrradbild hinzufügen
         try
         {
-            // Versuche verschiedene Pfade für das Bild
+            // Verwende das bike.jpg aus dem AasHandling Ordner
             var possibleImagePaths = new[]
             {
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "images", "rahmen.png"),
-                Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    "wwwroot",
-                    "images",
-                    "rahmen.png"
-                ),
-                Path.Combine(Directory.GetCurrentDirectory(), "images", "rahmen.png"),
-                Path.Combine(Directory.GetCurrentDirectory(), "src", "images", "rahmen.png"),
-                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "rahmen.png"),
-                // Fallback zu IMG_4957.png
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "images", "IMG_4957.png"),
-                Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    "wwwroot",
-                    "images",
-                    "IMG_4957.png"
-                ),
-                Path.Combine(Directory.GetCurrentDirectory(), "images", "IMG_4957.png"),
-                Path.Combine(Directory.GetCurrentDirectory(), "src", "images", "IMG_4957.png"),
+                Path.Combine(Directory.GetCurrentDirectory(), "AasHandling", "bike.jpg"),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AasHandling", "bike.jpg"),
+                Path.Combine(Directory.GetCurrentDirectory(), "src", "AasHandling", "bike.jpg"),
+                // Fallback zu anderen Bildern
                 Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "IMG_4957.png"),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "images", "rahmen.png"),
             };
 
-            string? workingImagePath = null;
+            byte[]? imageBytes = null;
             foreach (var path in possibleImagePaths)
             {
                 if (File.Exists(path))
                 {
-                    workingImagePath = path;
+                    imageBytes = File.ReadAllBytes(path);
                     break;
                 }
             }
 
-            if (workingImagePath != null)
+            if (imageBytes != null && imageBytes.Length > 0)
             {
                 var imageTitle = new Paragraph("Produkt:")
                     .SetFont(boldFont)
@@ -147,7 +205,7 @@ public class PdfService
                     .SetTextAlignment(TextAlignment.CENTER);
                 rightColumn.Add(imageTitle);
 
-                var imageData = ImageDataFactory.Create(workingImagePath);
+                var imageData = ImageDataFactory.Create(imageBytes);
                 var image = new Image(imageData)
                     .SetWidth(150)
                     .SetHeight(120)
@@ -156,7 +214,7 @@ public class PdfService
             }
             else
             {
-                // Kein Bild gefunden - erstelle eine einfache schematische Darstellung mit Text
+                // Kein Bild gefunden - erstelle eine bessere schematische Darstellung
                 var imageTitle = new Paragraph("Produkt:")
                     .SetFont(boldFont)
                     .SetFontSize(12)
@@ -164,15 +222,25 @@ public class PdfService
                     .SetTextAlignment(TextAlignment.CENTER);
                 rightColumn.Add(imageTitle);
 
-                // Einfache schematische Darstellung als Text
-                var bikeSchematic = new Paragraph("🚲")
-                    .SetFont(normalFont)
-                    .SetFontSize(48)
+                // ASCII-Art Fahrrad
+                var bikeArt =
+                    @"      
+                            ___
+                           (   )    ____
+                           |  |    /    
+                       ___/  |___/_    __
+                      /   \        \_/   \
+                     (  O  )--------(  O  )
+                      \___/          \___/";
+
+                var bikeAscii = new Paragraph(bikeArt)
+                    .SetFont(PdfFontFactory.CreateFont(StandardFonts.COURIER))
+                    .SetFontSize(8)
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetMarginBottom(10);
-                rightColumn.Add(bikeSchematic);
+                rightColumn.Add(bikeAscii);
 
-                var bikeDescription = new Paragraph("Fahrrad\n(Schematische Darstellung)")
+                var bikeDescription = new Paragraph("Fahrrad")
                     .SetFont(normalFont)
                     .SetFontSize(10)
                     .SetTextAlignment(TextAlignment.CENTER)
@@ -205,7 +273,52 @@ public class PdfService
                 .SetMarginTop(20)
                 .SetMarginBottom(10);
             document.Add(componentTitle);
+        }
+        else
+        {
+            // Debug-Information hinzufügen wenn keine Bestandteile vorhanden sind
+            var debugTitle = new Paragraph("Debug-Information:")
+                .SetFont(boldFont)
+                .SetFontSize(14)
+                .SetMarginTop(20)
+                .SetMarginBottom(10);
+            document.Add(debugTitle);
 
+            var debugInfo = new Paragraph();
+            if (producedProduct == null)
+            {
+                debugInfo.Add("ProducedProduct ist null\n");
+            }
+            else if (producedProduct.Bestandteile == null)
+            {
+                debugInfo.Add("Bestandteile-Liste ist null\n");
+            }
+            else if (!producedProduct.Bestandteile.Any())
+            {
+                debugInfo.Add(
+                    $"Bestandteile-Liste ist leer (Count: {producedProduct.Bestandteile.Count()})\n"
+                );
+            }
+            else
+            {
+                var activeComponents = producedProduct
+                    .Bestandteile.Where(b => !b.IsDeleted)
+                    .Count();
+                debugInfo.Add(
+                    $"Anzahl Bestandteile: {producedProduct.Bestandteile.Count()}, davon aktiv: {activeComponents}\n"
+                );
+            }
+
+            debugInfo
+                .SetFont(normalFont)
+                .SetFontSize(10)
+                .SetFontColor(iText.Kernel.Colors.ColorConstants.RED);
+            document.Add(debugInfo);
+        }
+
+        // Wenn Bestandteile vorhanden sind, erstelle die Tabelle
+        if (producedProduct?.Bestandteile != null && producedProduct.Bestandteile.Any())
+        {
             // Tabelle für Bestandteile erstellen
             var componentTable = new Table(3)
                 .SetWidth(UnitValue.CreatePercentValue(100))
@@ -227,7 +340,7 @@ public class PdfService
             componentTable.AddHeaderCell(headerGlobalAssetId);
 
             var headerIdShort = new Cell()
-                .Add(new Paragraph("ID Short").SetFont(boldFont).SetFontSize(10))
+                .Add(new Paragraph("QR-Code").SetFont(boldFont).SetFontSize(10))
                 .SetBackgroundColor(iText.Kernel.Colors.ColorConstants.LIGHT_GRAY)
                 .SetTextAlignment(TextAlignment.CENTER)
                 .SetPadding(5);
@@ -252,18 +365,60 @@ public class PdfService
                     )
                     .SetPadding(5)
                     .SetVerticalAlignment(VerticalAlignment.MIDDLE);
-                componentTable.AddCell(globalAssetIdCell);
+                componentTable.AddCell(globalAssetIdCell); // QR-Code für Global Asset ID
+                var qrCodeCell = new Cell()
+                    .SetPadding(1)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetTextAlignment(TextAlignment.CENTER);
 
-                // ID Short (AasId)
-                var idShortCell = new Cell()
-                    .Add(
-                        new Paragraph(bestandteil.KatalogEintrag?.AasId ?? "")
+                var globalAssetId = bestandteil.KatalogEintrag?.GlobalAssetId;
+                if (!string.IsNullOrWhiteSpace(globalAssetId))
+                {
+                    var qrCodeBytes = GenerateQrCodeBytes(globalAssetId, 3);
+                    if (qrCodeBytes != null)
+                    {
+                        try
+                        {
+                            var qrImageData = ImageDataFactory.Create(qrCodeBytes);
+                            var qrImage = new Image(qrImageData)
+                                .SetWidth(50)
+                                .SetHeight(50)
+                                .SetHorizontalAlignment(HorizontalAlignment.CENTER);
+                            qrCodeCell.Add(qrImage);
+                        }
+                        catch
+                        {
+                            // Fallback auf Text wenn QR-Code nicht erstellt werden kann
+                            qrCodeCell.Add(
+                                new Paragraph("QR-Fehler")
+                                    .SetFont(normalFont)
+                                    .SetFontSize(6)
+                                    .SetFontColor(iText.Kernel.Colors.ColorConstants.RED)
+                            );
+                        }
+                    }
+                    else
+                    {
+                        // Fallback wenn GlobalAssetId leer ist
+                        qrCodeCell.Add(
+                            new Paragraph("-")
+                                .SetFont(normalFont)
+                                .SetFontSize(8)
+                                .SetFontColor(iText.Kernel.Colors.ColorConstants.GRAY)
+                        );
+                    }
+                }
+                else
+                {
+                    // Fallback wenn GlobalAssetId leer ist
+                    qrCodeCell.Add(
+                        new Paragraph("-")
                             .SetFont(normalFont)
                             .SetFontSize(8)
-                    )
-                    .SetPadding(5)
-                    .SetVerticalAlignment(VerticalAlignment.MIDDLE);
-                componentTable.AddCell(idShortCell);
+                            .SetFontColor(iText.Kernel.Colors.ColorConstants.GRAY)
+                    );
+                }
+                componentTable.AddCell(qrCodeCell);
             }
 
             document.Add(componentTable);

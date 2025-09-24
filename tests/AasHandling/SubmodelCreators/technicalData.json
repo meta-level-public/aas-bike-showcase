@@ -1208,7 +1208,18 @@
         ]
       },
       "typeValueListElement": "SubmodelElementCollection",
-      "value": [],
+      "value": [
+        {
+          "value": [
+            {
+              "idShort": "Weight",
+              "valueType": "xs:long",
+              "modelType": "Property"
+            }
+          ],
+          "modelType": "SubmodelElementCollection"
+        }
+      ],
       "modelType": "SubmodelElementList"
     }
   ],

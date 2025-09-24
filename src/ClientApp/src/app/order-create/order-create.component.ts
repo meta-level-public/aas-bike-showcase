@@ -165,6 +165,8 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
                 plz: formValue.plz,
                 ort: formValue.ort,
                 land: formValue.land,
+                lat: formValue.lat,
+                long: formValue.long,
               }
             : undefined,
         };
