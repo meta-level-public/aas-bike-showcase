@@ -1,0 +1,147 @@
+<div class="assembly-panel">
+  <div class="panel-header">
+    <i class="pi pi-cog"></i>
+    <h3>Montageschritte</h3>
+  </div>
+
+  <!-- Current Assembly Step -->
+  @if (
+    selectedOrder &&
+    selectedItem &&
+    hasBestandteile &&
+    currentStep < totalSteps &&
+    getCurrentBestandteil()
+  ) {
+    <div class="assembly-step-card">
+      <div class="step-content">
+        <div class="step-image">
+          <img
+            [src]="'data:image/jpeg;base64, ' + getCurrentBestandteil()!.katalogEintrag?.image"
+            [alt]="getCurrentBestandteil()!.name"
+            class="part-image"
+          />
+        </div>
+
+        <div class="step-info">
+          <h4 class="part-name">{{ getCurrentBestandteil()!.name }}</h4>
+          <div class="part-amount">{{ getCurrentBestandteil()!.amount }} Stück</div>
+          <p class="step-instruction">Bitte scannen Sie das zu verbauende Teil</p>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        @if (getCurrentBestandteil()) {
+          @for (teil of getParts(getCurrentBestandteil()!); track $index) {
+            <div class="form-group">
+              <input
+                pInputText
+                type="text"
+                class="w-full"
+                placeholder="Verbautes Teil (Charge/Seriennummer/...) einscannen"
+                (keydown.enter)="onPartScan($event, getCurrentBestandteil()!, teil.guid)"
+                (blur)="onPartScan($event, getCurrentBestandteil()!, teil.guid)"
+                [(ngModel)]="teil.instanceGlobalAssetId"
+              />
+            </div>
+          }
+        }
+
+        @if (getCurrentBestandteil() && isTeilOk(getCurrentBestandteil()!)) {
+          <div class="status-message success">
+            <i class="pi pi-check-circle"></i>
+            Teil korrekt erfasst
+          </div>
+        }
+
+        @if (getCurrentBestandteil() && !isTeilOk(getCurrentBestandteil()!)) {
+          <div class="status-message warning">
+            <i class="pi pi-exclamation-triangle"></i>
+            Teil noch nicht korrekt erfasst
+          </div>
+        }
+
+        <div class="action-buttons">
+          <!-- Loading während Tool-Überprüfung - nur die Buttons ersetzen -->
+          @if (toolCheckLoading) {
+            <div class="loading-section">
+              <i class="pi pi-spin pi-spinner"></i>
+              <span>Überprüfe Tool-Anforderungen...</span>
+            </div>
+          } @else {
+            <!-- Tool Button - nur anzeigen wenn Tool benötigt und Teil OK aber Tool noch nicht OK -->
+            @if (
+              isToolRequired() &&
+              getCurrentBestandteil() &&
+              isTeilOk(getCurrentBestandteil()!) &&
+              !toolResultOk
+            ) {
+              <button
+                pButton
+                label="Zum Tool"
+                icon="pi pi-external-link"
+                class="w-full tool-btn"
+                (click)="onOpenTool()"
+                severity="info"
+              ></button>
+            }
+
+            <!-- Next Step Button - nur aktiv wenn alles OK ist -->
+            @if (hasNextStep()) {
+              <button
+                pButton
+                label="Nächster Schritt"
+                class="w-full next-step-btn"
+                (click)="onNextStep()"
+                [disabled]="
+                  !getCurrentBestandteil() ||
+                  !isTeilOk(getCurrentBestandteil()!) ||
+                  (isToolRequired() && !toolResultOk)
+                "
+                severity="success"
+              ></button>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Assembly Complete - nur nach dem letzten Schritt anzeigen -->
+  @if (assemblyComplete) {
+    <div class="completion-card">
+      <div class="completion-icon">
+        <i class="pi pi-check-circle"></i>
+      </div>
+      <h4 class="completion-title">Alle Teile erfolgreich verbaut!</h4>
+      <p class="completion-message">
+        Die Montage ist abgeschlossen. Sie können nun das fertige Produkt speichern.
+      </p>
+      <button
+        pButton
+        [label]="saveLoading ? 'Speichert...' : 'Verbau Fertig'"
+        [icon]="saveLoading ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+        class="w-full completion-btn"
+        (click)="onCompleteAssembly()"
+        [disabled]="saveLoading"
+        [loading]="saveLoading"
+        severity="success"
+      ></button>
+    </div>
+  }
+
+  <!-- No parts available -->
+  @if (selectedItem && !hasBestandteile && !assemblyComplete) {
+    <div class="empty-state">
+      <i class="pi pi-info-circle"></i>
+      <p>Keine zu verbauenden Teile vorhanden</p>
+    </div>
+  }
+
+  <!-- No order selected -->
+  @if (!selectedOrder) {
+    <div class="empty-state">
+      <i class="pi pi-list"></i>
+      <p>Bitte wählen Sie einen Produktionsauftrag aus</p>
+    </div>
+  }
+</div>

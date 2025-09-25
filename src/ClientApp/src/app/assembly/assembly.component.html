@@ -10,374 +10,51 @@
 
   <!-- Main Content -->
   <div class="assembly-content">
-    <!-- Left Panel - Production Order Selection -->
-    <div class="order-panel">
-      <div class="panel-header">
-        <i class="pi pi-list"></i>
-        <h3>Produktionsauftrag</h3>
-      </div>
+    <!-- Left Panel - Production Order Selection and Progress -->
+    <app-order-selection-panel
+      [productionOrders]="productionOrders()"
+      [selectedOrder]="selectedProductionOrder()"
+      [isRouteBasedSelection]="isRouteBasedSelection()"
+      [currentStep]="currentAssemblyStep()"
+      [totalSteps]="bestandteileLength()"
+      [hasBestandteile]="hasBestandteile()"
+      (orderSelected)="onOrderSelected($event)"
+    ></app-order-selection-panel>
 
-      @if (!isRouteBasedSelection()) {
-        <div class="form-group">
-          <label class="form-label">Produktionsauftrag wählen</label>
-          <p-select
-            [options]="productionOrders()"
-            [ngModel]="selectedProductionOrder()"
-            (ngModelChange)="selectedProductionOrder.set($event); productionOrderSelected()"
-            optionLabel="configuredProductName"
-            placeholder="Wählen Sie einen Produktionsauftrag"
-            class="w-full"
-          >
-            <ng-template #selectedItem>
-              @if (selectedProductionOrder()) {
-                <div class="flex align-items-center gap-2">
-                  <span class="font-medium">{{
-                    selectedProductionOrder()!.configuredProductName
-                  }}</span>
-                  <span class="text-sm text-500"
-                    >({{ selectedProductionOrder()!.anzahl }} Stück)</span
-                  >
-                </div>
-              }
-            </ng-template>
-            <ng-template #item let-order>
-              <div class="flex align-items-center gap-2">
-                <div class="flex flex-column">
-                  <span class="font-medium">{{ order.configuredProductName }}</span>
-                  <span class="text-sm text-500"
-                    >Anzahl: {{ order.anzahl }} | Erstellt:
-                    {{ order.createdAt | date: 'short' }}</span
-                  >
-                </div>
-              </div>
-            </ng-template>
-          </p-select>
-        </div>
-      }
-      @if (isRouteBasedSelection() && selectedProductionOrder()) {
-        <div class="selected-order-card">
-          <h4 class="order-title">
-            <i class="pi pi-check-circle"></i>
-            Ausgewählter Produktionsauftrag
-          </h4>
-          <div class="order-details">
-            <div class="order-name">
-              {{ selectedProductionOrder()!.configuredProductName }}
-            </div>
-            <div class="order-info">
-              <span>({{ selectedProductionOrder()!.anzahl }} Stück)</span>
-              <span>Erstellt: {{ selectedProductionOrder()!.createdAt | date: 'short' }}</span>
-            </div>
-          </div>
-        </div>
-      }
-
-      <!-- Progress Section -->
-      @if (selectedProductionOrder() && selectedItem() && hasBestandteile()) {
-        <div class="progress-section">
-          <h4 class="progress-title">
-            <i class="pi pi-chart-line"></i>
-            Montage-Fortschritt
-          </h4>
-          <div class="progress-info">
-            <span>Schritt {{ currentAssemblyStep() + 1 }} von {{ bestandteileLength() }}</span>
-            <div class="progress-bar">
-              <div
-                class="progress-fill"
-                [style.width.%]="(currentAssemblyStep() / bestandteileLength()) * 100"
-              ></div>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
-
-    <!-- Right Panel - Assembly Process -->
-    <div class="assembly-panel">
-      <div class="panel-header">
-        <i class="pi pi-cog"></i>
-        <h3>Montageschritte</h3>
-      </div>
-
-      <!-- Current Assembly Step -->
-      @if (
-        selectedProductionOrder() &&
-        selectedItem() &&
-        hasBestandteile() &&
-        currentAssemblyStep() < bestandteileLength()
-      ) {
-        <div class="assembly-step-card">
-          <div class="step-content">
-            <div class="step-image">
-              <img
-                [src]="
-                  'data:image/jpeg;base64, ' +
-                  selectedItem()!.bestandteile[currentAssemblyStep()].katalogEintrag?.image
-                "
-                [alt]="selectedItem()!.bestandteile[currentAssemblyStep()].name"
-                class="part-image"
-              />
-            </div>
-
-            <div class="step-info">
-              <h4 class="part-name">
-                {{ selectedItem()!.bestandteile[currentAssemblyStep()].name }}
-              </h4>
-              <div class="part-amount">
-                {{ selectedItem()!.bestandteile[currentAssemblyStep()].amount }}
-                Stück
-              </div>
-              <p class="step-instruction">Bitte scannen Sie das zu verbauende Teil</p>
-            </div>
-          </div>
-
-          <div class="step-actions">
-            @if (selectedItem()!.bestandteile[currentAssemblyStep()]) {
-              @for (
-                teil of getParts(selectedItem()!.bestandteile[currentAssemblyStep()]);
-                track $index
-              ) {
-                <div class="form-group">
-                  <input
-                    pInputText
-                    type="text"
-                    class="w-full"
-                    placeholder="Verbautes Teil (Charge/Seriennummer/...) einscannen"
-                    (keydown.enter)="
-                      findRohteilInstanz(
-                        $event,
-                        selectedItem()!.bestandteile[currentAssemblyStep()],
-                        teil.guid
-                      )
-                    "
-                    (blur)="
-                      findRohteilInstanz(
-                        $event,
-                        selectedItem()!.bestandteile[currentAssemblyStep()],
-                        teil.guid
-                      )
-                    "
-                    [(ngModel)]="teil.instanceGlobalAssetId"
-                  />
-                </div>
-              }
-            }
-            @if (
-              selectedItem()!.bestandteile[currentAssemblyStep()] &&
-              isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])
-            ) {
-              <div class="status-message success">
-                <i class="pi pi-check-circle"></i>
-                Teil korrekt erfasst
-              </div>
-            }
-            @if (
-              selectedItem()!.bestandteile[currentAssemblyStep()] &&
-              !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()])
-            ) {
-              <div class="status-message warning">
-                <i class="pi pi-exclamation-triangle"></i>
-                Teil noch nicht korrekt erfasst
-              </div>
-            }
-
-            <div class="action-buttons">
-              <button
-                pButton
-                label="Nächster Schritt"
-                class="w-full next-step-btn"
-                (click)="nextAssemblyStep()"
-                [disabled]="
-                  !selectedItem()!.bestandteile[currentAssemblyStep()] ||
-                  !isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()]) ||
-                  ((isToolRequired() | async) && !toolResultOk()) ||
-                  !hasNextStep()
-                "
-                severity="primary"
-              ></button>
-
-              @if (
-                (isToolRequired() | async) &&
-                isTeilOk(selectedItem()!.bestandteile[currentAssemblyStep()]) &&
-                !toolResultOk()
-              ) {
-                <button
-                  pButton
-                  label="Zum Tool"
-                  icon="pi pi-external-link"
-                  class="w-full screw-btn"
-                  (click)="openToolDialog()"
-                  severity="info"
-                ></button>
-              }
-            </div>
-          </div>
-        </div>
-      }
-
-      <!-- Assembly Complete -->
-      @if (assemblyComplete()) {
-        <div class="completion-card">
-          <div class="completion-icon">
-            <i class="pi pi-check-circle"></i>
-          </div>
-          <h4 class="completion-title">Alle Teile erfolgreich verbaut!</h4>
-          <p class="completion-message">
-            Die Montage ist abgeschlossen. Sie können nun das fertige Produkt speichern.
-          </p>
-          <button
-            pButton
-            label="Verbau Fertig"
-            class="w-full completion-btn"
-            (click)="saveProducedProduct()"
-            severity="success"
-          ></button>
-        </div>
-      }
-
-      <!-- No parts available -->
-      @if (selectedItem() && !hasBestandteile() && !assemblyComplete()) {
-        <div class="empty-state">
-          <i class="pi pi-info-circle"></i>
-          <p>Keine zu verbauenden Teile vorhanden</p>
-        </div>
-      }
-
-      <!-- No order selected -->
-      @if (!selectedProductionOrder()) {
-        <div class="empty-state">
-          <i class="pi pi-list"></i>
-          <p>Bitte wählen Sie einen Produktionsauftrag aus</p>
-        </div>
-      }
-    </div>
+    <!-- Right Panel - Assembly Steps -->
+    <app-assembly-steps-panel
+      [selectedOrder]="selectedProductionOrder()"
+      [selectedItem]="selectedItem()"
+      [currentStep]="currentAssemblyStep()"
+      [totalSteps]="bestandteileLength()"
+      [hasBestandteile]="hasBestandteile()"
+      [assemblyComplete]="assemblyComplete()"
+      [toolResultOk]="toolResultOk()"
+      [parts]="currentParts()"
+      [teilStatusMap]="teilStatusMap()"
+      [isToolRequiredForCurrentStep]="isToolRequiredValue()"
+      [toolCheckLoading]="toolCheckLoading()"
+      [saveLoading]="loading()"
+      (nextStep)="onNextStep()"
+      (openTool)="onOpenTool()"
+      (completeAssembly)="onCompleteAssembly()"
+      (partScanned)="onPartScanned($event)"
+    ></app-assembly-steps-panel>
   </div>
 </div>
 
-<!-- Tool-Dialog -->
-<p-dialog
-  header="Tool"
+<!-- Tool Dialog -->
+<app-tool-dialog
   [visible]="showToolDialog()"
-  [modal]="true"
-  [style]="{ width: '100vw', maxWidth: '100vw', height: '80vh' }"
-  [draggable]="false"
-  [resizable]="false"
-  closable="false"
->
-  <div class="flex flex-column h-full">
-    @if (requiredToolAasId() | async; as toolAasId) {
-      <div class="tool-summary">
-        <i class="pi pi-wrench summary-icon"></i>
-        <div class="summary-content">
-          <div class="summary-title">Benötigtes Werkzeug</div>
-          <div class="summary-sub">AAS-ID: {{ toolAasId }}</div>
-        </div>
-      </div>
-    }
-
-    <div class="tool-metrics">
-      @if (requiredTightenForce() | async; as target) {
-        <div class="metric">
-          <i class="pi pi-bolt metric-icon"></i>
-          <div>
-            <div class="metric-label">Soll-Drehmoment</div>
-            <div class="metric-value">{{ target }} Nm</div>
-          </div>
-        </div>
-      }
-      @if (allowedTightenForceElement() | async; as range) {
-        <div class="metric">
-          <i class="pi pi-sliders-h metric-icon"></i>
-          <div>
-            <div class="metric-label">Erlaubter Bereich</div>
-            <div class="metric-value">{{ $any(range)?.min }} - {{ $any(range)?.max }} Nm</div>
-          </div>
-        </div>
-      }
-    </div>
-
-    <!-- <div class="tool-steps-grid">
-      @for (sme of $any((assemblySubmodel() | async))?.submodelElements ?? []; track $index) {
-        <div class="tool-step-card">
-          <div class="step-header">
-            <i
-              class="pi"
-              [ngClass]="{
-                'pi-wrench': sme.idShort === 'required_tool',
-                'pi-bolt': sme.idShort === 'required_tighten_force',
-                'pi-sliders-h': sme.idShort === 'allowed_tighten_force',
-                'pi-info-circle': sme.idShort !== 'required_tool' && sme.idShort !== 'required_tighten_force' && sme.idShort !== 'allowed_tighten_force'
-              }"
-            ></i>
-            <div class="step-title">{{ sme.idShort }}</div>
-          </div>
-          <div class="step-body">
-            <div class="value">
-              {{ showFormattedValue(sme) }}
-              <span class="unit" *ngIf="sme.idShort?.includes('force')">Nm</span>
-            </div>
-          </div>
-        </div>
-      }
-    </div> -->
-
-    <div class="tool-controls">
-      <p-button label="Tool initialisieren" icon="pi pi-play" (click)="initializeTool()"></p-button>
-
-      <div class="live-torque">
-        <div class="live-label">
-          <i class="pi pi-gauge"></i>
-          Angefordertes Drehmoment
-        </div>
-        <div class="live-value">{{ configuredRequiredTightenForce() }} Nm</div>
-
-        <div class="live-label">
-          <i class="pi pi-gauge"></i>
-          Tatsächliches Drehmoment
-        </div>
-        <div class="live-value">{{ currentTightenForce() }} Nm</div>
-      </div>
-      @if (toolInitialized()) {
-        <p-button
-          label="Arbeitsschritt fertig"
-          icon="pi pi-check"
-          (click)="checkToolData()"
-          severity="success"
-        ></p-button>
-      }
-    </div>
-
-    @if (toolInitialized()) {
-      <div class="tool-image-section">
-        <iframe
-          src="https://mmc-simulator.aas-bike.showcasehub.de/"
-          title="Schrauber"
-          width="100%"
-          style="width: 100%; min-height: 400px; height: 50vh; border: none; border-radius: 8px"
-          allowfullscreen
-        ></iframe>
-      </div>
-    }
-  </div>
-
-  <ng-template #footer>
-    @if (!toolResultOk()) {
-      <button
-        pButton
-        type="button"
-        label="Abbrechen"
-        (click)="closeToolDialog(false)"
-        severity="secondary"
-      ></button>
-    }
-    @if (toolResultOk()) {
-      <button
-        pButton
-        type="button"
-        label="Montage erfolgt"
-        (click)="closeToolDialog(true)"
-        severity="secondary"
-      ></button>
-    }
-  </ng-template>
-</p-dialog>
+  [toolResultOk]="toolResultOk()"
+  [requiredToolAasId]="requiredToolAasId() | async"
+  [requiredTightenForce]="requiredTightenForceValue()"
+  [allowedTightenForceRange]="allowedTightenForceElement() | async"
+  [configuredRequiredTightenForce]="configuredRequiredTightenForce()"
+  [currentTightenForce]="currentTightenForce()"
+  [toolInitialized]="toolInitialized()"
+  [checkingToolData]="toolCheckLoading()"
+  (initializeTool)="initializeTool()"
+  (checkToolData)="checkToolData()"
+  (closeDialog)="closeToolDialog($event)"
+></app-tool-dialog>

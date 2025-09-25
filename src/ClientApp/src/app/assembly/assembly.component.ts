@@ -14,12 +14,29 @@ import { ProductPart } from '../model/product-part';
 import { ProductionOrder } from '../model/production-order';
 import { NotificationService } from '../notification.service';
 import { ProductionOrderListService } from '../production-order-list/production-order-list.service';
+import {
+  AssemblyStepsPanelComponent,
+  PartScanEvent,
+} from './assembly-steps-panel/assembly-steps-panel.component';
 import { AssemblyService } from './assembly.service';
+import { OrderSelectionPanelComponent } from './order-selection-panel/order-selection-panel.component';
+import { ToolDialogComponent } from './tool-dialog/tool-dialog.component';
+
 @Component({
   selector: 'app-assembly',
   templateUrl: './assembly.component.html',
   styleUrl: './assembly.component.css',
-  imports: [CommonModule, FormsModule, InputTextModule, ButtonModule, SelectModule, DialogModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    InputTextModule,
+    ButtonModule,
+    SelectModule,
+    DialogModule,
+    OrderSelectionPanelComponent,
+    AssemblyStepsPanelComponent,
+    ToolDialogComponent,
+  ],
 })
 export class AssemblyComponent implements OnInit, OnDestroy {
   private router = inject(Router);
@@ -45,6 +62,29 @@ export class AssemblyComponent implements OnInit, OnDestroy {
   isRouteBasedSelection = signal<boolean>(false); // Zeigt an, ob ProductionOrder über Route ausgewählt wurde
 
   toolResultOk = signal(false);
+  toolCheckLoading = signal(false); // Loading state für Tool-Überprüfung
+
+  // Computed signals für Assembly Steps Panel
+  currentParts = computed(() => {
+    const currentBestandteil = this.selectedItem()?.bestandteile[this.currentAssemblyStep()];
+    if (!currentBestandteil) return [];
+    return this.getParts(currentBestandteil);
+  });
+
+  teilStatusMap = computed(() => {
+    const map = new Map<number, boolean>();
+    const currentBestandteil = this.selectedItem()?.bestandteile[this.currentAssemblyStep()];
+    if (currentBestandteil && currentBestandteil.id !== undefined) {
+      map.set(currentBestandteil.id, this.isTeilOk(currentBestandteil));
+    }
+    return map;
+  });
+
+  isToolRequiredForCurrentStep = computed(() => {
+    // Für Computed Signals können wir nicht async verwenden
+    // Wir verwenden ein separates Signal für den async Zustand
+    return false; // Placeholder
+  });
 
   // Computed signals
   bestandteileLength = computed(() => {
@@ -64,33 +104,45 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     }
   });
 
-  isToolRequired = computed(async () => {
-    const submodel = await this.assemblySubmodel();
-    if (!submodel) {
-      return false;
+  isToolRequired = computed(() => {
+    // Computed signals können nicht async sein - wir verwenden die originale Implementierung
+    const id = this.selectedItem()?.bestandteile[this.currentAssemblyStep()]?.id;
+    if (id == null) {
+      return Promise.resolve(false);
     }
 
-    const elements = submodel.submodelElements ?? [];
-    return elements.some(
-      (sme: any) =>
-        typeof sme?.idShort === 'string' && sme.idShort.toLowerCase() === 'required_tool'
-    );
+    return this.service.getAssemblySubmodel(id).then((submodel: any) => {
+      if (!submodel) {
+        return false;
+      }
+      const elements = submodel.submodelElements ?? [];
+      return elements.some(
+        (sme: any) =>
+          typeof sme?.idShort === 'string' && sme.idShort.toLowerCase() === 'required_tool'
+      );
+    });
   });
 
-  requiredToolAasId = computed(async () => {
-    const submodel = await this.assemblySubmodel();
-    if (!submodel) {
+  requiredToolAasId = computed(() => {
+    const id = this.selectedItem()?.bestandteile[this.currentAssemblyStep()]?.id;
+    if (id == null) {
+      return Promise.resolve(null);
+    }
+
+    return this.service.getAssemblySubmodel(id).then((submodel: any) => {
+      if (!submodel) {
+        return null;
+      }
+      const elements = submodel.submodelElements ?? [];
+      const requiredTool = elements.find(
+        (sme: any) =>
+          typeof sme?.idShort === 'string' && sme.idShort.toLowerCase() === 'required_tool'
+      );
+      if (requiredTool instanceof Property) {
+        return requiredTool.value;
+      }
       return null;
-    }
-    const elements = submodel.submodelElements ?? [];
-    const requiredTool = elements.find(
-      (sme: any) =>
-        typeof sme?.idShort === 'string' && sme.idShort.toLowerCase() === 'required_tool'
-    );
-    if (requiredTool instanceof Property) {
-      return requiredTool.value;
-    }
-    return null;
+    });
   });
 
   allPartsValid = computed(() => {
@@ -103,9 +155,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
   assemblyComplete = computed(() => {
     return (
-      this.currentAssemblyStep() >= this.bestandteileLength() - 1 && this.allPartsValid()
-      // &&
-      // (!this.isToolRequired() || this.toolResultOk())
+      this.currentAssemblyStep() >= this.bestandteileLength() - 1 &&
+      this.allPartsValid() &&
+      (!this.isToolRequiredValue() || this.toolResultOk())
     );
   });
 
@@ -200,6 +252,8 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       console.log('Starting assembly for:', selectedItem);
       this.teileStatus.set([]);
       this.currentAssemblyStep.set(0);
+      // Initialize async values for the first step
+      this.updateAsyncValues();
 
       if (selectedItem?.bestandteile != null) {
         this.newProduct.update((product) => ({
@@ -288,10 +342,15 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
   nextAssemblyStep() {
     const currentStep = this.currentAssemblyStep();
+    // Setze Zustände für neuen Schritt zurück
     this.toolResultOk.set(false);
     this.toolInitialized.set(false);
+    this.toolCheckLoading.set(false);
+
     if (currentStep < this.bestandteileLength() - 1) {
       this.currentAssemblyStep.set(currentStep + 1);
+      // Update async values for the new step
+      this.updateAsyncValues();
     }
     // Stoppe ggf. laufendes Polling beim Schrittwechsel
     this.stopTorquePolling();
@@ -411,28 +470,42 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     this.toolInitialized.set(true);
   }
 
-  requiredTightenForce = computed(async () => {
-    const sm = await this.assemblySubmodel();
-    var requiredTightenForceEl = sm?.submodelElements?.find(
-      (el) => el.idShort === 'required_tighten_force'
-    );
-    if (requiredTightenForceEl instanceof Property) {
-      return requiredTightenForceEl.value;
-    } else {
-      return null;
+  requiredTightenForce = computed(() => {
+    const id = this.selectedItem()?.bestandteile[this.currentAssemblyStep()]?.id;
+    if (id == null) {
+      return Promise.resolve(null);
     }
+
+    return this.service.getAssemblySubmodel(id).then((sm: any) => {
+      var requiredTightenForceEl = sm?.submodelElements?.find(
+        (el: any) => el.idShort === 'required_tighten_force'
+      );
+      if (requiredTightenForceEl instanceof Property) {
+        return requiredTightenForceEl.value;
+      } else {
+        return null;
+      }
+    });
   });
 
-  allowedTightenForceElement = computed(async () => {
-    const sm = await this.assemblySubmodel();
-    var allowedTightenForceEl = sm?.submodelElements?.find(
-      (el) => el.idShort === 'allowed_tighten_force'
-    );
-    return allowedTightenForceEl;
+  allowedTightenForceElement = computed(() => {
+    const id = this.selectedItem()?.bestandteile[this.currentAssemblyStep()]?.id;
+    if (id == null) {
+      return Promise.resolve(null);
+    }
+
+    return this.service.getAssemblySubmodel(id).then((sm: any) => {
+      var allowedTightenForceEl = sm?.submodelElements?.find(
+        (el: any) => el.idShort === 'allowed_tighten_force'
+      );
+      return allowedTightenForceEl;
+    });
   });
 
   currentTightenForce = signal(0);
   configuredRequiredTightenForce = signal(0);
+  requiredTightenForceValue = signal<number | null>(null);
+  isToolRequiredValue = signal<boolean>(false);
   private torqueIntervalId: any | null = null;
 
   // Startet ein 5s-Polling zur Aktualisierung von currentTightenForce
@@ -494,48 +567,133 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
   async checkToolData() {
     console.log('checking tool Data');
+    this.toolCheckLoading.set(true);
 
-    const aasId = await this.requiredToolAasId();
-    if (aasId == null || aasId == '') {
-      this.notificationService.showMessageAlways('Fehler: AAS ID nicht gefunden');
-      return;
-    }
-
-    const toolData = await this.service.getToolData(aasId);
-    if (!toolData) {
-      this.notificationService.showMessageAlways('Fehler: Werkzeugdaten nicht gefunden');
-      return;
-    }
-
-    let currentTightenForce = 0;
-    const currentTightenForceElement = toolData?.submodelElements?.find(
-      (el) => el.idShort === 'LastMeasuredTorque'
-    );
-    if (currentTightenForceElement instanceof Property) {
-      currentTightenForce = +(currentTightenForceElement.value ?? '');
-    }
-    this.currentTightenForce.set(currentTightenForce);
-
-    const allowedTightenForceElement = await this.allowedTightenForceElement();
-    if (allowedTightenForceElement instanceof Range) {
-      const allowedTightenForceMin = +(allowedTightenForceElement.min ?? '') + currentTightenForce;
-      const allowedTightenForceMax = +(allowedTightenForceElement.max ?? '') + currentTightenForce;
-
-      console.log(allowedTightenForceMin);
-      console.log(allowedTightenForceMax);
-      console.log(currentTightenForce);
-
-      if (
-        currentTightenForce < allowedTightenForceMin &&
-        currentTightenForce > allowedTightenForceMax
-      ) {
-        this.notificationService.showMessageAlways('Fehler: Ungültiges Drehmoment');
-        this.toolResultOk.set(false);
-      } else {
-        // this.notificationService.showMessageAlways('Drehmoment ist gültig');
-        this.toolResultOk.set(true);
-        this.closeToolDialog(true);
+    try {
+      const aasId = await this.requiredToolAasId();
+      if (aasId == null || aasId == '') {
+        this.notificationService.showMessageAlways('Fehler: AAS ID nicht gefunden');
+        return;
       }
+
+      const toolData = await this.service.getToolData(aasId);
+      if (!toolData) {
+        this.notificationService.showMessageAlways('Fehler: Werkzeugdaten nicht gefunden');
+        return;
+      }
+
+      let currentTightenForce = 0;
+      const currentTightenForceElement = toolData?.submodelElements?.find(
+        (el) => el.idShort === 'LastMeasuredTorque'
+      );
+      if (currentTightenForceElement instanceof Property) {
+        currentTightenForce = +(currentTightenForceElement.value ?? '');
+      }
+      this.currentTightenForce.set(currentTightenForce);
+
+      const allowedTightenForceElement = await this.allowedTightenForceElement();
+      if (allowedTightenForceElement instanceof Range) {
+        const allowedTightenForceMin =
+          +(allowedTightenForceElement.min ?? '') + currentTightenForce;
+        const allowedTightenForceMax =
+          +(allowedTightenForceElement.max ?? '') + currentTightenForce;
+
+        console.log(allowedTightenForceMin);
+        console.log(allowedTightenForceMax);
+        console.log(currentTightenForce);
+
+        if (
+          currentTightenForce < allowedTightenForceMin &&
+          currentTightenForce > allowedTightenForceMax
+        ) {
+          this.notificationService.showMessageAlways('Fehler: Ungültiges Drehmoment');
+          this.toolResultOk.set(false);
+        } else {
+          // this.notificationService.showMessageAlways('Drehmoment ist gültig');
+          this.toolResultOk.set(true);
+          this.closeToolDialog(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking tool data:', error);
+      this.notificationService.showMessageAlways('Fehler beim Prüfen der Werkzeugdaten');
+    } finally {
+      this.toolCheckLoading.set(false);
     }
+  }
+
+  // Event Handler Methods for Child Components
+
+  onOrderSelected(order: ProductionOrder) {
+    this.selectedProductionOrder.set(order);
+    this.productionOrderSelected();
+  }
+
+  onNextStep() {
+    this.nextAssemblyStep();
+  }
+
+  onOpenTool() {
+    this.openToolDialog();
+  }
+
+  onCompleteAssembly() {
+    this.saveProducedProduct();
+  }
+
+  onPartScanned(event: PartScanEvent) {
+    this.findRohteilInstanz(event.event, event.bestandteil, event.teilGuid);
+  }
+
+  // Update async values when step changes
+  private async updateAsyncValues() {
+    this.toolCheckLoading.set(true);
+    try {
+      const requiredForce = await this.requiredTightenForce();
+      this.requiredTightenForceValue.set(requiredForce ? +requiredForce : null);
+
+      const toolRequired = await this.checkIsToolRequired();
+      this.isToolRequiredValue.set(toolRequired);
+
+      // Wenn kein Tool erforderlich ist, setze toolResultOk auf true
+      if (!toolRequired) {
+        this.toolResultOk.set(true);
+      }
+    } catch (error) {
+      console.error('Error updating async values:', error);
+      this.requiredTightenForceValue.set(null);
+      this.isToolRequiredValue.set(false);
+      // Bei Fehlern auch toolResultOk auf true setzen, da kein Tool erforderlich
+      this.toolResultOk.set(true);
+    } finally {
+      this.toolCheckLoading.set(false);
+    }
+  } // Separate async Methode für Tool-Überprüfung
+  private async checkIsToolRequired(): Promise<boolean> {
+    const id = this.selectedItem()?.bestandteile[this.currentAssemblyStep()]?.id;
+    if (id == null) {
+      return false;
+    }
+
+    try {
+      const submodel = await this.service.getAssemblySubmodel(id);
+      if (!submodel) {
+        return false;
+      }
+      const elements = submodel.submodelElements ?? [];
+      return elements.some(
+        (sme: any) =>
+          typeof sme?.idShort === 'string' && sme.idShort.toLowerCase() === 'required_tool'
+      );
+    } catch (error) {
+      console.error('Error checking tool requirement:', error);
+      return false;
+    }
+  }
+
+  // Helper methods for template
+  async getRequiredTightenForceAsNumber(): Promise<number | null> {
+    const value = await this.requiredTightenForce();
+    return value ? +value : null;
   }
 }

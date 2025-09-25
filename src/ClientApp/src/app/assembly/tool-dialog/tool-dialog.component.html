@@ -1,0 +1,104 @@
+<p-dialog
+  header="Tool"
+  [visible]="visible"
+  [modal]="true"
+  [style]="{ width: '100vw', maxWidth: '100vw', height: '80vh' }"
+  [draggable]="false"
+  [resizable]="false"
+  [closable]="false"
+>
+  <div class="flex flex-column h-full">
+    @if (requiredToolAasId) {
+      <div class="tool-summary">
+        <i class="pi pi-wrench summary-icon"></i>
+        <div class="summary-content">
+          <div class="summary-title">Benötigtes Werkzeug</div>
+          <div class="summary-sub">AAS-ID: {{ requiredToolAasId }}</div>
+        </div>
+      </div>
+    }
+
+    <div class="tool-metrics">
+      @if (requiredTightenForce) {
+        <div class="metric">
+          <i class="pi pi-bolt metric-icon"></i>
+          <div>
+            <div class="metric-label">Soll-Drehmoment</div>
+            <div class="metric-value">{{ requiredTightenForce }} Nm</div>
+          </div>
+        </div>
+      }
+      @if (allowedTightenForceRange) {
+        <div class="metric">
+          <i class="pi pi-sliders-h metric-icon"></i>
+          <div>
+            <div class="metric-label">Erlaubter Bereich</div>
+            <div class="metric-value">
+              {{ allowedTightenForceRange.min }} - {{ allowedTightenForceRange.max }} Nm
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="tool-controls">
+      <p-button
+        label="Tool initialisieren"
+        icon="pi pi-play"
+        (click)="onInitializeTool()"
+      ></p-button>
+
+      <div class="live-torque">
+        <div class="live-label">
+          <i class="pi pi-gauge"></i>
+          Aktuelles Drehmoment
+        </div>
+        <div class="live-value">{{ currentTightenForce }} Nm</div>
+      </div>
+    </div>
+
+    @if (toolInitialized) {
+      <div class="tool-image-section">
+        <iframe
+          src="https://mmc-simulator.aas-bike.showcasehub.de/"
+          title="Schrauber"
+          width="100%"
+          style="width: 100%; min-height: 400px; height: 50vh; border: none; border-radius: 8px"
+          allowfullscreen
+        ></iframe>
+      </div>
+    }
+  </div>
+
+  <ng-template #footer>
+    @if (!toolResultOk) {
+      <button
+        pButton
+        type="button"
+        label="Abbrechen"
+        (click)="onCloseDialog(false)"
+        severity="secondary"
+      ></button>
+    }
+    @if (toolInitialized) {
+      <p-button
+        [label]="checkingToolData ? 'Prüfe Drehmoment...' : 'Arbeitsschritt fertig'"
+        [icon]="checkingToolData ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
+        (click)="onCheckToolData()"
+        [disabled]="checkingToolData"
+        [loading]="checkingToolData"
+        severity="success"
+      ></p-button>
+    }
+
+    @if (toolResultOk) {
+      <button
+        pButton
+        type="button"
+        label="Montage erfolgt"
+        (click)="onCloseDialog(true)"
+        severity="secondary"
+      ></button>
+    }
+  </ng-template>
+</p-dialog>

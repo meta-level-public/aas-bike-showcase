@@ -1,0 +1,76 @@
+<div class="order-panel">
+  <div class="panel-header">
+    <i class="pi pi-list"></i>
+    <h3>Produktionsauftrag</h3>
+  </div>
+
+  @if (!isRouteBasedSelection) {
+    <div class="form-group">
+      <label class="form-label">Produktionsauftrag wählen</label>
+      <p-select
+        [options]="productionOrders"
+        [ngModel]="selectedOrder"
+        (ngModelChange)="onOrderChange($event)"
+        optionLabel="configuredProductName"
+        placeholder="Wählen Sie einen Produktionsauftrag"
+        class="w-full"
+      >
+        <ng-template #selectedItem>
+          @if (selectedOrder) {
+            <div class="flex align-items-center gap-2">
+              <span class="font-medium">{{ selectedOrder.configuredProductName }}</span>
+              <span class="text-sm text-500">({{ selectedOrder.anzahl }} Stück)</span>
+            </div>
+          }
+        </ng-template>
+        <ng-template #item let-order>
+          <div class="flex align-items-center gap-2">
+            <div class="flex flex-column">
+              <span class="font-medium">{{ order.configuredProductName }}</span>
+              <span class="text-sm text-500"
+                >Anzahl: {{ order.anzahl }} | Erstellt: {{ order.createdAt | date: 'short' }}</span
+              >
+            </div>
+          </div>
+        </ng-template>
+      </p-select>
+    </div>
+  }
+
+  @if (isRouteBasedSelection && selectedOrder) {
+    <div class="selected-order-card">
+      <h4 class="order-title">
+        <i class="pi pi-check-circle"></i>
+        Ausgewählter Produktionsauftrag
+      </h4>
+      <div class="order-details">
+        <div class="order-name">
+          {{ selectedOrder.configuredProductName }}
+        </div>
+        <div class="order-info">
+          <span>({{ selectedOrder.anzahl }} Stück)</span>
+          <span>Erstellt: {{ selectedOrder.createdAt | date: 'short' }}</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Progress Section -->
+  @if (selectedOrder && hasBestandteile) {
+    <div class="progress-section">
+      <h4 class="progress-title">
+        <i class="pi pi-chart-line"></i>
+        Montage-Fortschritt
+      </h4>
+      <div class="progress-info">
+        <span>Schritt {{ currentStep + 1 }} von {{ totalSteps }}</span>
+        <div class="progress-bar">
+          <div
+            class="progress-fill"
+            [style.width.%]="totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0"
+          ></div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
