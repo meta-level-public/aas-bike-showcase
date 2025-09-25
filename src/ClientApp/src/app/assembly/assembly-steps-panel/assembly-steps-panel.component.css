@@ -173,18 +173,6 @@
   font-size: 1.1rem;
 }
 
-.completion-btn {
-  background: var(--green-600) !important;
-  border-color: var(--green-600) !important;
-  font-size: 1.1rem;
-  padding: 0.75rem 2rem;
-}
-
-.completion-btn:hover {
-  background: var(--green-700) !important;
-  border-color: var(--green-700) !important;
-}
-
 .empty-state {
   text-align: center;
   padding: 3rem 2rem;

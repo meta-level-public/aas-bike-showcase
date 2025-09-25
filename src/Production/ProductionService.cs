@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -47,42 +48,65 @@ namespace AasDemoapp.Production
 
         private double getPCFValueV09(Submodel pcfSubmodel)
         {
+            if (pcfSubmodel.SubmodelElements == null)
+                return 0.0;
             double componentPCF = 0.0;
-            foreach (SubmodelElementCollection elem in pcfSubmodel.SubmodelElements)
+            foreach (var elem in pcfSubmodel.SubmodelElements.OfType<SubmodelElementCollection>())
             {
-                List<ISubmodelElement> elems = elem.Value;
-                var pcfElem = (IProperty)
-                    elems.Find(property =>
-                        property.SemanticId.Keys.First().Value == "0173-1#02-ABG855#001"
+                var elems = elem.Value;
+                if (elems == null)
+                    continue;
+                var pcfElem = elems
+                    .OfType<IProperty>()
+                    .FirstOrDefault(p =>
+                        p.SemanticId?.Keys?.FirstOrDefault()?.Value == "0173-1#02-ABG855#001"
                     );
-                componentPCF += double.Parse(
-                    pcfElem.Value,
-                    System.Globalization.CultureInfo.InvariantCulture
-                );
+                if (pcfElem?.Value == null)
+                    continue;
+                if (
+                    double.TryParse(
+                        pcfElem.Value,
+                        NumberStyles.Any,
+                        CultureInfo.InvariantCulture,
+                        out var parsed
+                    )
+                )
+                {
+                    componentPCF += parsed;
+                }
             }
             return componentPCF;
         }
 
         private double getPCFValueV10(Submodel pcfSubmodel)
         {
+            if (pcfSubmodel.SubmodelElements == null)
+                return 0.0;
             double componentPCF = 0.0;
-            var productFootprints = (SubmodelElementList)
-                pcfSubmodel.SubmodelElements.Find(submodel =>
-                    submodel.SemanticId.Keys.First().Value
-                    == "https://admin-shell.io/idta/CarbonFootprint/ProductCarbonFootprints/1/0"
-                );
-            foreach (SubmodelElementCollection elem in pcfSubmodel.SubmodelElements)
+            foreach (var elem in pcfSubmodel.SubmodelElements.OfType<SubmodelElementCollection>())
             {
-                Property pcfProperty = (Property)
-                    elem.Value.Find(property =>
-                        property.SemanticId.Keys.First().Value == "0173-1#02-ABG855#003"
+                var values = elem.Value;
+                if (values == null)
+                    continue;
+                var pcfProperty = values
+                    .OfType<Property>()
+                    .FirstOrDefault(p =>
+                        p.SemanticId?.Keys?.FirstOrDefault()?.Value == "0173-1#02-ABG855#003"
                     );
-                componentPCF += double.Parse(
-                    pcfProperty.Value,
-                    System.Globalization.CultureInfo.InvariantCulture
-                );
+                if (pcfProperty?.Value == null)
+                    continue;
+                if (
+                    double.TryParse(
+                        pcfProperty.Value,
+                        NumberStyles.Any,
+                        CultureInfo.InvariantCulture,
+                        out var parsed
+                    )
+                )
+                {
+                    componentPCF += parsed;
+                }
             }
-
             return componentPCF;
         }
 
@@ -110,6 +134,14 @@ namespace AasDemoapp.Production
                         securitySetting,
                         component.GlobalAssetId
                     );
+                    if (ids == null || ids.Length == 0)
+                    {
+                        _logger.LogWarning(
+                            "No AAS ids discovered for component {GlobalAssetId}",
+                            component.GlobalAssetId
+                        );
+                        continue;
+                    }
                     var aas_id = ids[0];
                     var submodelRepositoryUrl =
                         _settingService.GetSetting(SettingTypes.SubmodelRepositoryUrl)?.Value ?? "";
@@ -131,30 +163,46 @@ namespace AasDemoapp.Production
                         aas_id,
                         default
                     );
-                    Submodel pcfSubmodel = (Submodel)
-                        componentAAS.Environment.Submodels.Find(submodel =>
-                            submodel.SemanticId.Keys.First().Value
-                            == "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/1/0"
-                        );
-                    if (pcfSubmodel != null)
+                    var submodels = componentAAS?.Environment?.Submodels;
+                    Submodel? pcfSubmodelV10 = null;
+                    if (submodels != null)
                     {
-                        accumulatedPCF += getPCFValueV10(pcfSubmodel) * component.Amount;
+                        pcfSubmodelV10 = submodels
+                            .OfType<Submodel>()
+                            .FirstOrDefault(sm =>
+                                sm.SemanticId?.Keys?.FirstOrDefault()?.Value
+                                == "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/1/0"
+                            );
+                    }
+                    if (pcfSubmodelV10 != null)
+                    {
+                        accumulatedPCF += getPCFValueV10(pcfSubmodelV10) * component.Amount;
                     }
                     else
                     {
-                        pcfSubmodel = (Submodel)
-                            componentAAS.Environment.Submodels.Find(submodel =>
-                                submodel.SemanticId.Keys.First().Value == "0173-1#01-AHE712#001"
-                            );
-                        if (pcfSubmodel != null)
+                        Submodel? pcfSubmodelV09 = null;
+                        if (submodels != null)
                         {
-                            accumulatedPCF += getPCFValueV09(pcfSubmodel) * component.Amount;
+                            pcfSubmodelV09 = submodels
+                                .OfType<Submodel>()
+                                .FirstOrDefault(sm =>
+                                    sm.SemanticId?.Keys?.FirstOrDefault()?.Value
+                                    == "0173-1#01-AHE712#001"
+                                );
+                        }
+                        if (pcfSubmodelV09 != null)
+                        {
+                            accumulatedPCF += getPCFValueV09(pcfSubmodelV09) * component.Amount;
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e.Message);
+                    _logger.LogError(
+                        e,
+                        "Error while accumulating PCF for component {GlobalAssetId}",
+                        component.GlobalAssetId
+                    );
                 }
             }
 
@@ -244,10 +292,10 @@ namespace AasDemoapp.Production
             var part = _context
                 .ProductParts.Include(p => p.KatalogEintrag)
                 .FirstOrDefault(p => p.Id == partId);
-            if (part == null)
+            if (part?.KatalogEintrag == null)
                 return string.Empty;
 
-            var aasId = part.KatalogEintrag.LocalAasId;
+            var aasId = part.KatalogEintrag.LocalAasId ?? string.Empty;
 
             var res = await GetRequiredToolSubmodel(aasId);
 

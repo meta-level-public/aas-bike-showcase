@@ -19,6 +19,60 @@ public record HandoverDocumentationResult(Submodel Submodel, ProvidedFile? PdfFi
 
 public class InstanceAasCreator
 {
+    private static Microsoft.Extensions.Logging.ILogger<InstanceAasCreator>? _logger;
+
+    public static void InitializeLogger(
+        Microsoft.Extensions.Logging.ILogger<InstanceAasCreator> logger
+    )
+    {
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Lädt die Bilddatei (bike.jpg) als ProvidedFile für den Thumbnail-Upload.
+    /// Sucht zuerst im Output-Verzeichnis (AppContext.BaseDirectory/AasHandling),
+    /// danach relativ zum Projekt (./src/AasHandling/bike.jpg) für Entwicklungsumgebungen.
+    /// </summary>
+    /// <returns>ProvidedFile oder null falls nicht gefunden oder Fehler.</returns>
+    private static ProvidedFile? TryLoadThumbnailFile()
+    {
+        try
+        {
+            var thumbnailSourcePath = Path.Combine(
+                AppContext.BaseDirectory,
+                "AasHandling",
+                "bike.jpg"
+            );
+            if (!System.IO.File.Exists(thumbnailSourcePath))
+            {
+                // Fallback: Entwicklungszeit - relativ zum Projektroot (z.B. beim watch run)
+                var devRoot = Directory.GetCurrentDirectory();
+                var possible = Path.Combine(devRoot, "src", "AasHandling", "bike.jpg");
+                if (System.IO.File.Exists(possible))
+                {
+                    thumbnailSourcePath = possible;
+                }
+            }
+
+            if (System.IO.File.Exists(thumbnailSourcePath))
+            {
+                return new ProvidedFile
+                {
+                    Stream = System.IO.File.OpenRead(thumbnailSourcePath),
+                    Filename = "thumbnail.jpg", // bleibt konsistent mit AssetInformation Resource
+                    Type = ProvidedFileType.Added,
+                    ContentType = "image/jpeg",
+                };
+            }
+            _logger?.LogWarning("Thumbnail-Bild nicht gefunden: {Path}", thumbnailSourcePath);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Thumbnail konnte nicht geladen werden");
+        }
+        return null;
+    }
+
     public static async Task<AssetAdministrationShell> CreateBikeInstanceAas(
         ProducedProduct producedProduct,
         ImportService importService,
@@ -29,8 +83,10 @@ public class InstanceAasCreator
             AssetKind.Instance,
             producedProduct.GlobalAssetId,
             null,
-            producedProduct.GlobalAssetId
+            producedProduct.GlobalAssetId,
+            new Resource("thumbnail.jpg", "image/jpeg")
         );
+
         assetInformation.AssetType = producedProduct.ConfiguredProduct.GlobalAssetId; // Set the asset type to the configured product's global asset ID
         var aas = new AssetAdministrationShell(
             producedProduct.AasId,
@@ -112,6 +168,19 @@ public class InstanceAasCreator
             )
         );
 
+        var files = new List<ProvidedFile>();
+        if (handoverResult.PdfFile != null)
+        {
+            files.Add(handoverResult.PdfFile);
+        }
+
+        // Thumbnail laden (ausgelagerte Methode)
+        var thumbnailFile = TryLoadThumbnailFile();
+        if (thumbnailFile != null)
+        {
+            files.Add(thumbnailFile);
+        }
+
         await SaveAasToRepositories(
             aas,
             [
@@ -123,7 +192,7 @@ public class InstanceAasCreator
             ],
             importService,
             settingsService,
-            handoverResult.PdfFile != null ? [handoverResult.PdfFile] : []
+            files
         );
 
         return aas;
@@ -227,36 +296,46 @@ public class InstanceAasCreator
                     else
                     {
                         // Debug: Logge alle verfügbaren Elemente in DocumentVersion
-                        Console.WriteLine(
-                            $"DEBUG: DigitalFile nicht gefunden in DocumentVersion. Verfügbare Elemente:"
+                        _logger?.LogDebug(
+                            "DigitalFile nicht gefunden in DocumentVersion. Elemente werden gelistet"
                         );
                         foreach (var element in documentVersionCollection.Value)
                         {
-                            Console.WriteLine($"  - {element.GetType().Name}: {element.IdShort}");
+                            _logger?.LogDebug(
+                                "Element {Type} mit IdShort {IdShort}",
+                                element.GetType().Name,
+                                element.IdShort
+                            );
                         }
                     }
                 }
                 else
                 {
                     // Debug: Logge alle verfügbaren Elemente in Document
-                    Console.WriteLine(
-                        $"DEBUG: DocumentVersion nicht gefunden. Verfügbare Elemente in Document:"
+                    _logger?.LogDebug(
+                        "DocumentVersion nicht gefunden. Elemente in Document werden gelistet"
                     );
                     foreach (var element in documentCollection.Value)
                     {
-                        Console.WriteLine($"  - {element.GetType().Name}: {element.IdShort}");
+                        _logger?.LogDebug(
+                            "Element {Type} mit IdShort {IdShort}",
+                            element.GetType().Name,
+                            element.IdShort
+                        );
                     }
                 }
             }
             else
             {
                 // Debug: Logge alle verfügbaren Top-Level Elemente
-                Console.WriteLine(
-                    $"DEBUG: Document nicht gefunden. Verfügbare Top-Level Elemente:"
-                );
+                _logger?.LogDebug("Document nicht gefunden. Top-Level Elemente werden gelistet");
                 foreach (var element in handoverdoc.SubmodelElements)
                 {
-                    Console.WriteLine($"  - {element.GetType().Name}: {element.IdShort}");
+                    _logger?.LogDebug(
+                        "Element {Type} mit IdShort {IdShort}",
+                        element.GetType().Name,
+                        element.IdShort
+                    );
                 }
             }
         }

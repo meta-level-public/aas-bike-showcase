@@ -591,19 +591,21 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       }
       this.currentTightenForce.set(currentTightenForce);
 
+      const requiredTightenForce = +((await this.requiredTightenForce()) ?? 0);
+
       const allowedTightenForceElement = await this.allowedTightenForceElement();
       if (allowedTightenForceElement instanceof Range) {
         const allowedTightenForceMin =
-          +(allowedTightenForceElement.min ?? '') + currentTightenForce;
+          +(allowedTightenForceElement.min ?? '') + requiredTightenForce;
         const allowedTightenForceMax =
-          +(allowedTightenForceElement.max ?? '') + currentTightenForce;
+          +(allowedTightenForceElement.max ?? '') + requiredTightenForce;
 
         console.log(allowedTightenForceMin);
         console.log(allowedTightenForceMax);
         console.log(currentTightenForce);
 
         if (
-          currentTightenForce < allowedTightenForceMin &&
+          currentTightenForce < allowedTightenForceMin ||
           currentTightenForce > allowedTightenForceMax
         ) {
           this.notificationService.showMessageAlways('Fehler: Ungültiges Drehmoment');
