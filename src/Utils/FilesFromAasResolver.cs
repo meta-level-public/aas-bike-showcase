@@ -120,13 +120,13 @@ public static class FilesFromAasResolver
                 {
                     var endpoint =
                         submodelEndpoint.AppendSlash()
-                        + idShortPath.AppendIdShortPath(smEl.IdShort)
+                        + idShortPath.AppendIdShortPath(smEl.IdShort).ToUrlEncoded()
                         + "/attachment";
                     if (indexed)
                     {
                         endpoint =
                             submodelEndpoint.AppendSlash()
-                            + idShortPath.AppendIndexPath(count)
+                            + idShortPath.AppendIndexPath(count).ToUrlEncoded()
                             + "/attachment";
                     }
                     aasFiles.Add(
@@ -135,7 +135,9 @@ public static class FilesFromAasResolver
                             Filename = Path.GetFileName(smFile.Value),
                             Endpoint = endpoint,
                             ContentType = GetContentType(smFile),
-                            idShortPath = idShortPath.AppendIdShortPath(smEl.IdShort),
+                            idShortPath = idShortPath
+                                .AppendIdShortPath(smEl.IdShort)
+                                .ToUrlEncoded(Encoding.UTF8),
                             IsThumbnail = false,
                             Path = smFile.Value,
                             SubmodelId = submodelId,

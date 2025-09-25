@@ -17,17 +17,12 @@ public class HttpClientCreator
 
         try
         {
-            Console.WriteLine($"[DEBUG] Creating HttpClient with SSL bypass...");
-
             // Create HttpClientHandler with maximum SSL bypass configuration
             var handler = new HttpClientHandler();
 
             // MAXIMUM SSL BYPASS - Ignore ALL SSL certificate validation
             handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) =>
             {
-                Console.WriteLine(
-                    $"[DEBUG] SSL Callback triggered. Errors: {errors}. Ignoring all SSL errors."
-                );
                 return true; // ALWAYS ignore SSL errors
             };
 
@@ -38,8 +33,6 @@ public class HttpClientCreator
 
             // Disable certificate revocation checking
             handler.CheckCertificateRevocationList = false;
-
-            Console.WriteLine($"[DEBUG] HttpClientHandler configured with SSL bypass");
 
             // Configure client certificate if provided
             if (
@@ -55,7 +48,6 @@ public class HttpClientCreator
                         setting.CertificatePassword
                     );
                     handler.ClientCertificates.Add(certificate);
-                    Console.WriteLine($"[DEBUG] Client certificate added");
                 }
                 catch (Exception ex)
                 {
@@ -65,7 +57,6 @@ public class HttpClientCreator
 
             // Create HttpClient with configured handler
             client = new HttpClient(handler);
-            Console.WriteLine($"[DEBUG] HttpClient created with handler");
         }
         catch (Exception ex)
         {
@@ -80,7 +71,6 @@ public class HttpClientCreator
         client.Timeout = TimeSpan.FromSeconds(
             setting.TimeoutSeconds > 0 ? setting.TimeoutSeconds : 60
         );
-        Console.WriteLine($"[DEBUG] Timeout set to {client.Timeout.TotalSeconds} seconds");
 
         // Add custom headers
         if (setting.HeaderParameters.Any())
@@ -92,7 +82,6 @@ public class HttpClientCreator
                     try
                     {
                         client.DefaultRequestHeaders.Add(header.Name, header.Value);
-                        Console.WriteLine($"[DEBUG] Added header: {header.Name}");
                     }
                     catch (Exception ex)
                     {
@@ -110,7 +99,6 @@ public class HttpClientCreator
         //     client.DefaultRequestHeaders.Add("Authorization", "Bearer " + jwToken);
         // }
 
-        Console.WriteLine($"[DEBUG] HttpClient creation completed");
         return client;
     }
 
@@ -140,7 +128,7 @@ public class HttpClientCreator
             return true;
 
         // Log the SSL error for debugging
-        Console.WriteLine($"SSL Certificate validation failed: {sslPolicyErrors}");
+        // (removed Console.WriteLine outside of catch as per requirement)
 
         // In a real production environment, you might want to be more strict
         // For now, return true to allow connections (can be configured via IgnoreSslErrors)

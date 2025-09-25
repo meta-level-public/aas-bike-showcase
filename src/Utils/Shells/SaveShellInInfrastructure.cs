@@ -510,7 +510,11 @@ public class SaveShellSaver
                                 continue;
                             // datei zum endpunkt schicken
 
-                            var fileUrl = aasFile.Endpoint + "?fileName=" + providedFile.Filename;
+                            var fileUrl =
+                                aasFile.Endpoint
+                                + "?fileName="
+                                + providedFile.Filename.ToUrlEncoded();
+                            ;
                             using var httpRequest = new HttpRequestMessage(HttpMethod.Put, fileUrl);
                             var streamContent = new StreamContent(providedFile.Stream);
                             streamContent.Headers.ContentType = new MediaTypeHeaderValue(

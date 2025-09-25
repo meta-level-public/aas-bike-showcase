@@ -840,380 +840,115 @@
       "idShort": "CompanyLogo"
     },
     {
-      "modelType": "SubmodelElementList",
-      "semanticId": {
-        "keys": [
-          {
-            "type": "GlobalReference",
-            "value": "0112/2///61360_7#AAS006#001"
-          }
-        ],
-        "type": "ExternalReference"
-      },
-      "supplementalSemanticIds": [
-        {
-          "keys": [
-            {
-              "type": "GlobalReference",
-              "value": "0173-1#02-ABI563#003/0173-1#01-AHF849#003"
-            }
-          ],
-          "type": "ExternalReference"
-        }
-      ],
-      "qualifiers": [
-        {
-          "semanticId": {
-            "keys": [
-              {
-                "type": "GlobalReference",
-                "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
-              }
-            ],
-            "type": "ExternalReference"
-          },
-          "kind": "TemplateQualifier",
-          "type": "SMT/Cardinality",
-          "value": "ZeroToOne",
-          "valueType": "xs:string"
-        }
-      ],
+      "idShort": "Markings",
       "description": [
         {
           "language": "en",
           "text": "Note: CE marking is declared as mandatory according to EU Blue Guide"
         }
       ],
-      "idShort": "Markings",
+      "semanticId": {
+        "type": "ExternalReference",
+        "keys": [
+          {
+            "type": "GlobalReference",
+            "value": "0112/2///61360_7#AAS006#001"
+          }
+        ]
+      },
+      "supplementalSemanticIds": [
+        {
+          "type": "ExternalReference",
+          "keys": [
+            {
+              "type": "GlobalReference",
+              "value": "0173-1#02-ABI563#003/0173-1#01-AHF849#003"
+            }
+          ]
+        }
+      ],
+      "qualifiers": [
+        {
+          "semanticId": {
+            "type": "ExternalReference",
+            "keys": [
+              {
+                "type": "GlobalReference",
+                "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
+              }
+            ]
+          },
+          "kind": "TemplateQualifier",
+          "type": "SMT/Cardinality",
+          "valueType": "xs:string",
+          "value": "ZeroToOne"
+        }
+      ],
       "orderRelevant": true,
       "typeValueListElement": "SubmodelElementCollection",
       "value": [
         {
-          "modelType": "SubmodelElementCollection",
+          "idShort": "Marking00",
           "semanticId": {
+            "type": "ExternalReference",
             "keys": [
               {
-                "type": "GlobalReference",
-                "value": "0112/2///61360_7#AAS009#001"
+                "type": "ConceptDescription",
+                "value": "0173-1#01-AHD206#001"
               }
-            ],
-            "type": "ExternalReference"
+            ]
           },
-          "supplementalSemanticIds": [
-            {
-              "keys": [
-                {
-                  "type": "GlobalReference",
-                  "value": "0173-1#02-ABI564#003/0173-1#01-AHF850#003"
-                }
-              ],
-              "type": "ExternalReference"
-            }
-          ],
-          "qualifiers": [
-            {
-              "semanticId": {
-                "keys": [
-                  {
-                    "type": "GlobalReference",
-                    "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
-                  }
-                ],
-                "type": "ExternalReference"
-              },
-              "kind": "TemplateQualifier",
-              "type": "SMT/Cardinality",
-              "value": "OneToMany",
-              "valueType": "xs:string"
-            }
-          ],
-          "description": [
-            {
-              "language": "en",
-              "text": "Note: CE marking is declared as mandatory according to the Blue Guide of the EU-Commission"
-            }
-          ],
-          "idShort": "",
           "value": [
             {
-              "modelType": "Property",
+              "idShort": "MarkingFile",
               "semanticId": {
+                "type": "ExternalReference",
                 "keys": [
                   {
-                    "type": "GlobalReference",
-                    "value": "0112/2///61987#ABA231#009"
-                  }
-                ],
-                "type": "ExternalReference"
-              },
-              "supplementalSemanticIds": [
-                {
-                  "keys": [
-                    {
-                      "type": "GlobalReference",
-                      "value": "0173-1#02-ABI190#003"
-                    }
-                  ],
-                  "type": "ExternalReference"
-                }
-              ],
-              "value": "",
-              "valueType": "xs:string",
-              "qualifiers": [
-                {
-                  "semanticId": {
-                    "keys": [
-                      {
-                        "type": "GlobalReference",
-                        "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
-                      }
-                    ],
-                    "type": "ExternalReference"
-                  },
-                  "kind": "TemplateQualifier",
-                  "type": "SMT/Cardinality",
-                  "value": "One",
-                  "valueType": "xs:string"
-                }
-              ],
-              "idShort": "MarkingName"
-            },
-            {
-              "modelType": "Property",
-              "semanticId": {
-                "keys": [
-                  {
-                    "type": "GlobalReference",
-                    "value": "0112/2///61987#ABH783#003"
-                  }
-                ],
-                "type": "ExternalReference"
-              },
-              "supplementalSemanticIds": [
-                {
-                  "keys": [
-                    {
-                      "type": "GlobalReference",
-                      "value": "0173-1#02-ABI975#002"
-                    }
-                  ],
-                  "type": "ExternalReference"
-                }
-              ],
-              "value": "",
-              "valueType": "xs:string",
-              "qualifiers": [
-                {
-                  "semanticId": {
-                    "keys": [
-                      {
-                        "type": "GlobalReference",
-                        "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
-                      }
-                    ],
-                    "type": "ExternalReference"
-                  },
-                  "kind": "TemplateQualifier",
-                  "type": "SMT/Cardinality",
-                  "value": "ZeroToOne",
-                  "valueType": "xs:string"
-                }
-              ],
-              "description": [
-                {
-                  "language": "en",
-                  "text": "Note: Approval identifier, reference to the certificate number, to be entered without spaces "
-                }
-              ],
-              "idShort": "DesignationOfCertificateOrApproval"
-            },
-            {
-              "modelType": "Property",
-              "semanticId": {
-                "keys": [
-                  {
-                    "type": "GlobalReference",
-                    "value": "0112/2///61987#ABO097#001"
-                  }
-                ],
-                "type": "ExternalReference"
-              },
-              "supplementalSemanticIds": [
-                {
-                  "keys": [
-                    {
-                      "type": "GlobalReference",
-                      "value": "0173-1#02-ABL774#001"
-                    }
-                  ],
-                  "type": "ExternalReference"
-                }
-              ],
-              "value": "",
-              "valueType": "xs:date",
-              "qualifiers": [
-                {
-                  "semanticId": {
-                    "keys": [
-                      {
-                        "type": "GlobalReference",
-                        "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
-                      }
-                    ],
-                    "type": "ExternalReference"
-                  },
-                  "kind": "TemplateQualifier",
-                  "type": "SMT/Cardinality",
-                  "value": "ZeroToOne",
-                  "valueType": "xs:string"
-                }
-              ],
-              "description": [
-                {
-                  "language": "en",
-                  "text": "Note: format by lexical representation: CCYY-MM-DD Note: to be specified to the day "
-                }
-              ],
-              "idShort": "IssueDate"
-            },
-            {
-              "modelType": "Property",
-              "semanticId": {
-                "keys": [
-                  {
-                    "type": "GlobalReference",
-                    "value": "0112/2///61987#ABH830#002"
-                  }
-                ],
-                "type": "ExternalReference"
-              },
-              "supplementalSemanticIds": [
-                {
-                  "keys": [
-                    {
-                      "type": "GlobalReference",
-                      "value": "0173-1#02-ABL775#001"
-                    }
-                  ],
-                  "type": "ExternalReference"
-                }
-              ],
-              "value": "",
-              "valueType": "xs:date",
-              "qualifiers": [
-                {
-                  "semanticId": {
-                    "keys": [
-                      {
-                        "type": "GlobalReference",
-                        "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
-                      }
-                    ],
-                    "type": "ExternalReference"
-                  },
-                  "kind": "TemplateQualifier",
-                  "type": "SMT/Cardinality",
-                  "value": "ZeroToOne",
-                  "valueType": "xs:string"
-                }
-              ],
-              "description": [
-                {
-                  "language": "en",
-                  "text": "Note: format by lexical representation: CCYY-MM-DD Note: to be specified to the day "
-                }
-              ],
-              "idShort": "ExpiryDate"
-            },
-            {
-              "modelType": "File",
-              "contentType": "image/png",
-              "value": "",
-              "semanticId": {
-                "keys": [
-                  {
-                    "type": "GlobalReference",
+                    "type": "ConceptDescription",
                     "value": "0112/2///61987#ABO100#002"
                   }
-                ],
-                "type": "ExternalReference"
+                ]
               },
-              "supplementalSemanticIds": [
-                {
-                  "keys": [
-                    {
-                      "type": "GlobalReference",
-                      "value": "0173-1#02-ABI191#003"
-                    }
-                  ],
-                  "type": "ExternalReference"
-                }
-              ],
-              "qualifiers": [
-                {
-                  "semanticId": {
-                    "keys": [
-                      {
-                        "type": "GlobalReference",
-                        "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
-                      }
-                    ],
-                    "type": "ExternalReference"
-                  },
-                  "kind": "TemplateQualifier",
-                  "type": "SMT/Cardinality",
-                  "value": "One",
-                  "valueType": "xs:string"
-                }
-              ],
-              "idShort": "MarkingFile"
+              "value": "ce.png",
+              "contentType": "image/png",
+              "modelType": "File"
             },
             {
-              "modelType": "Property",
+              "idShort": "MarkingName",
               "semanticId": {
+                "type": "ModelReference",
                 "keys": [
                   {
-                    "type": "GlobalReference",
+                    "type": "ConceptDescription",
+                    "value": "0112/2///61987#ABA231#009"
+                  }
+                ]
+              },
+              "valueType": "xs:string",
+              "value": "0173-1#07-DAA603#004",
+              "modelType": "Property"
+            },
+            {
+              "idShort": "MarkingAdditionalText00",
+              "semanticId": {
+                "type": "ModelReference",
+                "keys": [
+                  {
+                    "type": "ConceptDescription",
                     "value": "0112/2///61987#ABB146#007"
                   }
-                ],
-                "type": "ExternalReference"
+                ]
               },
-              "supplementalSemanticIds": [
-                {
-                  "keys": [
-                    {
-                      "type": "GlobalReference",
-                      "value": "0173-1#02-ABI192#003"
-                    }
-                  ],
-                  "type": "ExternalReference"
-                }
-              ],
-              "value": "",
               "valueType": "xs:string",
-              "qualifiers": [
-                {
-                  "semanticId": {
-                    "keys": [
-                      {
-                        "type": "GlobalReference",
-                        "value": "https://admin-shell.io/SubmodelTemplates/Cardinality/1/0"
-                      }
-                    ],
-                    "type": "ExternalReference"
-                  },
-                  "kind": "TemplateQualifier",
-                  "type": "SMT/Cardinality",
-                  "value": "ZeroToMany",
-                  "valueType": "xs:string"
-                }
-              ],
-              "idShort": "MarkingAdditionalText"
+              "value": "",
+              "modelType": "Property"
             }
-          ]
+          ],
+          "modelType": "SubmodelElementCollection"
         }
-      ]
+      ],
+      "modelType": "SubmodelElementList"
     },
     {
       "modelType": "SubmodelElementCollection",

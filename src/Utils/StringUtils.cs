@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.WebUtilities;
@@ -43,6 +44,16 @@ namespace AasDemoapp.Utils
         public static string ToBase64UrlEncoded(this string text, Encoding encoding)
         {
             return Base64UrlTextEncoder.Encode(encoding.GetBytes(text));
+        }
+
+        public static string ToUrlEncoded(this string text)
+        {
+            return text.ToUrlEncoded(Encoding.UTF8);
+        }
+
+        public static string ToUrlEncoded(this string text, Encoding encoding)
+        {
+            return WebUtility.UrlEncode(encoding.GetString(encoding.GetBytes(text)));
         }
 
         public static bool TryParseBase64(

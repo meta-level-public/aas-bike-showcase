@@ -11,11 +11,22 @@ using AasDemoapp.Import;
 using AasDemoapp.Settings;
 using AasDemoapp.Utils;
 using AasDemoapp.Utils.Shells;
+using Docnet.Core;
+using Docnet.Core.Models;
+using Docnet.Core.Readers;
 using Namotion.Reflection;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace AasDemoapp.Production;
 
-public record HandoverDocumentationResult(Submodel Submodel, ProvidedFile? PdfFile);
+public record HandoverDocumentationResult(
+    Submodel Submodel,
+    ProvidedFile? PdfFile,
+    ProvidedFile? PdfPreviewImageFile
+);
 
 public class InstanceAasCreator
 {
@@ -26,6 +37,96 @@ public class InstanceAasCreator
     )
     {
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Erzeugt ein Vorschaubild (PNG) der ersten Seite eines PDF Dokuments.
+    /// Nutzt Docnet.Core (MIT) für das Rendering und ImageSharp (Apache-2.0) für PNG-Encoding.
+    /// Fallback/Fehlschlag wird geloggt und gibt null zurück. Läuft plattformunabhängig (Windows/macOS/Linux)
+    /// und ist damit docker-/container-tauglich ohne native Abhängigkeiten.
+    /// </summary>
+    /// <param name="pdfBytes">PDF als Bytearray</param>
+    /// <param name="originalPdfFileName">Originaler PDF Dateiname (zur Ableitung des Preview-Namens)</param>
+    /// <returns>ProvidedFile für die Preview PNG oder null</returns>
+    private static ProvidedFile? TryCreatePdfPreview(byte[] pdfBytes, string originalPdfFileName)
+    {
+        if (pdfBytes == null || pdfBytes.Length == 0)
+            return null;
+
+        try
+        {
+            // PageDimensions dürfen nicht 0 sein (Docnet wirft sonst ArgumentException "value can't be less or equal to zero (dimOne)").
+            // Wir rendern die erste Seite mit einer maximalen Zielgröße (A4 Hochformat grob ~1.414 Verhältnis) und skalieren ggf. später erneut.
+            const int targetRenderWidth = 1024; // ausreichende Preview-Qualität
+            const int targetRenderHeight = 1448; // 1024 * 1.414 (gerundet)
+            using var docReader = DocLib.Instance.GetDocReader(
+                pdfBytes,
+                new PageDimensions(targetRenderWidth, targetRenderHeight)
+            );
+            if (docReader.GetPageCount() == 0)
+                return null;
+
+            using var pageReader = docReader.GetPageReader(0);
+            var rawBytes = pageReader.GetImage();
+            var pageWidth = pageReader.GetPageWidth();
+            var pageHeight = pageReader.GetPageHeight();
+
+            // Docnet liefert BGRA ( laut Doku ), wir mappen nach ImageSharp PixelFormat Rgba32
+            // Rohdatenlänge prüfen (w * h * 4)
+            if (rawBytes == null || rawBytes.Length != pageWidth * pageHeight * 4)
+            {
+                _logger?.LogWarning(
+                    "PDF Preview: Unerwartete Pixeldaten-Länge (expected {Expected}, actual {Actual})",
+                    pageWidth * pageHeight * 4,
+                    rawBytes?.Length
+                );
+                return null;
+            }
+
+            // BGRA -> RGBA konvertieren (Inplace Kopie in neues Array)
+            for (var i = 0; i < rawBytes.Length; i += 4)
+            {
+                var b = rawBytes[i];
+                var r = rawBytes[i + 2];
+                rawBytes[i] = r; // R an Position 0
+                rawBytes[i + 2] = b; // B an Position 2
+            }
+
+            // Image anlegen
+            using var image = Image.LoadPixelData<Rgba32>(rawBytes, pageWidth, pageHeight);
+
+            // Optional skalieren, um große PDFs kleiner zu machen (Max 1024 Breite)
+            const int maxWidth = 1024;
+            if (pageWidth > maxWidth)
+            {
+                var ratio = (double)maxWidth / pageWidth;
+                var targetWidth = maxWidth;
+                var targetHeight = (int)Math.Round(pageHeight * ratio);
+                image.Mutate(ctx => ctx.Resize(targetWidth, targetHeight));
+            }
+
+            var previewFileName = Path.ChangeExtension(originalPdfFileName, null);
+            if (string.IsNullOrWhiteSpace(previewFileName))
+                previewFileName = "pdf_preview";
+            previewFileName += "_page1.png";
+
+            var ms = new MemoryStream();
+            image.Save(ms, new PngEncoder());
+            ms.Position = 0;
+
+            return new ProvidedFile
+            {
+                Stream = ms,
+                Filename = previewFileName,
+                Type = ProvidedFileType.Thumbnail,
+                ContentType = "image/png",
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogWarning(ex, "PDF Preview konnte nicht erstellt werden");
+            return null;
+        }
     }
 
     /// <summary>
@@ -170,8 +271,13 @@ public class InstanceAasCreator
 
         var files = new List<ProvidedFile>();
         if (handoverResult.PdfFile != null)
-        {
             files.Add(handoverResult.PdfFile);
+        if (handoverResult.PdfPreviewImageFile != null)
+            files.Add(handoverResult.PdfPreviewImageFile);
+        var ceFile = TryLoadCeFile();
+        if (ceFile != null)
+        {
+            files.Add(ceFile); // CE Kennzeichen laden (ausgelagerte Methode)
         }
 
         // Thumbnail laden (ausgelagerte Methode)
@@ -196,6 +302,41 @@ public class InstanceAasCreator
         );
 
         return aas;
+    }
+
+    private static ProvidedFile? TryLoadCeFile()
+    {
+        try
+        {
+            var ceSourcePath = Path.Combine(AppContext.BaseDirectory, "AasHandling", "ce.png");
+            if (!System.IO.File.Exists(ceSourcePath))
+            {
+                // Fallback: Entwicklungszeit - relativ zum Projektroot (z.B. beim watch run)
+                var devRoot = Directory.GetCurrentDirectory();
+                var possible = Path.Combine(devRoot, "src", "AasHandling", "ce.png");
+                if (System.IO.File.Exists(possible))
+                {
+                    ceSourcePath = possible;
+                }
+            }
+
+            if (System.IO.File.Exists(ceSourcePath))
+            {
+                return new ProvidedFile
+                {
+                    Stream = System.IO.File.OpenRead(ceSourcePath),
+                    Filename = "ce.png",
+                    Type = ProvidedFileType.Added,
+                    ContentType = "image/png",
+                };
+            }
+            _logger?.LogWarning("CE Logo nicht gefunden: {Path}", ceSourcePath);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "CE Logo konnte nicht geladen werden");
+        }
+        return null;
     }
 
     private static async Task SaveAasToRepositories(
@@ -264,6 +405,17 @@ public class InstanceAasCreator
             ContentType = "application/pdf",
         };
 
+        // Preview (erste Seite) erzeugen
+        ProvidedFile? previewFile = null;
+        try
+        {
+            previewFile = TryCreatePdfPreview(pdfData, pdfFileName);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogWarning(ex, "PDF Preview konnte nicht erzeugt werden");
+        }
+
         // Finde das erste Document Element im Submodel und aktualisiere es
         if (handoverdoc.SubmodelElements != null)
         {
@@ -310,6 +462,17 @@ public class InstanceAasCreator
                     }
 
                     // Vorschaubild einfügen, falls verfügbar
+                    if (previewFile != null)
+                    {
+                        var previewFileElement = documentVersionCollection
+                            .Value.OfType<AasCore.Aas3_0.File>()
+                            .FirstOrDefault(f => f.IdShort?.StartsWith("PreviewFile") == true);
+                        if (previewFileElement != null && previewFile != null)
+                        {
+                            previewFileElement.ContentType = "image/png";
+                            previewFileElement.Value = previewFile.Filename; // Verwende den Dateinamen als Referenz
+                        }
+                    }
                 }
                 else
                 {
@@ -342,7 +505,7 @@ public class InstanceAasCreator
             }
         }
 
-        return new HandoverDocumentationResult(handoverdoc, providedFile);
+        return new HandoverDocumentationResult(handoverdoc, providedFile, previewFile);
     }
 
     private static Submodel CreateNameplateSubmodel(

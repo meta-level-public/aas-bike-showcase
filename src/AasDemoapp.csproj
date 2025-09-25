@@ -13,10 +13,7 @@
   <ItemGroup>
     <PackageReference Include="AasCore.Aas3_0" Version="1.0.0" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference
-      Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
-      Version="12.0.1"
-    />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -30,10 +27,12 @@
     <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="Svg" Version="3.4.7" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
-      <!-- PDF Preview Rendering (Docnet.Core unter MIT) -->
-      <PackageReference Include="Docnet.Core" Version="3.4.0" />
-      <!-- PNG Encoding (ImageSharp unter Apache-2.0, MIT-kompatibel) -->
-      <PackageReference Include="SixLabors.ImageSharp" Version="3.1.3" />
+    <!-- PDF Preview Rendering (Docnet.Core unter MIT) -->
+    <PackageReference Include="Docnet.Core" Version="2.7.0-alpha.1" />
+    <!-- PNG Encoding (ImageSharp unter Apache-2.0, MIT-kompatibel) -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
+    <!-- Fallback PDF Rasterization (requires Ghostscript runtime for PDF). Used if Docnet fails. -->
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.6.0" />
   </ItemGroup>
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
@@ -47,24 +46,19 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <!-- Ensure ce.png is also copied to output/publish -->
+    <Content Include="AasHandling/ce.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
-  <Target
-    Name="DebugEnsureNodeEnv"
-    BeforeTargets="Build"
-    Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') "
-  >
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
-    <Error
-      Condition="'$(ErrorCode)' != '0'"
-      Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE."
-    />
-    <Message
-      Importance="high"
-      Text="Restoring dependencies using 'npm'. This may take several minutes..."
-    />
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
+    <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
@@ -74,10 +68,7 @@
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
-      <ResolvedFileToPublish
-        Include="@(DistFiles-&gt;'%(FullPath)')"
-        Exclude="@(ResolvedFileToPublish)"
-      >
+      <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
