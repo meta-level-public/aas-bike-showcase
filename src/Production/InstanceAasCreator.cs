@@ -308,6 +308,8 @@ public class InstanceAasCreator
                             );
                         }
                     }
+
+                    // Vorschaubild einfügen, falls verfügbar
                 }
                 else
                 {
