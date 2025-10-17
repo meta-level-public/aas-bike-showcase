@@ -176,8 +176,8 @@ public class InstanceAasCreator
 
     public static async Task<AssetAdministrationShell> CreateBikeInstanceAas(
         ProducedProduct producedProduct,
-        ImportService importService,
-        SettingService settingsService
+        IImportService importService,
+        ISettingService settingsService
     )
     {
         var assetInformation = new AssetInformation(
@@ -342,8 +342,8 @@ public class InstanceAasCreator
     private static async Task SaveAasToRepositories(
         AssetAdministrationShell aas,
         List<ISubmodel> submodels,
-        ImportService importService,
-        SettingService settingsService,
+        IImportService importService,
+        ISettingService settingsService,
         List<ProvidedFile>? providedFiles = null
     )
     {
@@ -708,7 +708,7 @@ public class InstanceAasCreator
 
     private static Submodel CreateProductCarbonFootprintSubmodel(
         ProducedProduct producedProduct,
-        SettingService settingsService,
+        ISettingService settingsService,
         double weight
     )
     {

@@ -16,7 +16,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace AasDemoapp.Import
 {
-    public class ImportService
+    public class ImportService : IImportService
     {
         private readonly AasDemoappContext _AasDemoappContext;
         private const string nameplateId = "https://admin-shell.io/zvei/nameplate/2/0/Nameplate";

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace AasDemoapp.Settings
 {
-    public class SettingService
+    public class SettingService : ISettingService
     {
         private readonly AasDemoappContext _context;
 
