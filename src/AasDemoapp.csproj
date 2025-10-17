@@ -28,12 +28,13 @@
     <PackageReference Include="itext7" Version="8.0.5" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.5" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="Svg" Version="3.4.7" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
     <!-- PDF Preview Rendering (Docnet.Core unter MIT) -->
     <PackageReference Include="Docnet.Core" Version="2.7.0-alpha.1" />
     <!-- PNG Encoding (ImageSharp unter Apache-2.0, MIT-kompatibel) -->
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <!-- Fallback PDF Rasterization (requires Ghostscript runtime for PDF). Used if Docnet fails. -->
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.6.0" />
   </ItemGroup>

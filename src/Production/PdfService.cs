@@ -8,36 +8,11 @@ using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 using iText.Layout.Properties;
-using QRCoder;
 
 namespace AasDemoapp.Production;
 
 public class PdfService
 {
-    /// <summary>
-    /// Generiert einen QR-Code als PNG-Byte-Array
-    /// </summary>
-    /// <param name="text">Text für den QR-Code</param>
-    /// <param name="pixelsPerModule">Pixel pro Modul (Größe)</param>
-    /// <returns>PNG-Daten als Byte-Array oder null falls Fehler</returns>
-    public static byte[]? GenerateQrCodeBytes(string text, int pixelsPerModule = 10)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-            return null;
-
-        try
-        {
-            using var qrGenerator = new QRCodeGenerator();
-            var qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
-            using var qrCode = new PngByteQRCode(qrCodeData);
-            return qrCode.GetGraphic(pixelsPerModule);
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
     /// <summary>
     /// Erzeugt ein PDF-Dokument mit aktuellem Datum, Firmenadresse, Fahrradbild und Bestandteilen
     /// </summary>
@@ -206,7 +181,7 @@ public class PdfService
                 rightColumn.Add(imageTitle);
 
                 var imageData = ImageDataFactory.Create(imageBytes);
-                var image = new Image(imageData)
+                var image = new iText.Layout.Element.Image(imageData)
                     .SetWidth(150)
                     .SetHeight(120)
                     .SetHorizontalAlignment(HorizontalAlignment.CENTER);
@@ -374,13 +349,13 @@ public class PdfService
                 var globalAssetId = bestandteil.KatalogEintrag?.GlobalAssetId;
                 if (!string.IsNullOrWhiteSpace(globalAssetId))
                 {
-                    var qrCodeBytes = GenerateQrCodeBytes(globalAssetId, 3);
+                    var qrCodeBytes = QrCodeService.GenerateQrCodeBytes(globalAssetId, 3);
                     if (qrCodeBytes != null)
                     {
                         try
                         {
                             var qrImageData = ImageDataFactory.Create(qrCodeBytes);
-                            var qrImage = new Image(qrImageData)
+                            var qrImage = new iText.Layout.Element.Image(qrImageData)
                                 .SetWidth(50)
                                 .SetHeight(50)
                                 .SetHorizontalAlignment(HorizontalAlignment.CENTER);
