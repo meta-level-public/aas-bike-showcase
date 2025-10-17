@@ -108,10 +108,10 @@ namespace AasDemoapp.Jobs
                                 localJsonNode
                             );
 
-                            Console.WriteLine(localShell.Administration?.Version);
-                            Console.WriteLine(remoteShell.Administration?.Version);
-                            Console.WriteLine(localShell.Administration?.Revision);
-                            Console.WriteLine(remoteShell.Administration?.Revision);
+                            // Console.WriteLine(localShell.Administration?.Version);
+                            // Console.WriteLine(remoteShell.Administration?.Version);
+                            // Console.WriteLine(localShell.Administration?.Revision);
+                            // Console.WriteLine(remoteShell.Administration?.Revision);
 
                             if (
                                 localShell.Administration != null

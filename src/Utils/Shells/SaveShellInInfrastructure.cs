@@ -200,7 +200,8 @@ public class SaveShellSaver
                     }
                     else
                     {
-                        var fileUrl = aasFile.Endpoint + "?fileName=" + providedFile.Filename;
+                        var fileUrl =
+                            aasFile.Endpoint + "?fileName=" + providedFile.Filename.ToUrlEncoded();
                         using var httpRequest = new HttpRequestMessage(HttpMethod.Put, fileUrl);
                         var streamContent = new StreamContent(providedFile.Stream);
                         var contentType = !string.IsNullOrEmpty(aasFile.ContentType)
