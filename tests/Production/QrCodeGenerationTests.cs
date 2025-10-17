@@ -12,7 +12,7 @@ public class QrCodeGenerationTests
         var testText = "https://example.com/globalAssetId/test123";
 
         // Act
-        var result = PdfService.GenerateQrCodeBytes(testText, 3);
+        var result = QrCodeService.GenerateQrCodeBytes(testText, 3);
 
         // Assert
         Assert.NotNull(result);
@@ -30,7 +30,7 @@ public class QrCodeGenerationTests
     public void GenerateQrCodeBytes_WithEmptyText_ShouldReturnNull()
     {
         // Act
-        var result = PdfService.GenerateQrCodeBytes("", 3);
+        var result = QrCodeService.GenerateQrCodeBytes("", 3);
 
         // Assert
         Assert.Null(result);
