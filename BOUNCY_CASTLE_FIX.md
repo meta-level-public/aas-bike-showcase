@@ -8,7 +8,7 @@ Either com.itextpdf:bouncy-castle-adapter or com.itextpdf:bouncy-castle-fips-ada
 
 ## 💡 Lösung
 
-Hinzugefügt in `src/AasDemoapp.csproj`:
+Hinzugefügt in `src/AasDemoapp/AasDemoapp.csproj`:
 
 ```xml
 <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.5" />

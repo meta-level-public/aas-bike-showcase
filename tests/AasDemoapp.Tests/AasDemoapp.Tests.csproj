@@ -20,7 +20,7 @@
     <PackageReference Include="Moq" Version="4.20.69" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../src/AasDemoapp.csproj" />
+    <ProjectReference Include="../../src/AasDemoapp/AasDemoapp.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AasHandling/SubmodelCreators/handoverdoc.json">

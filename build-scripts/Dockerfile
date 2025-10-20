@@ -11,14 +11,14 @@ WORKDIR /src
 
 # Install Node.js (LTS) and npm for SPA build
 RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
-    apt-get install -y nodejs && \
-    npm --version && node --version
+  apt-get install -y curl && \
+  curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+  apt-get install -y nodejs && \
+  npm --version && node --version
 
 
 # Copy the entire src directory (preserving structure)
-COPY src/ ./AasDemoapp/
+COPY src/AasDemoapp ./AasDemoapp
 
 # Restore dependencies (with NuGet cache mounts)
 RUN --mount=type=cache,target=/root/.nuget/packages \
@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.nuget/packages \
   dotnet restore "AasDemoapp/AasDemoapp.csproj"
 
 # Build the application
-WORKDIR "/src/AasDemoapp"
+WORKDIR "/AasDemoapp"
 RUN --mount=type=cache,target=/root/.nuget/packages \
   dotnet build "AasDemoapp.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 

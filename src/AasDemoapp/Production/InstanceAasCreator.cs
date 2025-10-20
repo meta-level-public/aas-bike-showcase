@@ -132,7 +132,7 @@ public class InstanceAasCreator
     /// <summary>
     /// Lädt die Bilddatei (bike.jpg) als ProvidedFile für den Thumbnail-Upload.
     /// Sucht zuerst im Output-Verzeichnis (AppContext.BaseDirectory/AasHandling),
-    /// danach relativ zum Projekt (./src/AasHandling/bike.jpg) für Entwicklungsumgebungen.
+    /// danach relativ zum Projekt (./src/AasDemoapp/AasHandling/bike.jpg) für Entwicklungsumgebungen.
     /// </summary>
     /// <returns>ProvidedFile oder null falls nicht gefunden oder Fehler.</returns>
     private static ProvidedFile? TryLoadThumbnailFile()

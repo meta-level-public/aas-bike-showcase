@@ -43,6 +43,6 @@ msbuild.log
 msbuild.err
 msbuild.wrn
 
-src/ClientApp/node_modules/**
-src/ClientApp/.angular/cache/**
+src/AasDemoapp/ClientApp/node_modules/**
+src/AasDemoapp/ClientApp/.angular/cache/**
 

@@ -110,10 +110,10 @@ Content-Type: application/json
 3. **src/Controllers/ProductionController.cs** ✅ (bereits erstellt)
    - API-Endpunkt GenerateHandoverPdf
 
-4. **src/AasDemoapp.csproj** ✅ (bereits aktualisiert)
+4. **src/AasDemoapp/AasDemoapp.csproj** ✅ (bereits aktualisiert)
    - iText7 Dependency hinzugefügt
 
-5. **tests/Production/PdfServiceTests.cs** ✅ (bereits erstellt)
+5. **tests/AasDemoapp.Tests/Production/PdfServiceTests.cs** ✅ (bereits erstellt)
    - Unit-Tests für PDF-Funktionalität
 
 ## 🎉 Ergebnis

@@ -6,7 +6,7 @@ Diese Funktionalität erstellt automatisch ein PDF-Dokument für die Übergabe v
 
 ### 1. PdfService.cs
 
-- **Ort**: `src/Production/PdfService.cs`
+- **Ort**: `src/AasDemoapp/Production/PdfService.cs`
 - **Funktion**: Erstellt PDF-Dokumente mit iText7
 - **Methode**: `CreateHandoverPdf(Address? companyAddress = null)`
 
@@ -20,13 +20,13 @@ Diese Funktionalität erstellt automatisch ein PDF-Dokument für die Übergabe v
 
 ### 2. Erweiterte InstanceAasCreator.cs
 
-- **Ort**: `src/Production/InstanceAasCreator.cs`
+- **Ort**: `src/AasDemoapp/Production/InstanceAasCreator.cs`
 - **Änderung**: `CreateHandoverDocumentation` Methode akzeptiert jetzt `Address`-Parameter
 - **Funktion**: Generiert PDF und bindet es in das AAS-Submodel ein
 
 ### 3. API-Endpunkt
 
-- **Ort**: `src/Controllers/ProductionController.cs`
+- **Ort**: `src/AasDemoapp/Controllers/ProductionController.cs`
 - **Endpunkt**: `POST /api/Production/GenerateHandoverPdf`
 - **Funktion**: Direkte PDF-Generierung über HTTP-API
 
@@ -100,7 +100,7 @@ Das generierte PDF enthält:
    - Straße
    - PLZ und Ort
    - Land
-4. **Produktbild**: Fahrradbild aus `src/images/IMG_4957.png`
+4. **Produktbild**: Fahrradbild aus `src/AasDemoapp/images/IMG_4957.png`
 5. **Footer**: Automatisch generiert Hinweis
 
 ## Fehlerbehandlung

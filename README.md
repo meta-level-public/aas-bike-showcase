@@ -95,7 +95,7 @@ dotnet run
 
 ```bash
 # In ClientApp Verzeichnis wechseln
-cd ClientApp
+cd src/AasDemoapp/ClientApp
 
 # Dependencies installieren
 npm install
@@ -185,17 +185,20 @@ Hinweise:
 ## 📁 Projektstruktur
 
 ```text
-├── Controllers/          # Web API Controller
-├── ClientApp/            # Angular Frontend
-├── Database/             # Entity Framework Modelle
-├── Dashboard/            # Dashboard Services
-├── Dpp/                  # Digital Product Passport
-├── Import/               # AAS Import Services
-├── Katalog/              # Produktkatalog
-├── Konfigurator/         # Produktkonfigurator
-├── Production/           # Produktionsmanagement
-├── Proxy/                # AAS Proxy Services
-├── Suppliers/            # Lieferantenintegration
+├── src/
+│   └── AasDemoapp/       # Main Application
+│       ├── Controllers/  # Web API Controller
+│       ├── ClientApp/    # Angular Frontend
+│       ├── Database/     # Entity Framework Modelle
+│       ├── Dashboard/    # Dashboard Services
+│       ├── Dpp/          # Digital Product Passport
+│       ├── Import/       # AAS Import Services
+│       ├── Katalog/      # Produktkatalog
+│       ├── Konfigurator/ # Produktkonfigurator
+│       ├── Production/   # Produktionsmanagement
+│       ├── Proxy/        # AAS Proxy Services
+│       └── Suppliers/    # Lieferantenintegration
+├── tests/                # Unit Tests
 ├── docker/               # Docker Compose Setup
 ├── dockerfiles/          # Container Definitions
 ├── images/               # Produktbilder
