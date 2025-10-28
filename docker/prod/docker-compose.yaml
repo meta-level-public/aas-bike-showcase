@@ -330,8 +330,6 @@ services:
     image: twinedgeimages.azurecr.io/aas-runtime:latest
     mem_limit: 512m
     memswap_limit: 1g
-    # networks:
-    #   - internal
     # ports:
     #   - '8080'
     restart: unless-stopped
@@ -368,8 +366,6 @@ services:
     image: twinedgeimages.azurecr.io/aas-runtime-web:latest
     mem_limit: 256m
     memswap_limit: 1g
-    # networks:
-    #   - internal
     # ports:
     #   - '3000'
     restart: unless-stopped
@@ -386,11 +382,9 @@ services:
   screw-simulator:
     image: twinedgeimages.azurecr.io/screwingsimulation:latest
     hostname: screw-simulator
-    # networks:
-    #   - internal
-    # ports:
-    #   - '7020:8080'
-    #   - '0.0.0.0:4840:4840'
+    ports:
+      #   - '7020:8080'
+      - '0.0.0.0:4840:4840'
     restart: unless-stopped
     env_file:
       - .env
@@ -402,6 +396,22 @@ services:
       - 'traefik.http.routers.mmc-simulator.middlewares=redirect-to-https@file'
       - 'traefik.http.services.mmc-simulator.loadbalancer.server.port=8080'
 
+  ##################################################################
+
+  ############################## Viewer ############################
+  aas-viewer:
+    container_name: aas-viewer
+    image: gitea.meta-level.de/aas-suite/aas-plain-viewer:latest
+    restart: always
+    ports:
+      - 5081:80
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.viewer.rule=Host(`viewer.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.viewer.entrypoints=web,websecure'
+      - 'traefik.http.routers.viewer.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.viewer.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.viewer.loadbalancer.server.port=80'
 ##################################################################
 
 volumes:

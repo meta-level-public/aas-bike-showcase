@@ -1,0 +1,36 @@
+Using launch settings from src/AasProxyService/Properties/launchSettings.json...
+Building...
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5168
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/christina/_DEV/ML/aas-bike-showcase/src/AasProxyService
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+info: AasProxyService.Controllers.ProxyController[0]
+      Processing request URL as globalAssetId: http://dt.suppl.mydomain.de/test123
+info: AasProxyService.Services.ProxyService[0]
+      Processing globalAssetId: http://dt.suppl.mydomain.de/test123
+info: AasProxyService.Services.ProxyService[0]
+      Found matching service mapping: suppl
+info: AasProxyService.Services.ProxyService[0]
+      Generated redirect URL: https://viewer.aas-suite.de/?globalAssetId=http%3a%2f%2fdt.suppl.mydomain.de%2ftest123&aasRepositoryUrl=https%3a%2f%2fbasyx-suppl.lan&smRepositoryUrl=https%3a%2f%2fbasyx-suppl.lan
+info: AasProxyService.Controllers.ProxyController[0]
+      Redirecting to: https://viewer.aas-suite.de/?globalAssetId=http%3a%2f%2fdt.suppl.mydomain.de%2ftest123&aasRepositoryUrl=https%3a%2f%2fbasyx-suppl.lan&smRepositoryUrl=https%3a%2f%2fbasyx-suppl.lan
+info: AasProxyService.Controllers.ProxyController[0]
+      Processing request URL as globalAssetId: http://dt.factory.mydomain.de/test123?id=0001
+info: AasProxyService.Services.ProxyService[0]
+      Processing globalAssetId: http://dt.factory.mydomain.de/test123?id=0001
+info: AasProxyService.Services.ProxyService[0]
+      Found matching service mapping: factory
+info: AasProxyService.Services.ProxyService[0]
+      Generated redirect URL: https://viewer.aas-suite.de/?globalAssetId=http%3a%2f%2fdt.factory.mydomain.de%2ftest123%3fid%3d0001&aasRepositoryUrl=https%3a%2f%2fbasyx-factory.lan&smRepositoryUrl=https%3a%2f%2fbasyx-factory.lan
+info: AasProxyService.Controllers.ProxyController[0]
+      Redirecting to: https://viewer.aas-suite.de/?globalAssetId=http%3a%2f%2fdt.factory.mydomain.de%2ftest123%3fid%3d0001&aasRepositoryUrl=https%3a%2f%2fbasyx-factory.lan&smRepositoryUrl=https%3a%2f%2fbasyx-factory.lan
+warn: Microsoft.AspNetCore.Server.Kestrel[22]
+      As of "10/20/2025 14:41:06 +00:00", the heartbeat has been running for "00:00:01.0846560" which is longer than "00:00:01". This could be caused by thread pool starvation.
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
