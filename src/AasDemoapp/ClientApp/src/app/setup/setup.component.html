@@ -1,0 +1,36 @@
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+  <div class="card mt-2">
+    <p-accordion [multiple]="true">
+      <!-- ERP System Bereich -->
+      <app-erp-configuration
+        [selectedErp]="selectedErp()"
+        (erpSelected)="onErpSelected($event)"
+        (settingsSaved)="onErpSettingsSaved()"
+      >
+      </app-erp-configuration>
+
+      <!-- AAS Infrastructure Bereich -->
+      <app-aas-infrastructure [settings]="settings()" (settingsUpdated)="onAasSettingsUpdated()">
+      </app-aas-infrastructure>
+
+      <!-- AAS ID-Präfix Bereich -->
+      <app-aas-id-configuration
+        [settings]="settings()"
+        (settingsUpdated)="onAasIdConfigurationUpdated()"
+      >
+      </app-aas-id-configuration>
+
+      <!-- Werkzeuge-Repository Bereich -->
+      <app-tools-repository [settings]="settings()" (settingsUpdated)="onToolsRepositoryUpdated()">
+      </app-tools-repository>
+
+      <!-- Lieferanten Bereich -->
+      <app-supplier-management [suppliers]="suppliers()" (suppliersUpdated)="onSuppliersUpdated()">
+      </app-supplier-management>
+
+      <!-- Firmenadresse Bereich -->
+      <app-company-address [settings]="settings()" (settingsUpdated)="onCompanyAddressUpdated()">
+      </app-company-address>
+    </p-accordion>
+  </div>
+</div>

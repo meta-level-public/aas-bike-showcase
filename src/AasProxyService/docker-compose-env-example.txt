@@ -1,0 +1,17 @@
+# Beispiel für docker-compose.yml Umgebungsvariablen
+
+# Basis-Konfiguration
+ProxyConfiguration__ViewerBaseUrl=https://viewer.aas-suite.de/
+
+# Service Mappings
+ProxyConfiguration__ServiceMappings__0__ServiceName=suppl
+ProxyConfiguration__ServiceMappings__0__AasRepositoryUrl=https://basyx-suppl.lan
+ProxyConfiguration__ServiceMappings__0__SmRepositoryUrl=https://basyx-suppl.lan
+
+ProxyConfiguration__ServiceMappings__1__ServiceName=factory
+ProxyConfiguration__ServiceMappings__1__AasRepositoryUrl=https://basyx-factory.lan
+ProxyConfiguration__ServiceMappings__1__SmRepositoryUrl=https://basyx-factory.lan
+
+ProxyConfiguration__ServiceMappings__2__ServiceName=fluid40
+ProxyConfiguration__ServiceMappings__2__AasRepositoryUrl=https://fluid40-messe.imd.mw.tu-dresden.de
+ProxyConfiguration__ServiceMappings__2__SmRepositoryUrl=https://fluid40-messe.imd.mw.tu-dresden.de

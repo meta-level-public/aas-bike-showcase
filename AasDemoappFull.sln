@@ -5,11 +5,13 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AasDemoapp.Tests", "tests\AasDemoapp.Tests.csproj", "{EB6B2DE0-524D-4B0E-9CA7-00FF8B5FACB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AasDemoapp.Tests", "tests\AasDemoapp.Tests\AasDemoapp.Tests.csproj", "{EB6B2DE0-524D-4B0E-9CA7-00FF8B5FACB8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AasDemoapp", "src\AasDemoapp.csproj", "{D923CB18-FE5C-48EA-A3C5-5FF3012FDE51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AasDemoapp", "src\AasDemoapp\AasDemoapp.csproj", "{D923CB18-FE5C-48EA-A3C5-5FF3012FDE51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AasProxyService", "src\AasProxyService\AasProxyService.csproj", "{9089D26B-5867-4BF1-8D9C-730F94198319}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,18 @@ Global
 		{D923CB18-FE5C-48EA-A3C5-5FF3012FDE51}.Release|x64.Build.0 = Release|Any CPU
 		{D923CB18-FE5C-48EA-A3C5-5FF3012FDE51}.Release|x86.ActiveCfg = Release|Any CPU
 		{D923CB18-FE5C-48EA-A3C5-5FF3012FDE51}.Release|x86.Build.0 = Release|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Debug|x64.Build.0 = Debug|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Debug|x86.Build.0 = Debug|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Release|x64.ActiveCfg = Release|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Release|x64.Build.0 = Release|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Release|x86.ActiveCfg = Release|Any CPU
+		{9089D26B-5867-4BF1-8D9C-730F94198319}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,5 +66,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{EB6B2DE0-524D-4B0E-9CA7-00FF8B5FACB8} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{D923CB18-FE5C-48EA-A3C5-5FF3012FDE51} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{9089D26B-5867-4BF1-8D9C-730F94198319} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal
