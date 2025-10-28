@@ -244,7 +244,7 @@ public class PdfService
         {
             // Trennlinie
             var separator = new Paragraph()
-                .SetMarginTop(20)
+                .SetMarginTop(10)
                 .SetMarginBottom(20)
                 .SetBorderBottom(
                     new iText.Layout.Borders.SolidBorder(
@@ -262,7 +262,17 @@ public class PdfService
                 .SetMarginBottom(15);
             document.Add(dppTitle);
 
-            // Informationstext für den Käufer
+            // Zweispaltige Tabelle: Links Text, Rechts QR-Code
+            var dppTable = new Table(2)
+                .SetWidth(UnitValue.CreatePercentValue(100))
+                .SetMarginBottom(20);
+
+            // Linke Spalte: Informationstext
+            var textCell = new Cell()
+                .SetBorder(iText.Layout.Borders.Border.NO_BORDER)
+                .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                .SetPadding(10);
+
             var dppInfoText = new Paragraph(
                 "Scannen Sie den QR-Code, um den digitalen Produktpass Ihres Fahrrades aufzurufen. "
                     + "Der digitale Produktpass enthält detaillierte Informationen zu allen verbauten Komponenten, "
@@ -272,11 +282,16 @@ public class PdfService
             )
                 .SetFont(normalFont)
                 .SetFontSize(10)
-                .SetTextAlignment(TextAlignment.JUSTIFIED)
-                .SetMarginBottom(20)
-                .SetMarginLeft(50)
-                .SetMarginRight(50);
-            document.Add(dppInfoText);
+                .SetTextAlignment(TextAlignment.JUSTIFIED);
+            textCell.Add(dppInfoText);
+
+            dppTable.AddCell(textCell);
+
+            // Rechte Spalte: QR-Code
+            var qrCell = new Cell()
+                .SetBorder(iText.Layout.Borders.Border.NO_BORDER)
+                .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                .SetTextAlignment(TextAlignment.CENTER);
 
             try
             {
@@ -288,40 +303,20 @@ public class PdfService
                 {
                     var qrImageData = ImageDataFactory.Create(qrCodeBytes);
                     var qrImage = new iText.Layout.Element.Image(qrImageData)
-                        .SetWidth(150)
-                        .SetHeight(150)
+                        .SetWidth(120)
+                        .SetHeight(120)
                         .SetHorizontalAlignment(HorizontalAlignment.CENTER);
 
-                    // QR-Code mit Rahmen in einer Tabelle für bessere Zentrierung
-                    var qrTable = new Table(1)
-                        .SetWidth(UnitValue.CreatePercentValue(100))
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER);
-
-                    var qrCodeCell = new Cell()
-                        .Add(qrImage)
-                        .SetBorder(
-                            new iText.Layout.Borders.SolidBorder(
-                                iText.Kernel.Colors.ColorConstants.BLACK,
-                                3
-                            )
-                        )
-                        .SetPadding(10)
-                        .SetTextAlignment(TextAlignment.CENTER)
-                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
-                        .SetBackgroundColor(iText.Kernel.Colors.ColorConstants.WHITE);
-
-                    qrTable.AddCell(qrCodeCell);
-                    document.Add(qrTable);
+                    qrCell.Add(qrImage);
 
                     // Label unter dem QR-Code
                     var qrLabel = new Paragraph("Produkt Global Asset ID")
                         .SetFont(normalFont)
-                        .SetFontSize(9)
+                        .SetFontSize(8)
                         .SetTextAlignment(TextAlignment.CENTER)
                         .SetFontColor(iText.Kernel.Colors.ColorConstants.GRAY)
-                        .SetMarginTop(10)
-                        .SetMarginBottom(20);
-                    document.Add(qrLabel);
+                        .SetMarginTop(5);
+                    qrCell.Add(qrLabel);
                 }
             }
             catch
@@ -329,16 +324,15 @@ public class PdfService
                 // Fehlerbehandlung für QR-Code-Generierung
                 var qrErrorText = new Paragraph("QR-Code konnte nicht erstellt werden")
                     .SetFont(normalFont)
-                    .SetFontSize(10)
+                    .SetFontSize(9)
                     .SetFontColor(iText.Kernel.Colors.ColorConstants.RED)
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .SetMarginBottom(20);
-                document.Add(qrErrorText);
+                    .SetTextAlignment(TextAlignment.CENTER);
+                qrCell.Add(qrErrorText);
             }
-        }
 
-        table.AddCell(rightColumn);
-        document.Add(table);
+            dppTable.AddCell(qrCell);
+            document.Add(dppTable);
+        }
 
         // Bestandteile-Tabelle hinzufügen
         if (producedProduct?.Bestandteile != null && producedProduct.Bestandteile.Any())
