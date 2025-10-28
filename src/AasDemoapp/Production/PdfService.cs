@@ -239,10 +239,111 @@ public class PdfService
         table.AddCell(rightColumn);
         document.Add(table);
 
+        // QR-Code Sektion für digitalen Produktpass (über die gesamte Breite)
+        if (producedProduct != null && !string.IsNullOrWhiteSpace(producedProduct.GlobalAssetId))
+        {
+            // Trennlinie
+            var separator = new Paragraph()
+                .SetMarginTop(20)
+                .SetMarginBottom(20)
+                .SetBorderBottom(
+                    new iText.Layout.Borders.SolidBorder(
+                        iText.Kernel.Colors.ColorConstants.LIGHT_GRAY,
+                        1
+                    )
+                );
+            document.Add(separator);
+
+            // Überschrift
+            var dppTitle = new Paragraph("Ihr Digitaler Produktpass")
+                .SetFont(boldFont)
+                .SetFontSize(14)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetMarginBottom(15);
+            document.Add(dppTitle);
+
+            // Informationstext für den Käufer
+            var dppInfoText = new Paragraph(
+                "Scannen Sie den QR-Code, um den digitalen Produktpass Ihres Fahrrades aufzurufen. "
+                    + "Der digitale Produktpass enthält detaillierte Informationen zu allen verbauten Komponenten, "
+                    + "Materialien und technischen Spezifikationen Ihres Fahrrads. "
+                    + "Zusätzlich finden Sie dort Wartungshinweise, Herstellerinformationen und können die "
+                    + "Lieferkette Ihres Produkts nachvollziehen."
+            )
+                .SetFont(normalFont)
+                .SetFontSize(10)
+                .SetTextAlignment(TextAlignment.JUSTIFIED)
+                .SetMarginBottom(20)
+                .SetMarginLeft(50)
+                .SetMarginRight(50);
+            document.Add(dppInfoText);
+
+            try
+            {
+                var qrCodeBytes = QrCodeService.GenerateQrCodeBytes(
+                    producedProduct.GlobalAssetId,
+                    8
+                );
+                if (qrCodeBytes != null)
+                {
+                    var qrImageData = ImageDataFactory.Create(qrCodeBytes);
+                    var qrImage = new iText.Layout.Element.Image(qrImageData)
+                        .SetWidth(150)
+                        .SetHeight(150)
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER);
+
+                    // QR-Code mit Rahmen in einer Tabelle für bessere Zentrierung
+                    var qrTable = new Table(1)
+                        .SetWidth(UnitValue.CreatePercentValue(100))
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER);
+
+                    var qrCodeCell = new Cell()
+                        .Add(qrImage)
+                        .SetBorder(
+                            new iText.Layout.Borders.SolidBorder(
+                                iText.Kernel.Colors.ColorConstants.BLACK,
+                                3
+                            )
+                        )
+                        .SetPadding(10)
+                        .SetTextAlignment(TextAlignment.CENTER)
+                        .SetHorizontalAlignment(HorizontalAlignment.CENTER)
+                        .SetBackgroundColor(iText.Kernel.Colors.ColorConstants.WHITE);
+
+                    qrTable.AddCell(qrCodeCell);
+                    document.Add(qrTable);
+
+                    // Label unter dem QR-Code
+                    var qrLabel = new Paragraph("Produkt Global Asset ID")
+                        .SetFont(normalFont)
+                        .SetFontSize(9)
+                        .SetTextAlignment(TextAlignment.CENTER)
+                        .SetFontColor(iText.Kernel.Colors.ColorConstants.GRAY)
+                        .SetMarginTop(10)
+                        .SetMarginBottom(20);
+                    document.Add(qrLabel);
+                }
+            }
+            catch
+            {
+                // Fehlerbehandlung für QR-Code-Generierung
+                var qrErrorText = new Paragraph("QR-Code konnte nicht erstellt werden")
+                    .SetFont(normalFont)
+                    .SetFontSize(10)
+                    .SetFontColor(iText.Kernel.Colors.ColorConstants.RED)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetMarginBottom(20);
+                document.Add(qrErrorText);
+            }
+        }
+
+        table.AddCell(rightColumn);
+        document.Add(table);
+
         // Bestandteile-Tabelle hinzufügen
         if (producedProduct?.Bestandteile != null && producedProduct.Bestandteile.Any())
         {
-            var componentTitle = new Paragraph("Bestandteile:")
+            var componentTitle = new Paragraph("Komponenten:")
                 .SetFont(boldFont)
                 .SetFontSize(14)
                 .SetMarginTop(20)

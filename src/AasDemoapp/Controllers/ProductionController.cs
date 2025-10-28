@@ -37,11 +37,20 @@ namespace AasDemoapp.Controllers
                 // DTO zu Entity Model konvertieren
                 var request = _mapper.Map<ProducedProductRequest>(requestDto);
 
-                // Produktion ausführen
-                var producedProduct = await _productionService.CreateProduct(request);
+                // Produktion ausführen - gibt auch PDF-Daten zurück
+                var (producedProduct, pdfData, pdfFileName) =
+                    await _productionService.CreateProduct(request);
 
                 // Entity Model zu DTO konvertieren
                 var responseDto = _mapper.Map<ProducedProductDto>(producedProduct);
+
+                // PDF als Base64 hinzufügen, falls vorhanden
+                if (pdfData != null && pdfData.Length > 0)
+                {
+                    responseDto.HandoverDocumentationPdfBase64 = Convert.ToBase64String(pdfData);
+                    responseDto.HandoverDocumentationPdfFileName =
+                        pdfFileName ?? "handover_documentation.pdf";
+                }
 
                 return Ok(
                     new ProductionResponseDto

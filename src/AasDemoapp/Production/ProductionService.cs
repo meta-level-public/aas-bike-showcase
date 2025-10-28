@@ -110,9 +110,11 @@ namespace AasDemoapp.Production
             return componentPCF;
         }
 
-        public async Task<ProducedProduct> CreateProduct(
-            ProducedProductRequest producedProductRequest
-        )
+        public async Task<(
+            ProducedProduct product,
+            byte[]? pdfData,
+            string? pdfFileName
+        )> CreateProduct(ProducedProductRequest producedProductRequest)
         {
             var idPrefix =
                 _settingService.GetSetting(SettingTypes.AasIdPrefix)?.Value
@@ -264,16 +266,39 @@ namespace AasDemoapp.Production
                 .ThenInclude(o => o.Address)
                 .FirstAsync(p => p.Id == producedProduct.Id);
 
+            byte[]? pdfData = null;
+            string? pdfFileName = null;
+
             try
             {
                 // Create InstanceAAS for Bike
-                var aas = await InstanceAasCreator.CreateBikeInstanceAas(
+                var aasResult = await InstanceAasCreator.CreateBikeInstanceAas(
                     product,
                     _importService,
                     _settingService
                 );
                 producedProduct.AasId = aasId;
                 producedProduct.GlobalAssetId = globalAssetId;
+
+                // Speichere PDF-Daten für Response
+                if (aasResult.PdfData != null && !string.IsNullOrEmpty(aasResult.PdfFileName))
+                {
+                    pdfData = aasResult.PdfData;
+                    pdfFileName = aasResult.PdfFileName;
+
+                    _logger.LogInformation(
+                        "PDF data prepared for product {ProductId}, size: {PdfSize} bytes",
+                        producedProduct.Id,
+                        pdfData.Length
+                    );
+                }
+                else
+                {
+                    _logger.LogWarning(
+                        "No PDF data returned for product {ProductId}",
+                        producedProduct.Id
+                    );
+                }
             }
             catch (Exception ex)
             {
@@ -284,7 +309,7 @@ namespace AasDemoapp.Production
                 );
             }
 
-            return producedProduct;
+            return (producedProduct, pdfData, pdfFileName);
         }
 
         public async Task<string> GetAssemblyPropertiesSubmodel(long partId)

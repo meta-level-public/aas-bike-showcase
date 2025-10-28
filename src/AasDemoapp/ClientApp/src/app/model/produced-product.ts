@@ -9,6 +9,9 @@ export interface ProducedProduct {
   globalAssetId: string;
   productionDate: Date;
   bestandteile: ProductPart[];
+  handoverDocumentationPdfUrl?: string;
+  handoverDocumentationPdfBase64?: string;
+  handoverDocumentationPdfFileName?: string;
 
   // Optional für erweiterte Anzeige
   configuredProduct?: ConfiguredProduct;

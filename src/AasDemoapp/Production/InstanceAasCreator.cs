@@ -25,7 +25,14 @@ namespace AasDemoapp.Production;
 public record HandoverDocumentationResult(
     Submodel Submodel,
     ProvidedFile? PdfFile,
-    ProvidedFile? PdfPreviewImageFile
+    ProvidedFile? PdfPreviewImageFile,
+    byte[]? PdfData
+);
+
+public record BikeInstanceAasResult(
+    AssetAdministrationShell Aas,
+    string? PdfFileName,
+    byte[]? PdfData
 );
 
 public class InstanceAasCreator
@@ -174,7 +181,7 @@ public class InstanceAasCreator
         return null;
     }
 
-    public static async Task<AssetAdministrationShell> CreateBikeInstanceAas(
+    public static async Task<BikeInstanceAasResult> CreateBikeInstanceAas(
         ProducedProduct producedProduct,
         IImportService importService,
         ISettingService settingsService
@@ -308,7 +315,11 @@ public class InstanceAasCreator
             files
         );
 
-        return aas;
+        return new BikeInstanceAasResult(
+            aas,
+            handoverResult.PdfFile?.Filename,
+            handoverResult.PdfData
+        );
     }
 
     private static ProvidedFile? TryLoadCeFile()
@@ -513,7 +524,7 @@ public class InstanceAasCreator
             }
         }
 
-        return new HandoverDocumentationResult(handoverdoc, providedFile, previewFile);
+        return new HandoverDocumentationResult(handoverdoc, providedFile, previewFile, pdfData);
     }
 
     private static Submodel CreateNameplateSubmodel(

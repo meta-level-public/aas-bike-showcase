@@ -21,5 +21,7 @@ namespace AasDemoapp.Database.Model
         public ProductionOrder Order { get; set; } = null!;
 
         public double PCFValue { get; set; }
+
+        public string? HandoverDocumentationPdfUrl { get; set; }
     }
 }

@@ -2,6 +2,7 @@ import { ISubmodelElement, Property, Range } from '@aas-core-works/aas-core3.0-t
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -49,6 +50,10 @@ export class AssemblyComponent implements OnInit, OnDestroy {
   loading = signal<boolean>(false);
   currentAssemblyStep = signal<number>(0);
   showToolDialog = signal<boolean>(false);
+  showPdfDialog = signal<boolean>(false);
+  pdfBlobUrl = signal<SafeResourceUrl | undefined>(undefined);
+  pdfBlob = signal<Blob | undefined>(undefined);
+  pdfFileName = signal<string>('handover_documentation.pdf');
   teileStatus = signal<
     {
       guid: string;
@@ -165,7 +170,8 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     private service: AssemblyService,
     private productionOrderService: ProductionOrderListService,
     private notificationService: NotificationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -418,7 +424,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
 
     try {
       this.loading.set(true);
-      await this.service.createProduct(productToSave);
+      const response = await this.service.createProduct(productToSave);
+      console.log('Produced Product created:', response);
+      console.log('PDF URL:', response.handoverDocumentationPdfUrl);
 
       // Markiere ProductionOrder als abgeschlossen, wenn eine ausgewählt ist
       if (selectedOrder?.id) {
@@ -430,7 +438,40 @@ export class AssemblyComponent implements OnInit, OnDestroy {
         this.notificationService.showMessageAlways('Produkt erfolgreich erstellt');
       }
 
-      this.router.navigate(['/production/assembly']);
+      // Zeige PDF-Dialog an, wenn verfügbar
+      if (response.handoverDocumentationPdfBase64) {
+        try {
+          // Konvertiere Base64 zu Blob
+          const byteCharacters = atob(response.handoverDocumentationPdfBase64);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const pdfBlob = new Blob([byteArray], { type: 'application/pdf' });
+
+          this.pdfBlob.set(pdfBlob);
+
+          // Erstelle eine Blob-URL für die Anzeige und sanitize sie
+          const blobUrl = URL.createObjectURL(pdfBlob);
+          const safeBlobUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+          this.pdfBlobUrl.set(safeBlobUrl);
+
+          // Setze Dateiname
+          const fileName =
+            response.handoverDocumentationPdfFileName || 'handover_documentation.pdf';
+          this.pdfFileName.set(fileName);
+
+          this.showPdfDialog.set(true);
+        } catch (error) {
+          console.error('Error converting Base64 to PDF:', error);
+          this.notificationService.showMessageAlways('Fehler beim Laden des PDFs');
+          this.router.navigate(['/production/assembly']);
+        }
+      } else {
+        // Nur navigieren, wenn kein PDF vorhanden
+        this.router.navigate(['/production/assembly']);
+      }
 
       this.newProduct.set({} as ProducedProductRequest);
       this.selectedProductionOrder.set(undefined);
@@ -442,6 +483,52 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       // await this.loadData();
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  closePdfDialog() {
+    // Räume die Blob-URL auf, um Speicherlecks zu vermeiden
+    const safeBlobUrl = this.pdfBlobUrl();
+    if (safeBlobUrl) {
+      // Extract the actual URL from the SafeResourceUrl
+      const urlString = (safeBlobUrl as any).changingThisBreaksApplicationSecurity;
+      if (urlString) {
+        URL.revokeObjectURL(urlString);
+      }
+    }
+
+    this.showPdfDialog.set(false);
+    this.pdfBlobUrl.set(undefined);
+    this.pdfBlob.set(undefined);
+    this.router.navigate(['/production/assembly']);
+  }
+
+  printPdf() {
+    const safeBlobUrl = this.pdfBlobUrl();
+    if (safeBlobUrl) {
+      // Extract the actual URL from the SafeResourceUrl
+      const urlString = (safeBlobUrl as any).changingThisBreaksApplicationSecurity;
+      if (urlString) {
+        // Öffne das PDF in einem neuen Fenster und löse den Druck aus
+        const printWindow = window.open(urlString, '_blank');
+        if (printWindow) {
+          printWindow.onload = () => {
+            printWindow.print();
+          };
+        }
+      }
+    }
+  }
+
+  downloadPdf() {
+    const blob = this.pdfBlob();
+    const fileName = this.pdfFileName();
+    if (blob) {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+      URL.revokeObjectURL(link.href);
     }
   }
 

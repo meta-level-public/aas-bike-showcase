@@ -58,3 +58,43 @@
   (checkToolData)="checkToolData()"
   (closeDialog)="closeToolDialog($event)"
 ></app-tool-dialog>
+
+<!-- PDF Viewer Dialog -->
+<p-dialog
+  [visible]="showPdfDialog()"
+  (visibleChange)="showPdfDialog.set($event)"
+  [header]="'Übergabedokumentation'"
+  [modal]="true"
+  [style]="{ width: '90vw', height: '90vh' }"
+  [closable]="true"
+  [dismissableMask]="true"
+  (onHide)="closePdfDialog()"
+>
+  <div class="pdf-dialog-content">
+    @if (pdfBlobUrl()) {
+      <iframe
+        id="pdf-viewer-iframe"
+        [src]="pdfBlobUrl()"
+        style="width: 100%; height: 75vh; border: none"
+        title="PDF Viewer"
+      ></iframe>
+    }
+  </div>
+  <ng-template pTemplate="footer">
+    <div class="pdf-dialog-footer">
+      <p-button
+        label="Herunterladen"
+        icon="pi pi-download"
+        severity="secondary"
+        (onClick)="downloadPdf()"
+      ></p-button>
+      <p-button
+        label="Drucken"
+        icon="pi pi-print"
+        severity="secondary"
+        (onClick)="printPdf()"
+      ></p-button>
+      <p-button label="Schließen" icon="pi pi-times" (onClick)="closePdfDialog()"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

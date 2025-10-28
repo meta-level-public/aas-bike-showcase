@@ -15,7 +15,11 @@ namespace AasDemoapp.Mapping
                     dest => dest.ConfiguredProductName,
                     opt => opt.MapFrom(src => src.ConfiguredProduct.Name)
                 )
-                .ForMember(dest => dest.Bestandteile, opt => opt.MapFrom(src => src.Bestandteile));
+                .ForMember(dest => dest.Bestandteile, opt => opt.MapFrom(src => src.Bestandteile))
+                .ForMember(
+                    dest => dest.HandoverDocumentationPdfUrl,
+                    opt => opt.MapFrom(src => src.HandoverDocumentationPdfUrl)
+                );
 
             // ProductPart zu ProductPartDto
             CreateMap<ProductPart, ProductPartDto>();

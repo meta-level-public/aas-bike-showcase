@@ -4,8 +4,8 @@ import { Inject, Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { ConfiguredProduct } from '../model/configured-product';
 import { KatalogEintrag } from '../model/katalog-eintrag';
-import { ProducedProduct } from '../model/produced-product';
 import { ProducedProductRequest } from '../model/produced-product-request';
+import { ProductionResponseDto } from '../model/production-response-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -28,9 +28,21 @@ export class AssemblyService {
     );
   }
 
-  createProduct(newProduct: ProducedProductRequest) {
+  async createProduct(newProduct: ProducedProductRequest) {
+    const response = await lastValueFrom(
+      this.http.post<ProductionResponseDto>(
+        `${this.baseUrl}api/production/createProduct`,
+        newProduct
+      )
+    );
+    return response.producedProduct!;
+  }
+
+  async downloadPdf(url: string): Promise<Blob> {
     return lastValueFrom(
-      this.http.post<ProducedProduct>(`${this.baseUrl}api/production/createProduct`, newProduct)
+      this.http.get(url, {
+        responseType: 'blob',
+      })
     );
   }
 

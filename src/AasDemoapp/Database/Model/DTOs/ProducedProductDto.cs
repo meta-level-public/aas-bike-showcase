@@ -13,5 +13,8 @@ namespace AasDemoapp.Database.Model.DTOs
         public string GlobalAssetId { get; set; } = string.Empty;
         public DateTime ProductionDate { get; set; }
         public double PCFValue { get; set; }
+        public string? HandoverDocumentationPdfUrl { get; set; }
+        public string? HandoverDocumentationPdfBase64 { get; set; }
+        public string? HandoverDocumentationPdfFileName { get; set; }
     }
 }

@@ -412,7 +412,7 @@ services:
       - 'traefik.http.services.viewer.loadbalancer.server.port=80'
   ##################################################################
 
-  ############################## Viewer ############################
+  ############################## Proxy ############################
   proxy:
     container_name: aas-proxy
     image: ghcr.io/meta-level-public/aasdemoproxy:latest
@@ -421,11 +421,11 @@ services:
       - .env.proxy # ProxyConfiguration aus Umgebungsvariablen laden
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.viewer.rule=Host(`dt.aas-bike.showcasehub.de`) || Host(`dt-suppl.aas-bike.showcasehub.de`)'
-      - 'traefik.http.routers.viewer.entrypoints=web,websecure'
-      - 'traefik.http.routers.viewer.tls.certresolver=letsencrypt'
-      - 'traefik.http.routers.viewer.middlewares=redirect-to-https@file'
-      - 'traefik.http.services.viewer.loadbalancer.server.port=80'
+      - 'traefik.http.routers.proxy.rule=Host(`dt.aas-bike.showcasehub.de`) || Host(`dt-suppl.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.proxy.entrypoints=web,websecure'
+      - 'traefik.http.routers.proxy.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.proxy.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.proxy.loadbalancer.server.port=8080'
 ##################################################################
 
 volumes:

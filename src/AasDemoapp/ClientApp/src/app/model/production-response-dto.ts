@@ -21,6 +21,9 @@ export interface ProducedProductDto {
   aasId: string;
   globalAssetId: string;
   productionDate: Date;
+  handoverDocumentationPdfUrl?: string;
+  handoverDocumentationPdfBase64?: string;
+  handoverDocumentationPdfFileName?: string;
 }
 
 // Production Response DTO interface
