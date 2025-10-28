@@ -9,7 +9,7 @@ namespace AasDemoapp.AasHandling.SubmodelCreators;
 
 public class HierarchicalStructuresCreator
 {
-    public static Submodel CreateFromJson()
+    public static Submodel CreateFromJson(string idPrefix)
     {
         // JSON-Datei lesen
         var jsonPath = Path.Combine(
@@ -21,10 +21,10 @@ public class HierarchicalStructuresCreator
         var jsonString = System.IO.File.ReadAllText(jsonPath);
 
         // JSON zu AAS Core Submodel konvertieren
-        return ConvertJsonToSubmodel(jsonString);
+        return ConvertJsonToSubmodel(jsonString, idPrefix);
     }
 
-    private static Submodel ConvertJsonToSubmodel(string jsonString)
+    private static Submodel ConvertJsonToSubmodel(string jsonString, string idPrefix)
     {
         var jsonNode = JsonNode.Parse(jsonString);
         if (jsonNode == null)
@@ -32,7 +32,7 @@ public class HierarchicalStructuresCreator
 
         var submodel = Jsonization.Deserialize.SubmodelFrom(jsonNode);
         submodel.Kind = ModellingKind.Instance;
-        submodel.Id = IdGenerationUtil.GenerateId(IdType.Submodel, "https://oi4-nextbike.de"); // Generiere eine korrekte ID
+        submodel.Id = IdGenerationUtil.GenerateId(IdType.Submodel, idPrefix); // Generiere eine korrekte ID
 
         return submodel;
     }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
 import { ConfirmationService } from 'primeng/api';
 import { Supplier } from '../model/supplier';
+import { AasIdConfigurationComponent } from './aas-id-configuration/aas-id-configuration.component';
 import { AasInfrastructureComponent } from './aas-infrastructure/aas-infrastructure.component';
 import { CompanyAddressComponent } from './company-address/company-address.component';
 import { ErpConfigurationComponent } from './erp-configuration/erp-configuration.component';
@@ -22,6 +23,7 @@ import { ToolsRepositoryComponent } from './tools-repository/tools-repository.co
     AccordionModule,
     ErpConfigurationComponent,
     AasInfrastructureComponent,
+    AasIdConfigurationComponent,
     ToolsRepositoryComponent,
     SupplierManagementComponent,
     CompanyAddressComponent,
@@ -90,6 +92,10 @@ export class SetupComponent implements OnInit {
   }
 
   async onToolsRepositoryUpdated() {
+    await this.loadSettings();
+  }
+
+  async onAasIdConfigurationUpdated() {
     await this.loadSettings();
   }
 }

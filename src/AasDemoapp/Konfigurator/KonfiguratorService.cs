@@ -55,11 +55,11 @@ namespace AasDemoapp.Konfigurator
             CreateConfiguredProductDto createDto
         )
         {
-            var aasId = IdGenerationUtil.GenerateId(IdType.Aas, "https://oi4-nextbike.de");
-            var globalAssetId = IdGenerationUtil.GenerateId(
-                IdType.Asset,
-                "https://oi4-nextbike.de"
-            );
+            var idPrefix =
+                _settingsService.GetSetting(SettingTypes.AasIdPrefix)?.Value
+                ?? "https://oi4-nextbike.de";
+            var aasId = IdGenerationUtil.GenerateId(IdType.Aas, idPrefix);
+            var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, idPrefix);
 
             var configuredProduct = new ConfiguredProduct
             {

@@ -24,5 +24,6 @@ namespace AasDemoapp.Settings
         public const string ToolsRepositorySecurity = "ToolsRepositorySecurity";
 
         public const string CompanyAddress = "CompanyAddress";
+        public const string AasIdPrefix = "AasIdPrefix";
     }
 }

@@ -4,8 +4,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ButtonModule } from 'primeng/button';
-import { PopoverModule } from 'primeng/popover';
 import { DataViewModule } from 'primeng/dataview';
+import { PopoverModule } from 'primeng/popover';
+import { TooltipModule } from 'primeng/tooltip';
 import { UrlBase } from '../base/url-base';
 import { ProducedProduct } from '../model/produced-product';
 import { DppService } from './dpp.service';
@@ -21,6 +22,7 @@ import { DppService } from './dpp.service';
     DataViewModule,
     NgxJsonViewerModule,
     ButtonModule,
+    TooltipModule,
   ],
 })
 export class DppComponent extends UrlBase implements OnInit {
@@ -62,5 +64,9 @@ export class DppComponent extends UrlBase implements OnInit {
 
   toDate(dateString: string) {
     return new Date(dateString);
+  }
+
+  getQrCodeUrl(aasId: string): string {
+    return `/api/QrCode/GenerateWithFrame?id=${encodeURIComponent(aasId)}`;
   }
 }

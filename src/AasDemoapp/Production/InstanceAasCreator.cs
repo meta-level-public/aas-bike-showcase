@@ -180,6 +180,9 @@ public class InstanceAasCreator
         ISettingService settingsService
     )
     {
+        var idPrefix =
+            settingsService.GetSetting(SettingTypes.AasIdPrefix)?.Value
+            ?? "https://oi4-nextbike.de";
         var assetInformation = new AssetInformation(
             AssetKind.Instance,
             producedProduct.GlobalAssetId,
@@ -222,7 +225,7 @@ public class InstanceAasCreator
             }
         }
 
-        var nameplate = CreateNameplateSubmodel(companyAddress, producedProduct);
+        var nameplate = CreateNameplateSubmodel(companyAddress, producedProduct, idPrefix);
         aas.Submodels =
         [
             new Reference(
@@ -231,7 +234,7 @@ public class InstanceAasCreator
             ),
         ];
 
-        var handoverResult = CreateHandoverDocumentation(companyAddress, producedProduct);
+        var handoverResult = CreateHandoverDocumentation(companyAddress, producedProduct, idPrefix);
         aas.Submodels.Add(
             new Reference(
                 ReferenceTypes.ModelReference,
@@ -241,7 +244,7 @@ public class InstanceAasCreator
 
         var weight = 5.4; // default gewicht in kg
 
-        var technicalData = CreateTechnicalData(weight);
+        var technicalData = CreateTechnicalData(weight, idPrefix);
         aas.Submodels.Add(
             new Reference(
                 ReferenceTypes.ModelReference,
@@ -249,7 +252,10 @@ public class InstanceAasCreator
             )
         );
 
-        var hierarchicalStructures = CreateHierarchicalStructuresSubmodel(producedProduct);
+        var hierarchicalStructures = CreateHierarchicalStructuresSubmodel(
+            producedProduct,
+            idPrefix
+        );
         aas.Submodels.Add(
             new Reference(
                 ReferenceTypes.ModelReference,
@@ -260,7 +266,8 @@ public class InstanceAasCreator
         var productCarbonFootprint = CreateProductCarbonFootprintSubmodel(
             producedProduct,
             settingsService,
-            weight
+            weight,
+            idPrefix
         );
         aas.Submodels.Add(
             new Reference(
@@ -382,10 +389,11 @@ public class InstanceAasCreator
 
     private static HandoverDocumentationResult CreateHandoverDocumentation(
         Address? companyAddress = null,
-        ProducedProduct? producedProduct = null
+        ProducedProduct? producedProduct = null,
+        string idPrefix = "https://oi4-nextbike.de"
     )
     {
-        var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
+        var handoverdoc = HandoverDocumentationCreator.CreateFromJson(idPrefix);
         handoverdoc.Description =
         [
             new LangStringTextType("de", "Handover documentation for the configured product"),
@@ -510,10 +518,11 @@ public class InstanceAasCreator
 
     private static Submodel CreateNameplateSubmodel(
         Address? companyAddress = null,
-        ProducedProduct? producedProduct = null
+        ProducedProduct? producedProduct = null,
+        string idPrefix = "https://oi4-nextbike.de"
     )
     {
-        var nameplate = NameplateCreator.CreateFromJson();
+        var nameplate = NameplateCreator.CreateFromJson(idPrefix);
         PropertyValueChanger.SetPropertyValueByPath(
             "ManufacturerName",
             companyAddress?.Name ?? string.Empty,
@@ -594,9 +603,9 @@ public class InstanceAasCreator
         return nameplate;
     }
 
-    private static Submodel CreateTechnicalData(double weight)
+    private static Submodel CreateTechnicalData(double weight, string idPrefix)
     {
-        var technicalData = TechnicalDataCreator.CreateFromJson();
+        var technicalData = TechnicalDataCreator.CreateFromJson(idPrefix);
 
         var collectionTechnicalData = new SubmodelElementCollection();
         collectionTechnicalData.Value = [];
@@ -621,9 +630,12 @@ public class InstanceAasCreator
         return technicalData;
     }
 
-    private static Submodel CreateHierarchicalStructuresSubmodel(ProducedProduct producedProduct)
+    private static Submodel CreateHierarchicalStructuresSubmodel(
+        ProducedProduct producedProduct,
+        string idPrefix
+    )
     {
-        var hierarchicalStructures = HierarchicalStructuresCreator.CreateFromJson();
+        var hierarchicalStructures = HierarchicalStructuresCreator.CreateFromJson(idPrefix);
         // entryNode ist das konfigurierte Produkt
         var entryNode = new Entity(EntityType.SelfManagedEntity);
         entryNode.SemanticId = new Reference(
@@ -709,10 +721,11 @@ public class InstanceAasCreator
     private static Submodel CreateProductCarbonFootprintSubmodel(
         ProducedProduct producedProduct,
         ISettingService settingsService,
-        double weight
+        double weight,
+        string idPrefix
     )
     {
-        var pcf = PCFCreator.CreateFromJsonPrefilled();
+        var pcf = PCFCreator.CreateFromJsonPrefilled(idPrefix);
         var productFootprints = (SubmodelElementList?)
             pcf.SubmodelElements?.Find(submodel => submodel.IdShort == "ProductCarbonFootprints");
         // add pcf value, publication date and address for phases A1 - A3

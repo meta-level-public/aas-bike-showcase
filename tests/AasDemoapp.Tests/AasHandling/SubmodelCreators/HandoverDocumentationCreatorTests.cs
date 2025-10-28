@@ -12,11 +12,13 @@ namespace AasDemoapp.Tests.AasHandling.SubmodelCreators;
 /// </summary>
 public class HandoverDocumentationCreatorTests
 {
+    private const string TestIdPrefix = "https://oi4-nextbike.de";
+
     [Fact]
     public void CreateFromJson_ShouldReturnSubmodel()
     {
         // Act
-        var result = HandoverDocumentationCreator.CreateFromJson();
+        var result = HandoverDocumentationCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result);
@@ -27,7 +29,7 @@ public class HandoverDocumentationCreatorTests
     public void CreateFromJson_ShouldHaveCorrectIdShort()
     {
         // Act
-        var result = HandoverDocumentationCreator.CreateFromJson();
+        var result = HandoverDocumentationCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.Equal("HandoverDocumentation", result.IdShort);
@@ -37,7 +39,7 @@ public class HandoverDocumentationCreatorTests
     public void CreateFromJson_ShouldHaveDescription()
     {
         // Act
-        var result = HandoverDocumentationCreator.CreateFromJson();
+        var result = HandoverDocumentationCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.Description);
@@ -52,7 +54,7 @@ public class HandoverDocumentationCreatorTests
     public void CreateFromJson_ShouldHaveInstanceKind()
     {
         // Act
-        var result = HandoverDocumentationCreator.CreateFromJson();
+        var result = HandoverDocumentationCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.Equal(ModellingKind.Instance, result.Kind);
@@ -62,7 +64,7 @@ public class HandoverDocumentationCreatorTests
     public void CreateFromJson_ShouldHaveGeneratedId()
     {
         // Act
-        var result = HandoverDocumentationCreator.CreateFromJson();
+        var result = HandoverDocumentationCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.Id);
@@ -74,7 +76,7 @@ public class HandoverDocumentationCreatorTests
     public void CreateFromJson_ShouldHaveSemanticId()
     {
         // Act
-        var result = HandoverDocumentationCreator.CreateFromJson();
+        var result = HandoverDocumentationCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.SemanticId);
@@ -85,7 +87,7 @@ public class HandoverDocumentationCreatorTests
     public void CreateFromJson_ShouldHaveSubmodelElements()
     {
         // Act
-        var result = HandoverDocumentationCreator.CreateFromJson();
+        var result = HandoverDocumentationCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.SubmodelElements);
@@ -96,7 +98,7 @@ public class HandoverDocumentationCreatorTests
     public void CreateFromJson_ShouldContainNumberOfDocumentsElement()
     {
         // Act
-        var result = HandoverDocumentationCreator.CreateFromJson();
+        var result = HandoverDocumentationCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         var numberOfDocuments = result.SubmodelElements?.FirstOrDefault(e =>
@@ -120,7 +122,7 @@ public class HandoverDocumentationCreatorTests
             """;
 
         // Act
-        var result = HandoverDocumentationCreator.ConvertJsonToSubmodel(validJson);
+        var result = HandoverDocumentationCreator.ConvertJsonToSubmodel(validJson, TestIdPrefix);
 
         // Assert
         Assert.NotNull(result);
@@ -136,7 +138,7 @@ public class HandoverDocumentationCreatorTests
 
         // Act & Assert
         Assert.ThrowsAny<Exception>(() =>
-            HandoverDocumentationCreator.ConvertJsonToSubmodel(invalidJson)
+            HandoverDocumentationCreator.ConvertJsonToSubmodel(invalidJson, TestIdPrefix)
         );
     }
 
@@ -148,7 +150,7 @@ public class HandoverDocumentationCreatorTests
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() =>
-            HandoverDocumentationCreator.ConvertJsonToSubmodel(nullJson!)
+            HandoverDocumentationCreator.ConvertJsonToSubmodel(nullJson!, TestIdPrefix)
         );
     }
 
@@ -173,7 +175,7 @@ public class HandoverDocumentationCreatorTests
 
             // Act & Assert
             Assert.Throws<FileNotFoundException>(() =>
-                HandoverDocumentationCreator.CreateFromJson()
+                HandoverDocumentationCreator.CreateFromJson(TestIdPrefix)
             );
         }
         finally

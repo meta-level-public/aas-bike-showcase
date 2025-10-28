@@ -12,11 +12,13 @@ namespace AasDemoapp.Tests.AasHandling.SubmodelCreators;
 /// </summary>
 public class NameplateCreatorTests
 {
+    private const string TestIdPrefix = "https://oi4-nextbike.de";
+
     [Fact]
     public void CreateFromJson_ShouldReturnSubmodel()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result);
@@ -27,7 +29,7 @@ public class NameplateCreatorTests
     public void CreateFromJson_ShouldHaveCorrectIdShort()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.Equal("DigitalNameplate", result.IdShort);
@@ -37,7 +39,7 @@ public class NameplateCreatorTests
     public void CreateFromJson_ShouldHaveInstanceKind()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.Equal(ModellingKind.Instance, result.Kind);
@@ -47,7 +49,7 @@ public class NameplateCreatorTests
     public void CreateFromJson_ShouldHaveGeneratedId()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.Id);
@@ -59,7 +61,7 @@ public class NameplateCreatorTests
     public void CreateFromJson_ShouldHaveSemanticId()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.SemanticId);
@@ -77,7 +79,7 @@ public class NameplateCreatorTests
     public void CreateFromJson_ShouldHaveSubmodelElements()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.SubmodelElements);
@@ -88,7 +90,7 @@ public class NameplateCreatorTests
     public void CreateFromJson_ShouldHaveDescription()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.Description);
@@ -99,7 +101,7 @@ public class NameplateCreatorTests
     public void CreateFromJson_ShouldHaveAdministration()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.Administration);
@@ -111,7 +113,7 @@ public class NameplateCreatorTests
     public void CreateFromJson_ShouldContainManufacturerNameElement()
     {
         // Act
-        var result = NameplateCreator.CreateFromJson();
+        var result = NameplateCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         // Suche nach einem typischen Nameplate-Element
@@ -154,7 +156,9 @@ public class NameplateCreatorTests
             }
 
             // Act & Assert
-            Assert.Throws<FileNotFoundException>(() => NameplateCreator.CreateFromJson());
+            Assert.Throws<FileNotFoundException>(() =>
+                NameplateCreator.CreateFromJson(TestIdPrefix)
+            );
         }
         finally
         {

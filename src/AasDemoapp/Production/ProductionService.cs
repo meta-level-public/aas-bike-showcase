@@ -114,11 +114,11 @@ namespace AasDemoapp.Production
             ProducedProductRequest producedProductRequest
         )
         {
-            var aasId = IdGenerationUtil.GenerateId(IdType.Aas, "https://oi4-nextbike.de");
-            var globalAssetId = IdGenerationUtil.GenerateId(
-                IdType.Asset,
-                "https://oi4-nextbike.de"
-            );
+            var idPrefix =
+                _settingService.GetSetting(SettingTypes.AasIdPrefix)?.Value
+                ?? "https://oi4-nextbike.de";
+            var aasId = IdGenerationUtil.GenerateId(IdType.Aas, idPrefix);
+            var globalAssetId = IdGenerationUtil.GenerateId(IdType.Asset, idPrefix);
             var securitySetting = _settingService.GetSecuritySetting(
                 SettingTypes.InfrastructureSecurity
             );

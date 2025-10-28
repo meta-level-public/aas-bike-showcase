@@ -12,11 +12,13 @@ namespace AasDemoapp.Tests.AasHandling.SubmodelCreators;
 /// </summary>
 public class HierarchicalStructuresCreatorTests
 {
+    private const string TestIdPrefix = "https://oi4-nextbike.de";
+
     [Fact]
     public void CreateFromJson_ShouldReturnSubmodel()
     {
         // Act
-        var result = HierarchicalStructuresCreator.CreateFromJson();
+        var result = HierarchicalStructuresCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result);
@@ -27,7 +29,7 @@ public class HierarchicalStructuresCreatorTests
     public void CreateFromJson_ShouldHaveCorrectIdShort()
     {
         // Act
-        var result = HierarchicalStructuresCreator.CreateFromJson();
+        var result = HierarchicalStructuresCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.Equal("HierarchicalStructures", result.IdShort);
@@ -37,7 +39,7 @@ public class HierarchicalStructuresCreatorTests
     public void CreateFromJson_ShouldHaveInstanceKind()
     {
         // Act
-        var result = HierarchicalStructuresCreator.CreateFromJson();
+        var result = HierarchicalStructuresCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.Equal(ModellingKind.Instance, result.Kind);
@@ -47,7 +49,7 @@ public class HierarchicalStructuresCreatorTests
     public void CreateFromJson_ShouldHaveGeneratedId()
     {
         // Act
-        var result = HierarchicalStructuresCreator.CreateFromJson();
+        var result = HierarchicalStructuresCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.Id);
@@ -59,7 +61,7 @@ public class HierarchicalStructuresCreatorTests
     public void CreateFromJson_ShouldHaveSemanticId()
     {
         // Act
-        var result = HierarchicalStructuresCreator.CreateFromJson();
+        var result = HierarchicalStructuresCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.SemanticId);
@@ -70,7 +72,7 @@ public class HierarchicalStructuresCreatorTests
     public void CreateFromJson_ShouldHaveSubmodelElements()
     {
         // Act
-        var result = HierarchicalStructuresCreator.CreateFromJson();
+        var result = HierarchicalStructuresCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.SubmodelElements);
@@ -81,7 +83,7 @@ public class HierarchicalStructuresCreatorTests
     public void CreateFromJson_ShouldHaveDescription()
     {
         // Act
-        var result = HierarchicalStructuresCreator.CreateFromJson();
+        var result = HierarchicalStructuresCreator.CreateFromJson(TestIdPrefix);
 
         // Assert
         Assert.NotNull(result.Description);
@@ -109,7 +111,7 @@ public class HierarchicalStructuresCreatorTests
 
             // Act & Assert
             Assert.Throws<FileNotFoundException>(() =>
-                HierarchicalStructuresCreator.CreateFromJson()
+                HierarchicalStructuresCreator.CreateFromJson(TestIdPrefix)
             );
         }
         finally

@@ -22,6 +22,12 @@
                         <span class="text-sm text-600">AAS Id: {{ item.aasId }}</span>
                       </span>
                       <span class="flex align-items-center gap-2">
+                        <i class="pi pi-link"></i>
+                        <span class="text-sm text-600"
+                          >Global Asset Id: {{ item.globalAssetId }}</span
+                        >
+                      </span>
+                      <span class="flex align-items-center gap-2">
                         <i class="pi pi-calendar"></i>
                         <span class="text-sm text-600">{{
                           toDate(item.productionDate) | date: 'dd.MM.yyyy HH:mm'
@@ -32,21 +38,51 @@
                   <div
                     class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2"
                   >
-                    <div class="flex flex-row gap-1">
-                      <button
-                        pButton
-                        icon="pi pi-eye"
-                        class="md:align-self-end mb-2 p-button-rounded p-button-outlined"
-                        (click)="loadShell(item.id!, shellPopover, $event)"
-                        type="button"
-                      ></button>
-                      <button
-                        pButton
-                        icon="pi pi-trash"
-                        class="md:align-self-end mb-2 p-button-rounded p-button-danger"
-                        (click)="deleteProduct(item.id!)"
-                        type="button"
-                      ></button>
+                    <div class="flex flex-row gap-3 align-items-center">
+                      <div class="qr-code-container">
+                        <img
+                          [src]="getQrCodeUrl(item.globalAssetId)"
+                          [alt]="'QR Code für ' + item.configuredProductName"
+                          class="qr-code-image"
+                          style="
+                            max-width: 120px;
+                            height: auto;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                          "
+                        />
+                      </div>
+                      <div class="flex flex-row gap-1">
+                        <a
+                          [href]="item.globalAssetId"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          pButton
+                          icon="pi pi-external-link"
+                          class="md:align-self-end mb-2 p-button-rounded p-button-outlined"
+                          [pTooltip]="'Global Asset Id öffnen'"
+                          tooltipPosition="left"
+                          type="button"
+                        ></a>
+                        <button
+                          pButton
+                          icon="pi pi-eye"
+                          class="md:align-self-end mb-2 p-button-rounded p-button-outlined"
+                          (click)="loadShell(item.id!, shellPopover, $event)"
+                          [pTooltip]="'AAS Shell anzeigen'"
+                          tooltipPosition="left"
+                          type="button"
+                        ></button>
+                        <button
+                          pButton
+                          icon="pi pi-trash"
+                          class="md:align-self-end mb-2 p-button-rounded p-button-danger"
+                          (click)="deleteProduct(item.id!)"
+                          [pTooltip]="'Produkt löschen'"
+                          tooltipPosition="left"
+                          type="button"
+                        ></button>
+                      </div>
                     </div>
                   </div>
                 </div>

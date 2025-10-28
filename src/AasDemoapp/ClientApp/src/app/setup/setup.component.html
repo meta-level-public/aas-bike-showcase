@@ -13,6 +13,13 @@
       <app-aas-infrastructure [settings]="settings()" (settingsUpdated)="onAasSettingsUpdated()">
       </app-aas-infrastructure>
 
+      <!-- AAS ID-Präfix Bereich -->
+      <app-aas-id-configuration
+        [settings]="settings()"
+        (settingsUpdated)="onAasIdConfigurationUpdated()"
+      >
+      </app-aas-id-configuration>
+
       <!-- Werkzeuge-Repository Bereich -->
       <app-tools-repository [settings]="settings()" (settingsUpdated)="onToolsRepositoryUpdated()">
       </app-tools-repository>

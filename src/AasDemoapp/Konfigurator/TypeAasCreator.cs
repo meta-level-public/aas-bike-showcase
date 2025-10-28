@@ -20,6 +20,9 @@ namespace AasDemoapp.Konfigurator
             SettingService settingsService
         )
         {
+            var idPrefix =
+                settingsService.GetSetting(SettingTypes.AasIdPrefix)?.Value
+                ?? "https://oi4-nextbike.de";
             var assetInformation = new AssetInformation(
                 AssetKind.Type,
                 configuredProduct.GlobalAssetId,
@@ -34,7 +37,7 @@ namespace AasDemoapp.Konfigurator
                 configuredProduct.Name
             );
 
-            var nameplate = CreateNameplateSubmodel();
+            var nameplate = CreateNameplateSubmodel(idPrefix);
             aas.Submodels =
             [
                 new Reference(
@@ -43,7 +46,7 @@ namespace AasDemoapp.Konfigurator
                 ),
             ];
 
-            var handoverdoc = CreateHandoverDocumentation();
+            var handoverdoc = CreateHandoverDocumentation(idPrefix);
             aas.Submodels.Add(
                 new Reference(
                     ReferenceTypes.ModelReference,
@@ -51,7 +54,10 @@ namespace AasDemoapp.Konfigurator
                 )
             );
 
-            var hierarchicalStructures = CreateHierarchicalStructuresSubmodel(configuredProduct);
+            var hierarchicalStructures = CreateHierarchicalStructuresSubmodel(
+                configuredProduct,
+                idPrefix
+            );
             aas.Submodels.Add(
                 new Reference(
                     ReferenceTypes.ModelReference,
@@ -118,9 +124,9 @@ namespace AasDemoapp.Konfigurator
             );
         }
 
-        private static Submodel CreateHandoverDocumentation()
+        private static Submodel CreateHandoverDocumentation(string idPrefix)
         {
-            var handoverdoc = HandoverDocumentationCreator.CreateFromJson();
+            var handoverdoc = HandoverDocumentationCreator.CreateFromJson(idPrefix);
             handoverdoc.Description =
             [
                 new LangStringTextType("de", "Handover documentation for the configured product"),
@@ -129,9 +135,9 @@ namespace AasDemoapp.Konfigurator
             return handoverdoc;
         }
 
-        private static Submodel CreateNameplateSubmodel()
+        private static Submodel CreateNameplateSubmodel(string idPrefix)
         {
-            var nameplate = NameplateCreator.CreateFromJson();
+            var nameplate = NameplateCreator.CreateFromJson(idPrefix);
             PropertyValueChanger.SetPropertyValueByPath(
                 "ManufacturerName",
                 "OI4 Nextbike",
@@ -142,10 +148,11 @@ namespace AasDemoapp.Konfigurator
         }
 
         private static Submodel CreateHierarchicalStructuresSubmodel(
-            ConfiguredProduct configuredProduct
+            ConfiguredProduct configuredProduct,
+            string idPrefix
         )
         {
-            var hierarchicalStructures = HierarchicalStructuresCreator.CreateFromJson();
+            var hierarchicalStructures = HierarchicalStructuresCreator.CreateFromJson(idPrefix);
             // entryNode ist das konfigurierte Produkt
             var entryNode = new Entity(EntityType.SelfManagedEntity);
             entryNode.SemanticId = new Reference(

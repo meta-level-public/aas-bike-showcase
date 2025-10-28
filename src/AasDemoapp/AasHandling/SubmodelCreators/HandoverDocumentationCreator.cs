@@ -11,7 +11,7 @@ namespace AasDemoapp.AasHandling.SubmodelCreators;
 
 public class HandoverDocumentationCreator
 {
-    public static Submodel CreateFromJson()
+    public static Submodel CreateFromJson(string idPrefix)
     {
         // JSON-Datei lesen
         var jsonPath = Path.Combine(
@@ -23,10 +23,10 @@ public class HandoverDocumentationCreator
         var jsonString = System.IO.File.ReadAllText(jsonPath);
 
         // JSON zu AAS Core Submodel konvertieren
-        return ConvertJsonToSubmodel(jsonString);
+        return ConvertJsonToSubmodel(jsonString, idPrefix);
     }
 
-    public static Submodel ConvertJsonToSubmodel(string jsonString)
+    public static Submodel ConvertJsonToSubmodel(string jsonString, string idPrefix)
     {
         var jsonNode = JsonNode.Parse(jsonString);
         if (jsonNode == null)
@@ -34,7 +34,7 @@ public class HandoverDocumentationCreator
 
         var submodel = Jsonization.Deserialize.SubmodelFrom(jsonNode);
         submodel.Kind = ModellingKind.Instance;
-        submodel.Id = IdGenerationUtil.GenerateId(IdType.Submodel, "https://oi4-nextbike.de"); // Generiere eine korrekte ID
+        submodel.Id = IdGenerationUtil.GenerateId(IdType.Submodel, idPrefix); // Generiere eine korrekte ID
 
         return submodel;
     }
