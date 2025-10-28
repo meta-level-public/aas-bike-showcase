@@ -95,7 +95,7 @@ jobs:
             echo "tag=aasdemoproxy:preview" >> $GITHUB_OUTPUT
           fi
       - name: Build Docker image using PowerShell script
-        run: pwsh -File build-scripts/build.ps1 -Configuration Release -Target final -Tag ${{ steps.set_tag.outputs.tag }}
+        run: pwsh -File build-scripts/build.ps1 -Configuration Release -Target final -Tag ${{ steps.set_tag.outputs.tag }} -Dockerfile Dockerfile.Proxy
         shell: pwsh
         working-directory: ${{ github.workspace }}
 

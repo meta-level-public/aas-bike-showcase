@@ -46,3 +46,7 @@ msbuild.wrn
 src/AasDemoapp/ClientApp/node_modules/**
 src/AasDemoapp/ClientApp/.angular/cache/**
 
+# Environment files with secrets
+.env.proxy
+*.env.local
+docker/**/.env.proxy
