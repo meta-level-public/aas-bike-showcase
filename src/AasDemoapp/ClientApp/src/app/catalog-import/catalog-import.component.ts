@@ -1,4 +1,4 @@
-import { AssetAdministrationShell } from '@aas-core-works/aas-core3.0-typescript/types';
+import { AssetAdministrationShell, AssetKind } from '@aas-core-works/aas-core3.0-typescript/types';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -33,7 +33,8 @@ import { CatalogImportService } from './catalog-import.service';
 export class CatalogImportComponent implements OnInit {
   kategorieOptions: Kategorie[] = [];
   aasId: string = '';
-  shells: any;
+  shells: AssetAdministrationShell[] = [];
+  filteredShells: AssetAdministrationShell[] = [];
   newKatalogEintrag: KatalogEintrag = {} as KatalogEintrag;
   currentRepositoryUrl: string = '';
 
@@ -66,6 +67,10 @@ export class CatalogImportComponent implements OnInit {
       } else {
         this.shells = await this.repositoryService.loadShell(url, this.aasId);
       }
+      // Filter nur Typ-AAS (AssetKind = "Type")
+      this.filteredShells = Array.isArray(this.shells)
+        ? this.shells.filter((shell) => shell?.assetInformation?.assetKind === AssetKind.Type)
+        : [];
     } finally {
       this.loading = false;
     }
