@@ -431,11 +431,11 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       // Markiere ProductionOrder als abgeschlossen, wenn eine ausgewählt ist
       if (selectedOrder?.id) {
         await this.productionOrderService.markProductionCompleted(selectedOrder.id);
-        this.notificationService.showMessageAlways(
-          'Produkt erfolgreich erstellt und Produktionsauftrag als abgeschlossen markiert'
-        );
-      } else {
-        this.notificationService.showMessageAlways('Produkt erfolgreich erstellt');
+        if (!response.handoverDocumentationPdfBase64) {
+          this.notificationService.showMessageAlways(
+            'Produkt erfolgreich erstellt und Produktionsauftrag als abgeschlossen markiert'
+          );
+        }
       }
 
       // Zeige PDF-Dialog an, wenn verfügbar
@@ -593,28 +593,30 @@ export class AssemblyComponent implements OnInit, OnDestroy {
   configuredRequiredTightenForce = signal(0);
   requiredTightenForceValue = signal<number | null>(null);
   isToolRequiredValue = signal<boolean>(false);
-  private torqueIntervalId: any | null = null;
+  private torqueTimeoutId: any | null = null;
+  private isPollingActive = false;
 
-  // Startet ein 5s-Polling zur Aktualisierung von currentTightenForce
+  // Startet ein sequenzielles Polling zur Aktualisierung von currentTightenForce
   private startTorquePolling(): void {
     this.stopTorquePolling();
-    // Einmal sofort aktualisieren
+    this.isPollingActive = true;
+    // Einmal sofort aktualisieren und dann sequenziell weitermachen
     void this.updateToolDataOnce();
-    this.torqueIntervalId = setInterval(() => {
-      void this.updateToolDataOnce();
-    }, 1000);
   }
 
   // Stoppt das Polling
   private stopTorquePolling(): void {
-    if (this.torqueIntervalId != null) {
-      clearInterval(this.torqueIntervalId);
-      this.torqueIntervalId = null;
+    this.isPollingActive = false;
+    if (this.torqueTimeoutId != null) {
+      clearTimeout(this.torqueTimeoutId);
+      this.torqueTimeoutId = null;
     }
   }
 
   // Liest einmalig das aktuelle Drehmoment und setzt das Signal
   private async updateToolDataOnce(): Promise<void> {
+    if (!this.isPollingActive) return;
+
     try {
       const aasId = await this.requiredToolAasId();
       if (!aasId) return;
@@ -639,6 +641,13 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       this.configuredRequiredTightenForce.set(vReq);
     } catch {
       // still, keep silent for polling
+    } finally {
+      // Nächsten Aufruf erst 1 Sekunde nach Abschluss des aktuellen Aufrufs planen
+      if (this.isPollingActive) {
+        this.torqueTimeoutId = setTimeout(() => {
+          void this.updateToolDataOnce();
+        }, 1000);
+      }
     }
   }
 
