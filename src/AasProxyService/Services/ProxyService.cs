@@ -29,10 +29,18 @@ namespace AasProxyService.Services
             {
                 _logger.LogInformation("Processing globalAssetId: {GlobalAssetId}", globalAssetId);
 
+                // Normalisiere URLs für Schema-agnostisches Matching
+                var normalizedGlobalAssetId = NormalizeUrl(globalAssetId);
+
                 // Finde das passende URL-Mapping basierend auf dem Präfix
                 var mapping = _configuration.UrlMappings.FirstOrDefault(m =>
-                    globalAssetId.StartsWith(m.UrlPrefix, StringComparison.OrdinalIgnoreCase)
-                );
+                {
+                    var normalizedPrefix = NormalizeUrl(m.UrlPrefix);
+                    return normalizedGlobalAssetId.StartsWith(
+                        normalizedPrefix,
+                        StringComparison.OrdinalIgnoreCase
+                    );
+                });
 
                 if (mapping != null)
                 {
@@ -143,6 +151,23 @@ namespace AasProxyService.Services
             );
 
             return $"{_configuration.ViewerBaseUrl}?{queryString}";
+        }
+
+        /// <summary>
+        /// Normalisiert eine URL für Schema-agnostisches Matching
+        /// Entfernt das Schema (http:// oder https://) für einheitliches Matching
+        /// </summary>
+        private string NormalizeUrl(string url)
+        {
+            if (url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return url.Substring(8); // Entfernt "https://"
+            }
+            if (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            {
+                return url.Substring(7); // Entfernt "http://"
+            }
+            return url;
         }
     }
 }
