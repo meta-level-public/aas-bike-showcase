@@ -153,6 +153,8 @@ namespace AasDemoapp.Production
                         _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
                     var aasRepositoryUrl =
                         _settingService.GetSetting(SettingTypes.AasRepositoryUrl)?.Value ?? "";
+                    var discoveryUrl =
+                        _settingService.GetSetting(SettingTypes.DiscoveryUrl)?.Value ?? "";
                     LoadShellResult componentAAS = await ShellLoader.LoadAsync(
                         new AasUrls
                         {
@@ -160,6 +162,7 @@ namespace AasDemoapp.Production
                             SubmodelRepositoryUrl = submodelRepositoryUrl,
                             AasRegistryUrl = aasRegistryUrl,
                             SubmodelRegistryUrl = submodelRegistryUrl,
+                            DiscoveryUrl = discoveryUrl,
                         },
                         securitySetting,
                         aas_id,
@@ -345,6 +348,7 @@ namespace AasDemoapp.Production
                     _settingService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "",
                 SubmodelRegistryUrl =
                     _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "",
+                DiscoveryUrl = _settingService.GetSetting(SettingTypes.DiscoveryUrl)?.Value ?? "",
             };
             var securitySetting = _settingService.GetSecuritySetting(
                 SettingTypes.InfrastructureSecurity
@@ -382,6 +386,8 @@ namespace AasDemoapp.Production
                 _settingService.GetSetting(SettingTypes.ToolsSubmodelRegistryUrl)?.Value ?? "";
             var aasRepositoryUrl =
                 _settingService.GetSetting(SettingTypes.ToolsAASRepositoryUrl)?.Value ?? "";
+            var discoveryUrl =
+                _settingService.GetSetting(SettingTypes.ToolsDiscoveryUrl)?.Value ?? "";
             var securitySetting = _settingService.GetSecuritySetting(
                 SettingTypes.ToolsRepositorySecurity
             );
@@ -392,6 +398,7 @@ namespace AasDemoapp.Production
                 SubmodelRepositoryUrl = submodelRepositoryUrl,
                 AasRegistryUrl = aasRegistryUrl,
                 SubmodelRegistryUrl = submodelRegistryUrl,
+                DiscoveryUrl = discoveryUrl,
             };
 
             var res = await ShellLoader.LoadAsync(
@@ -468,6 +475,8 @@ namespace AasDemoapp.Production
                 _settingService.GetSetting(SettingTypes.ToolsSubmodelRegistryUrl)?.Value ?? "";
             var aasRepositoryUrl =
                 _settingService.GetSetting(SettingTypes.ToolsAASRepositoryUrl)?.Value ?? "";
+            var discoveryUrl =
+                _settingService.GetSetting(SettingTypes.ToolsDiscoveryUrl)?.Value ?? "";
             var securitySetting = _settingService.GetSecuritySetting(
                 SettingTypes.ToolsRepositorySecurity
             );
@@ -478,6 +487,7 @@ namespace AasDemoapp.Production
                 SubmodelRepositoryUrl = submodelRepositoryUrl,
                 AasRegistryUrl = aasRegistryUrl,
                 SubmodelRegistryUrl = submodelRegistryUrl,
+                DiscoveryUrl = discoveryUrl,
             };
 
             var res = await ShellLoader.LoadAsync(

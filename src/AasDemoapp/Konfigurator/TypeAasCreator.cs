@@ -112,6 +112,7 @@ namespace AasDemoapp.Konfigurator
                 settingsService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
             var submodelRegistryUrl =
                 settingsService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
+            var discoveryUrl = settingsService.GetSetting(SettingTypes.DiscoveryUrl)?.Value ?? "";
             await SaveShellSaver.SaveSingle(
                 new AasUrls
                 {
@@ -119,6 +120,7 @@ namespace AasDemoapp.Konfigurator
                     SubmodelRepositoryUrl = submodelRepositoryUrl,
                     AasRegistryUrl = aasRegistryUrl,
                     SubmodelRegistryUrl = submodelRegistryUrl,
+                    DiscoveryUrl = discoveryUrl,
                 },
                 securitySetting,
                 plainJson,

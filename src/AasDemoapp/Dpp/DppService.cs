@@ -59,12 +59,15 @@ namespace AasDemoapp.Dpp
             var submodelRegistryUrl =
                 _settingService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
 
+            var discoveryUrl = _settingService.GetSetting(SettingTypes.DiscoveryUrl)?.Value ?? "";
+
             var aasUrls = new AasUrls
             {
                 AasRepositoryUrl = aasRepositoryUrl,
                 SubmodelRepositoryUrl = submodelRepositoryUrl,
                 AasRegistryUrl = aasRegistryUrl,
                 SubmodelRegistryUrl = submodelRegistryUrl,
+                DiscoveryUrl = discoveryUrl,
             };
 
             var res = await ShellLoader.LoadShellOnly(

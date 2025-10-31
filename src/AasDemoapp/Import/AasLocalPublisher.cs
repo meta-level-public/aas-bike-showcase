@@ -131,6 +131,24 @@ namespace AasDemoapp.Import
             SecuritySetting securitySetting
         )
         {
+            // Validate discovery service URL
+            if (string.IsNullOrWhiteSpace(localDiscoveryUrl))
+            {
+                Console.WriteLine(
+                    "[AasLocalPublisher] Warning: Discovery service URL is not configured. Skipping discovery update."
+                );
+                return false;
+            }
+
+            // Validate that URL is absolute
+            if (!Uri.TryCreate(localDiscoveryUrl, UriKind.Absolute, out _))
+            {
+                Console.WriteLine(
+                    $"[AasLocalPublisher] Warning: Discovery service URL '{localDiscoveryUrl}' is not a valid absolute URL. Skipping discovery update."
+                );
+                return false;
+            }
+
             using var client = HttpClientCreator.CreateHttpClient(securitySetting);
             var discoveryUrl =
                 localDiscoveryUrl.AppendSlash()

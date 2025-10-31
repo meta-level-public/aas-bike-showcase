@@ -13,6 +13,24 @@ public class DiscoveryUpdater
         HttpClient client
     )
     {
+        // Validate discovery service URL
+        if (string.IsNullOrWhiteSpace(discoveryService))
+        {
+            Console.WriteLine(
+                "Warning: Discovery service URL is not configured. Skipping discovery update."
+            );
+            return;
+        }
+
+        // Validate that URL is absolute
+        if (!Uri.TryCreate(discoveryService, UriKind.Absolute, out _))
+        {
+            Console.WriteLine(
+                $"Warning: Discovery service URL '{discoveryService}' is not a valid absolute URL. Skipping discovery update."
+            );
+            return;
+        }
+
         // Discovery befüllen
         var discoveryUrl =
             discoveryService.AppendSlash()
@@ -75,6 +93,24 @@ public class DiscoveryUpdater
         HttpClient client
     )
     {
+        // Validate discovery service URL
+        if (string.IsNullOrWhiteSpace(discoveryService))
+        {
+            Console.WriteLine(
+                "Warning: Discovery service URL is not configured. Skipping discovery removal."
+            );
+            return;
+        }
+
+        // Validate that URL is absolute
+        if (!Uri.TryCreate(discoveryService, UriKind.Absolute, out _))
+        {
+            Console.WriteLine(
+                $"Warning: Discovery service URL '{discoveryService}' is not a valid absolute URL. Skipping discovery removal."
+            );
+            return;
+        }
+
         // Discovery befüllen
         var discoveryUrl =
             discoveryService.AppendSlash()

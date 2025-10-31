@@ -375,6 +375,7 @@ public class InstanceAasCreator
         var aasRegistryUrl = settingsService.GetSetting(SettingTypes.AasRegistryUrl)?.Value ?? "";
         var submodelRegistryUrl =
             settingsService.GetSetting(SettingTypes.SubmodelRegistryUrl)?.Value ?? "";
+        var discoveryUrl = settingsService.GetSetting(SettingTypes.DiscoveryUrl)?.Value ?? "";
 
         var env = new AasCore.Aas3_0.Environment
         {
@@ -390,6 +391,7 @@ public class InstanceAasCreator
                 SubmodelRepositoryUrl = submodelRepositoryUrl,
                 AasRegistryUrl = aasRegistryUrl,
                 SubmodelRegistryUrl = submodelRegistryUrl,
+                DiscoveryUrl = discoveryUrl,
             },
             securitySetting,
             plainJson,
