@@ -35,8 +35,10 @@ namespace AasProxyService.Controllers
             var globalAssetId = $"{scheme}://{host}{path}{queryString}";
 
             _logger.LogInformation(
-                "Processing request URL as globalAssetId: {GlobalAssetId}",
-                globalAssetId
+                "Processing request URL as globalAssetId: {GlobalAssetId} (Scheme: {Scheme}, ForwardedProto: {ForwardedProto})",
+                globalAssetId,
+                scheme,
+                request.Headers["X-Forwarded-Proto"].ToString()
             );
 
             var redirectUrl = _proxyService.GetRedirectUrl(globalAssetId);
