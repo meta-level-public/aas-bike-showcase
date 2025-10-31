@@ -5,7 +5,6 @@ using AasDemoapp.Import;
 using AasDemoapp.Proxy;
 using AasDemoapp.Settings;
 using AasDemoapp.Utils;
-using IO.Swagger.Model;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;

@@ -88,7 +88,11 @@ namespace AasDemoapp.Jobs
                             var remoteShell = Jsonization.Deserialize.AssetAdministrationShellFrom(
                                 remoteJsonNode
                             );
-
+                            if (aasRepo == null)
+                            {
+                                _logger.LogWarning("AAS Repository setting is null");
+                                return;
+                            }
                             using HttpResponseMessage localResponse = await client.GetAsync(
                                 $"{aasRepo?.Value ?? ""}/shells/{eintrag.LocalAasId.ToBase64()}"
                             );

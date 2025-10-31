@@ -1,38 +1,43 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using AasCore.Aas3_0;
 using AasDemoapp.AasHandling;
 using AasDemoapp.Database;
 using AasDemoapp.Database.Model;
 using AasDemoapp.Settings;
-using AasDemoapp.Utils;
-using IO.Swagger.Model;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 namespace AasDemoapp.Import
 {
+    /// <summary>
+    /// Hauptservice für das Importieren von AAS-Daten aus Remote-Repositories
+    /// </summary>
     public class ImportService : IImportService
     {
         private readonly AasDemoappContext _AasDemoappContext;
         private readonly ISettingService _settingService;
-        private const string nameplateId = "https://admin-shell.io/zvei/nameplate/2/0/Nameplate";
-        private const string productFamiliyId = "0173-1#02-AAU731#001";
-        private const string carbonFootprintId =
-            "https://admin-shell.io/idta/CarbonFootprint/CarbonFootprint/0/9";
+        private readonly AasRemoteClient _remoteClient;
+        private readonly AasLocalPublisher _localPublisher;
+        private readonly SubmodelAnalyzer _submodelAnalyzer;
 
-        public ImportService(AasDemoappContext AasDemoappContext, ISettingService settingService)
+        public ImportService(
+            AasDemoappContext AasDemoappContext,
+            ISettingService settingService,
+            AasRemoteClient remoteClient,
+            AasLocalPublisher localPublisher,
+            SubmodelAnalyzer submodelAnalyzer
+        )
         {
             _AasDemoappContext = AasDemoappContext;
             _settingService = settingService;
+            _remoteClient = remoteClient;
+            _localPublisher = localPublisher;
+            _submodelAnalyzer = submodelAnalyzer;
         }
 
+        /// <summary>
+        /// Importiert eine AAS aus einem Remote-Repository in lokale Repositories
+        /// </summary>
         public async Task<string> ImportFromRepository(
             string aasRepositoryUrl,
             string aasRegistryUrl,
@@ -51,39 +56,15 @@ namespace AasDemoapp.Import
                 );
             }
 
-            using var clientSource = HttpClientCreator.CreateHttpClient(securitySetting);
-            using HttpResponseMessage response = await clientSource.GetAsync(
-                katalogEintrag.Supplier.RemoteAasRepositoryUrl + $"/shells/{decodedId.ToBase64()}"
+            // Shell und Submodels vom Remote-Repository abrufen
+            var (shell, submodels) = await _remoteClient.FetchShellWithSubmodelsAsync(
+                katalogEintrag.Supplier.RemoteAasRepositoryUrl,
+                katalogEintrag.Supplier.RemoteSmRepositoryUrl,
+                decodedId,
+                securitySetting
             );
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
 
-            var shellNode = JsonNode.Parse(responseBody);
-            if (shellNode == null)
-            {
-                throw new InvalidOperationException("Failed to parse shell JSON response");
-            }
-            var shell = Jsonization.Deserialize.AssetAdministrationShellFrom(shellNode);
-            var submodels = new List<Submodel>();
-
-            foreach (var smRef in shell.Submodels ?? [])
-            {
-                using var resp = await clientSource.GetAsync(
-                    katalogEintrag.Supplier.RemoteSmRepositoryUrl
-                        + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}"
-                );
-                resp.EnsureSuccessStatusCode();
-                responseBody = await resp.Content.ReadAsStringAsync();
-
-                var smNode = JsonNode.Parse(responseBody);
-                if (smNode == null)
-                {
-                    throw new InvalidOperationException("Failed to parse submodel JSON response");
-                }
-                var sm = Jsonization.Deserialize.SubmodelFrom(smNode);
-                submodels.Add(sm);
-            }
-            // Id umschreiben
+            // Original-ID für DerivedFrom speichern
             if (shell.DerivedFrom == null)
             {
                 shell.DerivedFrom = new Reference(
@@ -94,43 +75,51 @@ namespace AasDemoapp.Import
             }
             shell.DerivedFrom.Keys.Add(new Key(KeyTypes.AssetAdministrationShell, shell.Id));
 
-            // Generiere neue ID mit IdGenerationUtil und dem konfigurierten Präfix
+            // Neue IDs generieren
             var idPrefix =
                 _settingService.GetSetting(SettingTypes.AasIdPrefix)?.Value
                 ?? "https://oi4-nextbike.de";
+
+            // Neue Shell-ID generieren
             shell.Id = IdGenerationUtil.GenerateId(IdType.Aas, idPrefix);
 
-            // Thumbnail von der originalen AAS herunterladen
-            byte[]? thumbnailData = null;
-            string? thumbnailContentType = null;
-            string? thumbnailFilename = null;
-            if (shell.AssetInformation?.DefaultThumbnail != null)
+            // Neue Submodel-IDs generieren und Mapping für Referenzen erstellen
+            var submodelIdMapping = new Dictionary<string, string>();
+            foreach (var submodel in submodels)
             {
-                try
+                var oldId = submodel.Id;
+                var newId = IdGenerationUtil.GenerateId(IdType.Submodel, idPrefix);
+                submodel.Id = newId;
+                submodelIdMapping[oldId] = newId;
+            }
+
+            // Submodel-Referenzen in der Shell aktualisieren
+            if (shell.Submodels != null)
+            {
+                foreach (var smRef in shell.Submodels)
                 {
-                    using var thumbnailResponse = await clientSource.GetAsync(
-                        katalogEintrag.Supplier.RemoteAasRepositoryUrl
-                            + $"/shells/{decodedId.ToBase64()}/asset-information/thumbnail"
-                    );
-                    if (thumbnailResponse.IsSuccessStatusCode)
+                    if (smRef.Keys != null && smRef.Keys.Count > 0)
                     {
-                        thumbnailData = await thumbnailResponse.Content.ReadAsByteArrayAsync();
-                        thumbnailContentType =
-                            shell.AssetInformation.DefaultThumbnail.ContentType ?? "image/png";
-                        thumbnailFilename =
-                            Path.GetFileName(shell.AssetInformation.DefaultThumbnail.Path)
-                            ?? "thumbnail.png";
+                        var oldSmId = smRef.Keys[0].Value;
+                        if (submodelIdMapping.ContainsKey(oldSmId))
+                        {
+                            smRef.Keys[0] = new Key(KeyTypes.Submodel, submodelIdMapping[oldSmId]);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(
-                        $"[ImportFromRepository] Failed to download thumbnail: {ex.Message}"
-                    );
                 }
             }
 
-            await PushNewToLocalRepositoryAsync(
+            // Thumbnail herunterladen
+            var (thumbnailData, thumbnailContentType, thumbnailFilename) =
+                await _remoteClient.DownloadThumbnailAsync(
+                    katalogEintrag.Supplier.RemoteAasRepositoryUrl,
+                    decodedId,
+                    securitySetting,
+                    shell
+                );
+
+            // Zu lokalen Repositories pushen
+            await _localPublisher.PushToRepositoryAsync(
                 shell,
                 submodels,
                 aasRepositoryUrl,
@@ -139,15 +128,18 @@ namespace AasDemoapp.Import
                 thumbnailContentType,
                 thumbnailFilename
             );
-            await PushNewToLocalRegistryAsync(
+
+            await _localPublisher.PushToRegistryAsync(
                 shell,
                 submodels,
                 aasRepositoryUrl,
                 aasRegistryUrl,
                 securitySetting
             );
-            await PushNewToLocalDiscoveryAsync(shell, aasDiscoveryUrl, securitySetting);
 
+            await _localPublisher.PushToDiscoveryAsync(shell, aasDiscoveryUrl, securitySetting);
+
+            // Import in Datenbank speichern
             ImportedShell importedShell = new()
             {
                 RemoteAasRegistryUrl = katalogEintrag.Supplier.RemoteAasRegistryUrl,
@@ -161,584 +153,76 @@ namespace AasDemoapp.Import
             return shell.Id;
         }
 
+        /// <summary>
+        /// Ruft ein Thumbnail als Base64-String ab
+        /// </summary>
         public async Task<string> GetImageString(
             string decodedRemoteUrl,
             SecuritySetting securitySetting,
             string decodedId
         )
         {
-            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-            using HttpResponseMessage response = await client.GetAsync(
-                decodedRemoteUrl + $"/shells/{decodedId.ToBase64()}/asset-information/thumbnail"
+            return await _remoteClient.GetThumbnailAsBase64Async(
+                decodedRemoteUrl,
+                securitySetting,
+                decodedId
             );
-            response.EnsureSuccessStatusCode();
-            var responseBody = await response.Content.ReadAsByteArrayAsync();
-
-            return Convert.ToBase64String(responseBody);
         }
 
+        /// <summary>
+        /// Erstellt ein Environment-Objekt aus einer Remote-Shell
+        /// </summary>
         public async Task<AasCore.Aas3_0.Environment> GetEnvironment(
             string decodedRemoteUrl,
             SecuritySetting securitySetting,
             string decodedId
         )
         {
-            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-            var url = decodedRemoteUrl + $"/shells/{decodedId.ToBase64UrlEncoded(Encoding.UTF8)}";
-            using HttpResponseMessage response = await client.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            var shellNode = JsonNode.Parse(responseBody);
-            if (shellNode == null)
-            {
-                throw new InvalidOperationException("Failed to parse shell JSON response");
-            }
-            var shell = Jsonization.Deserialize.AssetAdministrationShellFrom(shellNode);
-            var submodels = new List<ISubmodel>();
-
-            foreach (var smRef in shell.Submodels ?? [])
-            {
-                using var resp = await client.GetAsync(
-                    decodedRemoteUrl + $"/submodels/{smRef.Keys?[0]?.Value.ToBase64()}"
-                );
-                resp.EnsureSuccessStatusCode();
-                responseBody = await resp.Content.ReadAsStringAsync();
-
-                var smNode = JsonNode.Parse(responseBody);
-                if (smNode == null)
-                {
-                    throw new InvalidOperationException("Failed to parse submodel JSON response");
-                }
-                var sm = Jsonization.Deserialize.SubmodelFrom(smNode);
-                submodels.Add(sm);
-            }
-
-            var env = new AasCore.Aas3_0.Environment();
-            env.AssetAdministrationShells = [shell];
-            env.Submodels = submodels;
-
-            return env;
+            return await _remoteClient.GetEnvironmentAsync(
+                decodedRemoteUrl,
+                securitySetting,
+                decodedId
+            );
         }
 
+        /// <summary>
+        /// Findet das Nameplate-Submodel in einem Environment
+        /// </summary>
         public Submodel? GetNameplate(AasCore.Aas3_0.Environment env)
         {
-            var nameplate = env.Submodels?.Find(sm =>
-                sm.SemanticId != null
-                && sm.SemanticId.Keys != null
-                && sm.SemanticId.Keys.Exists(id => id.Value == nameplateId)
-            );
-
-            return (Submodel?)nameplate;
+            return _submodelAnalyzer.GetNameplate(env);
         }
 
+        /// <summary>
+        /// Extrahiert die Produktkategorie aus einem Nameplate-Submodel
+        /// </summary>
         public string GetKategorie(Submodel nameplate)
         {
-            var kategorie = string.Empty;
-
-            if (nameplate != null)
-            {
-                var mlp = (MultiLanguageProperty?)
-                    nameplate.SubmodelElements?.Find(sme =>
-                        sme.SemanticId != null
-                        && sme.SemanticId.Keys != null
-                        && sme.SemanticId.Keys.Exists(id => id.Value == productFamiliyId)
-                    );
-                if (mlp != null)
-                {
-                    kategorie = mlp.Value?.FirstOrDefault()?.Text ?? string.Empty;
-                }
-            }
-
-            return kategorie;
+            return _submodelAnalyzer.GetKategorie(nameplate);
         }
 
+        /// <summary>
+        /// Extrahiert die Produktkategorie aus einem Environment
+        /// </summary>
         public string GetKategorie(AasCore.Aas3_0.Environment env)
         {
-            var kategorie = string.Empty;
-
-            var nameplate = (Submodel?)GetNameplate(env);
-            return nameplate != null ? GetKategorie(nameplate) : kategorie;
+            return _submodelAnalyzer.GetKategorie(env);
         }
 
+        /// <summary>
+        /// Findet das CarbonFootprint-Submodel in einem Environment
+        /// </summary>
         public Submodel? GetCarbonFootprint(AasCore.Aas3_0.Environment env)
         {
-            var carbonFootprint = env.Submodels?.Find(sm =>
-                sm.SemanticId != null
-                && sm.SemanticId.Keys != null
-                && sm.SemanticId.Keys.Exists(id => id.Value == carbonFootprintId)
-            );
-
-            return (Submodel?)carbonFootprint;
+            return _submodelAnalyzer.GetCarbonFootprint(env);
         }
 
+        /// <summary>
+        /// Prüft, ob ein Environment ein CarbonFootprint-Submodel besitzt
+        /// </summary>
         public bool HasCarbonFootprintSubmodel(AasCore.Aas3_0.Environment env)
         {
-            return GetCarbonFootprint(env) != null;
+            return _submodelAnalyzer.HasCarbonFootprintSubmodel(env);
         }
-
-        public async Task PushNewToLocalRegistryAsync(
-            AssetAdministrationShell shell,
-            List<Submodel> submodels,
-            string localRepositoryUrl,
-            string localRegistryUrl,
-            SecuritySetting securitySetting
-        )
-        {
-            var jsonString = CreateShellDescriptorString(shell, submodels, localRepositoryUrl);
-
-            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-            using var request = new HttpRequestMessage(
-                HttpMethod.Post,
-                $"{localRegistryUrl}/shell-descriptors"
-            );
-
-            var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-            request.Content = content;
-
-            try
-            {
-                var result = await client.SendAsync(
-                    request,
-                    HttpCompletionOption.ResponseHeadersRead
-                );
-
-                // Check if the response indicates success before reading content
-                if (result.IsSuccessStatusCode)
-                {
-                    var resultContent = await result.Content.ReadAsStringAsync();
-                    Console.WriteLine($"[PushNewToLocalRegistryAsync] Success: {resultContent}");
-                }
-                else
-                {
-                    // Try to read error content, but handle if it fails
-                    string errorContent = "Unable to read error response";
-                    try
-                    {
-                        errorContent = await result.Content.ReadAsStringAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(
-                            $"[PushNewToLocalRegistryAsync] Failed to read error content: {ex.Message}"
-                        );
-                    }
-
-                    Console.WriteLine(
-                        $"[PushNewToLocalRegistryAsync] Failed with status {result.StatusCode}: {errorContent}"
-                    );
-                    throw new HttpRequestException(
-                        $"Registry push failed with status {result.StatusCode}: {errorContent}"
-                    );
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine(
-                    $"[PushNewToLocalRegistryAsync] HTTP Request Exception: {ex.Message}"
-                );
-                throw;
-            }
-            catch (TaskCanceledException ex)
-            {
-                Console.WriteLine($"[PushNewToLocalRegistryAsync] Request timeout: {ex.Message}");
-                throw new TimeoutException("Request to registry timed out", ex);
-            }
-        }
-
-        public async Task<bool> PushNewToLocalDiscoveryAsync(
-            AssetAdministrationShell shell,
-            string localDiscoveryUrl,
-            SecuritySetting securitySetting
-        )
-        {
-            // Discovery befüllen
-
-            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-            var discoveryUrl =
-                localDiscoveryUrl.AppendSlash()
-                + "lookup/shells/"
-                + shell.Id.ToBase64UrlEncoded(Encoding.UTF8);
-            try
-            {
-                var discoveryDeleteResponse = await client.DeleteAsync(
-                    discoveryUrl,
-                    CancellationToken.None
-                );
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error deleting discovery: " + e.Message);
-            }
-
-            if (shell.AssetInformation.GlobalAssetId != null)
-            {
-                try
-                {
-                    var globalElem = new DiscoveryElement
-                    {
-                        name = "globalAssetId",
-                        value = shell.AssetInformation.GlobalAssetId,
-                    };
-                    var discoveryJsonString = JsonConvert.SerializeObject(globalElem);
-                    var discoveryResponse = await client.PostAsync(
-                        discoveryUrl,
-                        new StringContent(discoveryJsonString, Encoding.UTF8, "application/json"),
-                        CancellationToken.None
-                    );
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error saving discovery: " + e.Message);
-                }
-            }
-
-            foreach (var id in shell.AssetInformation.SpecificAssetIds ?? [])
-            {
-                var globalElem = new DiscoveryElement { name = id.Name, value = id.Value };
-                var discoveryJsonString = JsonConvert.SerializeObject(globalElem);
-                try
-                {
-                    var discoveryResponse = await client.PostAsync(
-                        discoveryUrl,
-                        new StringContent(discoveryJsonString, Encoding.UTF8, "application/json"),
-                        CancellationToken.None
-                    );
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error saving discovery: " + e.Message);
-                }
-            }
-
-            return true;
-        }
-
-        public async Task PushNewToLocalRepositoryAsync(
-            AssetAdministrationShell shell,
-            List<Submodel> submodels,
-            string localRepositoryUrl,
-            SecuritySetting securitySetting,
-            byte[]? thumbnailData = null,
-            string? thumbnailContentType = null,
-            string? thumbnailFilename = null
-        )
-        {
-            var jsonString = Jsonization.Serialize.ToJsonObject(shell).ToJsonString();
-
-            using var client = HttpClientCreator.CreateHttpClient(securitySetting);
-
-            // Push shell
-            try
-            {
-                using var request = new HttpRequestMessage(
-                    HttpMethod.Post,
-                    $"{localRepositoryUrl.AppendSlash()}shells"
-                );
-
-                var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-                request.Content = content;
-                var result = await client.SendAsync(
-                    request,
-                    HttpCompletionOption.ResponseHeadersRead
-                );
-
-                if (result.IsSuccessStatusCode)
-                {
-                    var resultContent = await result.Content.ReadAsStringAsync();
-                    Console.WriteLine(
-                        $"[PushNewToLocalRepositoryAsync] Shell pushed: {resultContent}"
-                    );
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    string errorContent = "Shell already exists";
-                    try
-                    {
-                        errorContent = await result.Content.ReadAsStringAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(
-                            $"[PushNewToLocalRepositoryAsync] Failed to read shell error: {ex.Message}"
-                        );
-                    }
-                    Console.WriteLine(
-                        $"[PushNewToLocalRepositoryAsync] Shell already exists in repository"
-                    );
-                    throw new InvalidOperationException(
-                        "Der Asset Administration Shell Eintrag existiert bereits im Repository."
-                    );
-                }
-                else
-                {
-                    string errorContent = "Unable to read error response";
-                    try
-                    {
-                        errorContent = await result.Content.ReadAsStringAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(
-                            $"[PushNewToLocalRepositoryAsync] Failed to read shell error: {ex.Message}"
-                        );
-                    }
-                    Console.WriteLine(
-                        $"[PushNewToLocalRepositoryAsync] Shell push failed with status {result.StatusCode}: {errorContent}"
-                    );
-                    throw new HttpRequestException(
-                        $"Shell push failed with status {result.StatusCode}: {errorContent}"
-                    );
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                throw;
-            }
-            catch (HttpRequestException)
-            {
-                throw;
-            }
-            catch (TaskCanceledException ex)
-            {
-                throw new TimeoutException(
-                    "Request to repository timed out while pushing shell",
-                    ex
-                );
-            }
-
-            // Push submodels
-            foreach (var sm in submodels)
-            {
-                try
-                {
-                    using var request = new HttpRequestMessage(
-                        HttpMethod.Post,
-                        $"{localRepositoryUrl.AppendSlash()}submodels"
-                    );
-                    jsonString = Jsonization.Serialize.ToJsonObject(sm).ToJsonString();
-
-                    var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-                    request.Content = content;
-                    var result = await client.SendAsync(
-                        request,
-                        HttpCompletionOption.ResponseHeadersRead
-                    );
-
-                    if (result.IsSuccessStatusCode)
-                    {
-                        var resultContent = await result.Content.ReadAsStringAsync();
-                        Console.WriteLine(
-                            $"[PushNewToLocalRepositoryAsync] Submodel pushed: {resultContent}"
-                        );
-                    }
-                    else if (result.StatusCode == System.Net.HttpStatusCode.Conflict)
-                    {
-                        string errorContent = "Submodel already exists";
-                        try
-                        {
-                            errorContent = await result.Content.ReadAsStringAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(
-                                $"[PushNewToLocalRepositoryAsync] Failed to read submodel error: {ex.Message}"
-                            );
-                        }
-                        Console.WriteLine(
-                            $"[PushNewToLocalRepositoryAsync] Submodel already exists in repository"
-                        );
-                        throw new InvalidOperationException(
-                            "Das Teil existiert bereits im Repository."
-                        );
-                    }
-                    else
-                    {
-                        string errorContent = "Unable to read error response";
-                        try
-                        {
-                            errorContent = await result.Content.ReadAsStringAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(
-                                $"[PushNewToLocalRepositoryAsync] Failed to read submodel error: {ex.Message}"
-                            );
-                        }
-                        Console.WriteLine(
-                            $"[PushNewToLocalRepositoryAsync] Submodel push failed with status {result.StatusCode}: {errorContent}"
-                        );
-                        throw new HttpRequestException(
-                            $"Submodel push failed with status {result.StatusCode}: {errorContent}"
-                        );
-                    }
-                }
-                catch (InvalidOperationException)
-                {
-                    throw;
-                }
-                catch (HttpRequestException)
-                {
-                    throw;
-                }
-                catch (TaskCanceledException ex)
-                {
-                    throw new TimeoutException(
-                        "Request to repository timed out while pushing submodel",
-                        ex
-                    );
-                }
-            }
-
-            // Upload thumbnail if available
-            if (
-                thumbnailData != null
-                && thumbnailData.Length > 0
-                && !string.IsNullOrEmpty(thumbnailFilename)
-            )
-            {
-                try
-                {
-                    var thumbnailUrl =
-                        localRepositoryUrl.AppendSlash()
-                        + "shells/"
-                        + shell.Id.ToBase64UrlEncoded(Encoding.UTF8).AppendSlash()
-                        + "asset-information/thumbnail?fileName="
-                        + thumbnailFilename;
-
-                    using var thumbnailRequest = new HttpRequestMessage(
-                        HttpMethod.Put,
-                        thumbnailUrl
-                    );
-                    using var thumbnailStream = new MemoryStream(thumbnailData);
-                    var streamContent = new StreamContent(thumbnailStream);
-                    streamContent.Headers.ContentType =
-                        new System.Net.Http.Headers.MediaTypeHeaderValue(
-                            thumbnailContentType ?? "image/png"
-                        );
-
-                    using var multipartContent = new MultipartFormDataContent
-                    {
-                        { streamContent, "file", thumbnailFilename },
-                    };
-
-                    thumbnailRequest.Content = multipartContent;
-                    var thumbnailResult = await client.SendAsync(thumbnailRequest);
-
-                    if (thumbnailResult.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine(
-                            $"[PushNewToLocalRepositoryAsync] Thumbnail uploaded successfully"
-                        );
-                    }
-                    else
-                    {
-                        Console.WriteLine(
-                            $"[PushNewToLocalRepositoryAsync] Thumbnail upload failed with status {thumbnailResult.StatusCode}"
-                        );
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(
-                        $"[PushNewToLocalRepositoryAsync] Failed to upload thumbnail: {ex.Message}"
-                    );
-                    // Don't throw - thumbnail upload failure should not break the import
-                }
-            }
-        }
-
-        private string CreateShellDescriptorString(
-            AssetAdministrationShell aas,
-            List<Submodel> submodels,
-            string localRegistryUrl
-        )
-        {
-            var shellEndpoint = $"{localRegistryUrl}/shells/{aas.Id.ToBase64()}";
-
-            var iEndpoint = new IO.Swagger.Model.Endpoint()
-            {
-                _Interface = "AssetAdministrationShell",
-                ProtocolInformation = new ProtocolInformation() { Href = shellEndpoint },
-            };
-
-            var endpointList = new List<IO.Swagger.Model.Endpoint> { iEndpoint };
-
-            var submodelDescriptors = new List<SubmodelDescriptor>();
-
-            submodels.ForEach(sm =>
-            {
-                submodelDescriptors.Add(CreateSubmodelDescriptors(sm, shellEndpoint));
-            });
-
-            var aasDescriptor = new AssetAdministrationShellDescriptor()
-            {
-                Administration =
-                    (AdministrativeInformation?)aas.Administration
-                    ?? new AdministrativeInformation(),
-                AssetKind = aas.AssetInformation.AssetKind,
-                AssetType =
-                    aas.AssetInformation.AssetType
-                    ?? aas.AssetInformation.AssetKind.ToString() ?? string.Empty,
-                Description = aas.Description ?? [],
-                DisplayName = aas.DisplayName ?? [],
-                Endpoints = endpointList,
-                Extensions = aas.Extensions ?? null,
-                GlobalAssetId = aas.AssetInformation.GlobalAssetId ?? string.Empty,
-                Id = aas.Id,
-                IdShort = aas.IdShort ?? string.Empty,
-                SpecificAssetIds = aas.AssetInformation.SpecificAssetIds ?? [],
-                SubmodelDescriptors = submodelDescriptors,
-            };
-
-            DefaultContractResolver contractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new CamelCaseNamingStrategy(),
-            };
-            var serializerSettings = new JsonSerializerSettings
-            {
-                ContractResolver = contractResolver,
-                Formatting = Formatting.Indented,
-                Converters = new List<JsonConverter> { new StringEnumConverter() },
-                NullValueHandling = NullValueHandling.Ignore,
-            };
-            return JsonConvert.SerializeObject(aasDescriptor, serializerSettings);
-        }
-
-        private SubmodelDescriptor CreateSubmodelDescriptors(Submodel sm, string shellEndpoint)
-        {
-            var iEndpoint = new IO.Swagger.Model.Endpoint()
-            {
-                _Interface = "Submodel",
-                ProtocolInformation = new ProtocolInformation()
-                {
-                    Href = $"{shellEndpoint}/submodels/{sm.Id.ToBase64()}",
-                },
-            };
-
-            var endpointList = new List<IO.Swagger.Model.Endpoint> { iEndpoint };
-
-            var submodelDescriptor = new SubmodelDescriptor()
-            {
-                Administration = sm.Administration ?? new AdministrativeInformation(),
-                Description = sm.Description ?? null,
-                DisplayName = sm.DisplayName ?? null,
-                Endpoints = endpointList,
-                Extensions = sm.Extensions ?? null,
-                IdShort = sm.IdShort ?? string.Empty,
-                Id = sm.Id,
-                // Don't create empty Reference - registry requires at least 1 key if SemanticId is present
-                SemanticId = sm.SemanticId,
-                SupplementalSemanticId = sm.SupplementalSemanticIds ?? null,
-            };
-
-            return submodelDescriptor;
-        }
-    }
-
-    public class DiscoveryElement
-    {
-        public string name { get; set; } = string.Empty;
-        public string value { get; set; } = string.Empty;
     }
 }

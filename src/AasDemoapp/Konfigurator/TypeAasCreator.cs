@@ -16,7 +16,7 @@ namespace AasDemoapp.Konfigurator
     {
         public static async Task CreateBikeTypeAas(
             ConfiguredProduct configuredProduct,
-            IImportService importService,
+            AasLocalPublisher localPublisher,
             ISettingService settingsService
         )
         {
@@ -70,7 +70,7 @@ namespace AasDemoapp.Konfigurator
                 nameplate,
                 handoverdoc,
                 hierarchicalStructures,
-                importService,
+                localPublisher,
                 settingsService
             );
         }
@@ -80,7 +80,7 @@ namespace AasDemoapp.Konfigurator
             Submodel nameplate,
             Submodel handoverdoc,
             Submodel hierarchicalStructures,
-            IImportService importService,
+            AasLocalPublisher localPublisher,
             ISettingService settingsService
         )
         {
@@ -89,9 +89,12 @@ namespace AasDemoapp.Konfigurator
             var securitySetting = settingsService.GetSecuritySetting(
                 SettingTypes.InfrastructureSecurity
             );
-            await importService.PushNewToLocalRepositoryAsync(
+
+            var submodels = new List<Submodel> { nameplate, handoverdoc, hierarchicalStructures };
+
+            await localPublisher.PushToRepositoryAsync(
                 aas,
-                [nameplate, handoverdoc, hierarchicalStructures],
+                submodels,
                 aasRepositoryUrl,
                 securitySetting
             );

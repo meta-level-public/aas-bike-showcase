@@ -4,6 +4,9 @@ using AasDemoapp.Database.Model;
 
 namespace AasDemoapp.Import
 {
+    /// <summary>
+    /// Interface für den Import-Service
+    /// </summary>
     public interface IImportService
     {
         Task<string> ImportFromRepository(
@@ -34,28 +37,8 @@ namespace AasDemoapp.Import
 
         string GetKategorie(AasCore.Aas3_0.Environment env);
 
-        Task PushNewToLocalRepositoryAsync(
-            AssetAdministrationShell shell,
-            List<Submodel> submodels,
-            string localRepositoryUrl,
-            SecuritySetting securitySetting,
-            byte[]? thumbnailData = null,
-            string? thumbnailContentType = null,
-            string? thumbnailFilename = null
-        );
+        Submodel? GetCarbonFootprint(AasCore.Aas3_0.Environment env);
 
-        Task PushNewToLocalRegistryAsync(
-            AssetAdministrationShell shell,
-            List<Submodel> submodels,
-            string localRepositoryUrl,
-            string localRegistryUrl,
-            SecuritySetting securitySetting
-        );
-
-        Task<bool> PushNewToLocalDiscoveryAsync(
-            AssetAdministrationShell shell,
-            string localDiscoveryUrl,
-            SecuritySetting securitySetting
-        );
+        bool HasCarbonFootprintSubmodel(AasCore.Aas3_0.Environment env);
     }
 }

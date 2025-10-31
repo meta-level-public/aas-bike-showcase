@@ -86,6 +86,22 @@ public class MyAdministrativeInformation
         if (string.IsNullOrEmpty(templateId))
             return templateId;
 
+        // The BaSyx registry has a very restrictive validation pattern for templateId
+        // that appears to reject standard URL characters (colon, slash, hyphen, etc.)
+        // According to the AAS spec, templateId should be a simple string identifier,
+        // not a full URL. If the templateId contains URL-like content, we need to
+        // either extract just the identifier part or omit it entirely.
+
+        // If templateId looks like a URL (contains ://), return null to omit it
+        // rather than sending invalid data to the registry
+        if (templateId.Contains("://"))
+        {
+            Console.WriteLine(
+                $"[AssetAdministrationShellDescriptor] Omitting templateId '{templateId}' - contains URL format not accepted by registry"
+            );
+            return null;
+        }
+
         // Fix common typos in template IDs:
         // 1. Fix missing dot: "admin-shell-io" -> "admin-shell.io"
         templateId = templateId.Replace("admin-shell-io/", "admin-shell.io/");
@@ -100,6 +116,13 @@ public class MyAdministrativeInformation
                 "$1-$2"
             );
         }
+
+        // 3. Remove any invisible or special Unicode characters that might cause validation issues
+        // Keep only visible ASCII and common URL characters
+        templateId = System.Text.RegularExpressions.Regex.Replace(templateId, @"[^\x20-\x7E]", "");
+
+        // 4. Normalize the templateId to ensure it's properly encoded
+        templateId = templateId.Normalize(System.Text.NormalizationForm.FormC);
 
         return templateId;
     }
