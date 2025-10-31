@@ -14,9 +14,9 @@ namespace AasDemoapp.Controllers
     [Route("api/[controller]/[action]")]
     public class SettingController : ControllerBase
     {
-        private readonly SettingService _settingService;
+        private readonly ISettingService _settingService;
 
-        public SettingController(SettingService settingService)
+        public SettingController(ISettingService settingService)
         {
             _settingService = settingService;
         }

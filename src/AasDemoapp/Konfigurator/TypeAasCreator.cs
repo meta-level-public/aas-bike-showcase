@@ -16,8 +16,8 @@ namespace AasDemoapp.Konfigurator
     {
         public static async Task CreateBikeTypeAas(
             ConfiguredProduct configuredProduct,
-            ImportService importService,
-            SettingService settingsService
+            IImportService importService,
+            ISettingService settingsService
         )
         {
             var idPrefix =
@@ -80,8 +80,8 @@ namespace AasDemoapp.Konfigurator
             Submodel nameplate,
             Submodel handoverdoc,
             Submodel hierarchicalStructures,
-            ImportService importService,
-            SettingService settingsService
+            IImportService importService,
+            ISettingService settingsService
         )
         {
             var aasRepositoryUrl =

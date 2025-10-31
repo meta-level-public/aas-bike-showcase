@@ -15,14 +15,14 @@ namespace AasDemoapp.Konfigurator
     public class KonfiguratorService
     {
         private readonly AasDemoappContext _context;
-        private readonly ImportService _importService;
-        private readonly SettingService _settingsService;
+        private readonly IImportService _importService;
+        private readonly ISettingService _settingsService;
         private readonly ILogger<KonfiguratorService> _logger;
 
         public KonfiguratorService(
             AasDemoappContext aasDemoappContext,
-            ImportService importService,
-            SettingService settingsService,
+            IImportService importService,
+            ISettingService settingsService,
             ILogger<KonfiguratorService> logger
         )
         {

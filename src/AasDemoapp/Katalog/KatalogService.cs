@@ -20,15 +20,15 @@ namespace AasDemoapp.Katalog
     public class KatalogService
     {
         private readonly AasDemoappContext _context;
-        private readonly ImportService _importService;
+        private readonly IImportService _importService;
         private readonly ProxyService _proxyService;
-        private readonly SettingService _settingsService;
+        private readonly ISettingService _settingsService;
 
         public KatalogService(
             AasDemoappContext aasDemoappContext,
-            ImportService importService,
+            IImportService importService,
             ProxyService proxyService,
-            SettingService settingsService
+            ISettingService settingsService
         )
         {
             _context = aasDemoappContext;
@@ -86,8 +86,12 @@ namespace AasDemoapp.Katalog
             }
             katalogEintrag.Kategorie = kategorie;
             var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
+            var aasRegistryUrl = _settingsService?.GetSetting(SettingTypes.AasRegistryUrl);
+            var aasDiscoveryUrl = _settingsService?.GetSetting(SettingTypes.DiscoveryUrl);
             katalogEintrag.LocalAasId = await _importService.ImportFromRepository(
                 aasRepositoryUrl?.Value ?? "",
+                aasRegistryUrl?.Value ?? "",
+                aasDiscoveryUrl?.Value ?? "",
                 katalogEintrag,
                 securitySetting,
                 katalogEintrag.AasId
@@ -228,8 +232,12 @@ namespace AasDemoapp.Katalog
                 }
 
                 var aasRepositoryUrl = _settingsService?.GetSetting(SettingTypes.AasRepositoryUrl);
+                var aasRegistryUrl = _settingsService?.GetSetting(SettingTypes.AasRegistryUrl);
+                var aasDiscoveryUrl = _settingsService?.GetSetting(SettingTypes.DiscoveryUrl);
                 katalogEintrag.LocalAasId = await _importService.ImportFromRepository(
                     aasRepositoryUrl?.Value ?? "",
+                    aasRegistryUrl?.Value ?? "",
+                    aasDiscoveryUrl?.Value ?? "",
                     katalogEintrag,
                     securitySetting,
                     katalogEintrag.AasId,

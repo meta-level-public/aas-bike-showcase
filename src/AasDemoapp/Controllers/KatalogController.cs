@@ -102,9 +102,19 @@ namespace AasDemoapp.Controllers
         }
 
         [HttpPost]
-        public async Task<KatalogEintrag> ImportRohteilTyp([FromBody] KatalogEintrag katalogEintrag)
+        public async Task<ActionResult<KatalogEintrag>> ImportRohteilTyp(
+            [FromBody] KatalogEintrag katalogEintrag
+        )
         {
-            return await _katalogService.ImportRohteilTyp(katalogEintrag);
+            try
+            {
+                var result = await _katalogService.ImportRohteilTyp(katalogEintrag);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         [HttpGet]
@@ -120,9 +130,19 @@ namespace AasDemoapp.Controllers
         }
 
         [HttpPost]
-        public async Task<KatalogEintrag?> ImportRohteilInstanz(KatalogEintrag katalogEintrag)
+        public async Task<ActionResult<KatalogEintrag>> ImportRohteilInstanz(
+            KatalogEintrag katalogEintrag
+        )
         {
-            return await _katalogService.ImportRohteilInstanz(katalogEintrag);
+            try
+            {
+                var result = await _katalogService.ImportRohteilInstanz(katalogEintrag);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         [HttpGet]

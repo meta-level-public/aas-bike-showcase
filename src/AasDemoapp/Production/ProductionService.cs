@@ -26,15 +26,15 @@ namespace AasDemoapp.Production
     public class ProductionService
     {
         private readonly AasDemoappContext _context;
-        private readonly ImportService _importService;
-        private readonly SettingService _settingService;
+        private readonly IImportService _importService;
+        private readonly ISettingService _settingService;
         private readonly ProxyService _proxyService;
         private readonly ILogger<ProductionService> _logger;
 
         public ProductionService(
             AasDemoappContext aasDemoappContext,
-            ImportService importService,
-            SettingService settingService,
+            IImportService importService,
+            ISettingService settingService,
             ProxyService proxyService,
             ILogger<ProductionService> logger
         )

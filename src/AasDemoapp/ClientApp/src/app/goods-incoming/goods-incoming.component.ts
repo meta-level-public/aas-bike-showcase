@@ -95,12 +95,22 @@ export class GoodsIncomingComponent {
       this.loading = true;
 
       await this.goodsIncomingService.createRohteilInstanz(this.newKatalogEintrag);
-      this.notificationService.showMessageAlways('Wareneingang erfolgreich gebucht');
+      this.notificationService.showMessageAlways('Wareneingang erfolgreich gebucht', '', 'success');
       this.newKatalogEintrag = {} as KatalogEintrag;
       this.parentRohteil = undefined;
       this.loaded = false;
       // Erst die Lieferung abschließen
       this.completeDelivery();
+    } catch (error: any) {
+      if (error?.status === 409) {
+        // Conflict - Eintrag existiert bereits
+        const message = error?.error?.message || 'Der Eintrag existiert bereits im Repository.';
+        this.notificationService.showMessageAlways(message, 'Fehler', 'error');
+      } else {
+        // Andere Fehler
+        const message = error?.error?.message || 'Fehler beim Buchen des Wareneingangs';
+        this.notificationService.showMessageAlways(message, 'Fehler', 'error');
+      }
     } finally {
       this.loading = false;
     }

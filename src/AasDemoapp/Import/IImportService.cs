@@ -7,7 +7,9 @@ namespace AasDemoapp.Import
     public interface IImportService
     {
         Task<string> ImportFromRepository(
-            string decodedLocalUrl,
+            string aasRepositoryUrl,
+            string aasRegistryUrl,
+            string aasDiscoveryUrl,
             KatalogEintrag katalogEintrag,
             SecuritySetting securitySetting,
             string decodedId,
@@ -24,6 +26,36 @@ namespace AasDemoapp.Import
             string decodedRemoteUrl,
             SecuritySetting securitySetting,
             string decodedId
+        );
+
+        Submodel? GetNameplate(AasCore.Aas3_0.Environment env);
+
+        string GetKategorie(Submodel nameplate);
+
+        string GetKategorie(AasCore.Aas3_0.Environment env);
+
+        Task PushNewToLocalRepositoryAsync(
+            AssetAdministrationShell shell,
+            List<Submodel> submodels,
+            string localRepositoryUrl,
+            SecuritySetting securitySetting,
+            byte[]? thumbnailData = null,
+            string? thumbnailContentType = null,
+            string? thumbnailFilename = null
+        );
+
+        Task PushNewToLocalRegistryAsync(
+            AssetAdministrationShell shell,
+            List<Submodel> submodels,
+            string localRepositoryUrl,
+            string localRegistryUrl,
+            SecuritySetting securitySetting
+        );
+
+        Task<bool> PushNewToLocalDiscoveryAsync(
+            AssetAdministrationShell shell,
+            string localDiscoveryUrl,
+            SecuritySetting securitySetting
         );
     }
 }

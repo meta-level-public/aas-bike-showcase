@@ -94,8 +94,18 @@ export class CatalogImportComponent implements OnInit {
         this.suppliers.find((s) => s.remoteAasRepositoryUrl === this.currentRepositoryUrl) ??
         ({} as Supplier);
       await this.catalogService.save(this.newKatalogEintrag);
-      this.notificationService.showMessageAlways('Eintrag erfolgreich gespeichert');
+      this.notificationService.showMessageAlways('Eintrag erfolgreich gespeichert', '', 'success');
       this.newKatalogEintrag = {} as KatalogEintrag;
+    } catch (error: any) {
+      if (error?.status === 409) {
+        // Conflict - Eintrag existiert bereits
+        const message = error?.error?.message || 'Der Eintrag existiert bereits im Repository.';
+        this.notificationService.showMessageAlways(message, 'Fehler', 'error');
+      } else {
+        // Andere Fehler
+        const message = error?.error?.message || 'Fehler beim Speichern des Eintrags';
+        this.notificationService.showMessageAlways(message, 'Fehler', 'error');
+      }
     } finally {
       this.loading = false;
     }

@@ -13,9 +13,9 @@ namespace AasDemoapp.Dpp
     public class DppService
     {
         private readonly AasDemoappContext _context;
-        private readonly SettingService _settingService;
+        private readonly ISettingService _settingService;
 
-        public DppService(AasDemoappContext AasDemoappContext, SettingService settingService)
+        public DppService(AasDemoappContext AasDemoappContext, ISettingService settingService)
         {
             _context = AasDemoappContext;
             _settingService = settingService;

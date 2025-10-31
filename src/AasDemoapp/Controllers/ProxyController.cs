@@ -17,14 +17,14 @@ namespace AasDemoapp.Controllers;
 [Route("api/[controller]/[action]")]
 public class ProxyController : ControllerBase
 {
-    private readonly ImportService _importService;
+    private readonly IImportService _importService;
     private readonly ProxyService _proxyService;
-    private readonly SettingService _settingService;
+    private readonly ISettingService _settingService;
 
     public ProxyController(
-        ImportService importService,
+        IImportService importService,
         ProxyService proxyService,
-        SettingService settingService
+        ISettingService settingService
     )
     {
         _importService = importService;

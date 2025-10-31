@@ -77,8 +77,31 @@ public class MyAdministrativeInformation
         }
 
         Revision = administration.Revision;
-        TemplateId = administration.TemplateId;
+        TemplateId = SanitizeTemplateId(administration.TemplateId);
         Version = administration.Version;
+    }
+
+    private static string? SanitizeTemplateId(string? templateId)
+    {
+        if (string.IsNullOrEmpty(templateId))
+            return templateId;
+
+        // Fix common typos in template IDs:
+        // 1. Fix missing dot: "admin-shell-io" -> "admin-shell.io"
+        templateId = templateId.Replace("admin-shell-io/", "admin-shell.io/");
+
+        // 2. Fix spaces that should be dashes (e.g., "IDTA 02023-1-0" -> "IDTA-02023-1-0")
+        // Match pattern: IDTA followed by space and digits
+        if (templateId.Contains("IDTA "))
+        {
+            templateId = System.Text.RegularExpressions.Regex.Replace(
+                templateId,
+                @"(IDTA)\s+(\d)",
+                "$1-$2"
+            );
+        }
+
+        return templateId;
     }
 
     public List<EmbeddedDataSpecification>? EmbeddedDataSpecifications { get; set; }
@@ -115,7 +138,18 @@ public class MyReference
             return;
         Type = externalSubjectId.Type;
         ReferredSemanticId = (MyReference?)externalSubjectId.ReferredSemanticId;
-        Keys = externalSubjectId.Keys?.Cast<Key>().ToList();
+
+        // Ensure Keys list is not empty - registry requires at least 1 key
+        var keysList = externalSubjectId.Keys?.Cast<Key>().ToList();
+        if (keysList != null && keysList.Count > 0)
+        {
+            Keys = keysList;
+        }
+        else
+        {
+            // Don't set Keys if it would be empty - leave it null instead
+            Keys = null;
+        }
     }
 
     public ReferenceTypes Type { get; set; }

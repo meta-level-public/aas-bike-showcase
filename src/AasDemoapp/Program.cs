@@ -100,11 +100,11 @@ builder.Services.AddDbContext<AasDemoappContext>(
 // AutoMapper registrieren
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-builder.Services.AddScoped<ImportService>();
+builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<KatalogService>();
 builder.Services.AddScoped<SupplierService>();
 builder.Services.AddScoped<ToolRepoService>();
-builder.Services.AddScoped<SettingService>();
+builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<ProxyService>();
 builder.Services.AddScoped<KonfiguratorService>();
 builder.Services.AddScoped<DashboardService>();
