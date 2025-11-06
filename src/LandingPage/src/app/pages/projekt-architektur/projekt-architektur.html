@@ -1,0 +1,215 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Technische Architektur</h1>
+    <p-divider></p-divider>
+  </div>
+
+  <div class="content-section">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-sitemap"></i>
+          <h2>Systemarchitektur</h2>
+        </div>
+      </ng-template>
+
+      <p>
+        Die NextBike-Plattform basiert auf einer modernen, serviceorientierten Architektur (SOA),
+        die auf den Standards der <strong>Asset Administration Shell (AAS)</strong> und der
+        <strong>Open Industry 4.0 Alliance (OI4)</strong> aufbaut.
+      </p>
+
+      <h3><i class="pi pi-layers"></i> Architekturschichten</h3>
+
+      <div class="architecture-layers">
+        <div class="layer">
+          <div class="layer-header">
+            <i class="pi pi-desktop"></i>
+            <h4>Präsentationsschicht</h4>
+          </div>
+          <ul>
+            <li>Angular-basiertes Frontend</li>
+            <li>Responsive Web-Interface</li>
+            <li>Echtzeit-Dashboard für Produktionsmonitoring</li>
+            <li>Konfiguratoroberfläche für Produktindividualisierung</li>
+          </ul>
+        </div>
+
+        <div class="layer">
+          <div class="layer-header">
+            <i class="pi pi-server"></i>
+            <h4>Applikationsschicht</h4>
+          </div>
+          <ul>
+            <li>ASP.NET Core Backend Services</li>
+            <li>RESTful APIs für Frontend-Kommunikation</li>
+            <li>Business Logic Layer mit Domain-Driven Design</li>
+            <li>Workflow-Engine für Produktionsprozesse</li>
+          </ul>
+        </div>
+
+        <div class="layer">
+          <div class="layer-header">
+            <i class="pi pi-cloud"></i>
+            <h4>AAS-Integrationsschicht</h4>
+          </div>
+          <ul>
+            <li>AAS Server (BaSyx-basiert) für Asset-Verwaltung</li>
+            <li>AAS Registry für Service Discovery</li>
+            <li>Submodel-Endpoints für verschiedene Aspekte (DPP, Nameplate, etc.)</li>
+            <li>OI4-konforme Kommunikationsprotokolle</li>
+          </ul>
+        </div>
+
+        <div class="layer">
+          <div class="layer-header">
+            <i class="pi pi-database"></i>
+            <h4>Datenschicht</h4>
+          </div>
+          <ul>
+            <li>Relationale Datenbank (SQL Server/PostgreSQL)</li>
+            <li>Dokumentenspeicher für AASX-Pakete</li>
+            <li>Time-Series Database für Sensor- und Maschinendaten</li>
+            <li>Caching-Layer (Redis) für Performance-Optimierung</li>
+          </ul>
+        </div>
+
+        <div class="layer">
+          <div class="layer-header">
+            <i class="pi pi-cog"></i>
+            <h4>IoT & Maschinenanbindung</h4>
+          </div>
+          <ul>
+            <li>OPC UA Server für Maschinenintegration</li>
+            <li>MQTT Broker für ereignisbasierte Kommunikation</li>
+            <li>Edge Gateways für lokale Datenvorverarbeitung</li>
+            <li>Adapter für proprietäre Maschinenprotokolle</li>
+          </ul>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-share-alt"></i>
+          <h2>Datenfluss & Integration</h2>
+        </div>
+      </ng-template>
+
+      <h3><i class="pi pi-arrows-h"></i> Hauptdatenflüsse</h3>
+
+      <div class="data-flows">
+        <div class="flow-item">
+          <div class="flow-number">1</div>
+          <div class="flow-content">
+            <h4>Lieferantenintegration</h4>
+            <p>
+              Lieferanten stellen ihre Produktdaten über AAS-konforme Submodelle bereit. Diese
+              werden über die AAS Registry entdeckt und in den Teilekatalog integriert.
+            </p>
+          </div>
+        </div>
+
+        <div class="flow-item">
+          <div class="flow-number">2</div>
+          <div class="flow-content">
+            <h4>Konfiguration zu Produktion</h4>
+            <p>
+              Kundenkonfigurationen werden in Produktionsaufträge überführt. Die benötigten
+              Komponenten werden anhand ihrer AAS identifiziert und bereitgestellt.
+            </p>
+          </div>
+        </div>
+
+        <div class="flow-item">
+          <div class="flow-number">3</div>
+          <div class="flow-content">
+            <h4>Produktionsausführung</h4>
+            <p>
+              Maschinendaten werden in Echtzeit erfasst und mit dem jeweiligen Produktionsauftrag
+              verknüpft. Alle Fertigungsschritte werden im entstehenden DPP dokumentiert.
+            </p>
+          </div>
+        </div>
+
+        <div class="flow-item">
+          <div class="flow-number">4</div>
+          <div class="flow-content">
+            <h4>DPP-Generierung</h4>
+            <p>
+              Nach Fertigstellung wird der vollständige Digital Product Passport generiert, der alle
+              Informationen aus Lieferkette, Produktion und Qualitätssicherung enthält.
+            </p>
+          </div>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-shield"></i>
+          <h2>Sicherheit & Compliance</h2>
+        </div>
+      </ng-template>
+
+      <ul class="security-features">
+        <li>
+          <i class="pi pi-lock"></i>
+          <strong>Authentifizierung & Autorisierung:</strong> OAuth 2.0 / OpenID Connect für sichere
+          Benutzeranmeldung
+        </li>
+        <li>
+          <i class="pi pi-key"></i>
+          <strong>API-Sicherheit:</strong> API Keys und JWT-basierte Autorisierung für
+          Service-to-Service-Kommunikation
+        </li>
+        <li>
+          <i class="pi pi-eye-slash"></i>
+          <strong>Datenschutz:</strong> GDPR-konforme Datenverarbeitung mit Anonymisierung sensibler
+          Informationen
+        </li>
+        <li>
+          <i class="pi pi-verified"></i>
+          <strong>Audit Trail:</strong> Lückenlose Protokollierung aller Änderungen an Assets und
+          Produktdaten
+        </li>
+        <li>
+          <i class="pi pi-shield"></i>
+          <strong>Netzwerksicherheit:</strong> TLS-verschlüsselte Kommunikation, Firewalls und
+          Netzwerksegmentierung
+        </li>
+      </ul>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-box"></i>
+          <h2>Deployment & Infrastruktur</h2>
+        </div>
+      </ng-template>
+
+      <p>
+        Das NextBike-System wird als containerisierte Anwendung bereitgestellt, was hohe
+        Flexibilität und Skalierbarkeit ermöglicht.
+      </p>
+
+      <h3><i class="pi pi-docker"></i> Container-Orchestrierung</h3>
+      <ul class="deployment-list">
+        <li>Docker-Container für alle Services</li>
+        <li>Docker Compose für lokale Entwicklungsumgebungen</li>
+        <li>Kubernetes für Production-Deployments (optional)</li>
+        <li>Traefik als Reverse Proxy und Load Balancer</li>
+        <li>Nginx für statische Inhalte und Frontend-Hosting</li>
+      </ul>
+
+      <h3><i class="pi pi-cloud-upload"></i> Cloud-Readiness</h3>
+      <p>
+        Die Architektur ist cloud-agnostisch designed und kann sowohl on-premise als auch in
+        verschiedenen Cloud-Umgebungen (Azure, AWS, Google Cloud) betrieben werden.
+      </p>
+    </p-card>
+  </div>
+</div>

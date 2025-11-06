@@ -1,0 +1,62 @@
+<div class="container">
+  <div class="hero-section">
+    <h1>Willkommen bei NextBike</h1>
+    <p class="subtitle">
+      Digitale Produktpässe und vernetzte Fertigung mit der Asset Administration Shell
+    </p>
+  </div>
+
+  <div class="intro-cards">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-book"></i>
+          <h3>Digital Product Passport</h3>
+        </div>
+      </ng-template>
+      <p>
+        Erfahren Sie mehr über den digitalen Produktpass und seine Bedeutung für die Industrie 4.0
+      </p>
+      <ng-template pTemplate="footer">
+        <p-button label="Mehr erfahren" icon="pi pi-arrow-right" [routerLink]="['/dpp']"></p-button>
+      </ng-template>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-briefcase"></i>
+          <h3>Das Projekt</h3>
+        </div>
+      </ng-template>
+      <p>
+        Entdecken Sie die virtuelle Fabrik NextBike und die vollständige digitale
+        Wertschöpfungskette
+      </p>
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Zum Projekt"
+          icon="pi pi-arrow-right"
+          [routerLink]="['/projekt']"
+        ></p-button>
+      </ng-template>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-users"></i>
+          <h3>Unsere Member</h3>
+        </div>
+      </ng-template>
+      <p>Lernen Sie die Unternehmen kennen, die dieses Projekt möglich gemacht haben</p>
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Zu den Members"
+          icon="pi pi-arrow-right"
+          [routerLink]="['/members']"
+        ></p-button>
+      </ng-template>
+    </p-card>
+  </div>
+</div>

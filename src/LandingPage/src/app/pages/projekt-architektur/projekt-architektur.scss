@@ -1,0 +1,204 @@
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+
+  h1 {
+    color: #76b82a;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  ::ng-deep .p-card {
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #76b82a 0%, #5fa022 100%);
+      color: white;
+
+      i {
+        font-size: 2rem;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+    }
+
+    h3 {
+      color: #76b82a;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      line-height: 1.8;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.architecture-layers {
+  margin-top: 2rem;
+
+  .layer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #76b82a;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateX(5px);
+    }
+
+    .layer-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+
+      i {
+        font-size: 1.8rem;
+        color: #76b82a;
+      }
+
+      h4 {
+        color: #333;
+        font-size: 1.4rem;
+        margin: 0;
+      }
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+
+      li {
+        padding: 0.5rem 0 0.5rem 2rem;
+        position: relative;
+        color: #555;
+
+        &:before {
+          content: '▸';
+          position: absolute;
+          left: 0.5rem;
+          color: #76b82a;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+.data-flows {
+  margin-top: 2rem;
+
+  .flow-item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .flow-number {
+      flex-shrink: 0;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .flow-content {
+      h4 {
+        color: #76b82a;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+      }
+
+      p {
+        color: #555;
+        line-height: 1.7;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.security-features {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+
+  li {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: start;
+    gap: 1rem;
+
+    i {
+      color: #4caf50;
+      font-size: 1.5rem;
+      margin-top: 0.2rem;
+    }
+
+    strong {
+      color: #333;
+    }
+  }
+}
+
+.deployment-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1rem;
+
+  li {
+    padding: 0.5rem 0 0.5rem 2rem;
+    position: relative;
+    color: #555;
+
+    &:before {
+      content: '✓';
+      position: absolute;
+      left: 0.5rem;
+      color: #4caf50;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  }
+}

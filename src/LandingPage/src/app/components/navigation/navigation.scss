@@ -1,0 +1,16 @@
+.navigation-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .logo {
+    padding: 0 1rem;
+
+    h2 {
+      margin: 0;
+      color: #76b82a;
+      font-weight: 600;
+    }
+  }
+}

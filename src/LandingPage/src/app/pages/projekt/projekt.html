@@ -1,0 +1,137 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Das NextBike Projekt</h1>
+    <p-divider></p-divider>
+  </div>
+
+  <div class="content-section">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-info-circle"></i>
+          <h2>Projektübersicht</h2>
+        </div>
+      </ng-template>
+
+      <p>
+        Das <strong>NextBike-Projekt</strong> ist eine Demonstrationsplattform für die virtuelle
+        Fabrik der Zukunft. Es wurde über einen längeren Zeitraum in Zusammenarbeit mit der
+        <strong>Open Industry 4.0 Alliance (OI4)</strong> und einer Reihe von führenden
+        <a [routerLink]="['/members']" class="inline-link">Mitgliedsunternehmen</a> entwickelt.
+      </p>
+
+      <p-divider></p-divider>
+
+      <h3><i class="pi pi-sitemap"></i> Vollständige digitale Wertschöpfungskette</h3>
+      <p>
+        Das Projekt zeigt, wie mittels der <strong>Asset Administration Shell (AAS)</strong> eine
+        vollständige digitale Wertschöpfungskette abgebildet werden kann - von den Lieferanten über
+        den Teilekatalog und die Konfiguration bis hin zur Produktion und dem finalen Digital
+        Product Passport (DPP).
+      </p>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-th-large"></i>
+          <h2>Projektkomponenten</h2>
+        </div>
+      </ng-template>
+
+      <div class="components-grid">
+        <div class="component-item">
+          <i class="pi pi-users"></i>
+          <h4>Lieferantenintegration</h4>
+          <p>Anbindung von Zulieferern über standardisierte AAS-Schnittstellen</p>
+        </div>
+
+        <div class="component-item">
+          <i class="pi pi-book"></i>
+          <h4>Digitaler Teilekatalog</h4>
+          <p>Zentrale Verwaltung aller Komponenten und deren Eigenschaften</p>
+        </div>
+
+        <div class="component-item">
+          <i class="pi pi-sliders-h"></i>
+          <h4>Konfigurator</h4>
+          <p>Individualisierung von Produkten nach Kundenwünschen</p>
+        </div>
+
+        <div class="component-item">
+          <i class="pi pi-inbox"></i>
+          <h4>Wareneingang</h4>
+          <p>Digitale Erfassung und Tracking eingehender Materialien</p>
+        </div>
+
+        <div class="component-item">
+          <i class="pi pi-cog"></i>
+          <h4>Maschinenintegration</h4>
+          <p>Echtzeitanbindung von Produktionsanlagen während der Fertigung</p>
+        </div>
+
+        <div class="component-item">
+          <i class="pi pi-id-card"></i>
+          <h4>Digital Product Passport</h4>
+          <p>Vollständige Dokumentation des fertigen Produkts</p>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-history"></i>
+          <h2>Vorgängerprojekte</h2>
+        </div>
+      </ng-template>
+
+      <p>
+        Das NextBike-Projekt baut auf den Erkenntnissen und Ergebnissen folgender Vorgängerprojekte
+        auf:
+      </p>
+
+      <div class="predecessor-projects">
+        <div class="project-item">
+          <h4><i class="pi pi-arrow-right-arrow-left"></i> Transfer of Ownership</h4>
+          <p>
+            Demonstration des digitalen Eigentümerwechsels von Assets über die gesamte
+            Wertschöpfungskette hinweg, inklusive der automatischen Übertragung von
+            Verantwortlichkeiten und Rechten.
+          </p>
+        </div>
+
+        <div class="project-item">
+          <h4><i class="pi pi-bell"></i> Product Change Notification</h4>
+          <p>
+            System zur automatischen Benachrichtigung über Produktänderungen entlang der
+            Lieferkette, um schnelle Reaktionen auf Designänderungen oder Qualitätsprobleme zu
+            ermöglichen.
+          </p>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <i class="pi pi-building"></i>
+          <h2>Technische Architektur</h2>
+        </div>
+      </ng-template>
+
+      <p>
+        Für detaillierte Informationen zur technischen Umsetzung und Architektur des Projekts
+        besuchen Sie bitte unsere dedizierte Architektur-Seite.
+      </p>
+
+      <p-button
+        label="Zur Architektur-Dokumentation"
+        icon="pi pi-arrow-right"
+        [routerLink]="['/projekt/architektur']"
+        styleClass="p-button-lg"
+      >
+      </p-button>
+    </p-card>
+  </div>
+</div>

@@ -1,0 +1,210 @@
+.container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+
+  h1 {
+    color: #76b82a;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.content-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  ::ng-deep .p-card {
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #76b82a 0%, #5fa022 100%);
+      color: white;
+
+      .oi4-logo-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 8px;
+        padding: 0.5rem;
+        height: 60px;
+        width: 60px;
+
+        img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
+      }
+
+      i {
+        font-size: 2rem;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+    }
+
+    p {
+      line-height: 1.8;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+.members-header {
+  margin: 2rem 0 1.5rem;
+
+  h2 {
+    color: #76b82a;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+
+    i {
+      font-size: 2rem;
+    }
+  }
+
+  p {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+::ng-deep .member-card {
+  height: 100%;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .member-logo {
+    height: 200px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    overflow: hidden;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .p-card-body {
+    h3 {
+      color: #76b82a;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      margin-top: 0;
+    }
+
+    p {
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+  }
+
+  .member-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
+    .tag {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+  }
+
+  .member-link {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #76b82a;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+
+      i {
+        font-size: 1rem;
+      }
+
+      &:hover {
+        color: #1976d2;
+        gap: 0.75rem;
+      }
+    }
+  }
+}
+
+::ng-deep .additional-members-card {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-left: 4px solid #ffc107;
+
+  .p-card-body {
+    .additional-info {
+      display: flex;
+      gap: 1.5rem;
+      align-items: start;
+
+      i {
+        font-size: 2.5rem;
+        color: #ff9800;
+        flex-shrink: 0;
+      }
+
+      h3 {
+        color: #333;
+        margin: 0 0 0.5rem 0;
+        font-size: 1.3rem;
+      }
+
+      p {
+        color: #555;
+        line-height: 1.7;
+        margin: 0;
+      }
+    }
+  }
+}
