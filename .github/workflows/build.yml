@@ -132,7 +132,7 @@ jobs:
         id: set_tag
         run: |
           if [ "$GITHUB_REF_NAME" = "main" ]; then
-            echo "tag=landing-page:latest" >> $GITHUB_OUTPUT
+            echo "tag=bike-showcase-landing-page:latest" >> $GITHUB_OUTPUT
           else
             echo "tag=landing-page:preview" >> $GITHUB_OUTPUT
           fi
@@ -140,10 +140,10 @@ jobs:
       - name: Build Docker image
         working-directory: src/LandingPage
         run: |
-          if [ "${{ steps.set_tag.outputs.tag }}" = "landing-page:latest" ]; then
-            docker build -t landing-page:latest .
+          if [ "${{ steps.set_tag.outputs.tag }}" = "bike-showcase-landing-page:latest" ]; then
+            docker build -t bike-showcase-landing-page:latest .
           else
-            docker build -t landing-page:preview .
+            docker build -t bike-showcase-landing-page:preview .
           fi
 
       - name: Login to GitHub Container Registry
@@ -151,10 +151,10 @@ jobs:
 
       - name: Tag Docker image for GHCR
         run: |
-          if [ "${{ steps.set_tag.outputs.tag }}" = "landing-page:latest" ]; then
-            docker tag landing-page:latest ghcr.io/${{ github.repository_owner }}/landing-page:latest
+          if [ "${{ steps.set_tag.outputs.tag }}" = "bike-showcase-landing-page:latest" ]; then
+            docker tag landing-page:latest ghcr.io/${{ github.repository_owner }}/bike-showcase-landing-page:latest
           else
-            docker tag landing-page:preview ghcr.io/${{ github.repository_owner }}/landing-page:preview
+            docker tag landing-page:preview ghcr.io/${{ github.repository_owner }}/bike-showcase-landing-page:preview
           fi
 
       - name: Push Docker image to GHCR

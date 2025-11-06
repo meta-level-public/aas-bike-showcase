@@ -428,6 +428,20 @@ services:
       - 'traefik.http.services.proxy.loadbalancer.server.port=8080'
   ##################################################################
 
+  ############################## Proxy ############################
+  landing:
+    container_name: aas-landing
+    image: ghcr.io/meta-level-public/bike-showcase-landing-page:latest
+    restart: always
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.landing.rule=Host(`aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.landing.entrypoints=web,websecure'
+      - 'traefik.http.routers.landing.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.landing.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.landing.loadbalancer.server.port=80'
+  ##################################################################
+
   ############################### MNESTIX ##########################
 
   mnestix-browser:
