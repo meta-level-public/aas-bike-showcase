@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+    <defs>
+        <style>
+      .bike { fill: none; stroke: #2c3e50; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+        </style>
+    </defs>
+
+    <!-- Hinterkreis -->
+    <circle cx="16" cy="16" r="15" fill="#3498db" opacity="0.1"/>
+
+    <!-- Hinteres Rad -->
+    <circle class="bike" cx="9" cy="22" r="4.5"/>
+    <circle class="bike" cx="9" cy="22" r="0.8" fill="#2c3e50"/>
+
+    <!-- Vorderes Rad -->
+    <circle class="bike" cx="23" cy="22" r="4.5"/>
+    <circle class="bike" cx="23" cy="22" r="0.8" fill="#2c3e50"/>
+
+    <!-- Rahmen -->
+    <path class="bike" d="M 9 22 L 14 15 L 18 15 L 23 22"/>
+    <path class="bike" d="M 14 15 L 11 11 L 16 11"/>
+    <path class="bike" d="M 18 15 L 16 11"/>
+
+    <!-- Sattel -->
+    <line class="bike" x1="13" y1="13.5" x2="15.5" y2="13.5" stroke-width="2"/>
+
+    <!-- Lenker -->
+    <path class="bike" d="M 16 11 L 17 9"/>
+    <line class="bike" x1="15.5" y1="9" x2="18.5" y2="9" stroke-width="1.5"/>
+
+    <!-- Pedal -->
+    <circle class="bike" cx="14" cy="18" r="1.2"/>
+    <line class="bike" x1="14" y1="15" x2="14" y2="18"/>
+</svg>
