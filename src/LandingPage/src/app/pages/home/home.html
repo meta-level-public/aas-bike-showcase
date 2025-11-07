@@ -18,7 +18,12 @@
         Erfahren Sie mehr über den digitalen Produktpass und seine Bedeutung für die Industrie 4.0
       </p>
       <ng-template pTemplate="footer">
-        <p-button label="Mehr erfahren" icon="pi pi-arrow-right" [routerLink]="['/dpp']"></p-button>
+        <div class="card-link">
+          <a [routerLink]="['/dpp']">
+            <span>Mehr erfahren</span>
+            <i class="pi pi-arrow-right"></i>
+          </a>
+        </div>
       </ng-template>
     </p-card>
 
@@ -34,11 +39,12 @@
         Wertschöpfungskette
       </p>
       <ng-template pTemplate="footer">
-        <p-button
-          label="Zum Projekt"
-          icon="pi pi-arrow-right"
-          [routerLink]="['/projekt']"
-        ></p-button>
+        <div class="card-link">
+          <a [routerLink]="['/projekt']">
+            <span>Zum Projekt</span>
+            <i class="pi pi-arrow-right"></i>
+          </a>
+        </div>
       </ng-template>
     </p-card>
 
@@ -51,11 +57,12 @@
       </ng-template>
       <p>Lernen Sie die Unternehmen kennen, die dieses Projekt möglich gemacht haben</p>
       <ng-template pTemplate="footer">
-        <p-button
-          label="Zu den Members"
-          icon="pi pi-arrow-right"
-          [routerLink]="['/members']"
-        ></p-button>
+        <div class="card-link">
+          <a [routerLink]="['/members']">
+            <span>Zu den Members</span>
+            <i class="pi pi-arrow-right"></i>
+          </a>
+        </div>
       </ng-template>
     </p-card>
   </div>

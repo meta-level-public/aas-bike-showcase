@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 
@@ -8,7 +9,7 @@ import { MenubarModule } from 'primeng/menubar';
   standalone: true,
   templateUrl: './navigation.html',
   styleUrl: './navigation.scss',
-  imports: [CommonModule, MenubarModule],
+  imports: [CommonModule, MenubarModule, RouterLink],
 })
 export class Navigation implements OnInit {
   menuItems: MenuItem[] = [];

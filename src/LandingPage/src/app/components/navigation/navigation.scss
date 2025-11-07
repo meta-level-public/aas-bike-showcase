@@ -7,10 +7,56 @@
   .logo {
     padding: 0 1rem;
 
+    a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
     h2 {
       margin: 0;
       color: #76b82a;
       font-weight: 600;
+      cursor: pointer;
+
+      @media (max-width: 768px) {
+        font-size: 1.4rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 1.2rem;
+        padding: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 0 0.5rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 0 0.25rem;
+    }
+  }
+
+  // PrimeNG Menubar responsive Anpassungen
+  ::ng-deep .p-menubar {
+    @media (max-width: 768px) {
+      .p-menubar-button {
+        display: flex;
+      }
+    }
+
+    @media (max-width: 480px) {
+      padding: 0.5rem;
+
+      .p-menuitem-link {
+        padding: 0.75rem 1rem;
+      }
     }
   }
 }

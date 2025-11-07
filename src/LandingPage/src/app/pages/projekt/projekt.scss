@@ -2,6 +2,14 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
 }
 
 .page-header {
@@ -11,6 +19,18 @@
     color: #76b82a;
     font-size: 2.5rem;
     margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.6rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -30,11 +50,32 @@
 
       i {
         font-size: 2rem;
+
+        @media (max-width: 768px) {
+          font-size: 1.5rem;
+        }
       }
 
       h2 {
         margin: 0;
         font-size: 1.8rem;
+
+        @media (max-width: 768px) {
+          font-size: 1.4rem;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 1.2rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        padding: 1rem;
+      }
+
+      @media (max-width: 480px) {
+        padding: 0.75rem;
+        gap: 0.75rem;
       }
     }
 
@@ -45,12 +86,31 @@
       gap: 0.5rem;
       margin-top: 1.5rem;
       margin-bottom: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.3rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        margin-bottom: 0.75rem;
+      }
     }
 
     p {
       line-height: 1.8;
       font-size: 1.1rem;
       margin-bottom: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 0.95rem;
+      }
     }
 
     .inline-link {
@@ -71,6 +131,16 @@
   gap: 1.5rem;
   margin-top: 1.5rem;
 
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
   .component-item {
     padding: 1.5rem;
     background: #f8f9fa;
@@ -89,18 +159,38 @@
       font-size: 2.5rem;
       color: #76b82a;
       margin-bottom: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
     }
 
     h4 {
       color: #333;
       margin-bottom: 0.5rem;
       font-size: 1.2rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.1rem;
+      }
     }
 
     p {
       color: #666;
       font-size: 0.95rem;
       line-height: 1.6;
+
+      @media (max-width: 480px) {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 1rem;
     }
   }
 }
@@ -126,12 +216,38 @@
       i {
         font-size: 1.2rem;
       }
+
+      @media (max-width: 768px) {
+        font-size: 1.1rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 1rem;
+        flex-wrap: wrap;
+      }
     }
 
     p {
       color: #555;
       line-height: 1.7;
       margin: 0;
+
+      @media (max-width: 768px) {
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 0.75rem;
     }
   }
 }

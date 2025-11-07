@@ -2,6 +2,14 @@
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
 }
 
 .page-header {
@@ -11,6 +19,18 @@
     color: #76b82a;
     font-size: 2.5rem;
     margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.6rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -19,46 +39,68 @@
   flex-direction: column;
   gap: 2rem;
 
-  ::ng-deep .p-card {
-    .card-header {
+  @media (max-width: 768px) {
+    gap: 1.5rem;
+  }
+}
+
+// OI4 Card - Sonderstyle mit grünem Header
+::ng-deep .oi4-card {
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #76b82a 0%, #5fa022 100%);
+    color: white;
+
+    .oi4-logo-header {
       display: flex;
       align-items: center;
-      gap: 1rem;
-      padding: 1.5rem;
-      background: linear-gradient(135deg, #76b82a 0%, #5fa022 100%);
-      color: white;
+      justify-content: center;
+      background: white;
+      border-radius: 8px;
+      padding: 0.5rem;
+      height: 60px;
+      width: 60px;
 
-      .oi4-logo-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: white;
-        border-radius: 8px;
-        padding: 0.5rem;
-        height: 60px;
-        width: 60px;
-
-        img {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
-        }
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
       }
 
-      i {
-        font-size: 2rem;
+      @media (max-width: 768px) {
+        height: 50px;
+        width: 50px;
       }
 
-      h2 {
-        margin: 0;
-        font-size: 1.8rem;
+      @media (max-width: 480px) {
+        height: 40px;
+        width: 40px;
       }
     }
 
-    p {
-      line-height: 1.8;
-      font-size: 1.1rem;
-      margin-bottom: 1rem;
+    h2 {
+      margin: 0;
+      font-size: 1.8rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.4rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 0.75rem;
+      gap: 0.75rem;
     }
   }
 }
@@ -77,11 +119,39 @@
     i {
       font-size: 2rem;
     }
+
+    @media (max-width: 768px) {
+      font-size: 1.6rem;
+
+      i {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.4rem;
+
+      i {
+        font-size: 1.4rem;
+      }
+    }
   }
 
   p {
     font-size: 1.1rem;
     color: #666;
+
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 0.95rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    margin: 1.5rem 0 1rem;
   }
 }
 
@@ -90,6 +160,16 @@
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 2rem;
   margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 
 ::ng-deep .member-card {
@@ -101,6 +181,10 @@
   &:hover {
     transform: translateY(-8px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+    @media (max-width: 768px) {
+      transform: translateY(-4px);
+    }
   }
 
   .member-logo {
@@ -117,6 +201,16 @@
       max-height: 100%;
       object-fit: contain;
     }
+
+    @media (max-width: 768px) {
+      height: 150px;
+      padding: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      height: 120px;
+      padding: 0.75rem;
+    }
   }
 
   .p-card-body {
@@ -125,6 +219,14 @@
       font-size: 1.5rem;
       margin-bottom: 1rem;
       margin-top: 0;
+
+      @media (max-width: 768px) {
+        font-size: 1.3rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 1.2rem;
+      }
     }
 
     p {
@@ -132,6 +234,16 @@
       line-height: 1.7;
       margin-bottom: 1.5rem;
       font-size: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 0.9rem;
+      }
     }
   }
 
@@ -149,6 +261,15 @@
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 500;
+
+      @media (max-width: 480px) {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.7rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      gap: 0.4rem;
     }
   }
 
@@ -174,6 +295,10 @@
         color: #1976d2;
         gap: 0.75rem;
       }
+
+      @media (max-width: 480px) {
+        font-size: 0.95rem;
+      }
     }
   }
 }
@@ -192,18 +317,52 @@
         font-size: 2.5rem;
         color: #ff9800;
         flex-shrink: 0;
+
+        @media (max-width: 768px) {
+          font-size: 2rem;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 1.5rem;
+        }
       }
 
       h3 {
         color: #333;
         margin: 0 0 0.5rem 0;
         font-size: 1.3rem;
+
+        @media (max-width: 768px) {
+          font-size: 1.2rem;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 1.1rem;
+        }
       }
 
       p {
         color: #555;
         line-height: 1.7;
         margin: 0;
+
+        @media (max-width: 768px) {
+          font-size: 0.95rem;
+          line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 0.9rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        gap: 1rem;
+      }
+
+      @media (max-width: 480px) {
+        flex-direction: column;
+        gap: 0.75rem;
       }
     }
   }

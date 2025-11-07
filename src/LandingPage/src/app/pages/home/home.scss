@@ -2,6 +2,14 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
 }
 
 .hero-section {
@@ -12,11 +20,37 @@
     font-size: 3rem;
     color: #76b82a;
     margin-bottom: 1rem;
+
+    @media (max-width: 768px) {
+      font-size: 2.2rem;
+      padding: 0 1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.8rem;
+    }
   }
 
   .subtitle {
     font-size: 1.5rem;
     color: #666;
+
+    @media (max-width: 768px) {
+      font-size: 1.2rem;
+      padding: 0 1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0;
   }
 }
 
@@ -26,8 +60,21 @@
   gap: 2rem;
   margin-top: 3rem;
 
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
   ::ng-deep .p-card {
     height: 100%;
+    display: flex;
+    flex-direction: column;
 
     .card-header {
       display: flex;
@@ -39,19 +86,83 @@
 
       i {
         font-size: 2rem;
+
+        @media (max-width: 480px) {
+          font-size: 1.5rem;
+        }
       }
 
       h3 {
         margin: 0;
         font-size: 1.5rem;
+
+        @media (max-width: 768px) {
+          font-size: 1.3rem;
+        }
+
+        @media (max-width: 480px) {
+          font-size: 1.1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        padding: 0.75rem;
+        gap: 0.75rem;
       }
     }
 
     .p-card-body {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
+      flex-grow: 1;
+
+      p {
+        flex-grow: 1;
+        margin-bottom: 0;
+
+        @media (max-width: 480px) {
+          font-size: 0.95rem;
+        }
+      }
+    }
+
+    .p-card-footer {
+      .card-link {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+
+        a {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #76b82a;
+          text-decoration: none;
+          font-weight: 500;
+          transition: all 0.3s ease;
+
+          span {
+            font-size: 1rem;
+
+            @media (max-width: 480px) {
+              font-size: 0.95rem;
+            }
+          }
+
+          i {
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+          }
+
+          &:hover {
+            color: #5fa022;
+
+            i {
+              transform: translateX(4px);
+            }
+          }
+        }
+      }
     }
   }
 }
