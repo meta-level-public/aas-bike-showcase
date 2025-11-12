@@ -141,17 +141,15 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Aas IdShort</th>
-              <th scope="col">AasId</th>
               <th scope="col">Aktionen</th>
               <th scope="col">Details</th>
+              <th scope="col">Aas IdShort</th>
+              <th scope="col">AasId</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-shell>
             @if (shell != null) {
               <tr>
-                <td>{{ shell.idShort }}</td>
-                <td>{{ shell.id }}</td>
                 <td>
                   <p-button
                     size="small"
@@ -171,6 +169,8 @@
                     severity="secondary"
                   ></p-button>
                 </td>
+                <td>{{ shell.idShort }}</td>
+                <td>{{ shell.id }}</td>
               </tr>
             }
           </ng-template>
