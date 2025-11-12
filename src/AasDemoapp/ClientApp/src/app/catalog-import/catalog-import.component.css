@@ -179,6 +179,16 @@
   overflow-x: auto;
 }
 
+.table-section ::ng-deep .p-datatable td {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 300px;
+}
+
+.table-section ::ng-deep .p-datatable th {
+  white-space: nowrap;
+}
+
 /* Empty State */
 .empty-state {
   text-align: center;
