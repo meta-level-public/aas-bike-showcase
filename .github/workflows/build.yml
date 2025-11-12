@@ -34,7 +34,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: "9.0.x"
       - name: Restore dependencies
         run: dotnet restore src/AasDemoapp/AasDemoapp.csproj
       - name: Build
@@ -42,10 +42,25 @@ jobs:
       - name: Test
         run: dotnet test tests/AasDemoapp.Tests/AasDemoapp.Tests.csproj --verbosity normal
 
+  test_proxy:
+    name: Test & Build AasProxyService
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - name: Restore dependencies
+        run: dotnet restore src/AasProxyService/AasProxyService.csproj
+      - name: Build
+        run: dotnet build src/AasProxyService/AasProxyService.csproj --no-restore --configuration Release
+
   build_demoapp_image:
     name: Build Docker image
     runs-on: ubuntu-latest
-    needs: test
+    needs: test_demoapp
     steps:
       - uses: actions/checkout@v4
       - name: Set Docker image tag
@@ -83,7 +98,7 @@ jobs:
   build_proxy_image:
     name: Build Docker image
     runs-on: ubuntu-latest
-    needs: test
+    needs: test_proxy
     steps:
       - uses: actions/checkout@v4
       - name: Set Docker image tag
