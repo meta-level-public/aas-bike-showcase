@@ -35,8 +35,9 @@
 /* Main Layout */
 .catalog-import-content {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
   gap: 1.5rem;
+  overflow: hidden;
 }
 
 /* Input Panel */
@@ -45,6 +46,7 @@
   border-radius: 8px;
   padding: 1.5rem;
   border: 1px solid var(--p-content-border-color);
+  min-width: 0;
 }
 
 /* Data Panel */
@@ -53,6 +55,8 @@
   border-radius: 8px;
   padding: 1.5rem;
   border: 1px solid var(--p-content-border-color);
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* Panel Headers */
@@ -168,6 +172,11 @@
 /* Table Section */
 .table-section {
   overflow: hidden;
+  min-width: 0;
+}
+
+.table-section ::ng-deep .p-datatable-wrapper {
+  overflow-x: auto;
 }
 
 /* Empty State */
