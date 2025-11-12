@@ -133,6 +133,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - mongo_data:/data/db
+      - mongo_config:/data/configdb
 
   aas-discovery:
     image: eclipsebasyx/aas-discovery:2.0.0-milestone-04
@@ -256,6 +259,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - mongo_suppl_data:/data/db
+      - mongo_suppl_config:/data/configdb
 
   aas-discovery-suppl:
     image: eclipsebasyx/aas-discovery:2.0.0-milestone-04
@@ -286,6 +292,130 @@ services:
     #   - '1883:1883'
     volumes:
       - ./mosquitto-suppl:/mosquitto
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mosquitto_sub -p 1883 -t 'topic' -C 1 -E -i probe -W 3
+      interval: 5s
+      timeout: 10s
+      start_period: 1s
+      retries: 3
+
+  ######################### BASYX SERVICES XITASO #########################
+
+  aas-env-xitaso:
+    image: eclipsebasyx/aas-environment:2.0.0-milestone-04
+    container_name: aas-env-xitaso
+    mem_limit: 384m
+    memswap_limit: 1g
+    environment:
+      - SERVER_PORT=8081
+    volumes:
+      - ./aas-xitaso:/application/aas
+      - ./basyx-xitaso/aas-env.properties:/application/application.properties
+    restart: unless-stopped
+    depends_on:
+      aas-registry-xitaso:
+        condition: service_healthy
+      sm-registry-xitaso:
+        condition: service_healthy
+      mongo-xitaso:
+        condition: service_healthy
+      mosquitto-xitaso:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-env-xitaso.rule=Host(`aas-env-xitaso.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-env-xitaso.entrypoints=websecure'
+      - 'traefik.http.routers.aas-env-xitaso.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-env-xitaso.middlewares=redirect-to-https@file'
+
+  aas-registry-xitaso:
+    image: eclipsebasyx/aas-registry-log-mongodb:2.0.0-milestone-04
+    container_name: aas-registry-xitaso
+    mem_limit: 384m
+    memswap_limit: 1g
+    environment:
+      - SERVER_PORT=8080
+    volumes:
+      - ./basyx-xitaso/aas-registry.yml:/workspace/config/application.yml
+    restart: unless-stopped
+    depends_on:
+      mongo-xitaso:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-registry-xitaso.rule=Host(`aas-registry-xitaso.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-registry-xitaso.entrypoints=websecure'
+      - 'traefik.http.routers.aas-registry-xitaso.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-registry-xitaso.middlewares=redirect-to-https@file'
+
+  sm-registry-xitaso:
+    image: eclipsebasyx/submodel-registry-log-mongodb:2.0.0-milestone-04
+    container_name: sm-registry-xitaso
+    mem_limit: 384m
+    memswap_limit: 1g
+    environment:
+      - SERVER_PORT=8080
+    volumes:
+      - ./basyx-xitaso/sm-registry.yml:/workspace/config/application.yml
+    restart: unless-stopped
+    depends_on:
+      mongo-xitaso:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.sm-registry-xitaso.rule=Host(`sm-registry-xitaso.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.sm-registry-xitaso.entrypoints=websecure'
+      - 'traefik.http.routers.sm-registry-xitaso.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.sm-registry-xitaso.middlewares=redirect-to-https@file'
+
+  mongo-xitaso:
+    image: mongo:5.0.10
+    container_name: mongo-xitaso
+    mem_limit: 256m
+    memswap_limit: 1g
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoAdmin
+      MONGO_INITDB_ROOT_PASSWORD: mongoPassword
+    restart: unless-stopped
+    healthcheck:
+      test: mongo
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - mongo_xitaso_data:/data/db
+      - mongo_xitaso_config:/data/configdb
+
+  aas-discovery-xitaso:
+    image: eclipsebasyx/aas-discovery:2.0.0-milestone-04
+    container_name: aas-discovery-xitaso
+    mem_limit: 256m
+    memswap_limit: 1g
+    environment:
+      - SERVER_PORT=8081
+    volumes:
+      - ./basyx-xitaso/aas-discovery.properties:/application/application.properties
+    restart: unless-stopped
+    depends_on:
+      mongo-xitaso:
+        condition: service_healthy
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.aas-discovery-xitaso.rule=Host(`aas-discovery-xitaso.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.aas-discovery-xitaso.entrypoints=websecure'
+      - 'traefik.http.routers.aas-discovery-xitaso.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.aas-discovery-xitaso.middlewares=redirect-to-https@file'
+
+  mosquitto-xitaso:
+    image: eclipse-mosquitto:2.0.15
+    container_name: mosquitto-xitaso
+    mem_limit: 128m
+    memswap_limit: 1g
+    volumes:
+      - ./mosquitto-xitaso:/mosquitto
     restart: unless-stopped
     healthcheck:
       test:
@@ -366,8 +496,6 @@ services:
     image: twinedgeimages.azurecr.io/aas-runtime-web:latest
     mem_limit: 256m
     memswap_limit: 1g
-    # ports:
-    #   - '3000'
     restart: unless-stopped
     env_file:
       - .env
@@ -383,7 +511,6 @@ services:
     image: twinedgeimages.azurecr.io/screwingsimulation:latest
     hostname: screw-simulator
     ports:
-      #   - '7020:8080'
       - '0.0.0.0:4840:4840'
     restart: unless-stopped
     env_file:
@@ -421,7 +548,7 @@ services:
       - .env.proxy # ProxyConfiguration aus Umgebungsvariablen laden
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.proxy.rule=Host(`dt.aas-bike.showcasehub.de`) || Host(`dt-suppl.aas-bike.showcasehub.de`)'
+      - 'traefik.http.routers.proxy.rule=Host(`dt.aas-bike.showcasehub.de`) || Host(`dt-suppl.aas-bike.showcasehub.de`) || Host(`dt-xitaso.aas-bike.showcasehub.de`)'
       - 'traefik.http.routers.proxy.entrypoints=web,websecure'
       - 'traefik.http.routers.proxy.tls.certresolver=letsencrypt'
       - 'traefik.http.routers.proxy.middlewares=redirect-to-https@file'
@@ -430,7 +557,7 @@ services:
 
   ############################## Proxy ############################
   landing:
-    container_name: aas-landing
+    container_name: bike-landing
     image: ghcr.io/meta-level-public/bike-showcase-landing-page:latest
     restart: always
     labels:
@@ -476,9 +603,39 @@ services:
     volumes:
       - mnestix-database:/app/prisma/database
 
+  ######################################### DPP Configurator ##################################
+
+  dpp-configurator:
+    image: dpp-configurator:amd64 # oder registry.example.com/dpp-configurator:latest
+    container_name: dpp-configurator
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.dppconf.rule=Host(`dppconfig.showcasehub.de`)'
+      - 'traefik.http.routers.dppconf.entrypoints=web,websecure'
+      - 'traefik.http.routers.dppconf.tls.certresolver=letsencrypt'
+      - 'traefik.http.routers.dppconf.middlewares=redirect-to-https@file'
+      - 'traefik.http.services.dppconf.loadbalancer.server.port=80'
+
   ###################################################################
 volumes:
   traefik-letsencrypt:
     driver: local
+
   mnestix-database:
+    driver: local
+
+  mongo_data:
+    driver: local
+  mongo_config:
+    driver: local
+
+  mongo_suppl_data:
+    driver: local
+  mongo_suppl_config:
+    driver: local
+
+  mongo_xitaso_data:
+    driver: local
+  mongo_xitaso_config:
     driver: local
