@@ -39,13 +39,13 @@ services:
     environment:
       - Database__DbPath=${DB_PATH:-AasDemoapp.db}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
-      - Impressum__Name=${IMPRESSUM_NAME:-Christina Bornträger}
-      - Impressum__Street=${IMPRESSUM_STREET:-Hintereckstr. 10}
-      - Impressum__PostalCode=${IMPRESSUM_POSTAL_CODE:-66606}
-      - Impressum__City=${IMPRESSUM_CITY:-St. Wendel}
+      - Impressum__Name=${IMPRESSUM_NAME}
+      - Impressum__Street=${IMPRESSUM_STREET}
+      - Impressum__PostalCode=${IMPRESSUM_POSTAL_CODE}
+      - Impressum__City=${IMPRESSUM_CITY}
       - Impressum__Country=${IMPRESSUM_COUNTRY:-Deutschland}
-      - Impressum__Email=${IMPRESSUM_EMAIL:-borntraegerchristina@gmail.com}
-      - Impressum__Phone=${IMPRESSUM_PHONE:-}
+      - Impressum__Email=${IMPRESSUM_EMAIL}
+      - Impressum__Phone=${IMPRESSUM_PHONE}
     volumes:
       - ../aasdemoapp-data:/AasDemoapp
       - ${DB_EXTERNAL_PATH:-./data/database}:/app/database
@@ -567,6 +567,14 @@ services:
     container_name: bike-landing
     image: ghcr.io/meta-level-public/bike-showcase-landing-page:latest
     restart: always
+    environment:
+      - IMPRESSUM_NAME=${IMPRESSUM_NAME}
+      - IMPRESSUM_STREET=${IMPRESSUM_STREET}
+      - IMPRESSUM_POSTAL_CODE=${IMPRESSUM_POSTAL_CODE}
+      - IMPRESSUM_CITY=${IMPRESSUM_CITY}
+      - IMPRESSUM_COUNTRY=${IMPRESSUM_COUNTRY:-Deutschland}
+      - IMPRESSUM_EMAIL=${IMPRESSUM_EMAIL}
+      - IMPRESSUM_PHONE=${IMPRESSUM_PHONE}
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.landing.rule=Host(`aas-bike.showcasehub.de`)'

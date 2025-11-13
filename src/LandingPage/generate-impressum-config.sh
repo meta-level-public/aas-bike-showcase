@@ -7,15 +7,15 @@ CONFIG_FILE="$CONFIG_DIR/impressum.json"
 # Erstelle Verzeichnis falls nicht vorhanden
 mkdir -p "$CONFIG_DIR"
 
-# Generiere JSON mit Umgebungsvariablen oder Defaults
+# Generiere JSON mit Umgebungsvariablen oder leeren Defaults
 cat > "$CONFIG_FILE" << EOF
 {
-  "name": "${IMPRESSUM_NAME:-Christina Bornträger}",
-  "street": "${IMPRESSUM_STREET:-Hintereckstr. 10}",
-  "postalCode": "${IMPRESSUM_POSTAL_CODE:-66606}",
-  "city": "${IMPRESSUM_CITY:-St. Wendel}",
+  "name": "${IMPRESSUM_NAME:-}",
+  "street": "${IMPRESSUM_STREET:-}",
+  "postalCode": "${IMPRESSUM_POSTAL_CODE:-}",
+  "city": "${IMPRESSUM_CITY:-}",
   "country": "${IMPRESSUM_COUNTRY:-Deutschland}",
-  "email": "${IMPRESSUM_EMAIL:-borntraegerchristina@gmail.com}",
+  "email": "${IMPRESSUM_EMAIL:-}",
   "phone": "${IMPRESSUM_PHONE:-}"
 }
 EOF
