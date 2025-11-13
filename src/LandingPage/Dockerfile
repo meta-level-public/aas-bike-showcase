@@ -20,6 +20,10 @@ FROM caddy:2-alpine
 # Angular 20 mit application builder erstellt Output in dist/[project-name]/browser
 COPY --from=builder /app/dist/LandingPage/browser /usr/share/caddy
 
+# Script zum Generieren der Impressum-Konfiguration kopieren
+COPY generate-impressum-config.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/generate-impressum-config.sh
+
 # Caddyfile für SPA-Routing erstellen
 RUN echo $'{\n\
   auto_https off\n\
@@ -47,6 +51,9 @@ RUN echo $'{\n\
   }\n\
   header @static Cache-Control "public, max-age=31536000, immutable"\n\
   }' > /etc/caddy/Caddyfile
+
+# Generiere Impressum-Konfiguration beim Container-Start
+CMD /usr/local/bin/generate-impressum-config.sh && caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
 
 EXPOSE 80
 

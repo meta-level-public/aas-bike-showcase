@@ -9,6 +9,7 @@ import { DiscoveryComponent } from './discovery/discovery.component';
 import { DppComponent } from './dpp/dpp.component';
 import { GoodsIncomingComponent } from './goods-incoming/goods-incoming.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
+import { ImpressumComponent } from './impressum/impressum.component';
 import { OrderCreateComponent } from './order-create/order-create.component';
 import { ProductionOrderListComponent } from './production-order-list/production-order-list.component';
 import { RegistryComponent } from './registry/registry.component';
@@ -67,5 +68,9 @@ export const routes: Routes = [
   {
     path: 'setup',
     children: [{ path: 'setup', component: SetupComponent }],
+  },
+  {
+    path: 'impressum',
+    component: ImpressumComponent,
   },
 ];

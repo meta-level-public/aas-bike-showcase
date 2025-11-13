@@ -39,6 +39,13 @@ services:
     environment:
       - Database__DbPath=${DB_PATH:-AasDemoapp.db}
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - Impressum__Name=${IMPRESSUM_NAME:-Christina Bornträger}
+      - Impressum__Street=${IMPRESSUM_STREET:-Hintereckstr. 10}
+      - Impressum__PostalCode=${IMPRESSUM_POSTAL_CODE:-66606}
+      - Impressum__City=${IMPRESSUM_CITY:-St. Wendel}
+      - Impressum__Country=${IMPRESSUM_COUNTRY:-Deutschland}
+      - Impressum__Email=${IMPRESSUM_EMAIL:-borntraegerchristina@gmail.com}
+      - Impressum__Phone=${IMPRESSUM_PHONE:-}
     volumes:
       - ../aasdemoapp-data:/AasDemoapp
       - ${DB_EXTERNAL_PATH:-./data/database}:/app/database

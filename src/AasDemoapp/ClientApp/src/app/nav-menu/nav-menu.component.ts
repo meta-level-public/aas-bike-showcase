@@ -162,6 +162,11 @@ export class NavMenuComponent implements OnInit, OnDestroy {
           },
         ],
       },
+      {
+        label: 'Impressum',
+        icon: 'pi pi-fw pi-file',
+        routerLink: '/impressum',
+      },
     ];
   }
 }

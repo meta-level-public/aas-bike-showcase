@@ -1,0 +1,74 @@
+.impressum-page {
+  padding: 2rem 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    font-size: 2.5rem;
+    color: var(--text-color);
+    margin: 0;
+  }
+}
+
+.impressum-content {
+  section {
+    margin-bottom: 2rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--surface-border);
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: var(--text-color);
+      margin: 1.5rem 0 0.75rem 0;
+      font-weight: 600;
+    }
+
+    p {
+      line-height: 1.8;
+      color: var(--text-color-secondary);
+      margin-bottom: 1rem;
+
+      strong {
+        color: var(--text-color);
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .impressum-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+
+  .impressum-content {
+    section {
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      h3 {
+        font-size: 1.1rem;
+      }
+    }
+  }
+}

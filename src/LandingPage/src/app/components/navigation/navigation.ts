@@ -47,6 +47,11 @@ export class Navigation implements OnInit {
         icon: 'pi pi-users',
         routerLink: '/members',
       },
+      {
+        label: 'Impressum',
+        icon: 'pi pi-file',
+        routerLink: '/impressum',
+      },
     ];
   }
 }
