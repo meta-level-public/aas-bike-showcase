@@ -1,6 +1,6 @@
 <div class="container">
   <div class="page-header">
-    <h1>Digital Product Passport (DPP)</h1>
+    <h1>{{ 'dpp.title' | translate }}</h1>
     <p-divider></p-divider>
   </div>
 
@@ -9,41 +9,40 @@
       <ng-template pTemplate="header">
         <div class="card-header">
           <i class="pi pi-id-card"></i>
-          <h2>Was ist ein Digital Product Passport?</h2>
+          <h2>{{ 'dpp.whatIs.title' | translate }}</h2>
         </div>
       </ng-template>
 
-      <p>
-        Der <strong>Digital Product Passport (DPP)</strong> ist ein digitaler Zwilling eines
-        physischen Produkts, der alle relevanten Informationen über den gesamten Lebenszyklus des
-        Produkts enthält.
-      </p>
+      <p [innerHTML]="'dpp.whatIs.intro' | translate"></p>
 
       <p-divider></p-divider>
 
-      <h3><i class="pi pi-list"></i> Kernfunktionen des DPP:</h3>
+      <h3><i class="pi pi-list"></i> {{ 'dpp.whatIs.features.title' | translate }}</h3>
       <ul class="feature-list">
         <li>
           <i class="pi pi-check-circle"></i>
-          <strong>Transparenz:</strong> Lückenlose Dokumentation von Herkunft, Materialien und
-          Fertigungsschritten
+          <strong>{{ 'dpp.whatIs.features.transparency.label' | translate }}</strong>
+          {{ 'dpp.whatIs.features.transparency.description' | translate }}
         </li>
         <li>
           <i class="pi pi-check-circle"></i>
-          <strong>Nachhaltigkeit:</strong> Tracking von CO2-Fußabdruck und Umweltauswirkungen
+          <strong>{{ 'dpp.whatIs.features.sustainability.label' | translate }}</strong>
+          {{ 'dpp.whatIs.features.sustainability.description' | translate }}
         </li>
         <li>
           <i class="pi pi-check-circle"></i>
-          <strong>Kreislaufwirtschaft:</strong> Unterstützung von Recycling und Wiederverwendung
+          <strong>{{ 'dpp.whatIs.features.circular.label' | translate }}</strong>
+          {{ 'dpp.whatIs.features.circular.description' | translate }}
         </li>
         <li>
           <i class="pi pi-check-circle"></i>
-          <strong>Compliance:</strong> Erfüllung regulatorischer Anforderungen
+          <strong>{{ 'dpp.whatIs.features.compliance.label' | translate }}</strong>
+          {{ 'dpp.whatIs.features.compliance.description' | translate }}
         </li>
         <li>
           <i class="pi pi-check-circle"></i>
-          <strong>Wartung & Service:</strong> Dokumentation von Wartungshistorie und technischen
-          Spezifikationen
+          <strong>{{ 'dpp.whatIs.features.maintenance.label' | translate }}</strong>
+          {{ 'dpp.whatIs.features.maintenance.description' | translate }}
         </li>
       </ul>
     </p-card>
@@ -52,22 +51,14 @@
       <ng-template pTemplate="header">
         <div class="card-header">
           <i class="pi pi-cog"></i>
-          <h2>DPP in der Praxis</h2>
+          <h2>{{ 'dpp.practice.title' | translate }}</h2>
         </div>
       </ng-template>
 
-      <p>
-        Im NextBike-Projekt wird der DPP durch die
-        <strong>Asset Administration Shell (AAS)</strong> realisiert. Die AAS ermöglicht die
-        standardisierte digitale Abbildung von Assets und deren Eigenschaften über den gesamten
-        Produktlebenszyklus hinweg.
-      </p>
+      <p [innerHTML]="'dpp.practice.description1' | translate"></p>
 
       <p>
-        Vom Lieferanten über die Produktion bis zum Endkunden werden alle Daten erfasst, verknüpft
-        und über standardisierte Schnittstellen zur Verfügung gestellt. Dies ermöglicht eine
-        durchgängige Rückverfolgbarkeit und schafft die Grundlage für intelligente Services und
-        datengetriebene Geschäftsmodelle.
+        {{ 'dpp.practice.description2' | translate }}
       </p>
     </p-card>
   </div>

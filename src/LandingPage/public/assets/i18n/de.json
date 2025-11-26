@@ -1,0 +1,147 @@
+{
+  "nav": {
+    "home": "Home",
+    "dpp": "DPP",
+    "project": "Projekt",
+    "projectOverview": "Übersicht",
+    "projectArchitecture": "Architektur",
+    "members": "Members",
+    "imprint": "Impressum",
+    "language": "Sprache"
+  },
+  "home": {
+    "title": "Willkommen bei NextBike",
+    "subtitle": "Digitale Produktpässe und vernetzte Fertigung mit der Asset Administration Shell",
+    "dppCard": {
+      "title": "Digital Product Passport",
+      "description": "Erfahren Sie mehr über den digitalen Produktpass und seine Bedeutung für die Industrie 4.0",
+      "link": "Mehr erfahren"
+    },
+    "projectCard": {
+      "title": "Das Projekt",
+      "description": "Entdecken Sie die virtuelle Fabrik NextBike und die vollständige digitale Wertschöpfungskette",
+      "link": "Zum Projekt"
+    },
+    "membersCard": {
+      "title": "Unsere Member",
+      "description": "Lernen Sie die Unternehmen kennen, die dieses Projekt möglich gemacht haben",
+      "link": "Zu den Members"
+    },
+    "additionalInfo": {
+      "title": "Weitere Informationen",
+      "stageTalk": {
+        "title": "SPS Stage Talk",
+        "description": "Laden Sie hier die Präsentationsfolien vom SPS Stage Talk herunter. Der Vortrag bietet spannende Einblicke in die praktische Umsetzung des DPP mit der Asset Administration Shell und dem Projekt NextBike.",
+        "link": "Slides auf Slideshare ansehen"
+      },
+      "whitePaper": {
+        "title": "White Paper: AAS Tool Landscape",
+        "description": "Dieses White Paper bietet einen umfassenden Überblick über die Tool-Landschaft der Asset Administration Shell (AAS). Es stellt verschiedene Werkzeuge vor, die für die Implementierung und Verwaltung von AAS-basierten Lösungen verwendet werden können, und gibt praktische Einblicke in deren Einsatzmöglichkeiten.",
+        "link1": "Download (openindustry4.com)",
+        "link2": "Vergleichstabelle"
+      }
+    }
+  },
+  "dpp": {
+    "title": "Digital Product Passport (DPP)",
+    "whatIs": {
+      "title": "Was ist ein Digital Product Passport?",
+      "intro": "Der <strong>Digital Product Passport (DPP)</strong> ist ein digitaler Zwilling eines physischen Produkts, der alle relevanten Informationen über den gesamten Lebenszyklus des Produkts enthält.",
+      "features": {
+        "title": "Kernfunktionen des DPP:",
+        "transparency": {
+          "label": "Transparenz:",
+          "description": "Lückenlose Dokumentation von Herkunft, Materialien und Fertigungsschritten"
+        },
+        "sustainability": {
+          "label": "Nachhaltigkeit:",
+          "description": "Tracking von CO2-Fußabdruck und Umweltauswirkungen"
+        },
+        "circular": {
+          "label": "Kreislaufwirtschaft:",
+          "description": "Unterstützung von Recycling und Wiederverwendung"
+        },
+        "compliance": {
+          "label": "Compliance:",
+          "description": "Erfüllung regulatorischer Anforderungen"
+        },
+        "maintenance": {
+          "label": "Wartung & Service:",
+          "description": "Dokumentation von Wartungshistorie und technischen Spezifikationen"
+        }
+      }
+    },
+    "practice": {
+      "title": "DPP in der Praxis",
+      "description1": "Im NextBike-Projekt wird der DPP durch die <strong>Asset Administration Shell (AAS)</strong> realisiert. Die AAS ermöglicht die standardisierte digitale Abbildung von Assets und deren Eigenschaften über den gesamten Produktlebenszyklus hinweg.",
+      "description2": "Vom Lieferanten über die Produktion bis zum Endkunden werden alle Daten erfasst, verknüpft und über standardisierte Schnittstellen zur Verfügung gestellt. Dies ermöglicht eine durchgängige Rückverfolgbarkeit und schafft die Grundlage für intelligente Services und datengetriebene Geschäftsmodelle."
+    }
+  },
+  "project": {
+    "title": "Das NextBike Projekt",
+    "overview": {
+      "title": "Projektübersicht",
+      "description1": "Das <strong>NextBike-Projekt</strong> ist eine Demonstrationsplattform für die virtuelle Fabrik der Zukunft. Es wurde über einen längeren Zeitraum in Zusammenarbeit mit der <strong>Open Industry 4.0 Alliance (OI4)</strong> und einer Reihe von führenden",
+      "membersLink": "Mitgliedsunternehmen",
+      "description2": "entwickelt.",
+      "valueChain": {
+        "title": "Vollständige digitale Wertschöpfungskette",
+        "description": "Das Projekt zeigt, wie mittels der <strong>Asset Administration Shell (AAS)</strong> eine vollständige digitale Wertschöpfungskette abgebildet werden kann - von den Lieferanten über den Teilekatalog und die Konfiguration bis hin zur Produktion und dem finalen Digital Product Passport (DPP)."
+      }
+    },
+    "components": {
+      "title": "Projektkomponenten",
+      "suppliers": {
+        "title": "Lieferantenintegration",
+        "description": "Anbindung von Zulieferern über standardisierte AAS-Schnittstellen"
+      },
+      "catalog": {
+        "title": "Digitaler Teilekatalog",
+        "description": "Zentrale Verwaltung aller Komponenten und deren Eigenschaften"
+      },
+      "configurator": {
+        "title": "Konfigurator",
+        "description": "Individualisierung von Produkten nach Kundenwünschen"
+      },
+      "goods": {
+        "title": "Wareneingang",
+        "description": "Digitale Erfassung und Tracking eingehender Materialien"
+      },
+      "machines": {
+        "title": "Maschinenintegration",
+        "description": "Echtzeitanbindung von Produktionsanlagen während der Fertigung"
+      },
+      "dpp": {
+        "title": "Digital Product Passport",
+        "description": "Vollständige Dokumentation des fertigen Produkts"
+      }
+    },
+    "predecessor": {
+      "title": "Vorgängerprojekte",
+      "intro": "Das NextBike-Projekt baut auf den Erkenntnissen und Ergebnissen folgender Vorgängerprojekte auf:",
+      "transfer": {
+        "title": "Transfer of Ownership",
+        "description": "Demonstration des digitalen Eigentümerwechsels von Assets über die gesamte Wertschöpfungskette hinweg, inklusive der automatischen Übertragung von Verantwortlichkeiten und Rechten."
+      },
+      "notification": {
+        "title": "Product Change Notification",
+        "description": "System zur automatischen Benachrichtigung über Produktänderungen entlang der Lieferkette, um schnelle Reaktionen auf Designänderungen oder Qualitätsprobleme zu ermöglichen."
+      }
+    },
+    "architecture": {
+      "title": "Technische Architektur",
+      "description": "Für detaillierte Informationen zur technischen Umsetzung und Architektur des Projekts besuchen Sie bitte unsere dedizierte Architektur-Seite.",
+      "button": "Zur Architektur-Dokumentation"
+    }
+  },
+  "members": {
+    "title": "Projekt-Members",
+    "oi4": {
+      "title": "Open Industry 4.0 Alliance",
+      "description1": "Das NextBike-Projekt wurde unter der Führung der <strong>Open Industry 4.0 Alliance (OI4)</strong> entwickelt. Die OI4 ist ein herstellerübergreifender Verein, der sich für offene Standards in der Industrie 4.0 einsetzt und die Interoperabilität zwischen verschiedenen Systemen und Herstellern fördert.",
+      "description2": "Durch die Zusammenarbeit in der OI4 Alliance wird sichergestellt, dass die entwickelten Lösungen industrieweit einsetzbar sind und den neuesten Standards entsprechen."
+    },
+    "companiesTitle": "Mitgliedsunternehmen",
+    "companiesIntro": "Folgende Unternehmen haben aktiv an der Entwicklung des NextBike-Projekts mitgewirkt:"
+  }
+}

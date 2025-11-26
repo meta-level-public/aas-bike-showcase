@@ -1,8 +1,8 @@
 <div class="container">
   <div class="hero-section">
-    <h1>Willkommen bei NextBike</h1>
+    <h1>{{ 'home.title' | translate }}</h1>
     <p class="subtitle">
-      Digitale Produktpässe und vernetzte Fertigung mit der Asset Administration Shell
+      {{ 'home.subtitle' | translate }}
     </p>
   </div>
 
@@ -11,16 +11,16 @@
       <ng-template pTemplate="header">
         <div class="card-header">
           <i class="pi pi-book"></i>
-          <h3>Digital Product Passport</h3>
+          <h3>{{ 'home.dppCard.title' | translate }}</h3>
         </div>
       </ng-template>
       <p>
-        Erfahren Sie mehr über den digitalen Produktpass und seine Bedeutung für die Industrie 4.0
+        {{ 'home.dppCard.description' | translate }}
       </p>
       <ng-template pTemplate="footer">
         <div class="card-link">
           <a [routerLink]="['/dpp']">
-            <span>Mehr erfahren</span>
+            <span>{{ 'home.dppCard.link' | translate }}</span>
             <i class="pi pi-arrow-right"></i>
           </a>
         </div>
@@ -31,17 +31,16 @@
       <ng-template pTemplate="header">
         <div class="card-header">
           <i class="pi pi-briefcase"></i>
-          <h3>Das Projekt</h3>
+          <h3>{{ 'home.projectCard.title' | translate }}</h3>
         </div>
       </ng-template>
       <p>
-        Entdecken Sie die virtuelle Fabrik NextBike und die vollständige digitale
-        Wertschöpfungskette
+        {{ 'home.projectCard.description' | translate }}
       </p>
       <ng-template pTemplate="footer">
         <div class="card-link">
           <a [routerLink]="['/projekt']">
-            <span>Zum Projekt</span>
+            <span>{{ 'home.projectCard.link' | translate }}</span>
             <i class="pi pi-arrow-right"></i>
           </a>
         </div>
@@ -52,14 +51,14 @@
       <ng-template pTemplate="header">
         <div class="card-header">
           <i class="pi pi-users"></i>
-          <h3>Unsere Member</h3>
+          <h3>{{ 'home.membersCard.title' | translate }}</h3>
         </div>
       </ng-template>
-      <p>Lernen Sie die Unternehmen kennen, die dieses Projekt möglich gemacht haben</p>
+      <p>{{ 'home.membersCard.description' | translate }}</p>
       <ng-template pTemplate="footer">
         <div class="card-link">
           <a [routerLink]="['/members']">
-            <span>Zu den Members</span>
+            <span>{{ 'home.membersCard.link' | translate }}</span>
             <i class="pi pi-arrow-right"></i>
           </a>
         </div>
@@ -68,19 +67,17 @@
   </div>
 
   <div class="additional-info-section">
-    <h2>Weitere Informationen</h2>
+    <h2>{{ 'home.additionalInfo.title' | translate }}</h2>
     <div class="intro-cards">
       <p-card>
         <ng-template pTemplate="header">
           <div class="card-header">
             <i class="pi pi-microphone"></i>
-            <h3>SPS Stage Talk</h3>
+            <h3>{{ 'home.additionalInfo.stageTalk.title' | translate }}</h3>
           </div>
         </ng-template>
         <p>
-          Laden Sie hier die Präsentationsfolien vom SPS Stage Talk herunter. Der Vortrag bietet
-          spannende Einblicke in die praktische Umsetzung des DPP mit der Asset Administration Shell
-          und dem Projekt NextBike.
+          {{ 'home.additionalInfo.stageTalk.description' | translate }}
         </p>
         <ng-template pTemplate="footer">
           <div class="card-link">
@@ -89,7 +86,7 @@
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span>Slides auf Slideshare ansehen</span>
+              <span>{{ 'home.additionalInfo.stageTalk.link' | translate }}</span>
               <i class="pi pi-external-link"></i>
             </a>
           </div>
@@ -100,14 +97,11 @@
         <ng-template pTemplate="header">
           <div class="card-header">
             <i class="pi pi-file-pdf"></i>
-            <h3>White Paper: AAS Tool Landscape</h3>
+            <h3>{{ 'home.additionalInfo.whitePaper.title' | translate }}</h3>
           </div>
         </ng-template>
         <p>
-          Dieses White Paper bietet einen umfassenden Überblick über die Tool-Landschaft der Asset
-          Administration Shell (AAS). Es stellt verschiedene Werkzeuge vor, die für die
-          Implementierung und Verwaltung von AAS-basierten Lösungen verwendet werden können, und
-          gibt praktische Einblicke in deren Einsatzmöglichkeiten.
+          {{ 'home.additionalInfo.whitePaper.description' | translate }}
         </p>
         <ng-template pTemplate="footer">
           <div class="card-link">
@@ -116,7 +110,7 @@
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span>Download (openindustry4.com)</span>
+              <span>{{ 'home.additionalInfo.whitePaper.link1' | translate }}</span>
               <i class="pi pi-external-link"></i>
             </a>
             <a
@@ -125,7 +119,7 @@
               rel="noopener noreferrer"
               style="margin-top: 0.5rem"
             >
-              <span>Vergleichstabelle</span>
+              <span>{{ 'home.additionalInfo.whitePaper.link2' | translate }}</span>
               <i class="pi pi-external-link"></i>
             </a>
           </div>

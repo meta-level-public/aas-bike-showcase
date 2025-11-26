@@ -1,11 +1,27 @@
-import { provideHttpClient } from '@angular/common/http';
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
+import { Observable } from 'rxjs';
 import { routes } from './app.routes';
+
+// Custom TranslateLoader
+export class CustomTranslateLoader implements TranslateLoader {
+  constructor(private http: HttpClient) {}
+
+  getTranslation(lang: string): Observable<any> {
+    return this.http.get(`./assets/i18n/${lang}.json`);
+  }
+}
+
+// Factory-Funktion für den CustomTranslateLoader
+export function HttpLoaderFactory(http: HttpClient): CustomTranslateLoader {
+  return new CustomTranslateLoader(http);
+}
 
 // Custom Preset mit Lila (#764ba2) als Primärfarbe für Buttons
 const NextBikePreset = definePreset(Aura, {
@@ -56,5 +72,15 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+    importProvidersFrom(
+      TranslateModule.forRoot({
+        defaultLanguage: 'de',
+        loader: {
+          provide: TranslateLoader,
+          useFactory: HttpLoaderFactory,
+          deps: [HttpClient],
+        },
+      }),
+    ),
   ],
 };

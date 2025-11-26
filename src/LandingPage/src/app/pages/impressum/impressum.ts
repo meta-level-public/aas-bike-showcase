@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { ImpressumConfig } from './impressum.model';
 import { ImpressumService } from './impressum.service';
@@ -9,7 +10,7 @@ import { ImpressumService } from './impressum.service';
   standalone: true,
   templateUrl: './impressum.html',
   styleUrl: './impressum.scss',
-  imports: [CommonModule, CardModule],
+  imports: [CommonModule, CardModule, TranslateModule],
 })
 export class Impressum implements OnInit {
   config: ImpressumConfig | null = null;

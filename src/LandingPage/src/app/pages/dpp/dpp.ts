@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
 
@@ -7,6 +8,6 @@ import { DividerModule } from 'primeng/divider';
   standalone: true,
   templateUrl: './dpp.html',
   styleUrl: './dpp.scss',
-  imports: [CardModule, DividerModule],
+  imports: [CardModule, DividerModule, TranslateModule],
 })
 export class Dpp {}

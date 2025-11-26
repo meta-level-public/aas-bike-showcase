@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { Navigation } from './components/navigation/navigation';
 
 @Component({
@@ -9,4 +10,26 @@ import { Navigation } from './components/navigation/navigation';
   styleUrl: './app.scss',
   imports: [RouterOutlet, Navigation],
 })
-export class App {}
+export class App implements OnInit {
+  constructor(private translate: TranslateService) {
+    // Verfügbare Sprachen festlegen
+    this.translate.addLangs(['de', 'en']);
+
+    // Standardsprache festlegen
+    this.translate.setDefaultLang('de');
+
+    // Browser-Sprache verwenden oder auf Deutsch fallback
+    const browserLang = this.translate.getBrowserLang();
+    const savedLang = localStorage.getItem('language');
+
+    if (savedLang) {
+      this.translate.use(savedLang);
+    } else if (browserLang && ['de', 'en'].includes(browserLang)) {
+      this.translate.use(browserLang);
+    } else {
+      this.translate.use('de');
+    }
+  }
+
+  ngOnInit() {}
+}

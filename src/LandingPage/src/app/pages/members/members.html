@@ -1,6 +1,6 @@
 <div class="container">
   <div class="page-header">
-    <h1>Projekt-Members</h1>
+    <h1>{{ 'members.title' | translate }}</h1>
     <p-divider></p-divider>
   </div>
 
@@ -15,18 +15,12 @@
         </div>
       </ng-template>
 
-      <h3>Open Industry 4.0 Alliance</h3>
+      <h3>{{ 'members.oi4.title' | translate }}</h3>
+
+      <p [innerHTML]="'members.oi4.description1' | translate"></p>
 
       <p>
-        Das NextBike-Projekt wurde unter der Führung der
-        <strong>Open Industry 4.0 Alliance (OI4)</strong> entwickelt. Die OI4 ist ein
-        herstellerübergreifender Verein, der sich für offene Standards in der Industrie 4.0 einsetzt
-        und die Interoperabilität zwischen verschiedenen Systemen und Herstellern fördert.
-      </p>
-
-      <p>
-        Durch die Zusammenarbeit in der OI4 Alliance wird sichergestellt, dass die entwickelten
-        Lösungen industrieweit einsetzbar sind und den neuesten Standards entsprechen.
+        {{ 'members.oi4.description2' | translate }}
       </p>
 
       <ng-template pTemplate="footer">
@@ -39,8 +33,8 @@
     </p-card>
 
     <div class="members-header">
-      <h2><i class="pi pi-users"></i> Mitgliedsunternehmen</h2>
-      <p>Folgende Unternehmen haben aktiv an der Entwicklung des NextBike-Projekts mitgewirkt:</p>
+      <h2><i class="pi pi-users"></i> {{ 'members.companiesTitle' | translate }}</h2>
+      <p>{{ 'members.companiesIntro' | translate }}</p>
     </div>
 
     <div class="members-grid">
