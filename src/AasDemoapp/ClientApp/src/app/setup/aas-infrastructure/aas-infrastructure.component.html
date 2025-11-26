@@ -1,8 +1,8 @@
 <p-accordion-panel value="1">
-  <p-accordion-header>AAS Infrastructure URLs</p-accordion-header>
+  <p-accordion-header>{{ 'setup.aasInfrastructure' | translate }}</p-accordion-header>
   <p-accordion-content>
     <div class="flex flex-column gap-4 p-4">
-      <p>Konfiguration der Asset Administration Shell (AAS) Infrastruktur URLs</p>
+      <p>{{ 'setup.aasInfrastructureDescription' | translate }}</p>
 
       <app-aas-endpoints-configuration
         [aasRepositoryUrl]="aasRepositoryUrl()"
@@ -14,7 +14,7 @@
         [headerParameters]="headerParameters()"
         [certificate]="certificate()"
         [certificatePassword]="certificatePassword()"
-        [securityLegend]="'Sicherheit'"
+        [securityLegend]="'setup.security' | translate"
         [showCertificate]="true"
         (aasRepositoryUrlChange)="aasRepositoryUrl.set($event)"
         (aasRegistryUrlChange)="aasRegistryUrl.set($event)"
@@ -31,7 +31,7 @@
       <button
         pButton
         type="button"
-        label="Einstellungen speichern"
+        [label]="'setup.saveSettings' | translate"
         (click)="saveAasUrls()"
         class="w-auto"
         icon="pi pi-save"

@@ -1,13 +1,11 @@
 <p-accordion-panel value="5">
-  <p-accordion-header>AAS ID-Präfix</p-accordion-header>
+  <p-accordion-header>{{ 'setup.aasIdPrefix' | translate }}</p-accordion-header>
   <p-accordion-content>
     <div class="grid">
       <div class="col-12">
-        <h5>AAS ID-Präfix konfigurieren</h5>
+        <h5>{{ 'setup.configureAasIdPrefix' | translate }}</h5>
         <p class="text-color-secondary">
-          Konfigurieren Sie hier den URL-Präfix, der für die Generierung von AAS IDs verwendet wird.
-          Dieser Präfix wird allen generierten Asset Administration Shell IDs, Submodel IDs und
-          Asset IDs vorangestellt.
+          {{ 'setup.aasIdPrefixDescription' | translate }}
         </p>
       </div>
     </div>
@@ -16,9 +14,9 @@
       <!-- ID Prefix Input -->
       <div class="field col-12">
         <label for="aasIdPrefix">
-          ID-Präfix
+          {{ 'setup.idPrefix' | translate }}
           <span class="text-color-secondary ml-2" style="font-weight: normal">
-            (URL-Format, z.B. https://example.com)
+            {{ 'setup.urlFormat' | translate }}
           </span>
         </label>
         <input
@@ -31,7 +29,7 @@
           placeholder="https://oi4-nextbike.de"
         />
         <small class="block mt-2 text-color-secondary">
-          Dieser Wert wird für die Generierung aller IDs in der AAS-Umgebung verwendet.
+          {{ 'setup.idGenerationDescription' | translate }}
         </small>
       </div>
 
@@ -39,7 +37,7 @@
       <div class="col-12">
         <div class="surface-100 border-round p-3">
           <h6 class="mt-0 mb-2">
-            <i class="pi pi-info-circle mr-2"></i>Beispiel einer generierten ID
+            <i class="pi pi-info-circle mr-2"></i>{{ 'setup.generatedIdExample' | translate }}
           </h6>
           <p class="text-sm mb-0">
             <code class="text-primary">{{ aasIdPrefix() }}/ids/aas/1234_5678_9012_3456</code>
@@ -51,13 +49,13 @@
       <div class="col-12">
         <div class="flex gap-2">
           <p-button
-            label="Speichern"
+            [label]="'common.save' | translate"
             icon="pi pi-check"
             (click)="saveAasIdPrefix()"
             [loading]="isSaving()"
           />
           <p-button
-            label="Standard wiederherstellen"
+            [label]="'setup.restoreDefault' | translate"
             icon="pi pi-refresh"
             severity="secondary"
             [outlined]="true"

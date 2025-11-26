@@ -2,7 +2,7 @@
   <div class="mb-4">
     <button
       pButton
-      label="Zurück zur Konfigurationsliste"
+      [label]="'order.create.backToList' | translate"
       icon="pi pi-arrow-left"
       class="p-button-text"
       (click)="cancel()"
@@ -11,7 +11,7 @@
 
   <div class="grid">
     <div class="col-12">
-      <p-card header="Neue Bestellung erstellen">
+      <p-card [header]="'order.create.title' | translate">
         <div class="flex flex-column gap-4">
           <!-- Produkt Info -->
           @if (product) {
@@ -21,10 +21,13 @@
                 <div class="flex-1">
                   <h2 class="text-primary m-0 mb-2">{{ product.name }}</h2>
                   <p class="text-600 m-0 text-lg">
-                    Preis pro Stück: <strong>${{ product.price }}</strong>
+                    {{ 'order.create.pricePerPiece' | translate }}:
+                    <strong>${{ product.price }}</strong>
                   </p>
                   @if (product.bestandteile && product.bestandteile.length > 0) {
-                    <p class="text-600 m-0">{{ product.bestandteile.length }} Bestandteile</p>
+                    <p class="text-600 m-0">
+                      {{ product.bestandteile.length }} {{ 'order.create.components' | translate }}
+                    </p>
                   }
                 </div>
               </div>
@@ -43,7 +46,7 @@
               <!-- Anzahl -->
               <div class="field">
                 <label for="anzahl" class="font-semibold block mb-2 text-lg">
-                  <i class="pi pi-hashtag mr-2"></i>Anzahl *
+                  <i class="pi pi-hashtag mr-2"></i>{{ 'order.create.quantity' | translate }} *
                 </label>
                 <p-inputNumber
                   id="anzahl"
@@ -59,9 +62,9 @@
                 >
                 </p-inputNumber>
                 @if (orderForm.get('anzahl')?.invalid && orderForm.get('anzahl')?.touched) {
-                  <small class="p-error block mt-1"
-                    >Anzahl ist erforderlich und muss mindestens 1 sein.</small
-                  >
+                  <small class="p-error block mt-1">{{
+                    'order.create.quantityRequired' | translate
+                  }}</small>
                 }
               </div>
 
@@ -71,7 +74,8 @@
                   class="bg-surface-100 border-round p-4 flex justify-content-between align-items-center"
                 >
                   <span class="font-semibold text-900 text-lg">
-                    <i class="pi pi-calculator mr-2"></i>Gesamtpreis:
+                    <i class="pi pi-calculator mr-2"></i
+                    >{{ 'order.create.totalPrice' | translate }}:
                   </span>
                   <span class="text-primary font-bold text-2xl"
                     >${{ getTotalPrice().toFixed(2) }}</span
@@ -82,7 +86,8 @@
               <!-- Lieferadresse (Optional) -->
               <div class="field">
                 <h3 class="text-900 mb-3">
-                  <i class="pi pi-map-marker mr-2"></i>Lieferadresse (Optional)
+                  <i class="pi pi-map-marker mr-2"></i
+                  >{{ 'order.create.deliveryAddress' | translate }}
                 </h3>
 
                 <div class="grid">
@@ -90,7 +95,9 @@
                   <div class="col-12">
                     <div class="grid">
                       <div class="col-12 md:col-6">
-                        <label for="vorname" class="block mb-2">Vorname</label>
+                        <label for="vorname" class="block mb-2">{{
+                          'order.create.firstName' | translate
+                        }}</label>
                         <input
                           pInputText
                           id="vorname"
@@ -101,7 +108,9 @@
                       </div>
 
                       <div class="col-12 md:col-6">
-                        <label for="name" class="block mb-2">Nachname</label>
+                        <label for="nachname" class="block mb-2">{{
+                          'order.create.lastName' | translate
+                        }}</label>
                         <input
                           pInputText
                           id="name"
@@ -115,10 +124,12 @@
 
                   <!-- Adressfelder mit Suchbutton -->
                   <div class="col-12">
-                    <h4 class="text-900 mb-2">Adresse</h4>
+                    <h4 class="text-900 mb-2">{{ 'order.create.address' | translate }}</h4>
                     <div class="grid">
                       <div class="col-12">
-                        <label for="strasse" class="block mb-2">Straße</label>
+                        <label for="strasse" class="block mb-2">{{
+                          'order.create.street' | translate
+                        }}</label>
                         <div class="flex gap-2">
                           <input
                             pInputText
@@ -131,7 +142,7 @@
                           <button
                             pButton
                             type="button"
-                            label="Suchen"
+                            [label]="'order.create.search' | translate"
                             icon="pi pi-search"
                             class="p-button-outlined"
                             (click)="searchAddress()"
@@ -140,7 +151,9 @@
                       </div>
 
                       <div class="col-12 md:col-4">
-                        <label for="plz" class="block mb-2">PLZ</label>
+                        <label for="plz" class="block mb-2">{{
+                          'order.create.postalCode' | translate
+                        }}</label>
                         <input
                           pInputText
                           id="plz"
@@ -152,7 +165,9 @@
                       </div>
 
                       <div class="col-12 md:col-5">
-                        <label for="ort" class="block mb-2">Ort</label>
+                        <label for="ort" class="block mb-2">{{
+                          'order.create.city' | translate
+                        }}</label>
                         <input
                           pInputText
                           id="ort"
@@ -164,7 +179,9 @@
                       </div>
 
                       <div class="col-12 md:col-3">
-                        <label for="land" class="block mb-2">Land</label>
+                        <label for="land" class="block mb-2">{{
+                          'order.create.country' | translate
+                        }}</label>
                         <input
                           pInputText
                           id="land"
@@ -178,11 +195,11 @@
 
                   <!-- Koordinaten (optional) -->
                   <div class="col-12">
-                    <h4 class="text-900 mb-2">Koordinaten (optional)</h4>
+                    <h4 class="text-900 mb-2">{{ 'order.create.coordinates' | translate }}</h4>
                     <div class="grid">
                       <div class="col-12 md:col-6">
                         <label for="latitude" class="block mb-2">
-                          Breitengrad (Lat)
+                          {{ 'order.create.latitude' | translate }}
                           @if (isGeocodingLoading) {
                             <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem"></i>
                           }
@@ -199,7 +216,9 @@
                       </div>
 
                       <div class="col-12 md:col-6">
-                        <label for="longitude" class="block mb-2">Längengrad (Long)</label>
+                        <label for="longitude" class="block mb-2">{{
+                          'order.create.longitude' | translate
+                        }}</label>
                         <input
                           pInputText
                           id="longitude"
@@ -217,7 +236,7 @@
                           <button
                             pButton
                             type="button"
-                            label="Koordinaten ermitteln"
+                            [label]="'order.create.determineCoordinates' | translate"
                             icon="pi pi-map-marker"
                             size="small"
                             class="p-button-outlined p-button-secondary"
@@ -229,7 +248,7 @@
                             <button
                               pButton
                               type="button"
-                              label="Koordinaten löschen"
+                              [label]="'order.create.deleteCoordinates' | translate"
                               icon="pi pi-times"
                               size="small"
                               class="p-button-outlined p-button-danger"
@@ -238,7 +257,7 @@
                           }
                           @if (isGeocodingLoading) {
                             <small class="text-600">
-                              Koordinaten werden automatisch ermittelt...
+                              {{ 'order.create.autoDeterm' | translate }}
                             </small>
                           }
                         </div>
@@ -251,12 +270,18 @@
                     <div class="col-12">
                       <div class="bg-surface-50 border-round p-3 mb-3">
                         <div class="flex justify-content-between align-items-center mb-3">
-                          <h4 class="text-900 m-0"><i class="pi pi-map mr-2"></i>Kartenansicht</h4>
+                          <h4 class="text-900 m-0">
+                            <i class="pi pi-map mr-2"></i>{{ 'order.create.mapView' | translate }}
+                          </h4>
                           <div class="flex align-items-center gap-2">
                             <!-- Alternative: Normaler Button statt Toggle Button -->
                             <button
                               pButton
-                              [label]="mapClickMode ? 'Klick-Modus: Ein' : 'Klick-Modus: Aus'"
+                              [label]="
+                                mapClickMode
+                                  ? ('order.create.clickModeOn' | translate)
+                                  : ('order.create.clickModeOff' | translate)
+                              "
                               [icon]="mapClickMode ? 'pi pi-map-marker' : 'pi pi-map'"
                               [severity]="mapClickMode ? 'success' : 'secondary'"
                               (click)="toggleMapClickMode()"
@@ -265,12 +290,16 @@
 
                             @if (mapClickMode) {
                               <small class="text-600">
-                                Klicken Sie auf die Karte, um Position zu setzen
+                                {{ 'order.create.clickOnMap' | translate }}
                               </small>
                             }
                             <small class="text-500 ml-2">
-                              Status:
-                              {{ mapClickMode ? 'Aktiviert' : 'Deaktiviert' }}
+                              {{ 'order.create.status' | translate }}:
+                              {{
+                                mapClickMode
+                                  ? ('order.create.activated' | translate)
+                                  : ('order.create.deactivated' | translate)
+                              }}
                             </small>
                           </div>
                         </div>
@@ -294,7 +323,7 @@
               <div class="flex gap-2 justify-content-end pt-4">
                 <button
                   pButton
-                  label="Abbrechen"
+                  [label]="'common.cancel' | translate"
                   icon="pi pi-times"
                   class="p-button-text p-button-secondary"
                   (click)="cancel()"
@@ -303,7 +332,7 @@
 
                 <button
                   pButton
-                  label="Bestellung erstellen"
+                  [label]="'order.create.createOrder' | translate"
                   icon="pi pi-check"
                   class="p-button-primary"
                   (click)="createOrder()"

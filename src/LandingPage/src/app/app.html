@@ -1,2 +1,9 @@
 <app-navigation></app-navigation>
 <router-outlet></router-outlet>
+<footer class="app-footer">
+  <div class="footer-content">
+    <a [routerLink]="['/impressum']" class="impressum-link">
+      {{ 'nav.imprint' | translate }}
+    </a>
+  </div>
+</footer>

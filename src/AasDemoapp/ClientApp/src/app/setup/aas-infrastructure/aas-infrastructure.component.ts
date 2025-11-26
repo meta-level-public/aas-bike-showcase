@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, OnChanges, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -20,6 +21,7 @@ import { AasEndpointsConfigurationComponent } from '../shared/aas-endpoints-conf
     AccordionModule,
     ButtonModule,
     InputTextModule,
+    TranslateModule,
     AasEndpointsConfigurationComponent,
   ],
 })

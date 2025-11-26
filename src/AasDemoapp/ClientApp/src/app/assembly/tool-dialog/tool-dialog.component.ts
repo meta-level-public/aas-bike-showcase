@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 
@@ -7,7 +8,7 @@ import { DialogModule } from 'primeng/dialog';
   selector: 'app-tool-dialog',
   templateUrl: './tool-dialog.component.html',
   styleUrl: './tool-dialog.component.css',
-  imports: [CommonModule, DialogModule, ButtonModule],
+  imports: [CommonModule, DialogModule, ButtonModule, TranslateModule],
 })
 export class ToolDialogComponent {
   @Input() visible: boolean = false;

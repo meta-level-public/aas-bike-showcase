@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -29,6 +30,7 @@ import { GoodsIncomingService } from './goods-incoming.service';
     MessageModule,
     InputGroupModule,
     InputGroupAddonModule,
+    TranslateModule,
   ],
 })
 export class GoodsIncomingComponent {

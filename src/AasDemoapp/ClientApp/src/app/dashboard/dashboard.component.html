@@ -5,7 +5,9 @@
         <div class="surface-card shadow-2 p-3 border-round">
           <div class="flex justify-content-between mb-3">
             <div>
-              <span class="block text-500 font-medium mb-3">Configured Products</span>
+              <span class="block text-500 font-medium mb-3">{{
+                'dashboard.configuredProducts' | translate
+              }}</span>
               @if (!countConfiguredProductsLoading) {
                 <div class="text-900 font-medium text-xl">
                   {{ countConfiguredProducts }}
@@ -32,7 +34,9 @@
         <div class="surface-card shadow-2 p-3 border-round">
           <div class="flex justify-content-between mb-3">
             <div>
-              <span class="block text-500 font-medium mb-3">AAS in System</span>
+              <span class="block text-500 font-medium mb-3">{{
+                'dashboard.aasInSystem' | translate
+              }}</span>
               @if (!countAasLoading) {
                 <div class="text-900 font-medium text-xl">
                   {{ countAAS }}
@@ -59,7 +63,9 @@
         <div class="surface-card shadow-2 p-3 border-round">
           <div class="flex justify-content-between mb-3">
             <div>
-              <span class="block text-500 font-medium mb-3">Aktualisierbare AAS</span>
+              <span class="block text-500 font-medium mb-3">{{
+                'dashboard.updateableAAS' | translate
+              }}</span>
               @if (!countUpdateableLoading) {
                 <div class="text-900 font-medium text-xl">
                   {{ countUpdateable }}
@@ -86,7 +92,9 @@
         <div class="surface-card shadow-2 p-3 border-round">
           <div class="flex justify-content-between mb-3">
             <div>
-              <span class="block text-500 font-medium mb-3">Produzierte Teile</span>
+              <span class="block text-500 font-medium mb-3">{{
+                'dashboard.producedParts' | translate
+              }}</span>
               <div class="text-900 font-medium text-xl">
                 {{ countProducedProducts }}
               </div>

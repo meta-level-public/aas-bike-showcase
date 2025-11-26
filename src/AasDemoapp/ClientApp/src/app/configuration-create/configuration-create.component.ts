@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -20,6 +21,7 @@ import { ConfigurationCreateService } from './configuration-create.service';
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     PickListModule,
     InputTextModule,
     ButtonModule,
@@ -40,7 +42,8 @@ export class ConfigurationCreateComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
     private notificationService: NotificationService,
     private confirmationService: ConfirmationService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {}
 
   async ngOnInit() {
@@ -134,9 +137,8 @@ export class ConfigurationCreateComponent implements OnInit {
 
       // Zeige Bestätigungsdialog für Bestellung
       this.confirmationService.confirm({
-        message:
-          'Ihre Konfiguration wurde erfolgreich erstellt! Möchten Sie das konfigurierte Produkt nun bestellen?',
-        header: 'Bestellung erstellen',
+        message: this.translate.instant('configuration.create.configCreatedSuccess'),
+        header: this.translate.instant('configuration.create.createOrderTitle'),
         icon: 'pi pi-shopping-cart',
         accept: () => {
           // Navigiere zur Order-Erstellungsseite

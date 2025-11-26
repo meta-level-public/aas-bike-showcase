@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnChanges, OnInit, input, output, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { HeaderParameter } from '../../model/header-parameter';
@@ -12,7 +13,13 @@ import { AasEndpointsConfigurationComponent } from '../shared/aas-endpoints-conf
   selector: 'app-tools-repository',
   templateUrl: './tools-repository.component.html',
   styleUrl: './tools-repository.component.css',
-  imports: [CommonModule, AccordionModule, ButtonModule, AasEndpointsConfigurationComponent],
+  imports: [
+    CommonModule,
+    AccordionModule,
+    ButtonModule,
+    TranslateModule,
+    AasEndpointsConfigurationComponent,
+  ],
 })
 export class ToolsRepositoryComponent implements OnInit, OnChanges {
   // Inputs/Outputs

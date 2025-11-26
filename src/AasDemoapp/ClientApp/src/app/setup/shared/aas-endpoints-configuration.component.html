@@ -1,13 +1,13 @@
 <div class="grid">
   <div class="col-12 flex justify-content-end gap-2 mb-2">
     <p-button
-      label="Konfiguration kopieren"
+      [label]="'setup.copyConfiguration' | translate"
       icon="pi pi-copy"
       (click)="copyConfigToClipboard()"
       [outlined]="true"
     ></p-button>
     <p-button
-      label="Konfiguration einfügen"
+      [label]="'setup.pasteConfiguration' | translate"
       icon="pi pi-clipboard"
       (click)="pasteConfigFromClipboard()"
       severity="secondary"
@@ -15,9 +15,9 @@
   </div>
   @if (showEndpoints()) {
     <div class="col-12 md:col-6">
-      <label for="aasRepositoryUrl" class="block text-900 font-medium mb-2"
-        >AAS Repository URL</label
-      >
+      <label for="aasRepositoryUrl" class="block text-900 font-medium mb-2">{{
+        'setup.aasRepositoryUrl' | translate
+      }}</label>
       <input
         id="aasRepositoryUrl"
         type="text"
@@ -29,7 +29,9 @@
     </div>
 
     <div class="col-12 md:col-6">
-      <label for="aasRegistryUrl" class="block text-900 font-medium mb-2">AAS Registry URL</label>
+      <label for="aasRegistryUrl" class="block text-900 font-medium mb-2">{{
+        'setup.aasRegistryUrl' | translate
+      }}</label>
       <input
         id="aasRegistryUrl"
         type="text"
@@ -41,9 +43,9 @@
     </div>
 
     <div class="col-12 md:col-6">
-      <label for="submodelRepositoryUrl" class="block text-900 font-medium mb-2"
-        >Submodel Repository URL</label
-      >
+      <label for="submodelRepositoryUrl" class="block text-900 font-medium mb-2">{{
+        'setup.submodelRepositoryUrl' | translate
+      }}</label>
       <input
         id="submodelRepositoryUrl"
         type="text"
@@ -55,9 +57,9 @@
     </div>
 
     <div class="col-12 md:col-6">
-      <label for="submodelRegistryUrl" class="block text-900 font-medium mb-2"
-        >Submodel Registry URL</label
-      >
+      <label for="submodelRegistryUrl" class="block text-900 font-medium mb-2">{{
+        'setup.submodelRegistryUrl' | translate
+      }}</label>
       <input
         id="submodelRegistryUrl"
         type="text"
@@ -69,7 +71,9 @@
     </div>
 
     <div class="col-12 md:col-6">
-      <label for="discoveryUrl" class="block text-900 font-medium mb-2">Discovery URL</label>
+      <label for="discoveryUrl" class="block text-900 font-medium mb-2">{{
+        'setup.discoveryUrl' | translate
+      }}</label>
       <input
         id="discoveryUrl"
         type="text"
@@ -81,9 +85,9 @@
     </div>
 
     <div class="col-12 md:col-6">
-      <label for="conceptDescriptionUrl" class="block text-900 font-medium mb-2"
-        >Concept Description URL</label
-      >
+      <label for="conceptDescriptionUrl" class="block text-900 font-medium mb-2">{{
+        'setup.conceptDescriptionUrl' | translate
+      }}</label>
       <input
         id="conceptDescriptionUrl"
         type="text"

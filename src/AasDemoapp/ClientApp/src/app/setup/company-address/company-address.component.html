@@ -1,12 +1,11 @@
 <p-accordion-panel value="3">
-  <p-accordion-header>Firmenadresse</p-accordion-header>
+  <p-accordion-header>{{ 'setup.companyAddress' | translate }}</p-accordion-header>
   <p-accordion-content>
     <div class="grid">
       <div class="col-12">
-        <h5>Firmenadresse konfigurieren</h5>
+        <h5>{{ 'setup.configureCompanyAddress' | translate }}</h5>
         <p class="text-color-secondary">
-          Konfigurieren Sie hier die Adresse Ihres Unternehmens. Diese wird als Setting
-          "CompanyAddress" gespeichert.
+          {{ 'setup.companyAddressDescription' | translate }}
         </p>
       </div>
     </div>
@@ -14,7 +13,7 @@
     <div class="grid">
       <!-- Name und Vorname -->
       <div class="field col-12 md:col-12">
-        <label for="companyName">Firmenname</label>
+        <label for="companyName">{{ 'setup.companyName' | translate }}</label>
         <input
           id="companyName"
           type="text"
@@ -22,13 +21,13 @@
           class="w-full"
           [value]="address().name || ''"
           (input)="updateAddress('name', $any($event.target).value)"
-          placeholder="Firmenname eingeben..."
+          [placeholder]="'setup.companyNamePlaceholder' | translate"
         />
       </div>
 
       <!-- Straße -->
       <div class="field col-12">
-        <label for="street">Straße</label>
+        <label for="street">{{ 'order.create.street' | translate }}</label>
         <input
           id="street"
           type="text"
@@ -36,13 +35,13 @@
           class="w-full"
           [value]="address().strasse || ''"
           (input)="updateAddress('strasse', $any($event.target).value)"
-          placeholder="Straße und Hausnummer eingeben..."
+          [placeholder]="'setup.streetPlaceholder' | translate"
         />
       </div>
 
       <!-- PLZ und Ort -->
       <div class="field col-12 md:col-4">
-        <label for="zipCode">PLZ</label>
+        <label for="zipCode">{{ 'order.create.postalCode' | translate }}</label>
         <input
           id="zipCode"
           type="text"
@@ -50,12 +49,12 @@
           class="w-full"
           [value]="address().plz || ''"
           (input)="updateAddress('plz', $any($event.target).value)"
-          placeholder="PLZ eingeben..."
+          [placeholder]="'setup.postalCodePlaceholder' | translate"
         />
       </div>
 
       <div class="field col-12 md:col-8">
-        <label for="city">Ort</label>
+        <label for="city">{{ 'order.create.city' | translate }}</label>
         <input
           id="city"
           type="text"
@@ -63,13 +62,13 @@
           class="w-full"
           [value]="address().ort || ''"
           (input)="updateAddress('ort', $any($event.target).value)"
-          placeholder="Ort eingeben..."
+          [placeholder]="'setup.cityPlaceholder' | translate"
         />
       </div>
 
       <!-- Land -->
       <div class="field col-12">
-        <label for="country">Land</label>
+        <label for="country">{{ 'order.create.country' | translate }}</label>
         <input
           id="country"
           type="text"
@@ -77,7 +76,7 @@
           class="w-full"
           [value]="address().land || ''"
           (input)="updateAddress('land', $any($event.target).value)"
-          placeholder="Land eingeben..."
+          [placeholder]="'setup.countryPlaceholder' | translate"
         />
       </div>
 
@@ -86,7 +85,7 @@
         <div class="grid">
           <div class="col-12 md:col-6">
             <label for="latitude">
-              Breitengrad (Lat)
+              {{ 'order.create.latitude' | translate }}
               @if (isGeocodingLoading()) {
                 <i class="pi pi-spin pi-spinner ml-2" style="font-size: 0.8rem"></i>
               }
@@ -103,13 +102,13 @@
                   $any($event.target).value ? +$any($event.target).value : undefined
                 )
               "
-              placeholder="z.B. 52.520008"
+              [placeholder]="'setup.latitudePlaceholder' | translate"
               step="any"
             />
           </div>
 
           <div class="col-12 md:col-6">
-            <label for="longitude">Längengrad (Long)</label>
+            <label for="longitude">{{ 'order.create.longitude' | translate }}</label>
             <input
               id="longitude"
               type="number"
@@ -122,7 +121,7 @@
                   $any($event.target).value ? +$any($event.target).value : undefined
                 )
               "
-              placeholder="z.B. 13.404954"
+              [placeholder]="'setup.longitudePlaceholder' | translate"
               step="any"
             />
           </div>
@@ -131,7 +130,7 @@
           <div class="col-12">
             <div class="flex gap-2 align-items-center mt-2">
               <p-button
-                label="Koordinaten ermitteln"
+                [label]="'setup.determineCoordinates' | translate"
                 icon="pi pi-map-marker"
                 size="small"
                 severity="secondary"
@@ -142,7 +141,7 @@
               />
               @if (hasCoordinates()) {
                 <p-button
-                  label="Koordinaten löschen"
+                  [label]="'setup.deleteCoordinates' | translate"
                   icon="pi pi-times"
                   size="small"
                   severity="danger"
@@ -152,7 +151,7 @@
               }
               @if (isGeocodingLoading()) {
                 <small class="text-color-secondary">
-                  Koordinaten werden automatisch ermittelt...
+                  {{ 'setup.coordinatesAutomatic' | translate }}
                 </small>
               }
             </div>
@@ -163,25 +162,25 @@
       <!-- Buttons -->
       <div class="field col-12 flex gap-2 justify-content-end">
         <p-button
-          label="Zurücksetzen"
+          [label]="'setup.reset' | translate"
           severity="secondary"
           (click)="resetAddress()"
           [outlined]="true"
         />
-        <p-button label="Speichern" (click)="saveAddress()" icon="pi pi-check" />
+        <p-button [label]="'common.save' | translate" (click)="saveAddress()" icon="pi pi-check" />
       </div>
 
       <!-- Map Section -->
       @if (hasAddressData() || hasCoordinates()) {
         <div class="field col-12">
           <div class="flex justify-content-between align-items-center mb-3">
-            <h6 class="m-0">Kartenansicht</h6>
+            <h6 class="m-0">{{ 'setup.mapView' | translate }}</h6>
             <div class="flex align-items-center gap-2">
               <p-toggleButton
                 [ngModel]="mapClickMode()"
                 (ngModelChange)="mapClickMode.set($event)"
-                [onLabel]="'Klick-Modus: Ein'"
-                [offLabel]="'Klick-Modus: Aus'"
+                [onLabel]="'setup.clickModeOn' | translate"
+                [offLabel]="'setup.clickModeOff' | translate"
                 [onIcon]="'pi pi-map-marker'"
                 [offIcon]="'pi pi-map'"
                 [style]="{ 'min-width': '160px' }"
@@ -189,7 +188,7 @@
               />
               @if (mapClickMode()) {
                 <small class="text-color-secondary">
-                  Klicken Sie auf die Karte, um Position zu setzen
+                  {{ 'setup.clickOnMap' | translate }}
                 </small>
               }
             </div>

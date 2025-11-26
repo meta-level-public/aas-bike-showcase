@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, OnChanges, OnDestroy, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -28,6 +29,7 @@ import { SetupService } from '../setup.service';
     InputTextModule,
     ToastModule,
     ToggleButtonModule,
+    TranslateModule,
     LeafletMapComponent,
   ],
   providers: [MessageService],

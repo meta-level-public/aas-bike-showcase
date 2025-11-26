@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ConfiguredProduct } from '../../model/configured-product';
@@ -16,7 +17,7 @@ export interface PartScanEvent {
   selector: 'app-assembly-steps-panel',
   templateUrl: './assembly-steps-panel.component.html',
   styleUrl: './assembly-steps-panel.component.css',
-  imports: [CommonModule, FormsModule, ButtonModule, InputTextModule],
+  imports: [CommonModule, FormsModule, ButtonModule, InputTextModule, TranslateModule],
 })
 export class AssemblyStepsPanelComponent {
   @Input() selectedOrder: ProductionOrder | undefined;

@@ -3,6 +3,13 @@
   <main class="container">
     <router-outlet></router-outlet>
   </main>
+  <footer class="app-footer">
+    <div class="footer-content">
+      <a [routerLink]="['/impressum']" class="impressum-link">
+        {{ 'nav.imprint' | translate }}
+      </a>
+    </div>
+  </footer>
 </body>
 
 <p-toast [baseZIndex]="11000" position="top-center"></p-toast>

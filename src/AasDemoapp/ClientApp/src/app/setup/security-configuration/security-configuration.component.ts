@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, OnChanges, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { FieldsetModule } from 'primeng/fieldset';
 import { FileUploadModule } from 'primeng/fileupload';
@@ -23,6 +24,7 @@ import { SecuritySetting } from '../../model/security-setting';
     MessageModule,
     PasswordModule,
     InputTextModule,
+    TranslateModule,
   ],
 })
 export class SecurityConfigurationComponent implements OnInit, OnChanges {

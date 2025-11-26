@@ -3,7 +3,7 @@
 
   <!-- Header mit Filter -->
   <div class="flex flex-column gap-2 w-full mb-4">
-    <label for="statusFilter">Filter nach Status</label>
+    <label for="statusFilter">{{ 'production.orders.filterByStatus' | translate }}</label>
     <p-select
       id="statusFilter"
       [(ngModel)]="selectedFilterModel"
@@ -19,19 +19,19 @@
     <div class="statistics-card bg-yellow-50 border-yellow-200">
       <div class="text-yellow-800">
         <div class="statistics-number">{{ pendingProductionCount() }}</div>
-        <div class="statistics-label">Zur Produktion anstehend</div>
+        <div class="statistics-label">{{ 'production.orders.pendingProduction' | translate }}</div>
       </div>
     </div>
     <div class="statistics-card bg-blue-50 border-blue-200">
       <div class="text-blue-800">
         <div class="statistics-number">{{ readyForShippingCount() }}</div>
-        <div class="statistics-label">Zum Versand anstehend</div>
+        <div class="statistics-label">{{ 'production.orders.readyForShipping' | translate }}</div>
       </div>
     </div>
     <div class="statistics-card bg-green-50 border-green-200">
       <div class="text-green-800">
         <div class="statistics-number">{{ completedCount() }}</div>
-        <div class="statistics-label">Abgeschlossen</div>
+        <div class="statistics-label">{{ 'production.orders.completed' | translate }}</div>
       </div>
     </div>
   </div>
@@ -42,7 +42,7 @@
       @if (orders.length === 0) {
         <div class="text-center p-6">
           <i class="pi pi-inbox text-4xl text-gray-400 mb-3 block"></i>
-          <p class="text-gray-600">Keine Produktionsaufträge gefunden.</p>
+          <p class="text-gray-600">{{ 'production.orders.noOrders' | translate }}</p>
         </div>
       }
 
@@ -67,7 +67,9 @@
                 class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4"
               >
                 <div class="flex flex-column align-items-center sm:align-items-start gap-3">
-                  <div class="text-2xl font-bold text-900">Auftrag #{{ order.id }}</div>
+                  <div class="text-2xl font-bold text-900">
+                    {{ 'production.orders.orderNumber' | translate }} #{{ order.id }}
+                  </div>
 
                   <div class="flex align-items-center gap-3 flex-wrap">
                     <span class="flex align-items-center gap-2">
@@ -76,7 +78,7 @@
                     </span>
                     <span class="flex align-items-center gap-2">
                       <i class="pi pi-hashtag"></i>
-                      <span>{{ order.anzahl }} Stück</span>
+                      <span>{{ order.anzahl }} {{ 'production.orders.pieces' | translate }}</span>
                     </span>
                     <p-tag
                       [severity]="getStatusSeverity(order)"
@@ -92,14 +94,16 @@
                     <div class="flex align-items-center gap-2">
                       <i class="pi pi-calendar text-sm"></i>
                       <span class="text-sm text-600"
-                        >Erstellt: {{ formatDate(order.createdAt) }}</span
+                        >{{ 'production.orders.created' | translate }}:
+                        {{ formatDate(order.createdAt) }}</span
                       >
                     </div>
                     @if (order.fertigstellungsDatum) {
                       <div class="flex align-items-center gap-2">
                         <i class="pi pi-check-circle text-sm"></i>
                         <span class="text-sm text-600"
-                          >Fertiggestellt: {{ formatDate(order.fertigstellungsDatum) }}</span
+                          >{{ 'production.orders.completedDate' | translate }}:
+                          {{ formatDate(order.fertigstellungsDatum) }}</span
                         >
                       </div>
                     }
@@ -107,7 +111,8 @@
                       <div class="flex align-items-center gap-2">
                         <i class="pi pi-send text-sm"></i>
                         <span class="text-sm text-600"
-                          >Versandt: {{ formatDate(order.versandDatum) }}</span
+                          >{{ 'production.orders.shippedDate' | translate }}:
+                          {{ formatDate(order.versandDatum) }}</span
                         >
                       </div>
                     }
@@ -120,7 +125,7 @@
                 >
                   @if (!order.produktionAbgeschlossen) {
                     <p-button
-                      label="Produktion starten"
+                      [label]="'production.orders.startProduction' | translate"
                       icon="pi pi-play"
                       severity="info"
                       size="small"
@@ -131,7 +136,7 @@
 
                   @if (order.produktionAbgeschlossen && !order.versandt) {
                     <p-button
-                      label="Als versandt markieren"
+                      [label]="'production.orders.markAsShipped' | translate"
                       icon="pi pi-send"
                       severity="success"
                       size="small"
@@ -142,7 +147,7 @@
 
                   @if (order.versandt) {
                     <p-button
-                      label="Abgeschlossen"
+                      [label]="'production.orders.completedStatus' | translate"
                       icon="pi pi-check-circle"
                       severity="success"
                       size="small"

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, OnChanges, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -13,7 +14,15 @@ import { SetupService } from '../setup.service';
   selector: 'app-aas-id-configuration',
   templateUrl: './aas-id-configuration.component.html',
   styleUrl: './aas-id-configuration.component.css',
-  imports: [CommonModule, FormsModule, AccordionModule, ButtonModule, InputTextModule, ToastModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    AccordionModule,
+    ButtonModule,
+    InputTextModule,
+    ToastModule,
+    TranslateModule,
+  ],
   providers: [MessageService],
 })
 export class AasIdConfigurationComponent implements OnInit, OnChanges {

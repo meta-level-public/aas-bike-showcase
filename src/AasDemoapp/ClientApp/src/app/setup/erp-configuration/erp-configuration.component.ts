@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { SelectButtonModule } from 'primeng/selectbutton';
@@ -11,7 +12,14 @@ import { SetupService } from '../setup.service';
   selector: 'app-erp-configuration',
   templateUrl: './erp-configuration.component.html',
   styleUrl: './erp-configuration.component.css',
-  imports: [CommonModule, FormsModule, AccordionModule, SelectButtonModule, ButtonModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    AccordionModule,
+    SelectButtonModule,
+    ButtonModule,
+    TranslateModule,
+  ],
 })
 export class ErpConfigurationComponent {
   // Input signals

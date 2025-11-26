@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { HeaderParameter } from '../../model/header-parameter';
@@ -16,6 +17,7 @@ import { SecurityConfigurationComponent } from '../security-configuration/securi
     FormsModule,
     InputTextModule,
     ButtonModule,
+    TranslateModule,
     SecurityConfigurationComponent,
   ],
 })

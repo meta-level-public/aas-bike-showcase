@@ -1,5 +1,5 @@
 <p-dialog
-  header="Tool"
+  [header]="'production.assembly.tool' | translate"
   [visible]="visible"
   [modal]="true"
   [style]="{ width: '100vw', maxWidth: '100vw', height: '80vh' }"
@@ -12,7 +12,7 @@
       <div class="tool-summary">
         <i class="pi pi-wrench summary-icon"></i>
         <div class="summary-content">
-          <div class="summary-title">Benötigtes Werkzeug</div>
+          <div class="summary-title">{{ 'production.assembly.requiredTool' | translate }}</div>
           <div class="summary-sub">AAS-ID: {{ requiredToolAasId }}</div>
         </div>
       </div>
@@ -23,7 +23,7 @@
         <div class="metric">
           <i class="pi pi-bolt metric-icon"></i>
           <div>
-            <div class="metric-label">Soll-Drehmoment</div>
+            <div class="metric-label">{{ 'production.assembly.targetTorque' | translate }}</div>
             <div class="metric-value">{{ requiredTightenForce }} Nm</div>
           </div>
         </div>
@@ -32,7 +32,7 @@
         <div class="metric">
           <i class="pi pi-sliders-h metric-icon"></i>
           <div>
-            <div class="metric-label">Erlaubter Bereich</div>
+            <div class="metric-label">{{ 'production.assembly.allowedRange' | translate }}</div>
             <div class="metric-value">
               {{ allowedTightenForceRange.min }} - {{ allowedTightenForceRange.max }} Nm
             </div>
@@ -43,15 +43,15 @@
 
     <div class="tool-controls">
       <p-button
-        label="Tool initialisieren"
+        [label]="'production.assembly.initializeTool' | translate"
         icon="pi pi-play"
-        (click)="onInitializeTool()"
+        (onClick)="onInitializeTool()"
       ></p-button>
 
       <div class="live-torque">
         <div class="live-label">
           <i class="pi pi-gauge"></i>
-          Aktuelles Drehmoment
+          {{ 'production.assembly.currentTorque' | translate }}
         </div>
         <div class="live-value">{{ currentTightenForce }} Nm</div>
       </div>
@@ -75,14 +75,19 @@
       <button
         pButton
         type="button"
-        label="Abbrechen"
+        [label]="'common.cancel' | translate"
         (click)="onCloseDialog(false)"
         severity="secondary"
       ></button>
     }
     @if (toolInitialized) {
       <p-button
-        [label]="checkingToolData ? 'Prüfe Drehmoment...' : 'Arbeitsschritt fertig'"
+        [label]="
+          (checkingToolData
+            ? 'production.assembly.checkingTorque'
+            : 'production.assembly.stepComplete'
+          ) | translate
+        "
         [icon]="checkingToolData ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
         (click)="onCheckToolData()"
         [disabled]="checkingToolData"
@@ -95,7 +100,7 @@
       <button
         pButton
         type="button"
-        label="Montage erfolgt"
+        [label]="'production.assembly.assemblyComplete' | translate"
         (click)="onCloseDialog(true)"
         severity="secondary"
       ></button>

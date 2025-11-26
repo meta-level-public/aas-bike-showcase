@@ -8,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -41,6 +42,7 @@ import { formatAddressString, hasValidCoordinates } from '../shared/utils/addres
     ToastModule,
     ToggleButtonModule,
     LeafletMapComponent,
+    TranslateModule,
   ],
   providers: [MessageService],
 })
@@ -65,7 +67,8 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     private configurationService: ConfigurationListService,
     private messageService: MessageService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.orderForm = this.fb.group({
       anzahl: [1, [Validators.required, Validators.min(1)]],
@@ -99,8 +102,8 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
       } else {
         this.messageService.add({
           severity: 'error',
-          summary: 'Fehler',
-          detail: 'Keine Produkt-ID angegeben',
+          summary: this.translate.instant('order.create.errorTitle'),
+          detail: this.translate.instant('order.create.errorNoProductId'),
         });
         this.router.navigate(['/config/list']);
       }
@@ -118,8 +121,8 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
       if (!this.product) {
         this.messageService.add({
           severity: 'error',
-          summary: 'Fehler',
-          detail: 'Produkt nicht gefunden',
+          summary: this.translate.instant('order.create.errorTitle'),
+          detail: this.translate.instant('order.create.errorProductNotFound'),
         });
         this.router.navigate(['/config/list']);
       }
@@ -127,8 +130,8 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
       console.error('Error loading product:', error);
       this.messageService.add({
         severity: 'error',
-        summary: 'Fehler',
-        detail: 'Fehler beim Laden des Produkts',
+        summary: this.translate.instant('order.create.errorTitle'),
+        detail: this.translate.instant('order.create.errorLoadingProduct'),
       });
     } finally {
       this.loading = false;
@@ -176,8 +179,8 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.messageService.add({
             severity: 'success',
-            summary: 'Erfolgreich',
-            detail: 'Bestellung wurde erfolgreich erstellt!',
+            summary: this.translate.instant('order.create.successTitle'),
+            detail: this.translate.instant('order.create.successOrderCreated'),
           });
 
           // Nach erfolgreicher Erstellung zur Bestellliste navigieren
@@ -187,16 +190,16 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         } else {
           this.messageService.add({
             severity: 'error',
-            summary: 'Fehler',
-            detail: response.message || 'Fehler beim Erstellen der Bestellung',
+            summary: this.translate.instant('order.create.errorTitle'),
+            detail: response.message || this.translate.instant('order.create.errorCreatingOrder'),
           });
         }
       } catch (error) {
         console.error('Error creating order:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Fehler',
-          detail: 'Unerwarteter Fehler beim Erstellen der Bestellung',
+          summary: this.translate.instant('order.create.errorTitle'),
+          detail: this.translate.instant('order.create.errorUnexpected'),
         });
       } finally {
         this.loading = false;
@@ -213,7 +216,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     } catch (error) {
       return {
         success: false,
-        message: 'Fehler beim Erstellen der Bestellung',
+        message: this.translate.instant('order.create.errorCreatingOrder'),
         error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
@@ -273,16 +276,16 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         // Erfolgs-Nachricht
         this.messageService.add({
           severity: 'success',
-          summary: 'Adresse gefunden',
-          detail: 'Die Adressdaten wurden automatisch ausgefüllt.',
+          summary: this.translate.instant('order.create.addressFound'),
+          detail: this.translate.instant('order.create.addressAutoFilled'),
         });
       }
     } catch (error) {
       console.error('Reverse geocoding error:', error);
       this.messageService.add({
         severity: 'warn',
-        summary: 'Adresse',
-        detail: 'Adresse konnte nicht automatisch ermittelt werden.',
+        summary: this.translate.instant('order.create.addressTitle'),
+        detail: this.translate.instant('order.create.addressNotFound'),
       });
     } finally {
       this.isGeocodingLoading = false;
@@ -374,13 +377,15 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
           lat: lat,
           lng: lng,
           address: addressString,
-          title: 'Lieferadresse',
+          title: this.translate.instant('order.create.deliveryAddress'),
         };
 
         this.messageService.add({
           severity: 'success',
-          summary: 'Koordinaten gefunden',
-          detail: `Koordinaten automatisch für "${addressString}" ermittelt`,
+          summary: this.translate.instant('order.create.coordinatesFound'),
+          detail: this.translate.instant('order.create.coordinatesAutoForAddress', {
+            address: addressString,
+          }),
         });
       }
     } catch (error) {
@@ -417,7 +422,7 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
         lat: formValue.lat,
         lng: formValue.long,
         address: this.getFormattedAddress(),
-        title: 'Lieferadresse',
+        title: this.translate.instant('order.create.deliveryAddress'),
       };
     }
     return undefined;
@@ -466,8 +471,8 @@ export class OrderCreateComponent implements OnInit, OnDestroy {
     if (!addressString || addressString === ', , Deutschland') {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Warnung',
-        detail: 'Bitte geben Sie eine Adresse ein, um sie zu suchen.',
+        summary: this.translate.instant('order.create.warningTitle'),
+        detail: this.translate.instant('order.create.warningEnterAddress'),
       });
       return;
     }

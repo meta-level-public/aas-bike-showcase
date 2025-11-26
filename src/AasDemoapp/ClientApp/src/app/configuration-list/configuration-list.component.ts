@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { DataViewModule } from 'primeng/dataview';
 import { ConfiguredProduct } from '../model/configured-product';
 import { ConfigurationItemComponent } from './configuration-item/configuration-item.component';
@@ -10,7 +11,7 @@ import { ConfigurationListService } from './configuration-list.service';
   selector: 'app-configuration-list',
   templateUrl: './configuration-list.component.html',
   styleUrl: './configuration-list.component.css',
-  imports: [CommonModule, FormsModule, DataViewModule, ConfigurationItemComponent],
+  imports: [CommonModule, FormsModule, DataViewModule, ConfigurationItemComponent, TranslateModule],
 })
 export class ConfigurationListComponent implements OnInit {
   items: ConfiguredProduct[] = [];

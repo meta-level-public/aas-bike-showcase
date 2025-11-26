@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { AccordionModule } from 'primeng/accordion';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -25,6 +26,7 @@ import { AasEndpointsConfigurationComponent } from '../shared/aas-endpoints-conf
     ButtonModule,
     DialogModule,
     InputTextModule,
+    TranslateModule,
     AasEndpointsConfigurationComponent,
   ],
 })

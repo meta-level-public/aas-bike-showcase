@@ -10,6 +10,7 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import * as L from 'leaflet';
 
 export interface MapLocation {
@@ -23,7 +24,7 @@ export interface MapLocation {
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
   styleUrl: './leaflet-map.component.css',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
 })
 export class LeafletMapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: true })

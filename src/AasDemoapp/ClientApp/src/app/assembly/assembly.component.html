@@ -3,9 +3,9 @@
   <div class="assembly-header">
     <h1 class="assembly-title">
       <i class="pi pi-wrench"></i>
-      Montage
+      {{ 'production.assembly.title' | translate }}
     </h1>
-    <p class="assembly-subtitle">Geführte Montage für Produktionsaufträge</p>
+    <p class="assembly-subtitle">{{ 'production.assembly.subtitle' | translate }}</p>
   </div>
 
   <!-- Main Content -->
@@ -63,7 +63,7 @@
 <p-dialog
   [visible]="showPdfDialog()"
   (visibleChange)="showPdfDialog.set($event)"
-  [header]="'Übergabedokumentation'"
+  [header]="'production.assembly.productionOrder' | translate"
   [modal]="true"
   [style]="{ width: '90vw', height: '90vh' }"
   [closable]="true"
@@ -83,18 +83,22 @@
   <ng-template pTemplate="footer">
     <div class="pdf-dialog-footer">
       <p-button
-        label="Herunterladen"
+        [label]="'production.assembly.download' | translate"
         icon="pi pi-download"
         severity="secondary"
         (onClick)="downloadPdf()"
       ></p-button>
       <p-button
-        label="Drucken"
+        [label]="'production.assembly.print' | translate"
         icon="pi pi-print"
         severity="secondary"
         (onClick)="printPdf()"
       ></p-button>
-      <p-button label="Schließen" icon="pi pi-times" (onClick)="closePdfDialog()"></p-button>
+      <p-button
+        [label]="'production.assembly.close' | translate"
+        icon="pi pi-times"
+        (onClick)="closePdfDialog()"
+      ></p-button>
     </div>
   </ng-template>
 </p-dialog>

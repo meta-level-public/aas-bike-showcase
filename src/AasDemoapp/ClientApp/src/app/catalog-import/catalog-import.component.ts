@@ -2,6 +2,7 @@ import { AssetAdministrationShell, AssetKind } from '@aas-core-works/aas-core3.0
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -23,6 +24,7 @@ import { CatalogImportService } from './catalog-import.service';
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     TableModule,
     InputTextModule,
     ButtonModule,

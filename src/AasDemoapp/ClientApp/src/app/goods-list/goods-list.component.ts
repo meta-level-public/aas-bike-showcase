@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { DataViewModule } from 'primeng/dataview';
 import { SelectModule } from 'primeng/select';
 import { KatalogEintrag } from '../model/katalog-eintrag';
@@ -11,7 +12,14 @@ import { GoodsListService } from './goods-list.service';
   selector: 'app-goods-list',
   templateUrl: './goods-list.component.html',
   styleUrl: './goods-list.component.css',
-  imports: [CommonModule, FormsModule, DataViewModule, SelectModule, GoodsItemComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DataViewModule,
+    SelectModule,
+    GoodsItemComponent,
+    TranslateModule,
+  ],
 })
 export class GoodsListComponent implements OnInit {
   items: KatalogEintrag[] = [];

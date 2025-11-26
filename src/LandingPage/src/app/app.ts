@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Navigation } from './components/navigation/navigation';
 
 @Component({
@@ -8,7 +8,7 @@ import { Navigation } from './components/navigation/navigation';
   templateUrl: './app.html',
   standalone: true,
   styleUrl: './app.scss',
-  imports: [RouterOutlet, Navigation],
+  imports: [RouterOutlet, RouterLink, Navigation, TranslateModule],
 })
 export class App implements OnInit {
   constructor(private translate: TranslateService) {

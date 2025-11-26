@@ -1,8 +1,8 @@
 <p-accordion-panel value="4">
-  <p-accordion-header>Werkzeug-Repository</p-accordion-header>
+  <p-accordion-header>{{ 'setup.toolsRepository' | translate }}</p-accordion-header>
   <p-accordion-content>
     <div class="flex flex-column gap-4 p-4">
-      <p>Konfiguration der Endpunkte und Sicherheit für das Werkzeuge-Repository.</p>
+      <p>{{ 'setup.toolsRepositoryDescription' | translate }}</p>
 
       <app-aas-endpoints-configuration
         [aasRepositoryUrl]="aasRepositoryUrl()"
@@ -14,7 +14,7 @@
         [headerParameters]="headerParameters()"
         [certificate]="certificate()"
         [certificatePassword]="certificatePassword()"
-        [securityLegend]="'Authentifizierung'"
+        [securityLegend]="'setup.authentication' | translate"
         [showCertificate]="true"
         (aasRepositoryUrlChange)="aasRepositoryUrl.set($event)"
         (aasRegistryUrlChange)="aasRegistryUrl.set($event)"
@@ -31,7 +31,7 @@
       <button
         pButton
         type="button"
-        label="Einstellungen speichern"
+        [label]="'setup.saveSettings' | translate"
         (click)="save()"
         class="w-auto"
         icon="pi pi-save"

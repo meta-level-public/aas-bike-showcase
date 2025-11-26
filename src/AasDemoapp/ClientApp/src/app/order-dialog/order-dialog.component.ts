@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -23,6 +24,7 @@ import { ProductionOrderListService } from '../production-order-list/production-
     InputTextModule,
     InputNumberModule,
     ToastModule,
+    TranslateModule,
   ],
   providers: [MessageService],
 })
@@ -38,7 +40,8 @@ export class OrderDialogComponent implements OnChanges {
   constructor(
     private fb: FormBuilder,
     private productionOrderService: ProductionOrderListService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private translate: TranslateService
   ) {
     this.orderForm = this.fb.group({
       anzahl: [1, [Validators.required, Validators.min(1)]],
@@ -107,24 +110,24 @@ export class OrderDialogComponent implements OnChanges {
         if (response.success) {
           this.messageService.add({
             severity: 'success',
-            summary: 'Erfolgreich',
-            detail: 'Bestellung wurde erfolgreich erstellt!',
+            summary: this.translate.instant('order.create.successTitle'),
+            detail: this.translate.instant('order.create.successOrderCreated'),
           });
           this.orderCreated.emit();
           this.hideDialog();
         } else {
           this.messageService.add({
             severity: 'error',
-            summary: 'Fehler',
-            detail: response.message || 'Fehler beim Erstellen der Bestellung',
+            summary: this.translate.instant('order.create.errorTitle'),
+            detail: response.message || this.translate.instant('order.create.errorCreatingOrder'),
           });
         }
       } catch (error) {
         console.error('Error creating order:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Fehler',
-          detail: 'Unerwarteter Fehler beim Erstellen der Bestellung',
+          summary: this.translate.instant('order.create.errorTitle'),
+          detail: this.translate.instant('order.create.errorUnexpected'),
         });
       } finally {
         this.loading = false;
@@ -141,7 +144,7 @@ export class OrderDialogComponent implements OnChanges {
     } catch (error) {
       return {
         success: false,
-        message: 'Fehler beim Erstellen der Bestellung',
+        message: this.translate.instant('order.create.errorCreatingOrder'),
         error: error instanceof Error ? error.message : 'Unknown error',
       };
     }

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { SelectModule } from 'primeng/select';
@@ -18,6 +19,7 @@ import { CatalogListService } from './catalog-list.service';
     CatalogItemComponent,
     SelectModule,
     DataViewModule,
+    TranslateModule,
     ButtonModule,
   ],
 })

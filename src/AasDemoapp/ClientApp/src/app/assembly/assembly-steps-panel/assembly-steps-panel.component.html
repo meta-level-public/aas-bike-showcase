@@ -1,7 +1,7 @@
 <div class="assembly-panel">
   <div class="panel-header">
     <i class="pi pi-cog"></i>
-    <h3>Montageschritte</h3>
+    <h3>{{ 'production.assembly.title' | translate }}</h3>
   </div>
 
   <!-- Current Assembly Step -->
@@ -24,8 +24,10 @@
 
         <div class="step-info">
           <h4 class="part-name">{{ getCurrentBestandteil()!.name }}</h4>
-          <div class="part-amount">{{ getCurrentBestandteil()!.amount }} Stück</div>
-          <p class="step-instruction">Bitte scannen Sie das zu verbauende Teil</p>
+          <div class="part-amount">
+            {{ getCurrentBestandteil()!.amount }} {{ 'production.assembly.pieces' | translate }}
+          </div>
+          <p class="step-instruction">{{ 'production.assembly.scanPart' | translate }}</p>
         </div>
       </div>
 
@@ -37,7 +39,7 @@
                 pInputText
                 type="text"
                 class="w-full"
-                placeholder="Verbautes Teil (Charge/Seriennummer/...) einscannen"
+                [placeholder]="'production.assembly.scanPlaceholder' | translate"
                 (keydown.enter)="onPartScan($event, getCurrentBestandteil()!, teil.guid)"
                 (blur)="onPartScan($event, getCurrentBestandteil()!, teil.guid)"
                 [(ngModel)]="teil.instanceGlobalAssetId"
@@ -49,14 +51,14 @@
         @if (getCurrentBestandteil() && isTeilOk(getCurrentBestandteil()!)) {
           <div class="status-message success">
             <i class="pi pi-check-circle"></i>
-            Teil korrekt erfasst
+            {{ 'production.assembly.partCorrect' | translate }}
           </div>
         }
 
         @if (getCurrentBestandteil() && !isTeilOk(getCurrentBestandteil()!)) {
           <div class="status-message warning">
             <i class="pi pi-exclamation-triangle"></i>
-            Teil noch nicht korrekt erfasst
+            {{ 'production.assembly.partIncorrect' | translate }}
           </div>
         }
 
@@ -65,7 +67,7 @@
           @if (toolCheckLoading) {
             <div class="loading-section">
               <i class="pi pi-spin pi-spinner"></i>
-              <span>Überprüfe Tool-Anforderungen...</span>
+              <span>{{ 'production.assembly.checkingTool' | translate }}</span>
             </div>
           } @else {
             <!-- Tool Button - nur anzeigen wenn Tool benötigt und Teil OK aber Tool noch nicht OK -->
@@ -77,7 +79,7 @@
             ) {
               <button
                 pButton
-                label="Zum Tool"
+                [label]="'production.assembly.toTool' | translate"
                 icon="pi pi-external-link"
                 class="w-full tool-btn"
                 (click)="onOpenTool()"
@@ -89,7 +91,7 @@
             @if (hasNextStep()) {
               <button
                 pButton
-                label="Nächster Schritt"
+                [label]="'production.assembly.nextStep' | translate"
                 class="w-full next-step-btn"
                 (click)="onNextStep()"
                 [disabled]="
@@ -112,13 +114,16 @@
       <div class="completion-icon">
         <i class="pi pi-check-circle"></i>
       </div>
-      <h4 class="completion-title">Alle Teile erfolgreich verbaut!</h4>
+      <h4 class="completion-title">{{ 'production.assembly.assemblyComplete' | translate }}</h4>
       <p class="completion-message">
-        Die Montage ist abgeschlossen. Sie können nun das fertige Produkt speichern.
+        {{ 'production.assembly.assemblyCompletedMsg' | translate }}
       </p>
       <button
         pButton
-        [label]="saveLoading ? 'Speichert...' : 'Verbau Fertig'"
+        [label]="
+          (saveLoading ? 'production.assembly.saving' : 'production.assembly.finishAssembly')
+            | translate
+        "
         [icon]="saveLoading ? 'pi pi-spin pi-spinner' : 'pi pi-check'"
         class="w-full completion-btn"
         (click)="onCompleteAssembly()"
@@ -133,7 +138,7 @@
   @if (selectedItem && !hasBestandteile && !assemblyComplete) {
     <div class="empty-state">
       <i class="pi pi-info-circle"></i>
-      <p>Keine zu verbauenden Teile vorhanden</p>
+      <p>{{ 'production.assembly.noParts' | translate }}</p>
     </div>
   }
 
@@ -141,7 +146,7 @@
   @if (!selectedOrder) {
     <div class="empty-state">
       <i class="pi pi-list"></i>
-      <p>Bitte wählen Sie einen Produktionsauftrag aus</p>
+      <p>{{ 'production.assembly.selectOrder' | translate }}</p>
     </div>
   }
 </div>

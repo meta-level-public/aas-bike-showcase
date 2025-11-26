@@ -3,9 +3,9 @@
   <div class="goods-incoming-header">
     <h1 class="goods-incoming-title">
       <i class="pi pi-truck"></i>
-      Wareneingang
+      {{ 'goods.incoming.goodsIncoming' | translate }}
     </h1>
-    <p class="goods-incoming-subtitle">Lieferungen verwalten und Teile einbuchen</p>
+    <p class="goods-incoming-subtitle">{{ 'goods.incoming.subtitle' | translate }}</p>
   </div>
 
   <!-- Main Content -->
@@ -14,13 +14,13 @@
     <div class="delivery-panel">
       <div class="panel-header">
         <i class="pi pi-play-circle"></i>
-        <h3>Lieferung simulieren</h3>
+        <h3>{{ 'goods.incoming.simulateDelivery' | translate }}</h3>
       </div>
 
       <div class="delivery-controls mb-3">
         @if (!showTruck) {
           <p-button
-            label="Lieferung starten"
+            [label]="'goods.incoming.startDelivery' | translate"
             icon="pi pi-truck"
             class="w-full delivery-button"
             (onClick)="startDelivery()"
@@ -32,7 +32,7 @@
         }
         @if (showTruck) {
           <p-button
-            label="Lieferung zurücksetzen"
+            [label]="'goods.incoming.resetDelivery' | translate"
             icon="pi pi-refresh"
             class="w-full reset-button"
             severity="secondary"
@@ -74,7 +74,7 @@
         <div class="delivery-status mt-3">
           <p-message
             severity="info"
-            text="Klicken Sie auf die Kiste, um die GlobalAssetId zu übernehmen"
+            [text]="'goods.incoming.clickBoxMessage' | translate"
             [closable]="false"
           ></p-message>
         </div>
@@ -85,7 +85,7 @@
     <div class="booking-panel">
       <div class="panel-header">
         <i class="pi pi-barcode"></i>
-        <h3>Teil einbuchen</h3>
+        <h3>{{ 'goods.incoming.bookPart' | translate }}</h3>
       </div>
 
       <!-- Input Form -->
@@ -93,7 +93,7 @@
         <div class="form-group">
           <label for="globalAssetId" class="form-label">
             <i class="pi pi-qrcode"></i>
-            GlobalAssetId des gelieferten Teils
+            {{ 'goods.incoming.globalAssetIdLabel' | translate }}
           </label>
           <p-inputgroup>
             <p-inputgroup-addon>
@@ -102,7 +102,7 @@
             <input
               id="globalAssetId"
               type="text"
-              placeholder="Teil scannen oder eingeben"
+              [placeholder]="'goods.incoming.scanOrEnter' | translate"
               pInputText
               class="w-full"
               [(ngModel)]="newKatalogEintrag.globalAssetId"
@@ -114,7 +114,7 @@
 
         <div class="form-group">
           <p-button
-            label="Lookup"
+            [label]="'goods.incoming.lookup' | translate"
             icon="pi pi-search"
             (click)="lookup()"
             [loading]="loading"
@@ -127,14 +127,14 @@
         <div class="form-group">
           <label for="amount" class="form-label">
             <i class="pi pi-hashtag"></i>
-            Anzahl
+            {{ 'goods.incoming.quantity' | translate }}
           </label>
           <p-inputNumber
             id="amount"
             [(ngModel)]="newKatalogEintrag.amount"
             [showButtons]="true"
             [min]="1"
-            placeholder="Anzahl eingeben"
+            [placeholder]="'goods.incoming.enterQuantity' | translate"
             class="w-full"
             buttonLayout="horizontal"
             inputStyleClass="w-full text-center"
@@ -145,7 +145,7 @@
 
         <div class="form-group">
           <p-button
-            label="Teil einbuchen"
+            [label]="'goods.incoming.bookPart' | translate"
             icon="pi pi-check"
             (click)="createRohteilInstanz()"
             [loading]="loading"
@@ -162,7 +162,7 @@
           <div class="preview-card">
             <h4 class="preview-title">
               <i class="pi pi-box"></i>
-              Teil im lokalen Katalog
+              {{ 'goods.incoming.partInCatalog' | translate }}
             </h4>
             <app-catalog-item [item]="parentRohteil" [showDelete]="false"></app-catalog-item>
           </div>
@@ -170,7 +170,7 @@
           <div class="preview-card">
             <h4 class="preview-title">
               <i class="pi pi-external-link"></i>
-              Instanz beim Hersteller
+              {{ 'goods.incoming.instanceAtManufacturer' | translate }}
             </h4>
             <app-catalog-item
               [item]="newKatalogEintrag"
@@ -187,12 +187,12 @@
           @if (loading) {
             <div class="loading-state">
               <i class="pi pi-spin pi-spinner"></i>
-              <p>Lade Teiledaten...</p>
+              <p>{{ 'goods.incoming.loadingPartData' | translate }}</p>
             </div>
           } @else {
             <div class="empty-state">
               <i class="pi pi-info-circle"></i>
-              <p>Geben Sie eine GlobalAssetId ein und klicken Sie auf "Lookup"</p>
+              <p>{{ 'goods.incoming.enterGlobalAssetId' | translate }}</p>
             </div>
           }
         </div>

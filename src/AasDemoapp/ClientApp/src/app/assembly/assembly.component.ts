@@ -4,6 +4,7 @@ import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
@@ -34,6 +35,7 @@ import { ToolDialogComponent } from './tool-dialog/tool-dialog.component';
     ButtonModule,
     SelectModule,
     DialogModule,
+    TranslateModule,
     OrderSelectionPanelComponent,
     AssemblyStepsPanelComponent,
     ToolDialogComponent,
@@ -171,7 +173,8 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     private productionOrderService: ProductionOrderListService,
     private notificationService: NotificationService,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -225,7 +228,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       console.warn(`ProductionOrder with ID ${orderId} not found`);
       this.isRouteBasedSelection.set(false);
       this.notificationService.showMessageAlways(
-        `Produktionsauftrag mit ID ${orderId} nicht gefunden.`
+        this.translate.instant('production.assembly.orderNotFound', { id: orderId })
       );
     }
   }
@@ -244,7 +247,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       } else {
         console.warn(`ConfiguredProduct with ID ${selectedOrder.configuredProductId} not found`);
         this.notificationService.showMessageAlways(
-          `Produktkonfiguration für Auftrag nicht gefunden.`
+          this.translate.instant('production.assembly.productConfigNotFound')
         );
       }
     }
@@ -300,7 +303,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       this.loading.set(true);
       const katalogEintrag = await this.service.getRohteilInstanz(event.target.value);
       if (katalogEintrag == null) {
-        this.notificationService.showMessageAlways('Rohteil Instanz nicht gefunden');
+        this.notificationService.showMessageAlways(
+          this.translate.instant('production.assembly.partInstanceNotFound')
+        );
       } else {
         console.log(this.teileStatus());
         const currentTeileStatus = this.teileStatus();
@@ -312,7 +317,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
         console.log(teileStatusItem);
         if (teileStatusItem == null) return;
         if (katalogEintrag.referencedType?.globalAssetId != item.katalogEintrag?.globalAssetId) {
-          this.notificationService.showMessageAlways('Rohteil hat den falschen Typ!');
+          this.notificationService.showMessageAlways(
+            this.translate.instant('production.assembly.wrongPartType')
+          );
         } else {
           // Update the specific item in the array
           this.teileStatus.update((statuses) =>
@@ -433,7 +440,7 @@ export class AssemblyComponent implements OnInit, OnDestroy {
         await this.productionOrderService.markProductionCompleted(selectedOrder.id);
         if (!response.handoverDocumentationPdfBase64) {
           this.notificationService.showMessageAlways(
-            'Produkt erfolgreich erstellt und Produktionsauftrag als abgeschlossen markiert'
+            this.translate.instant('production.assembly.productCreatedSuccess')
           );
         }
       }
@@ -465,7 +472,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
           this.showPdfDialog.set(true);
         } catch (error) {
           console.error('Error converting Base64 to PDF:', error);
-          this.notificationService.showMessageAlways('Fehler beim Laden des PDFs');
+          this.notificationService.showMessageAlways(
+            this.translate.instant('production.assembly.pdfLoadError')
+          );
           this.router.navigate(['/production/assembly']);
         }
       } else {
@@ -544,11 +553,15 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     const requiredToolAasId = await this.requiredToolAasId();
 
     if (!requiredToolAasId) {
-      this.notificationService.showMessageAlways('Fehler: RequiredTool AAS ID nicht gefunden');
+      this.notificationService.showMessageAlways(
+        this.translate.instant('production.assembly.errorToolAasIdNotFound')
+      );
       return;
     }
     if (requiredTightenForce == null || requiredTightenForce === '') {
-      this.notificationService.showMessageAlways('Fehler: required_tighten_force nicht gefunden');
+      this.notificationService.showMessageAlways(
+        this.translate.instant('production.assembly.errorRequiredForceNotFound')
+      );
       return;
     }
     await this.service.initializeTool(requiredToolAasId, 'TargetTorque', requiredTightenForce);
@@ -668,13 +681,17 @@ export class AssemblyComponent implements OnInit, OnDestroy {
     try {
       const aasId = await this.requiredToolAasId();
       if (aasId == null || aasId == '') {
-        this.notificationService.showMessageAlways('Fehler: AAS ID nicht gefunden');
+        this.notificationService.showMessageAlways(
+          this.translate.instant('production.assembly.errorAasIdNotFound')
+        );
         return;
       }
 
       const toolData = await this.service.getToolData(aasId);
       if (!toolData) {
-        this.notificationService.showMessageAlways('Fehler: Werkzeugdaten nicht gefunden');
+        this.notificationService.showMessageAlways(
+          this.translate.instant('production.assembly.errorToolDataNotFound')
+        );
         return;
       }
 
@@ -704,7 +721,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
           currentTightenForce < allowedTightenForceMin ||
           currentTightenForce > allowedTightenForceMax
         ) {
-          this.notificationService.showMessageAlways('Fehler: Ungültiges Drehmoment');
+          this.notificationService.showMessageAlways(
+            this.translate.instant('production.assembly.errorInvalidTorque')
+          );
           this.toolResultOk.set(false);
         } else {
           // this.notificationService.showMessageAlways('Drehmoment ist gültig');
@@ -714,7 +733,9 @@ export class AssemblyComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error checking tool data:', error);
-      this.notificationService.showMessageAlways('Fehler beim Prüfen der Werkzeugdaten');
+      this.notificationService.showMessageAlways(
+        this.translate.instant('production.assembly.errorCheckingToolData')
+      );
     } finally {
       this.toolCheckLoading.set(false);
     }

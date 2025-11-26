@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService } from './dashboard.service';
+import { TranslateModule } from '@ngx-translate/core';
 import { UrlBase } from '../base/url-base';
+import { DashboardService } from './dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
+  imports: [TranslateModule],
+  standalone: true,
 })
 export class DashboardComponent extends UrlBase implements OnInit {
   countAAS: number = 0;

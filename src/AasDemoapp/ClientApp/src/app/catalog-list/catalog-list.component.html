@@ -1,6 +1,6 @@
 <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
   <div class="card flex flex-column mt-2 gap-2 w-full">
-    <label>Kategorie</label>
+    <label>{{ 'common.category' | translate }}</label>
     <p-select
       [options]="groups"
       [(ngModel)]="selectedCategory"
@@ -25,7 +25,7 @@
       </ng-template>
     </p-dataView>
     @if (!currentGroupItems) {
-      <p>Keine Elemente erfasst. Bitte zuerst Elemente in den Katalog importieren</p>
+      <p>{{ 'catalog.list.noItemsImport' | translate }}</p>
     }
   </div>
 </div>

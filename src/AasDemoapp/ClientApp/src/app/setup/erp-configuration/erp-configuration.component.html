@@ -1,9 +1,9 @@
 <p-accordion-panel value="0">
-  <p-accordion-header>ERP System Konfiguration</p-accordion-header>
+  <p-accordion-header>{{ 'setup.erpSystemConfig' | translate }}</p-accordion-header>
   <p-accordion-content>
     <div class="flex flex-column gap-4 p-4">
       <div class="flex flex-column gap-2">
-        <label>ERP System wählen</label>
+        <label>{{ 'setup.selectErp' | translate }}</label>
         <p-selectButton
           [options]="erpOptions()"
           [ngModel]="selectedErp()"
@@ -23,23 +23,22 @@
         @if (selectedErp()) {
           @if (selectedErp()?.label == 'Meta SimplestErp') {
             <div class="flex flex-column gap-2">
-              Beim Eigenen ERP-System ist keine Konfiguration notwendig.
+              {{ 'setup.noConfigNeeded' | translate }}
             </div>
           }
           @if (selectedErp()?.label != 'Meta SimplestErp') {
             <div class="flex flex-column gap-2">
-              <label>Mapping</label>
+              <label>{{ 'setup.mapping' | translate }}</label>
               <p>
-                Hier wird jetzt ein Mapping für Felder des ERP-Systems zu Feldern aus der
-                AAS/Speziellen Teilmodellen vorgenommen.
+                {{ 'setup.mappingDescription' | translate }}
               </p>
-              <p>Beispiele:</p>
+              <p>{{ 'setup.examples' | translate }}:</p>
               <ul>
-                <li>Produktfamilie aus dem Digital Nameplate ==> Kategorie des Teils</li>
-                <li>Hersteller aus Digital Nameplate ==> Hersteller des Teils</li>
-                <li>Produktbeschreibung aus dem Digital Nameplate ==> Beschreibung</li>
-                <li>Produktbezeichnung aus dem Digital Nameplate ==> Bezeichnung</li>
-                <li>Globale Asset ID ==> Eindeutige Kennung</li>
+                <li>{{ 'setup.mappingExample1' | translate }}</li>
+                <li>{{ 'setup.mappingExample2' | translate }}</li>
+                <li>{{ 'setup.mappingExample3' | translate }}</li>
+                <li>{{ 'setup.mappingExample4' | translate }}</li>
+                <li>{{ 'setup.mappingExample5' | translate }}</li>
                 <li>...</li>
               </ul>
             </div>
@@ -47,7 +46,7 @@
           <button
             pButton
             type="button"
-            label="ERP Konfiguration Speichern"
+            [label]="'setup.saveErpConfiguration' | translate"
             (click)="saveSettings()"
             class="w-auto mt-2"
             icon="pi pi-save"

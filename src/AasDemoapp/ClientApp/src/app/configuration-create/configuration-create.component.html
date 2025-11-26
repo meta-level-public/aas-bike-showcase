@@ -3,9 +3,9 @@
   <div class="configurator-header">
     <h1 class="configurator-title">
       <i class="pi pi-cog"></i>
-      Bike Konfigurator
+      {{ 'configuration.create.bikeConfigurator' | translate }}
     </h1>
-    <p class="configurator-subtitle">Erstellen Sie Ihr individuelles Fahrrad</p>
+    <p class="configurator-subtitle">{{ 'configuration.create.subtitle' | translate }}</p>
   </div>
 
   <!-- Main Content -->
@@ -14,8 +14,10 @@
     <div class="parts-panel">
       <div class="panel-header">
         <i class="pi pi-shopping-cart"></i>
-        <h3>Verfügbare Rohteile</h3>
-        <span class="parts-count">({{ rohteile.length }} Teile)</span>
+        <h3>{{ 'configuration.create.availableRawParts' | translate }}</h3>
+        <span class="parts-count"
+          >({{ rohteile.length }} {{ 'configuration.create.parts' | translate }})</span
+        >
       </div>
 
       <div class="parts-grid p-4">
@@ -48,18 +50,20 @@
     <div class="configuration-panel">
       <div class="panel-header">
         <i class="pi pi-wrench"></i>
-        <h3>Konfiguration</h3>
-        <span class="selected-count">({{ bestandteile.length }} ausgewählt)</span>
+        <h3>{{ 'configuration.create.configuration' | translate }}</h3>
+        <span class="selected-count"
+          >({{ bestandteile.length }} {{ 'configuration.create.selected' | translate }})</span
+        >
       </div>
 
       <!-- Product Details -->
       <div class="product-details">
         <div class="form-group">
-          <label for="productName">Produktname</label>
+          <label for="productName">{{ 'configuration.create.productName' | translate }}</label>
           <input
             id="productName"
             type="text"
-            placeholder="Name eingeben..."
+            [placeholder]="'configuration.create.nameEnter' | translate"
             pInputText
             [(ngModel)]="newProduct.name"
             class="product-name-input"
@@ -67,7 +71,7 @@
         </div>
 
         <div class="price-display">
-          <div class="price-label">Gesamtpreis</div>
+          <div class="price-label">{{ 'configuration.create.totalPrice' | translate }}</div>
           <div class="price-value">
             {{ newProduct.price | currency: 'EUR' : 'symbol' : '1.2-2' }}
           </div>
@@ -78,7 +82,7 @@
       <div class="selected-parts">
         <div *ngIf="bestandteile.length === 0" class="empty-state">
           <i class="pi pi-shopping-basket"></i>
-          <p>Wählen Sie Teile aus der linken Liste aus</p>
+          <p>{{ 'configuration.create.selectParts' | translate }}</p>
         </div>
 
         <div *ngFor="let teil of bestandteile; trackBy: trackByFn" class="selected-part-card">
@@ -92,12 +96,13 @@
             <h4>{{ teil.name }}</h4>
             <p class="selected-part-category">{{ teil.kategorie }}</p>
             <div class="selected-part-price">
-              {{ teil.price | currency: 'EUR' : 'symbol' : '1.2-2' }} / Stück
+              {{ teil.price | currency: 'EUR' : 'symbol' : '1.2-2' }} /
+              {{ 'configuration.create.piece' | translate }}
             </div>
           </div>
 
           <div class="quantity-controls">
-            <span class="quantity-label">Anzahl</span>
+            <span class="quantity-label">{{ 'configuration.create.quantity' | translate }}</span>
             <div class="quantity-input-group">
               <button
                 type="button"
@@ -132,7 +137,7 @@
             type="button"
             class="remove-btn"
             (click)="removeFromConfiguration(teil)"
-            title="Teil entfernen"
+            [title]="'configuration.create.removePart' | translate"
           >
             <i class="pi pi-trash"></i>
           </button>
@@ -144,7 +149,7 @@
         <button
           pButton
           type="button"
-          label="Konfiguration löschen"
+          [label]="'configuration.create.clearConfiguration' | translate"
           class="p-button-outlined p-button-secondary"
           (click)="clearConfiguration()"
           [disabled]="bestandteile.length === 0"
@@ -155,7 +160,7 @@
         <button
           pButton
           type="button"
-          label="Konfiguration erstellen"
+          [label]="'configuration.create.createConfiguration' | translate"
           class="p-button-success create-btn"
           (click)="createProduct()"
           [disabled]="!valid()"

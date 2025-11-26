@@ -1,25 +1,27 @@
 <div class="order-panel">
   <div class="panel-header">
     <i class="pi pi-list"></i>
-    <h3>Produktionsauftrag</h3>
+    <h3>{{ 'production.assembly.orderSelection' | translate }}</h3>
   </div>
 
   @if (!isRouteBasedSelection) {
     <div class="form-group">
-      <label class="form-label">Produktionsauftrag wählen</label>
+      <label class="form-label">{{ 'production.assembly.chooseOrder' | translate }}</label>
       <p-select
         [options]="productionOrders"
         [ngModel]="selectedOrder"
         (ngModelChange)="onOrderChange($event)"
         optionLabel="configuredProductName"
-        placeholder="Wählen Sie einen Produktionsauftrag"
+        [placeholder]="'production.assembly.selectOrderPlaceholder' | translate"
         class="w-full"
       >
         <ng-template #selectedItem>
           @if (selectedOrder) {
             <div class="flex align-items-center gap-2">
               <span class="font-medium">{{ selectedOrder.configuredProductName }}</span>
-              <span class="text-sm text-500">({{ selectedOrder.anzahl }} Stück)</span>
+              <span class="text-sm text-500"
+                >({{ selectedOrder.anzahl }} {{ 'production.assembly.pieces' | translate }})</span
+              >
             </div>
           }
         </ng-template>
@@ -28,7 +30,9 @@
             <div class="flex flex-column">
               <span class="font-medium">{{ order.configuredProductName }}</span>
               <span class="text-sm text-500"
-                >Anzahl: {{ order.anzahl }} | Erstellt: {{ order.createdAt | date: 'short' }}</span
+                >{{ 'production.assembly.quantity' | translate }}: {{ order.anzahl }} |
+                {{ 'production.assembly.created' | translate }}:
+                {{ order.createdAt | date: 'short' }}</span
               >
             </div>
           </div>
@@ -41,15 +45,18 @@
     <div class="selected-order-card">
       <h4 class="order-title">
         <i class="pi pi-check-circle"></i>
-        Ausgewählter Produktionsauftrag
+        {{ 'production.assembly.selectedOrder' | translate }}
       </h4>
       <div class="order-details">
         <div class="order-name">
           {{ selectedOrder.configuredProductName }}
         </div>
         <div class="order-info">
-          <span>({{ selectedOrder.anzahl }} Stück)</span>
-          <span>Erstellt: {{ selectedOrder.createdAt | date: 'short' }}</span>
+          <span>({{ selectedOrder.anzahl }} {{ 'production.assembly.pieces' | translate }})</span>
+          <span
+            >{{ 'production.assembly.created' | translate }}:
+            {{ selectedOrder.createdAt | date: 'short' }}</span
+          >
         </div>
       </div>
     </div>

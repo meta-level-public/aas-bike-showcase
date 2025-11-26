@@ -1,12 +1,12 @@
 <p-accordion-panel value="2">
-  <p-accordion-header>Lieferanten Verwaltung</p-accordion-header>
+  <p-accordion-header>{{ 'setup.supplierManagement' | translate }}</p-accordion-header>
   <p-accordion-content>
     <div class="flex flex-column gap-4 p-4">
       <div class="flex justify-content-between align-items-center">
-        <p>Konfiguration der Lieferanten</p>
+        <p>{{ 'setup.supplierConfiguration' | translate }}</p>
         <p-button
           type="button"
-          label="Lieferant hinzufügen"
+          [label]="'setup.addSupplier' | translate"
           (onClick)="showAddSupplierDialog()"
           styleClass="w-auto"
           icon="pi pi-plus"
@@ -35,9 +35,13 @@
                       <div class="text-2xl font-bold text-900">
                         {{ item.name }}
                       </div>
-                      <div class="text-900">AAS Repository: {{ item.remoteAasRepositoryUrl }}</div>
+                      <div class="text-900">
+                        {{ 'setup.aasRepository' | translate }}: {{ item.remoteAasRepositoryUrl }}
+                      </div>
                       @if (item.remoteSmRepositoryUrl) {
-                        <div class="text-900">SM Repository: {{ item.remoteSmRepositoryUrl }}</div>
+                        <div class="text-900">
+                          {{ 'setup.smRepository' | translate }}: {{ item.remoteSmRepositoryUrl }}
+                        </div>
                       }
                     </div>
                   </div>
@@ -69,7 +73,7 @@
 <p-dialog
   [visible]="addSupplierDialogVisible()"
   (visibleChange)="addSupplierDialogVisible.set($event)"
-  header="Neuen Lieferanten hinzufügen"
+  [header]="'setup.addSupplier' | translate"
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
@@ -77,11 +81,11 @@
   @if (newSupplier()) {
     <div class="flex flex-column gap-3 p-4">
       <div class="flex flex-column gap-2">
-        <label for="name" class="block text-900 font-medium">Name</label>
+        <label for="name" class="block text-900 font-medium">{{ 'setup.name' | translate }}</label>
         <input
           id="name"
           type="text"
-          placeholder="Name des Lieferanten"
+          [placeholder]="'setup.supplierName' | translate"
           pInputText
           class="w-full"
           [ngModel]="newSupplier()?.name"
@@ -90,11 +94,11 @@
       </div>
 
       <div class="flex flex-column gap-2">
-        <label for="logo" class="block text-900 font-medium">Logo</label>
+        <label for="logo" class="block text-900 font-medium">{{ 'setup.logo' | translate }}</label>
         <input
           id="logo"
           type="text"
-          placeholder="Logo-Dateiname (z.B. logo.png)"
+          [placeholder]="'setup.logoFilename' | translate"
           pInputText
           class="w-full"
           [ngModel]="newSupplier()?.logo"
@@ -112,7 +116,7 @@
         [headerParameters]="newSupplier()?.securitySetting?.headerParameters || []"
         [certificate]="newSupplier()?.securitySetting?.certificate || ''"
         [certificatePassword]="newSupplier()?.securitySetting?.certificatePassword || ''"
-        [securityLegend]="'Supplier-Authentifizierung'"
+        [securityLegend]="'setup.supplierAuthentication' | translate"
         [showCertificate]="true"
         (aasRepositoryUrlChange)="updateSupplierAasRepositoryUrl($event)"
         (submodelRepositoryUrlChange)="updateSupplierSmRepositoryUrl($event)"
@@ -129,14 +133,14 @@
       <div class="flex justify-content-end gap-2 mt-3">
         <p-button
           type="button"
-          label="Abbrechen"
+          [label]="'common.cancel' | translate"
           (onClick)="addSupplierDialogVisible.set(false)"
           severity="secondary"
           variant="text"
         ></p-button>
         <p-button
           type="button"
-          label="Speichern"
+          [label]="'common.save' | translate"
           (onClick)="saveSupplier()"
           icon="pi pi-save"
         ></p-button>
@@ -149,7 +153,7 @@
 <p-dialog
   [visible]="editSupplierDialogVisible()"
   (visibleChange)="editSupplierDialogVisible.set($event)"
-  header="Lieferanten bearbeiten"
+  [header]="'setup.editSupplier' | translate"
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
@@ -157,11 +161,13 @@
   @if (supplierToEdit()) {
     <div class="flex flex-column gap-3 p-4">
       <div class="flex flex-column gap-2">
-        <label for="editName" class="block text-900 font-medium">Name</label>
+        <label for="editName" class="block text-900 font-medium">{{
+          'setup.name' | translate
+        }}</label>
         <input
           id="editName"
           type="text"
-          placeholder="Name des Lieferanten"
+          [placeholder]="'setup.supplierName' | translate"
           pInputText
           class="w-full"
           [ngModel]="supplierToEdit()?.name"
@@ -170,11 +176,13 @@
       </div>
 
       <div class="flex flex-column gap-2">
-        <label for="editLogo" class="block text-900 font-medium">Logo</label>
+        <label for="editLogo" class="block text-900 font-medium">{{
+          'setup.logo' | translate
+        }}</label>
         <input
           id="editLogo"
           type="text"
-          placeholder="Logo-Dateiname (z.B. logo.png)"
+          [placeholder]="'setup.logoFilename' | translate"
           pInputText
           class="w-full"
           [ngModel]="supplierToEdit()?.logo"
@@ -192,7 +200,7 @@
         [headerParameters]="supplierToEdit()?.securitySetting?.headerParameters || []"
         [certificate]="supplierToEdit()?.securitySetting?.certificate || ''"
         [certificatePassword]="supplierToEdit()?.securitySetting?.certificatePassword || ''"
-        [securityLegend]="'Supplier-Authentifizierung'"
+        [securityLegend]="'setup.supplierAuthentication' | translate"
         [showCertificate]="true"
         (aasRepositoryUrlChange)="updateEditSupplierAasRepositoryUrl($event)"
         (submodelRepositoryUrlChange)="updateEditSupplierSmRepositoryUrl($event)"
@@ -209,14 +217,14 @@
       <div class="flex justify-content-end gap-2 mt-3">
         <p-button
           type="button"
-          label="Abbrechen"
+          [label]="'common.cancel' | translate"
           (onClick)="editSupplierDialogVisible.set(false)"
           severity="secondary"
           variant="text"
         ></p-button>
         <p-button
           type="button"
-          label="Änderungen speichern"
+          [label]="'setup.saveChanges' | translate"
           (onClick)="saveEditSupplier()"
           icon="pi pi-save"
         ></p-button>

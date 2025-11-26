@@ -2,6 +2,7 @@ import { AssetAdministrationShell } from '@aas-core-works/aas-core3.0-typescript
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { NgxJsonViewerModule } from 'ngx-json-viewer';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
@@ -23,6 +24,7 @@ import { DppService } from './dpp.service';
     NgxJsonViewerModule,
     ButtonModule,
     TooltipModule,
+    TranslateModule,
   ],
 })
 export class DppComponent extends UrlBase implements OnInit {

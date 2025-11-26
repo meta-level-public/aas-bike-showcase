@@ -2,22 +2,19 @@
   <div class="flex flex-column gap-2">
     <div class="flex flex-row align-items-end">
       <p-button
-        label="Header-Parameter hinzufügen"
+        [label]="'setup.addHeader' | translate"
         class="w-full"
         (click)="addHeaderRow()"
         icon="pi pi-plus"
       ></p-button>
     </div>
-    <p-message
-      >Wenn Ihre Infrastruktur eine Authentifizierung erfordert, können Sie hier Header Parameter
-      angeben, die für den Zugriff notwendig sind</p-message
-    >
+    <p-message>{{ 'setup.authenticationDescription' | translate }}</p-message>
   </div>
 
   @for (headerParam of localHeaderParameters(); track $index; let indx = $index) {
     <div class="flex flex-row gap-2 align-items-end">
       <div class="field w-5">
-        <label for="headerName{{ indx }}"> Name </label>
+        <label for="headerName{{ indx }}"> {{ 'setup.headerName' | translate }} </label>
         <input
           pInputText
           id="headerName{{ indx }}"
@@ -30,7 +27,7 @@
         />
       </div>
       <div class="field w-5">
-        <label for="headerValue{{ indx }}"> Wert </label>
+        <label for="headerValue{{ indx }}"> {{ 'setup.headerValue' | translate }} </label>
         <input
           pInputText
           id="headerValue{{ indx }}"
@@ -55,33 +52,30 @@
   }
   @if (showCertificate()) {
     <div class="flex flex-column mt-5">
-      <p-message severity="info"
-        >Wenn Ihre Infrastruktur eine Zertifikatsdatei erfordert, können Sie diese hier
-        hinterlegen.</p-message
-      >
+      <p-message severity="info">{{ 'setup.certificateInfo' | translate }}</p-message>
       <div class="field">
-        <label for="certificate"> Zertifikatsdatei</label>
+        <label for="certificate"> {{ 'setup.certificateFile' | translate }}</label>
         <p-fileUpload
           #uploader
           chooseIcon="pi pi-upload"
           accept=".pfx,"
           [auto]="false"
-          chooseLabel="Datei auswählen"
+          [chooseLabel]="'setup.selectFile' | translate"
           [customUpload]="true"
           (onSelect)="setCertificateFile($event)"
           [showUploadButton]="false"
         >
           <ng-template pTemplate="content" let-files>
             @if (localCertificate() != null && localCertificate().length > 0) {
-              <em> Zertifikat wurde angegeben. </em>
+              <em> {{ 'setup.certificateSelected' | translate }} </em>
             } @else {
-              <em> Wählen Sie eine Datei aus oder ziehen Sie sie hierher </em>
+              <em> {{ 'setup.certificateSelectPrompt' | translate }} </em>
             }
           </ng-template>
         </p-fileUpload>
       </div>
       <div class="field">
-        <label for="certificatePassword"> Passwort </label>
+        <label for="certificatePassword"> {{ 'setup.password' | translate }} </label>
         <p-password
           [ngModel]="localCertificatePassword()"
           (ngModelChange)="onCertificatePasswordChange($event)"

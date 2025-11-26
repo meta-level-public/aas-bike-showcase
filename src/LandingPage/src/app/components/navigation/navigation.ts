@@ -39,7 +39,6 @@ export class Navigation implements OnInit {
         'nav.projectOverview',
         'nav.projectArchitecture',
         'nav.members',
-        'nav.imprint',
       ])
       .subscribe((translations) => {
         this.menuItems = [
@@ -74,11 +73,6 @@ export class Navigation implements OnInit {
             label: translations['nav.members'],
             icon: 'pi pi-users',
             routerLink: '/members',
-          },
-          {
-            label: translations['nav.imprint'],
-            icon: 'pi pi-file',
-            routerLink: '/impressum',
           },
           {
             icon: 'pi pi-language',

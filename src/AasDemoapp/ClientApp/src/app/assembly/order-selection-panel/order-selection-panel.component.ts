@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { SelectModule } from 'primeng/select';
 import { ProductionOrder } from '../../model/production-order';
 
@@ -8,7 +9,7 @@ import { ProductionOrder } from '../../model/production-order';
   selector: 'app-order-selection-panel',
   templateUrl: './order-selection-panel.component.html',
   styleUrl: './order-selection-panel.component.css',
-  imports: [CommonModule, FormsModule, SelectModule],
+  imports: [CommonModule, FormsModule, SelectModule, TranslateModule],
 })
 export class OrderSelectionPanelComponent {
   @Input() productionOrders: ProductionOrder[] = [];

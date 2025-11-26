@@ -12,12 +12,17 @@
           <div class="flex align-items-center gap-3">
             <span class="flex align-items-center gap-2">
               <i class="pi pi-cog"></i>
-              <span class="font-semibold">Konfiguriertes Produkt</span>
+              <span class="font-semibold">{{
+                'configuration.list.configuredProduct' | translate
+              }}</span>
             </span>
             @if (getTotalBestandteile() > 0) {
               <span class="flex align-items-center gap-2">
                 <i class="pi pi-list"></i>
-                <span class="font-semibold">{{ getTotalBestandteile() }} Bestandteile</span>
+                <span class="font-semibold"
+                  >{{ getTotalBestandteile() }}
+                  {{ 'configuration.list.components' | translate }}</span
+                >
               </span>
             }
           </div>
@@ -31,7 +36,7 @@
                 icon="pi pi-list"
                 class="md:align-self-end mb-2 p-button-rounded p-button-outlined"
                 (click)="bestandteilePopover.toggle($event)"
-                pTooltip="Bestandteile anzeigen"
+                [pTooltip]="'configuration.list.showComponents' | translate"
                 tooltipPosition="top"
               ></button>
             }
@@ -41,7 +46,7 @@
               class="md:align-self-end mb-2 p-button-rounded"
               (click)="openOrderDialog()"
               [loading]="loading"
-              pTooltip="Bestellung erstellen"
+              [pTooltip]="'configuration.list.createOrder' | translate"
               tooltipPosition="top"
             ></button>
             <button
@@ -62,7 +67,9 @@
     <div class="flex flex-column gap-3 p-0">
       <div class="flex flex-row align-items-center gap-2 bestandteile-header p-3 border-round-top">
         <i class="pi pi-list text-primary text-lg"></i>
-        <span class="text-lg font-bold">Bestandteile von {{ item.name }}</span>
+        <span class="text-lg font-bold"
+          >{{ 'configuration.list.componentsOf' | translate }} {{ item.name }}</span
+        >
       </div>
 
       @if (item.bestandteile && item.bestandteile.length > 0) {
@@ -78,7 +85,8 @@
                     <i class="pi pi-hashtag"></i> {{ bestandteil.amount }}x
                   </span>
                   <span class="text-600">
-                    <i class="pi pi-dollar"></i> {{ bestandteil.price }} p. Stück
+                    <i class="pi pi-dollar"></i> {{ bestandteil.price }}
+                    {{ 'configuration.list.perPiece' | translate }}
                   </span>
                 </div>
               </div>
@@ -86,7 +94,7 @@
                 <span class="font-bold text-primary text-lg"
                   >${{ (bestandteil.price * bestandteil.amount).toFixed(2) }}</span
                 >
-                <small class="text-600">Gesamt</small>
+                <small class="text-600">{{ 'configuration.list.total' | translate }}</small>
               </div>
             </div>
           }
@@ -97,7 +105,9 @@
         >
           <div class="flex align-items-center gap-2">
             <i class="pi pi-calculator text-primary"></i>
-            <span class="font-bold text-900">Gesamtkosten Bestandteile:</span>
+            <span class="font-bold text-900"
+              >{{ 'configuration.list.totalComponentCost' | translate }}:</span
+            >
           </div>
           <span class="font-bold text-primary text-xl">${{ getTotalPrice().toFixed(2) }}</span>
         </div>
@@ -106,15 +116,21 @@
           <small class="text-600">
             <i class="pi pi-info-circle mr-1"></i>
             {{ getTotalBestandteile() }}
-            {{ getTotalBestandteile() === 1 ? 'Bestandteil' : 'Bestandteile' }}
-            insgesamt
+            {{
+              getTotalBestandteile() === 1
+                ? ('configuration.list.componentSingular' | translate)
+                : ('configuration.list.componentPlural' | translate)
+            }}
+            {{ 'configuration.list.inTotal' | translate }}
           </small>
         </div>
       } @else {
         <div class="text-center text-600 p-4">
           <i class="pi pi-info-circle text-4xl mb-3 text-300"></i>
-          <p class="text-lg font-semibold mb-2">Keine Bestandteile verfügbar</p>
-          <p class="text-sm">Dieses Produkt hat noch keine konfigurierten Bestandteile.</p>
+          <p class="text-lg font-semibold mb-2">
+            {{ 'configuration.list.noComponents' | translate }}
+          </p>
+          <p class="text-sm">{{ 'configuration.list.noComponentsDesc' | translate }}</p>
         </div>
       }
     </div>

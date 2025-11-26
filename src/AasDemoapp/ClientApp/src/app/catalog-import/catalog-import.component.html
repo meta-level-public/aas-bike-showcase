@@ -3,9 +3,9 @@
   <div class="catalog-import-header">
     <h1 class="catalog-import-title">
       <i class="pi pi-download"></i>
-      Katalog Import
+      {{ 'catalog.import.catalogImport' | translate }}
     </h1>
-    <p class="catalog-import-subtitle">Teile aus externen Katalogen importieren</p>
+    <p class="catalog-import-subtitle">{{ 'catalog.import.subtitle' | translate }}</p>
   </div>
 
   <!-- Main Content -->
@@ -14,19 +14,19 @@
     <div class="input-panel">
       <div class="panel-header">
         <i class="pi pi-pencil"></i>
-        <h3>Teil Details</h3>
+        <h3>{{ 'catalog.import.partDetails' | translate }}</h3>
       </div>
 
       <div class="form-section">
         <div class="form-group">
           <label for="name" class="form-label">
             <i class="pi pi-tag"></i>
-            Name
+            {{ 'catalog.import.name' | translate }}
           </label>
           <input
             id="name"
             type="text"
-            placeholder="Name eingeben"
+            [placeholder]="'catalog.import.nameEnter' | translate"
             pInputText
             class="w-full"
             [(ngModel)]="newKatalogEintrag.name"
@@ -36,12 +36,12 @@
         <div class="form-group">
           <label for="price" class="form-label">
             <i class="pi pi-euro"></i>
-            Preis
+            {{ 'catalog.import.price' | translate }}
           </label>
           <input
             id="price"
             type="text"
-            placeholder="Preis eingeben"
+            [placeholder]="'catalog.import.priceEnter' | translate"
             pInputText
             class="w-full"
             [(ngModel)]="newKatalogEintrag.price"
@@ -51,12 +51,12 @@
         <div class="form-group">
           <label for="aasId" class="form-label">
             <i class="pi pi-id-card"></i>
-            AasId
+            {{ 'catalog.import.aasId' | translate }}
           </label>
           <input
             id="aasId"
             type="text"
-            placeholder="AasId eingeben"
+            [placeholder]="'catalog.import.aasIdEnter' | translate"
             pInputText
             [(ngModel)]="newKatalogEintrag.aasId"
             class="w-full"
@@ -66,12 +66,12 @@
         <div class="form-group">
           <label for="globalAssetId" class="form-label">
             <i class="pi pi-globe"></i>
-            GlobalAssetId
+            {{ 'catalog.import.globalAssetId' | translate }}
           </label>
           <input
             id="globalAssetId"
             type="text"
-            placeholder="GlobalAssetId eingeben"
+            [placeholder]="'catalog.import.globalAssetIdEnter' | translate"
             pInputText
             [(ngModel)]="newKatalogEintrag.globalAssetId"
             class="w-full"
@@ -80,7 +80,7 @@
 
         <div class="form-group">
           <p-button
-            label="Speichern"
+            [label]="'common.save' | translate"
             icon="pi pi-save"
             class="w-full save-btn"
             (click)="save()"
@@ -94,14 +94,14 @@
     <div class="data-panel">
       <div class="panel-header">
         <i class="pi pi-building"></i>
-        <h3>Lieferanten & Katalog</h3>
+        <h3>{{ 'catalog.import.suppliersAndCatalog' | translate }}</h3>
       </div>
 
       <!-- Supplier Selection -->
       <div class="suppliers-section">
         <h4 class="section-title">
           <i class="pi pi-users"></i>
-          Lieferant auswählen
+          {{ 'catalog.import.selectSupplier' | translate }}
         </h4>
         <div class="suppliers-grid">
           @for (item of suppliers; track $index) {
@@ -118,7 +118,7 @@
           } @empty {
             <div class="empty-state">
               <i class="pi pi-info-circle"></i>
-              <p>Keine Lieferanten erfasst. Bitte zuerst im Grundsetup einrichten</p>
+              <p>{{ 'catalog.import.noSuppliers' | translate }}</p>
             </div>
           }
         </div>
@@ -128,7 +128,7 @@
       <div class="table-section">
         <h4 class="section-title">
           <i class="pi pi-list"></i>
-          Verfügbare Teile
+          {{ 'catalog.import.availableParts' | translate }}
         </h4>
         <p-table
           [value]="filteredShells"
@@ -141,10 +141,10 @@
         >
           <ng-template pTemplate="header">
             <tr>
-              <th scope="col">Aktionen</th>
-              <th scope="col">Details</th>
-              <th scope="col">Aas IdShort</th>
-              <th scope="col">AasId</th>
+              <th scope="col">{{ 'catalog.import.actions' | translate }}</th>
+              <th scope="col">{{ 'catalog.import.details' | translate }}</th>
+              <th scope="col">{{ 'catalog.import.aasIdShort' | translate }}</th>
+              <th scope="col">{{ 'catalog.import.aasId' | translate }}</th>
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-shell>
@@ -153,7 +153,7 @@
                 <td>
                   <p-button
                     size="small"
-                    label="Übernehmen"
+                    [label]="'catalog.import.apply' | translate"
                     (click)="apply(shell)"
                     severity="info"
                   ></p-button>

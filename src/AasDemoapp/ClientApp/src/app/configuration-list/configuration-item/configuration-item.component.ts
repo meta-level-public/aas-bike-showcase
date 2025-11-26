@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { RatingModule } from 'primeng/rating';
@@ -18,6 +19,7 @@ import { ConfigurationListService } from '../configuration-list.service';
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     RatingModule,
     ButtonModule,
     PopoverModule,

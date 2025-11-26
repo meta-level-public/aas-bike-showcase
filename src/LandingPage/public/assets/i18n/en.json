@@ -143,5 +143,26 @@
     },
     "companiesTitle": "Member Companies",
     "companiesIntro": "The following companies have actively contributed to the development of the NextBike project:"
+  },
+  "impressum": {
+    "title": "Imprint",
+    "loading": "Loading imprint data...",
+    "error": "Error loading imprint data. Please try again later.",
+    "legalInfo": "Information according to § 5 TMG",
+    "contact": "Contact",
+    "phone": "Phone",
+    "responsible": "Responsible for content according to § 55 Abs. 2 RStV",
+    "disclaimer": "Disclaimer",
+    "contentLiability": "Liability for Content",
+    "contentLiabilityText1": "As a service provider, we are responsible for our own content on these pages according to § 7 Abs.1 TMG under general law. However, according to §§ 8 to 10 TMG, we are not obligated as a service provider to monitor transmitted or stored third-party information or to investigate circumstances that indicate illegal activity.",
+    "contentLiabilityText2": "Obligations to remove or block the use of information under general law remain unaffected. However, liability in this regard is only possible from the time of knowledge of a specific legal violation. Upon becoming aware of corresponding legal violations, we will remove this content immediately.",
+    "linksLiability": "Liability for Links",
+    "linksLiabilityText1": "Our website contains links to external third-party websites over whose content we have no control. Therefore, we cannot accept any liability for this external content. The respective provider or operator of the linked pages is always responsible for the content of the linked pages. The linked pages were checked for possible legal violations at the time of linking. Illegal content was not recognizable at the time of linking.",
+    "linksLiabilityText2": "However, permanent monitoring of the content of linked pages is not reasonable without concrete evidence of a legal violation. Upon becoming aware of legal violations, we will remove such links immediately.",
+    "copyright": "Copyright",
+    "copyrightText1": "The content and works created by the site operators on these pages are subject to German copyright law. The reproduction, editing, distribution and any kind of exploitation outside the limits of copyright require the written consent of the respective author or creator. Downloads and copies of this page are only permitted for private, non-commercial use.",
+    "copyrightText2": "Insofar as the content on this page was not created by the operator, the copyrights of third parties are respected. In particular, third-party content is marked as such. Should you nevertheless become aware of a copyright infringement, please inform us accordingly. Upon becoming aware of legal violations, we will remove such content immediately.",
+    "projectInfo": "Project Information",
+    "projectInfoText": "The NextBike project is a showcase application demonstrating Digital Product Passports and Asset Administration Shells in a virtual factory. The project was created by the Open Industry 4.0 Alliance and its member companies."
   }
 }

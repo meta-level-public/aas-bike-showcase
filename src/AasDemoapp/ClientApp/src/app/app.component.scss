@@ -1,7 +1,7 @@
 .app-footer {
   margin-top: 4rem;
   padding: 1.5rem 0;
-  border-top: 1px solid var(--p-surface-500);
+  border-top: 1px solid light-dark(var(--p-surface-200), var(--p-surface-800)) !important;
 
   .footer-content {
     max-width: 1200px;
@@ -16,7 +16,7 @@
       transition: color 0.3s ease;
 
       &:hover {
-        color: #76b82a;
+        color: #764ba2;
       }
     }
   }
